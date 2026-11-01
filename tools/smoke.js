@@ -33,7 +33,7 @@ async function main() {
     const target = url.pathToFileURL(path.join(__dirname, '..', 'index.html')).href + q + route;
     await page.goto(target, { waitUntil: 'load' });
     await sleep(Number(arg('wait', 600)));
-    const ev = arg('eval');
+    const ev = arg('evalfile') ? fs.readFileSync(arg('evalfile'), 'utf8') : arg('eval');
     if (ev) {
       try {
         const out = await page.evaluate(`(async () => { ${ev} })()`);

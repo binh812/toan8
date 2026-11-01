@@ -127,16 +127,18 @@
   }
 
   function toLatex(n) {
+    // sau dấu trừ chỉ cần ngoặc khi là tổng (x-(a+b)); tích như 4x thì viết thẳng
+    function negArg(x) { return x.t === 'add' || x.t === 'neg' ? '\\left(' + toLatex(x) + '\\right)' : toLatex(x); }
     function wrap(x) { return isAtom(x) || x.t === 'pow' || x.t === 'div' ? toLatex(x) : '\\left(' + toLatex(x) + '\\right)'; }
     switch (n.t) {
       case 'num': return String(n.v).replace('.', '{,}');
       case 'var': return n.n;
       case 'fn': return '\\sqrt{' + toLatex(n.a) + '}';
       case 'add': return n.terms.map(function (x, i) {
-        if (x.t === 'neg') return '-' + wrap(x.a);
+        if (x.t === 'neg') return '-' + negArg(x.a);
         return (i ? '+' : '') + toLatex(x);
       }).join('');
-      case 'neg': return '-' + wrap(n.a);
+      case 'neg': return '-' + negArg(n.a);
       case 'mul': return n.fs.map(function (x, i) {
         var s = wrap(x);
         return i && x.t === 'num' ? '\\cdot ' + s : s;

@@ -119,9 +119,10 @@ svg.dt text, svg.dt .lbl { font: 600 18px "Segoe UI", system-ui, sans-serif; }
 /* Bài tập */
 .status { background: var(--paper); border-radius: var(--radius); padding: 12px 18px; margin-bottom: 18px; border: 1.5px solid var(--line); }
 .muc-h { margin: 26px 0 10px; font-size: 1.15rem; color: var(--muted); }
-.q { background: var(--paper); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 16px; box-shadow: var(--shadow); border-left: 6px solid transparent; transition: border-color .3s; }
+.q { position: relative; background: var(--paper); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 16px; box-shadow: var(--shadow); border-left: 6px solid transparent; transition: border-color .3s; }
 .q.done { border-left-color: var(--ok); }
-.q.done .q-de::after { content: "✓ đã làm đúng"; float: right; color: var(--ok); font-size: .8rem; font-weight: 700; }
+.q.done::after { content: "✓ đã làm đúng"; position: absolute; top: 14px; right: 18px; color: var(--ok); font-size: .8rem; font-weight: 700; }
+.o-sai .ti { border-color: var(--bad); }
 .muc-tag { display: inline-block; font-size: .75rem; font-weight: 700; padding: 1px 9px; border-radius: 99px; margin-right: 8px; background: #f1f3f5; color: var(--muted); vertical-align: 2px; }
 .muc2 .muc-tag { background: #e7f5ff; color: #1864ab; }
 .muc3 .muc-tag { background: #fff0f6; color: #a61e4d; }

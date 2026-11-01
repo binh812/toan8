@@ -45,4 +45,6 @@ test('toNerdamer tương đương', () => {
 test('toLatex', () => {
   assert.strictEqual(P.toLatex(P.parse('(x+1)/(x-1)')), '\\frac{x+1}{x-1}');
   assert.strictEqual(P.toLatex(P.parse('2x^2')), '2x^{2}');
+  assert.strictEqual(P.toLatex(P.parse('4x^2-4x+1')), '4x^{2}-4x+1');
+  assert.strictEqual(P.toLatex(P.parse('x-(a+b)')), 'x-\\left(a+b\\right)');
 });
