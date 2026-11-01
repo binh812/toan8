@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toán 8 – Học cùng hình động</title>
+  <link rel="stylesheet" href="lib/katex/katex.min.css">
+  <link rel="stylesheet" href="lib/jsxgraph/jsxgraph.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header id="top">
+    <a href="#/" class="logo"><span class="logo-mark">8</span> Toán 8 <small>Kết nối tri thức</small></a>
+    <nav><a href="#/on-tap" id="nav-ontap" class="btn small">Ôn 5 câu hôm nay</a></nav>
+  </header>
+  <div id="warn" hidden></div>
+  <main id="app"></main>
+
+  <script src="lib/katex/katex.min.js"></script>
+  <script src="lib/jsxgraph/jsxgraphcore.js"></script>
+  <script src="lib/nerdamer/nerdamer.js"></script>
+  <script>if (!/nomathlive/.test(location.search)) document.write('<script src="lib/mathlive/mathlive.min.js"><\/script>');</script>
+  <script src="js/core/parser.js"></script>
+  <script src="js/core/checker.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/render.js"></script>
+  <script src="js/core/app.js"></script>
+  <script src="js/widgets/mathinput.js"></script>
+  <script src="js/widgets/stepper.js"></script>
+  <script src="js/widgets/practice.js"></script>
+  <script src="js/widgets/timloi.js"></script>
+  <script src="js/widgets/review.js"></script>
+  <script src="js/widgets/tiles.js"></script>
+  <script src="js/widgets/geo.js"></script>
+  <script src="content/index.js"></script>
+  <!-- NOI DUNG: thêm file bài ở đây -->
+  <script>TOAN8.start();</script>
+</body>
+</html>
