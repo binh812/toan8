@@ -1,0 +1,261 @@
+// Bài 11 – Hình thang cân (SGK Toán 8 KNTT, Tập 1, tr. 52–56)
+(function () {
+  'use strict';
+  var CAM = '#d9480f', XANH = '#1971c2', LA = '#2f9e44', TIM = '#9c36b5';
+
+  // ---------- Tiện ích vẽ hình cố định cho đề bài (toạ độ dựng từ chính số liệu đề) ----------
+  var hinh = TOAN8.hinhTinh, lerp = TOAN8.hh.lerp;
+  function rad(d) { return d * Math.PI / 180; }
+  function toi(P, goc, l) { return [P[0] + l * Math.cos(rad(goc)), P[1] + l * Math.sin(rad(goc))]; }
+  // Chỗ đặt chữ số đo của góc POQ: trên tia phân giác, cách đỉnh O một đoạn k.
+  function chuGoc(P, O, Q, k) {
+    var ux = P[0] - O[0], uy = P[1] - O[1], vx = Q[0] - O[0], vy = Q[1] - O[1];
+    var lu = Math.hypot(ux, uy), lv = Math.hypot(vx, vy);
+    var wx = ux / lu + vx / lv, wy = uy / lu + vy / lv, lw = Math.hypot(wx, wy);
+    if (lw < 1e-6) { wx = -uy / lu; wy = ux / lu; lw = 1; }
+    return [O[0] + k * wx / lw, O[1] + k * wy / lw];
+  }
+  // o: { diem, vong:[đỉnh theo thứ tự], vach?:{AB:1}, canh?, goc?, soGoc?:[[P,O,Q,'chữ',hệ số xa?,màu?]], nhan?, ve?, lechTen?, ghiChu? }
+  function hinhTG(o) {
+    var D = o.diem, v = o.vong || [], canh = [], ten = Object.keys(D);
+    v.forEach(function (a, i) { var b = v[(i + 1) % v.length], k = (o.vach || {})[a + b]; canh.push([a, b, k ? { vach: k } : {}]); });
+    var xs = ten.map(function (n) { return D[n][0]; }), ys = ten.map(function (n) { return D[n][1]; });
+    var s = Math.max(Math.max.apply(null, xs) - Math.min.apply(null, xs), Math.max.apply(null, ys) - Math.min.apply(null, ys));
+    var chu = (o.soGoc || []).map(function (g) {
+      var p = chuGoc(D[g[0]], D[g[1]], D[g[2]], 0.17 * s * (g[4] || 1));
+      return [p[0], p[1], g[3], g[5] || CAM];
+    });
+    return { widget: 'geo', config: hinh({ diem: D, to: v.length ? v : null, canh: canh.concat(o.canh || []), goc: o.goc, nhan: o.nhan, ve: o.ve,
+      lechTen: o.lechTen, ghiChu: o.ghiChu,
+      them: function (board, G) {
+        chu.forEach(function (c) { G.label(c[0], c[1], c[2], { anchorX: 'middle', anchorY: 'middle', fontSize: 16, strokeColor: c[3] }); });
+      } }) };
+  }
+  // Hình thang cân ABCD (AB // CD), đáy lớn CD = d nằm dưới, góc ở đáy lớn = g, chiều cao h.
+  function thangCan(d, g, h) {
+    var x = h / Math.tan(rad(g));
+    return { A: [x, h], B: [d - x, h], C: [d, 0], D: [0, 0] };
+  }
+
+  var h2 = hinhTG({ diem: thangCan(8, 55, 3.5), vong: ['A', 'B', 'C', 'D'],
+    goc: [['B', 'C', 'D'], ['D', 'A', 'B', { mau: XANH }]], soGoc: [['B', 'C', 'D', '55°', 1.3], ['D', 'A', 'B', '?', 1, XANH]] });
+  // Cạnh bên 6, góc đáy 65°, đáy lớn chọn sao cho đường chéo AC = 9 (đúng tỉ lệ 6 : 9).
+  var h3 = hinhTG({ diem: thangCan(6 * Math.cos(rad(65)) + Math.sqrt(81 - Math.pow(6 * Math.sin(rad(65)), 2)), 65, 6 * Math.sin(rad(65))), vong: ['A', 'B', 'C', 'D'], vach: { DA: 1, BC: 1 },
+    canh: [['A', 'C', { mau: TIM, day: 2 }], ['B', 'D', { mau: TIM, day: 2 }]],
+    nhan: [['D', 'A', '6 cm'], ['A', 'C', '9 cm', false, 1.2, TIM]] });
+  var D4 = { D: [0, 0], A: toi([0, 0], 55, 4) };
+  D4.B = [D4.A[0] + 4, D4.A[1]]; D4.C = [8.5, 0];
+  var h4 = hinhTG({ diem: { A: D4.A, B: D4.B, C: D4.C, D: D4.D }, vong: ['A', 'B', 'C', 'D'],
+    goc: [['D', 'A', 'B'], ['A', 'D', 'C', { mau: XANH }]], soGoc: [['D', 'A', 'B', '125°', 1.2], ['A', 'D', 'C', '?', 1.3, XANH]] });
+  var A5 = toi([0, 0], 65, 4), B5 = [A5[0] + 3.5, A5[1]];
+  var h5 = hinhTG({ diem: { A: A5, B: B5, C: [B5[0] + B5[1] / Math.tan(rad(70)), 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'],
+    goc: [['D', 'A', 'B'], ['B', 'C', 'D']], soGoc: [['D', 'A', 'B', '115°', 1.2], ['B', 'C', 'D', '70°', 1.4]] });
+  var A6 = toi([0, 0], 50, 4), B6 = [A6[0] + 4, A6[1]];
+  var h6 = hinhTG({ diem: { A: A6, B: B6, C: [B6[0] + 4 * Math.cos(rad(50)), 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'],
+    vach: { AB: 1, DA: 1 }, canh: [['B', 'D', { mau: TIM, day: 2 }]],
+    goc: [['A', 'B', 'D'], ['D', 'A', 'B', { mau: XANH }]], soGoc: [['A', 'B', 'D', '25°', 1.6], ['D', 'A', 'B', '?', 0.9, XANH]] });
+  var h7 = hinhTG({ diem: { A: [4, 5], B: [10, 5], C: [14, 0], D: [0, 0], H: [4, 0] }, vong: ['A', 'B', 'C', 'D'],
+    canh: [['A', 'H', { mau: TIM, day: 2, net: 2 }]], goc: [['A', 'H', 'C', { mau: TIM }]],
+    nhan: [['A', 'B', '6 cm'], ['D', 'C', '14 cm', false, 1.3, '#212529'], ['D', 'H', '?', true, 0.8, XANH]],
+    lechTen: { H: [0, -18] } });
+  // Tam giác ABC cân tại A, d // BC cắt AB, AC tại D, E.
+  function tamGiacCan(them) {
+    var A = [4, 5.5], B = [0, 0], C = [8, 0], D = lerp(A, B, 0.42), E = lerp(A, C, 0.42);
+    var o = { diem: { A: A, B: B, C: C, D: D, E: E }, vong: ['A', 'B', 'C'], vach: { AB: 1, CA: 1 },
+      canh: [['D', 'E', { mau: TIM, day: 4 }]], ve: [[[D[0] - 1.8, D[1]], [E[0] + 1.8, E[1]], { mau: '#adb5bd', day: 2 }]],
+      lechTen: { D: [-14, 10], E: [14, 10] } };
+    for (var k in them || {}) o[k] = them[k];
+    return hinhTG(o);
+  }
+  var h8 = tamGiacCan();
+  var h9 = tamGiacCan({ goc: [['B', 'A', 'C'], ['B', 'D', 'E', { mau: XANH }]], soGoc: [['B', 'A', 'C', '40°', 1.1], ['B', 'D', 'E', '?', 0.8, XANH]] });
+  var A10 = toi([0, 0], 70, 6);
+  var h10 = hinhTG({ diem: { A: A10, B: [12 - A10[0], A10[1]], C: [12, 0], D: [0, 0], E: [6, 0] }, vong: ['A', 'B', 'C', 'D'],
+    canh: [['A', 'E', { mau: CAM, day: 2 }], ['B', 'E', { mau: XANH, day: 2 }]],
+    goc: [['D', 'A', 'E', { mau: CAM, r: 0.9 }], ['E', 'A', 'B', { mau: CAM, r: 1.1 }], ['A', 'B', 'E', { mau: XANH, r: 0.9 }], ['E', 'B', 'C', { mau: XANH, r: 1.1 }]],
+    nhan: [['D', 'C', 'DC = 12 cm', false, 1.4]], lechTen: { E: [0, -16] } });
+  // Hình bình hành ABCD có AB // CD và AD = BC nhưng không phải hình thang cân.
+  var hBinhHanh = hinhTG({ diem: { A: [1.8, 3], B: [6.8, 3], C: [5, 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'], vach: { BC: 1, DA: 1 },
+    canh: [['A', 'C', { mau: TIM, day: 2, net: 2 }], ['B', 'D', { mau: TIM, day: 2, net: 2 }]],
+    ghiChu: 'AB // CD, AD = BC nhưng AC ≠ BD' });
+
+  // ---------- Hình động ----------
+  var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
+  function fmt(v) { return (Math.round(v * 10) / 10).toString().replace('.', ','); }
+  function doGoc(P, O, Q) {
+    var ux = P.X() - O.X(), uy = P.Y() - O.Y(), vx = Q.X() - O.X(), vy = Q.Y() - O.Y();
+    var c = (ux * vx + uy * vy) / Math.sqrt((ux * ux + uy * uy) * (vx * vx + vy * vy));
+    return Math.acos(Math.max(-1, Math.min(1, c))) * 180 / Math.PI;
+  }
+  function cung(board, P, O, Q, mau, r) {
+    board.create('nonreflexangle', [P, O, Q], { radius: r || 0.6, name: '', fillColor: mau, strokeColor: mau, fillOpacity: 0.35, fixed: true, highlight: false });
+  }
+  function diemPhu(board, ten, fx, fy) {
+    return board.create('point', [fx, fy], { name: ten, size: 4, color: '#495057', fixed: true, label: LBL, showInfobox: false });
+  }
+
+  // Hình thang cân: B, C là ảnh đối xứng của A, D qua trục x = 4 nên AB // CD và hình luôn cân.
+  var khamPhaBuild = function (board, G) {
+    var TRUC = 4;
+    board.create('line', [[TRUC, -1], [TRUC, 6]], { strokeColor: '#adb5bd', strokeWidth: 2, dash: 2, fixed: true, highlight: false });
+    var A = G.pt('A', 2.6, 4), D = G.pt('D', 0.3, 0);
+    A.on('drag', function () { A.moveTo([Math.min(A.X(), TRUC - 0.3), Math.max(A.Y(), D.Y() + 1)]); });
+    D.on('drag', function () { D.moveTo([Math.min(D.X(), TRUC - 0.3), Math.min(D.Y(), A.Y() - 1)]); });
+    var B = diemPhu(board, 'B', function () { return 2 * TRUC - A.X(); }, function () { return A.Y(); });
+    var C = diemPhu(board, 'C', function () { return 2 * TRUC - D.X(); }, function () { return D.Y(); });
+    G.poly([A, B, C, D], { fillOpacity: 0.06 });
+    G.seg(A, C, { strokeColor: TIM, strokeWidth: 2 }); G.seg(B, D, { strokeColor: TIM, strokeWidth: 2 });
+    G.seg(A, D, { strokeColor: CAM, strokeWidth: 4 }); G.seg(B, C, { strokeColor: CAM, strokeWidth: 4 });
+    cung(board, A, D, C, XANH); cung(board, B, C, D, XANH);
+    G.label(-1.3, 7.6, function () { return 'góc D = ' + Math.round(doGoc(A, D, C)) + '°'; }, { strokeColor: XANH });
+    G.label(4.6, 7.6, function () { return 'góc C = ' + Math.round(doGoc(B, C, D)) + '°'; }, { strokeColor: XANH });
+    G.label(-1.3, 6.9, function () { return 'AD = ' + fmt(G.len(A, D)); }, { strokeColor: CAM });
+    G.label(4.6, 6.9, function () { return 'BC = ' + fmt(G.len(B, C)); }, { strokeColor: CAM });
+    G.label(-1.3, 6.2, function () { return 'AC = ' + fmt(G.len(A, C)); }, { strokeColor: TIM });
+    G.label(4.6, 6.2, function () { return 'BD = ' + fmt(G.len(B, D)); }, { strokeColor: TIM });
+    G.label(TRUC + 0.15, -0.7, 'trục đối xứng', { fontSize: 13, strokeColor: '#868e96' });
+  };
+
+  // Hình thang bất kì: B chạy trên đường thẳng qua A song song với DC.
+  var thangBuild = function (board, G) {
+    var D = G.pt('D', 0, 0), C = G.pt('C', 8, 0.4), A = G.pt('A', 1.6, 4);
+    var dc = G.line(D, C, { visible: false });
+    var d = G.par(A, dc, { strokeColor: '#dee2e6' });
+    var B = G.glider('B', 5.5, 4.2, d);
+    // Giữ B ở bên phải A (cùng chiều với D → C) để ABCD không bị bắt chéo.
+    function giuB() {
+      var ux = C.X() - D.X(), uy = C.Y() - D.Y(), l = Math.hypot(ux, uy) || 1; ux /= l; uy /= l;
+      if ((B.X() - A.X()) * ux + (B.Y() - A.Y()) * uy < 0.8) B.moveTo([A.X() + 0.8 * ux, A.Y() + 0.8 * uy]);
+    }
+    [A, B, C, D].forEach(function (P) { P.on('drag', giuB); });
+    G.poly([A, B, C, D], { fillOpacity: 0.06 });
+    cung(board, B, A, D, CAM); cung(board, A, D, C, CAM); cung(board, A, B, C, XANH); cung(board, B, C, D, XANH);
+    G.label(-1.3, 7.2, function () { var a = Math.round(doGoc(B, A, D)); return 'góc A + góc D = ' + a + '° + ' + (180 - a) + '° = 180°'; }, { strokeColor: CAM });
+    G.label(-1.3, 6.4, function () { var b = Math.round(doGoc(A, B, C)); return 'góc B + góc C = ' + b + '° + ' + (180 - b) + '° = 180°'; }, { strokeColor: XANH });
+  };
+
+  TOAN8.bai({
+    id: 11, ten: 'Hình thang cân', sgk: { tap: 1, trang: 52 },
+    khamPha: {
+      nhiemVu: 'Đây là một **hình thang cân** $ABCD$ ($AB \\parallel CD$). Kéo đỉnh $A$ hoặc $D$: đỉnh $B$, $C$ tự di chuyển theo, **đối xứng** với $A$, $D$ qua trục nét đứt.\n\nEm hãy so sánh: hai góc ở đáy $\\cb{\\widehat{D}}$, $\\cb{\\widehat{C}}$; hai cạnh bên $\\ca{AD}$, $\\ca{BC}$; hai đường chéo $\\cd{AC}$, $\\cd{BD}$.',
+      widget: 'geo',
+      config: { bbox: [-1.5, 8.2, 9.5, -1.2], build: khamPhaBuild },
+      cauHoi: {
+        de: 'Khi kéo hình thang cân, hai đường chéo $AC$ và $BD$ thế nào?',
+        dapAn: { kieu: 'chon', gt: 0, luaChon: ['Luôn bằng nhau', '$AC$ luôn dài hơn $BD$', 'Lúc bằng nhau, lúc không'] },
+        goiY: ['Kéo $A$ tới vài vị trí rồi so hai số $AC$ và $BD$ (màu tím).'],
+        loiGiai: ['Hai đường chéo luôn bằng nhau. Hai cạnh bên cũng luôn bằng nhau và hai góc ở đáy luôn bằng nhau.', 'Đó là các **tính chất của hình thang cân** mà ta học trong bài này.']
+      }
+    },
+    lyThuyet: [
+      { loai: 'dinhNghia', tieuDe: 'Hình thang',
+        noiDung: '**Hình thang** là tứ giác có hai cạnh đối **song song**.\n\nHình thang $ABCD$ ($AB \\parallel CD$):\n- Hai cạnh song song $AB$, $CD$ là **hai đáy** (đáy nhỏ, đáy lớn).\n- Hai cạnh còn lại $AD$, $BC$ là **hai cạnh bên**.\n- Đoạn vuông góc $AH$ kẻ từ $A$ đến $CD$ là một **đường cao**.' },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1.5, 7.8, 9.5, -1], build: thangBuild },
+        chuThich: 'Kéo $A$, $C$, $D$, hoặc kéo $B$ trên đường xám (luôn song song với $DC$). Hai góc kề một **cạnh bên** luôn có tổng $180^\\circ$.' },
+      { loai: 'chuY', noiDung: '**Trong hình thang, hai góc kề một cạnh bên bù nhau** (tổng $180^\\circ$): $\\widehat{A} + \\widehat{D} = 180^\\circ$, $\\widehat{B} + \\widehat{C} = 180^\\circ$.\n\n**Vì sao?** Kéo dài cạnh $DA$ về phía $A$ thành tia $Ax$. Vì $AB \\parallel CD$ nên $\\widehat{xAB} = \\widehat{D}$ (hai góc đồng vị), mà $\\widehat{xAB} + \\widehat{A} = 180^\\circ$ (hai góc kề bù). Vậy $\\widehat{A} + \\widehat{D} = 180^\\circ$.' },
+      { loai: 'dinhNghia', tieuDe: 'Hình thang cân',
+        noiDung: '**Hình thang cân** là hình thang có **hai góc kề một đáy bằng nhau**.\n\nHình thang cân $ABCD$ ($AB \\parallel CD$): $\\widehat{A} = \\widehat{B}$ và $\\widehat{C} = \\widehat{D}$.\n\n(Hai góc kề một đáy bằng nhau thì hai góc kề đáy kia cũng bằng nhau, vì mỗi góc bù với một góc của đáy kia.)' },
+      { loai: 'dinhLi', tieuDe: 'Tính chất của hình thang cân',
+        noiDung: '**Định lí 1.** Trong hình thang cân, **hai cạnh bên bằng nhau**: $\\ca{AD} = \\ca{BC}$.\n\n**Định lí 2.** Trong hình thang cân, **hai đường chéo bằng nhau**: $\\cd{AC} = \\cd{BD}$.\n\n(Chứng minh Định lí 2: $\\triangle ACD = \\triangle BDC$ (c.g.c) vì $AD = BC$, $\\widehat{ADC} = \\widehat{BCD}$, $DC$ chung.)' },
+      { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết (Định lí 3)',
+        noiDung: '**Hình thang có hai đường chéo bằng nhau là hình thang cân.**\n\nĐây là định lí **đảo** của Định lí 2. Vậy có hai cách nhận biết hình thang cân:\n1. Hình thang có hai góc kề một đáy bằng nhau (định nghĩa).\n2. Hình thang có hai đường chéo bằng nhau.' },
+      { loai: 'chuY', noiDung: '**Hay nhầm – hai cạnh bên bằng nhau.** Hình thang có hai cạnh bên bằng nhau **chưa chắc** là hình thang cân! Hình bình hành ở dưới có $AB \\parallel CD$, $AD = BC$ nhưng hai góc kề đáy không bằng nhau, hai đường chéo cũng không bằng nhau.\n\n(Nếu thêm điều kiện hai đáy **không bằng nhau** thì hình thang có hai cạnh bên bằng nhau mới là hình thang cân.)' },
+      { loai: 'hinh', widget: hBinhHanh.widget, config: hBinhHanh.config,
+        chuThich: 'Phản ví dụ: hình thang $ABCD$ có hai cạnh bên bằng nhau nhưng **không** cân.' }
+    ],
+    viDu: [
+      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $\\widehat{C} = 65^\\circ$. Tính các góc còn lại.', buoc: [
+        { lam: '$\\widehat{D} = \\widehat{C} = 65^\\circ$', vi: 'Hình thang cân có hai góc kề đáy $CD$ bằng nhau.' },
+        { lam: '$\\widehat{A} = 180^\\circ - \\widehat{D} = 180^\\circ - 65^\\circ = 115^\\circ$', vi: 'Hai góc kề cạnh bên $AD$ bù nhau.' },
+        { lam: '$\\widehat{B} = \\widehat{A} = 115^\\circ$', vi: 'Hai góc kề đáy $AB$ cũng bằng nhau.' } ] },
+      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có $\\widehat{A} - \\widehat{D} = 40^\\circ$. Tính $\\widehat{A}$ và $\\widehat{D}$.', buoc: [
+        { lam: '$\\widehat{A} + \\widehat{D} = 180^\\circ$', vi: 'Hai góc kề cạnh bên $AD$ của hình thang bù nhau.' },
+        { lam: '$\\widehat{A} = (180^\\circ + 40^\\circ) : 2 = 110^\\circ$', vi: 'Biết tổng và hiệu: số lớn $= ($tổng $+$ hiệu$) : 2$.' },
+        { lam: '$\\widehat{D} = 180^\\circ - 110^\\circ = 70^\\circ$', vi: 'Lấy tổng trừ góc vừa tìm.' } ] },
+      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $AB = AD$ và $\\widehat{ABD} = 35^\\circ$. Tính các góc của hình thang.', buoc: [
+        { lam: '$\\widehat{ADB} = \\widehat{ABD} = 35^\\circ$', vi: '$AB = AD$ nên tam giác $ABD$ cân tại $A$: hai góc ở đáy $BD$ bằng nhau.' },
+        { lam: '$\\widehat{BDC} = \\widehat{ABD} = 35^\\circ$', vi: '$AB \\parallel CD$ nên đây là hai góc so le trong.' },
+        { lam: '$\\widehat{D} = \\widehat{ADB} + \\widehat{BDC} = 70^\\circ$, nên $\\widehat{C} = 70^\\circ$', vi: 'Hình thang cân: hai góc kề đáy $CD$ bằng nhau.' },
+        { lam: '$\\widehat{A} = \\widehat{B} = 180^\\circ - 70^\\circ = 110^\\circ$', vi: 'Hai góc kề một cạnh bên bù nhau.' } ] },
+      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có hai đường chéo $AC = BD = 7$ cm và cạnh bên $AD = 5$ cm. Tính $BC$.', buoc: [
+        { lam: 'Hình thang $ABCD$ có $AC = BD$ nên là hình thang cân.', vi: 'Dấu hiệu nhận biết (Định lí 3): hình thang có hai đường chéo bằng nhau.' },
+        { lam: '$BC = AD = 5$ cm', vi: 'Hình thang cân có hai cạnh bên bằng nhau (Định lí 1).' } ] }
+    ],
+    viDuMo: [
+      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $\\widehat{A} = 105^\\circ$. Tính $\\widehat{D}$ (độ).', buoc: [
+        { lam: '$\\widehat{A} + \\widehat{D} = 180^\\circ$', vi: 'Hai góc kề cạnh bên $AD$ bù nhau.' },
+        { lam: '$\\widehat{D} = 180^\\circ - 105^\\circ = 75^\\circ$', vi: 'Em hãy tính $\\widehat{D}$ (độ):', an: true,
+          dapAn: { kieu: 'so', gt: 75 },
+          loiThuongGap: [{ gt: 105, giaiThich: '$\\widehat{A}$ và $\\widehat{D}$ kề cùng cạnh bên $AD$ nên **bù** nhau, không bằng nhau. Góc bằng $\\widehat{A}$ là $\\widehat{B}$.' }] } ] },
+      { de: 'Hình thang cân $ABCD$ có hai đáy $AB = 4$ cm, $CD = 10$ cm và cạnh bên $AD = 5$ cm. Tính chu vi hình thang (cm).', buoc: [
+        { lam: '$BC = AD = 5$ cm', vi: 'Hai cạnh bên của hình thang cân bằng nhau.' },
+        { lam: 'Chu vi $= 4 + 10 + 5 + 5 = 24$ (cm)', vi: 'Em hãy tính chu vi (cm):', an: true,
+          dapAn: { kieu: 'so', gt: 24 },
+          loiThuongGap: [{ gt: 19, giaiThich: 'Em mới cộng một cạnh bên. Hình thang có **hai** cạnh bên, mỗi cạnh $5$ cm.' }] } ] }
+    ],
+    baiTap: [
+      { id: '11.1', muc: 1, de: 'Hình thang cân là hình thang có tính chất nào dưới đây (theo **định nghĩa**)?',
+        dapAn: { kieu: 'chon', gt: 1, luaChon: ['Có hai cạnh bên bằng nhau', 'Có hai góc kề một đáy bằng nhau', 'Có một góc vuông', 'Có hai cạnh đáy bằng nhau'] },
+        goiY: ['Nhớ lại định nghĩa trong phần Lý thuyết.', 'Cẩn thận: "hai cạnh bên bằng nhau" chưa đủ để là hình thang cân.'],
+        loiGiai: ['Theo định nghĩa: **hình thang cân là hình thang có hai góc kề một đáy bằng nhau**.', 'Hình thang có hai cạnh bên bằng nhau có thể là hình bình hành.'] },
+      { id: '11.2', muc: 1, de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) trong hình có $\\widehat{C} = 55^\\circ$. Tính $\\widehat{A}$ (độ).', hinh: h2,
+        dapAn: { kieu: 'so', gt: 125 },
+        goiY: ['Hình thang cân: $\\widehat{D} = \\widehat{C}$.', '$\\widehat{A}$ và $\\widehat{D}$ kề cạnh bên $AD$ nên bù nhau.'],
+        loiGiai: ['$\\widehat{D} = \\widehat{C} = 55^\\circ$ (hai góc kề đáy $CD$).', '$\\widehat{A} = 180^\\circ - \\widehat{D} = 180^\\circ - 55^\\circ = 125^\\circ$'],
+        loiThuongGap: [{ gt: 55, giaiThich: '$\\widehat{A}$ kề đáy nhỏ $AB$, không bằng $\\widehat{C}$. $\\widehat{A}$ bù với $\\widehat{D}$.' }] },
+      { id: '11.3', muc: 1, de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) trong hình có cạnh bên $AD = 6$ cm, đường chéo $AC = 9$ cm. Tính $BC$ và $BD$ (cm).', hinh: h3,
+        dapAn: { kieu: 'nhieuO', o: [{ nhan: '$BC =$', kieu: 'so', gt: 6 }, { nhan: '$BD =$', kieu: 'so', gt: 9 }] },
+        goiY: ['Hình thang cân có hai cạnh bên bằng nhau.', 'Hình thang cân có hai đường chéo bằng nhau.'],
+        loiGiai: ['$BC = AD = 6$ cm (Định lí 1).', '$BD = AC = 9$ cm (Định lí 2).'] },
+      { id: '11.4', muc: 1, de: 'Hình thang $ABCD$ ($AB \\parallel CD$) trong hình có $\\widehat{A} = 125^\\circ$. Tính $\\widehat{D}$ (độ).', hinh: h4,
+        dapAn: { kieu: 'so', gt: 55 },
+        goiY: ['Trong hình thang, hai góc kề một cạnh bên bù nhau.', '$\\widehat{D} = 180^\\circ - \\widehat{A}$.'],
+        loiGiai: ['$\\widehat{A} + \\widehat{D} = 180^\\circ$ (hai góc kề cạnh bên $AD$).', '$\\widehat{D} = 180^\\circ - 125^\\circ = 55^\\circ$'],
+        loiThuongGap: [{ gt: 125, giaiThich: 'Hai góc kề một cạnh bên **bù** nhau (tổng $180^\\circ$), không phải bằng nhau.' }] },
+      { id: '11.5', muc: 2, de: 'Hình thang $ABCD$ ($AB \\parallel CD$) trong hình có $\\widehat{A} = 115^\\circ$, $\\widehat{C} = 70^\\circ$. Khẳng định "$ABCD$ là hình thang cân" đúng hay sai?', hinh: h5,
+        dapAn: { kieu: 'dungSai', gt: false },
+        goiY: ['Tính $\\widehat{D}$ từ $\\widehat{A}$ (hai góc kề cạnh bên $AD$).', 'So sánh $\\widehat{D}$ với $\\widehat{C}$: hai góc kề đáy $CD$ có bằng nhau không?'],
+        loiGiai: ['$\\widehat{D} = 180^\\circ - 115^\\circ = 65^\\circ$.', '$\\widehat{D} = 65^\\circ \\ne 70^\\circ = \\widehat{C}$: hai góc kề đáy $CD$ không bằng nhau.', 'Vậy $ABCD$ **không** là hình thang cân. Khẳng định **sai**.'] },
+      { id: '11.6', muc: 2, de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) trong hình có $AB = AD$ và $\\widehat{ABD} = 25^\\circ$. Tính $\\widehat{DAB}$ (độ).', hinh: h6,
+        dapAn: { kieu: 'so', gt: 130 },
+        goiY: ['Tam giác $ABD$ cân tại $A$ nên $\\widehat{ADB} = 25^\\circ$. $AB \\parallel CD$ nên $\\widehat{BDC} = 25^\\circ$ (so le trong).', '$\\widehat{ADC} = 50^\\circ$; góc $A$ bù với góc $D$.'],
+        loiGiai: ['$AB = AD$ nên $\\widehat{ADB} = \\widehat{ABD} = 25^\\circ$.', '$AB \\parallel CD$ nên $\\widehat{BDC} = \\widehat{ABD} = 25^\\circ$ (so le trong). Do đó $\\widehat{ADC} = 50^\\circ$.', '$\\widehat{DAB} = 180^\\circ - 50^\\circ = 130^\\circ$'],
+        loiThuongGap: [{ gt: 155, giaiThich: 'Em lấy $\\widehat{D} = 25^\\circ$. Góc $D$ của hình thang gồm hai phần $\\widehat{ADB} + \\widehat{BDC} = 50^\\circ$.' }, { gt: 50, giaiThich: '$50^\\circ$ là góc $D$. Góc $A$ bù với góc $D$: $180^\\circ - 50^\\circ$.' }] },
+      { id: '11.7', muc: 2, de: 'Hình thang cân $ABCD$ trong hình có đáy nhỏ $AB = 6$ cm, đáy lớn $CD = 14$ cm, $AH$ là đường cao ($H \\in CD$). Tính $DH$ (cm).', hinh: h7,
+        dapAn: { kieu: 'so', gt: 4 },
+        goiY: ['Kẻ thêm đường cao $BK$. Hai tam giác vuông $AHD$ và $BKC$ bằng nhau nên $DH = KC$.', '$HK = AB = 6$, nên $DH + KC = 14 - 6 = 8$.'],
+        loiGiai: ['Kẻ $BK \\perp CD$. Ta có $HK = AB = 6$ cm và $\\triangle AHD = \\triangle BKC$ (cạnh huyền – góc nhọn) nên $DH = KC$.', '$DH + KC = CD - HK = 14 - 6 = 8$ (cm)', '$DH = 8 : 2 = 4$'],
+        loiThuongGap: [{ gt: 8, giaiThich: '$8$ cm là tổng $DH + KC$ ở **hai** bên. Hình thang cân đối xứng nên chia đôi.' }] },
+      { id: '11.8', muc: 2, de: 'Tam giác $ABC$ cân tại $A$. Đường thẳng $d$ song song với $BC$ cắt $AB$ tại $D$, cắt $AC$ tại $E$ (hình). Tứ giác $DECB$ là hình gì?', hinh: h8,
+        dapAn: { kieu: 'chon', gt: 0, luaChon: ['Hình thang cân', 'Hình thang nhưng không cân', 'Hình bình hành', 'Không phải hình thang'] },
+        goiY: ['$DE \\parallel BC$ nên $DECB$ là hình thang.', 'Hai góc kề đáy $BC$ là $\\widehat{B}$ và $\\widehat{C}$ của tam giác cân.'],
+        loiGiai: ['$DE \\parallel BC$ nên $DECB$ là hình thang.', 'Tam giác $ABC$ cân tại $A$ nên $\\widehat{B} = \\widehat{C}$: hai góc kề đáy $BC$ bằng nhau.', 'Vậy $DECB$ là **hình thang cân**.'] },
+      { id: '11.9', muc: 2, de: 'Cũng hình như câu trước, biết thêm $\\widehat{BAC} = 40^\\circ$. Tính góc $BDE$ (độ).', hinh: h9,
+        dapAn: { kieu: 'so', gt: 110 },
+        goiY: ['Tam giác cân: $\\widehat{B} = \\widehat{C} = (180^\\circ - 40^\\circ) : 2$.', 'Trong hình thang $DECB$, $\\widehat{BDE}$ và $\\widehat{B}$ kề cạnh bên $DB$ nên bù nhau.'],
+        loiGiai: ['$\\widehat{B} = (180^\\circ - 40^\\circ) : 2 = 70^\\circ$.', '$DE \\parallel BC$ nên $\\widehat{BDE} + \\widehat{B} = 180^\\circ$.', '$\\widehat{BDE} = 180^\\circ - 70^\\circ = 110^\\circ$'],
+        loiThuongGap: [{ gt: 70, giaiThich: '$70^\\circ$ là $\\widehat{ADE}$ (đồng vị với $\\widehat{B}$). Góc $BDE$ kề bù với nó.' }] },
+      { id: '11.10', muc: 3, de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có tia phân giác của góc $A$ và góc $B$ cắt nhau tại điểm $E$ nằm trên đáy $CD$ (hình). Biết $CD = 12$ cm. Tính $ED$ và cạnh bên $AD$ (cm).', hinh: h10,
+        dapAn: { kieu: 'nhieuO', o: [{ nhan: '$ED =$', kieu: 'so', gt: 6 }, { nhan: '$AD =$', kieu: 'so', gt: 6 }] },
+        goiY: ['$AB \\parallel CD$ nên $\\widehat{BAE} = \\widehat{AED}$ (so le trong). Mà $\\widehat{BAE} = \\widehat{DAE}$ (phân giác). Tam giác $ADE$ thế nào?', 'Tam giác $ADE$ cân tại $D$: $AD = DE$. Tương tự $BC = CE$. Mà $AD = BC$.'],
+        loiGiai: ['$\\widehat{AED} = \\widehat{BAE}$ (so le trong) $= \\widehat{DAE}$ (phân giác), nên $\\triangle ADE$ cân tại $D$: $DE = AD$.', 'Tương tự $\\triangle BCE$ cân tại $C$: $CE = BC$. Mà $AD = BC$ (hình thang cân) nên $DE = CE = 12 : 2 = 6$ cm.', 'Vậy $ED = 6$ cm và $AD = DE = 6$ cm.'] },
+      { id: '11.11', muc: 3, de: 'Một khung ảnh có dạng hình thang cân, chu vi $46$ cm, hai đáy dài $10$ cm và $18$ cm. Tính độ dài mỗi cạnh bên của khung (cm).',
+        dapAn: { kieu: 'so', gt: 9 },
+        goiY: ['Chu vi = tổng hai đáy + hai cạnh bên, mà hai cạnh bên bằng nhau.', 'Hai cạnh bên có tổng $46 - (10 + 18)$.'],
+        loiGiai: ['Hai cạnh bên bằng nhau, tổng của chúng là $46 - (10 + 18) = 18$ (cm).', 'Mỗi cạnh bên: $18 : 2 = 9$'],
+        loiThuongGap: [{ gt: 18, giaiThich: '$18$ cm là tổng **hai** cạnh bên. Chia đôi mới được mỗi cạnh.' }] }
+    ],
+    timLoi: [
+      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có $AD = BC = 5$ cm. Bạn Tròn lập luận như sau. Dòng nào sai?',
+        loiGiaiSai: ['Hình thang $ABCD$ có hai cạnh bên $AD = BC$.', 'Hình thang có hai cạnh bên bằng nhau là hình thang cân, nên $ABCD$ là hình thang cân.', 'Do đó hai đường chéo $AC = BD$.'],
+        dongSai: 1,
+        giaiThich: 'Hình thang có hai cạnh bên bằng nhau **chưa chắc** là hình thang cân: hình bình hành cũng là hình thang có hai cạnh bên bằng nhau, nhưng hai đường chéo thường không bằng nhau.',
+        sua: 'Chỉ kết luận được hình thang cân nếu biết thêm, ví dụ, hai góc kề một đáy bằng nhau hoặc hai đường chéo bằng nhau.' },
+      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $\\widehat{C} = 70^\\circ$. Bạn Vuông tính $\\widehat{A}$ như sau. Dòng nào sai?',
+        loiGiaiSai: ['$ABCD$ là hình thang cân nên $\\widehat{D} = \\widehat{C} = 70^\\circ$.', '$\\widehat{A}$ và $\\widehat{C}$ là hai góc đối nên $\\widehat{A} = \\widehat{C} = 70^\\circ$.', 'Vậy $\\widehat{A} = 70^\\circ$.'],
+        dongSai: 1,
+        giaiThich: 'Hình thang cân **không** có tính chất "hai góc đối bằng nhau" (đó là tính chất của hình bình hành). $\\widehat{A}$ kề cạnh bên $AD$ với $\\widehat{D}$ nên bù với $\\widehat{D}$.',
+        sua: '$\\widehat{A} = 180^\\circ - \\widehat{D} = 180^\\circ - 70^\\circ = 110^\\circ$.' }
+    ]
+  });
+})();
