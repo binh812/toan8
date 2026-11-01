@@ -57,3 +57,29 @@ test('xuất / nhập', () => {
   assert.strictEqual(b.importJSON('rác'), false);
   assert.strictEqual(b.importJSON('{"v":1}'), false);
 });
+
+test('tiến độ hỏng: giữ bản cũ và báo recovered', () => {
+  const s = mem(); s.setItem('toan8.v1', '{"v":1,"ex":{"a":');
+  const a = createStore(s, day(2));
+  assert.strictEqual(a.recovered, true);
+  assert.strictEqual(s.getItem('toan8.v1.hong'), '{"v":1,"ex":{"a":');
+  assert.strictEqual(createStore(mem(), day(2)).recovered, false);
+});
+test('nhập file có cấu trúc lạ: làm sạch, không làm hỏng trang', () => {
+  const a = createStore(mem(), day(2));
+  assert.strictEqual(a.importJSON('{"v":1,"ex":{"k":{"tries":1,"correct":true},"bad":5},"box":{"1.1":null,"k":{"box":2,"due":0}},"tabs":{"1":5,"2":["khamPha",3]}}'), true);
+  assert.deepStrictEqual(a.dueToday(5), ['k']);
+  assert.strictEqual(a.exState('bad'), null);
+  a.markTab(1, 'viDu');
+  assert.deepStrictEqual(a.tabsSeen(1), ['viDu']);
+  assert.deepStrictEqual(a.tabsSeen(2), ['khamPha']);
+  assert.strictEqual(a.importJSON('{"v":1,"ex":{},"tabs":"s"}'), true);
+  a.markTab(3, 'x');
+});
+test('ôn tập: bấm Kiểm tra nhiều lần trong ngày chỉ lên hộp một lần', () => {
+  const s = mem();
+  createStore(s, day(2)).recordAttempt('x', { ok: false, hintLevel: 0, hintMax: 3 });
+  const b = createStore(s, day(3));
+  for (let i = 0; i < 4; i++) b.recordAttempt('x', { ok: true, hintLevel: 0, hintMax: 3 });
+  assert.deepStrictEqual(createStore(s, day(5)).dueToday(5), ['x']);   // hộp 2 (+2 ngày), không phải hộp 5
+});

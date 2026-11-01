@@ -72,8 +72,10 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
   function importProgress(ev) {
-    var f = ev.target.files[0];
+    var input = ev.target, f = input.files[0];
+    input.value = ''; // để chọn lại đúng file đó lần sau vẫn kích hoạt
     if (!f) return;
+    if (!window.confirm('Mở file này sẽ thay tiến độ hiện tại trên máy. Tiếp tục?')) return;
     f.text().then(function (s) {
       T.toast(T.store.importJSON(s) ? 'Đã mở tiến độ.' : 'File không đúng định dạng tiến độ.');
       route();
@@ -109,6 +111,7 @@
 
   function route() {
     var app = document.getElementById('app');
+    if (T.freeBoards) T.freeBoards(); // giải phóng hình JSXGraph của trang trước
     app.innerHTML = '';
     document.documentElement.style.removeProperty('--c');
     var h = location.hash.replace(/^#\/?/, '').split('/');
@@ -126,10 +129,13 @@
 
   T.start = function () {
     T.store = T.createStore(safeStorage());
+    var w = document.getElementById('warn');
     if (!T.store.ok) {
-      var w = document.getElementById('warn');
       w.hidden = false;
       w.textContent = 'Trình duyệt đang chặn lưu dữ liệu – tiến độ sẽ không được lưu sau khi đóng trang.';
+    } else if (T.store.recovered) {
+      w.hidden = false;
+      w.textContent = 'Tiến độ cũ trên máy này bị hỏng nên đã bắt đầu lại (bản cũ vẫn được giữ trong trình duyệt). Nếu có file tiến độ đã lưu, bấm "Mở file tiến độ" ở cuối trang chủ.';
     }
     window.addEventListener('hashchange', route);
     route();

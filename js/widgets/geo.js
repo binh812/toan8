@@ -1,7 +1,12 @@
 // Tiện ích dựng hình động bằng JSXGraph: điểm kéo được, đoạn thẳng, song song, giao điểm, nhãn số đo động.
 (function (T) {
   'use strict';
-  var n = 0;
+  var n = 0, live = [];
+  // Gọi khi chuyển trang: JSXGraph giữ mọi board (và ResizeObserver) cho tới khi freeBoard.
+  T.freeBoards = function () {
+    live.forEach(function (b) { try { JXG.JSXGraph.freeBoard(b); } catch (e) { console.warn('Không giải phóng được hình', e); } });
+    live = [];
+  };
   function fmt(v, d) {
     var p = Math.pow(10, d == null ? 2 : d);
     return (Math.round(v * p) / p).toString().replace('.', ',');
@@ -42,6 +47,7 @@
       len: function (A, B) { return A.Dist(B); },
       label: function (x, y, fn, o) { return board.create('text', [x, y, fn], opt({ fontSize: 18, fixed: true, cssClass: 'geo-label', highlightCssClass: 'geo-label' }, o)); }
     };
+    live.push(board);
     cfg.build(board, G);
     return board;
   };

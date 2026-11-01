@@ -139,8 +139,13 @@
   function parseNumber(s) {
     var t = String(s == null ? '' : s).replace(/\s+/g, '');
     // "9.801", "1.234,5": dấu chấm phân cách hàng nghìn kiểu Việt Nam (không phải dấu thập phân)
-    if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t = t.replace(/\./g, '');
-    try { var a = P.parse(t); return isConst(a) ? P.evaluate(a, {}) : NaN; } catch (e) { return NaN; }
+    // (0.125 không bao giờ là cách viết hàng nghìn nên số đầu phải từ 1 đến 9)
+    if (/^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(t)) t = t.replace(/\./g, '');
+    return parseNumberDot(t);
+  }
+  // Đọc số coi dấu chấm là dấu thập phân.
+  function parseNumberDot(s) {
+    try { var a = P.parse(s); return isConst(a) ? P.evaluate(a, {}) : NaN; } catch (e) { return NaN; }
   }
 
   var MSG = {
@@ -155,11 +160,19 @@
   }
   function near(x, y, tol) { return Math.abs(x - y) <= tol + 1e-12; }
 
+  function isBlank(v) { return v == null || (typeof v === 'string' && !v.trim()); }
+  // Chữ có dấu tiếng Việt trong ô nhập toán: gần như chắc bộ gõ (Unikey Telex/VNI) đang bật, vd "ax" → "ã".
+  var VIET = /[À-ỹđĐ]/;
+  var MSG_BOGO = 'Hình như bộ gõ tiếng Việt đang bật (máy thấy chữ có dấu). Em tắt bộ gõ (thường là Ctrl+Shift) rồi gõ lại nhé.';
+
   function checkExpr(d, input, ltg) {
     var a;
-    try { a = P.parse(input); } catch (e) { return res('khongDoc'); }
+    try { a = P.parse(input); } catch (e) { return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : null); }
     var g = P.parse(d.gt);
     if (!equivalentAst(a, g)) {
+      var low = lowerVars(a, g);
+      if (low && equivalentAst(low, g))
+        return res('saiDang', 'Gần đúng rồi! Em đang gõ chữ in hoa (vd X); máy phân biệt x và X. Em tắt Caps Lock rồi gõ lại nhé.');
       for (var i = 0; i < ltg.length; i++)
         if (ltg[i].gt != null && equivalentAst(a, P.parse(ltg[i].gt))) return res('loiThuongGap', ltg[i].giaiThich);
       return res('sai');
@@ -168,11 +181,26 @@
     return chk.ok ? res('dung') : res('saiDang', chk.ly);
   }
 
+  // Đổi chữ in hoa không có trong đáp án thành chữ thường (X → x); null nếu không có gì để đổi.
+  function lowerVars(a, g) {
+    var gv = P.variables(g), changed = false;
+    var copy = JSON.parse(JSON.stringify(a));
+    (function walk(n) {
+      if (n.t === 'var' && n.n !== n.n.toLowerCase() && gv.indexOf(n.n) < 0) { n.n = n.n.toLowerCase(); changed = true; }
+      ['a', 'b', 'e'].forEach(function (k) { if (n[k]) walk(n[k]); });
+      (n.terms || n.fs || []).forEach(walk);
+    })(copy);
+    return changed ? copy : null;
+  }
+
   function checkNumber(d, input, ltg) {
     var x = parseNumber(input), y = typeof d.gt === 'number' ? d.gt : parseNumber(d.gt);
-    if (Number.isNaN(x)) return res('khongDoc', 'Em nhập một số, ví dụ 12 hoặc 0,5 hoặc 3/4.');
+    if (Number.isNaN(x)) return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : 'Em nhập một số, ví dụ 12 hoặc 0,5 hoặc 3/4.');
     var tol = d.saiSo != null ? d.saiSo : 1e-9;
     if (near(x, y, tol)) return res('dung');
+    // "1.125": vừa có thể là 1125 (chấm hàng nghìn) vừa là 1,125 (chấm thập phân) – nhận nếu một trong hai đúng
+    var x2 = parseNumberDot(input);
+    if (!Number.isNaN(x2) && near(x2, y, tol)) return res('dung');
     for (var j = 0; j < ltg.length; j++)
       if (near(x, parseNumber(String(ltg[j].gt)), tol)) return res('loiThuongGap', ltg[j].giaiThich);
     return res('sai');
@@ -212,9 +240,16 @@
       case 'chon': return res(input != null && Number(input) === d.gt ? 'dung' : 'sai');
       case 'dungSai': return res(input === d.gt ? 'dung' : 'sai');
       case 'nhieuO': {
-        var tung = d.o.map(function (sub, i) { return checkAnswer(sub, (input || [])[i], sub.loiThuongGap); });
+        var vals = input || [];
+        var nhan = function (i) { return d.o[i].nhan || ('ô ' + (i + 1)); };
+        var trong = d.o.map(function (_, i) { return i; }).filter(function (i) { return isBlank(vals[i]); });
+        if (trong.length) return res('khongDoc', 'Em chưa điền ' + trong.map(nhan).join(', ') + '.');
+        var tung = d.o.map(function (sub, i) { return checkAnswer(sub, vals[i], sub.loiThuongGap); });
         var all = tung.every(function (r) { return r.ok; });
-        return res(all ? 'dung' : 'sai', all ? null : 'Có ô chưa đúng (viền đỏ).', { tungO: tung });
+        if (all) return res('dung', null, { tungO: tung });
+        // nói rõ từng ô sai và vì sao (lỗi thường gặp, sai dạng…), không chỉ "có ô sai"
+        var chiTiet = tung.map(function (r, i) { return r.ok ? null : nhan(i) + ': ' + (r.code === 'sai' ? 'chưa đúng.' : r.msg); }).filter(Boolean);
+        return res('sai', chiTiet.join(' \n') + (tung.some(function (r) { return r.code === 'sai'; }) ? ' \nEm xem lại các ô viền đỏ hoặc bấm Gợi ý nhé.' : ''), { tungO: tung });
       }
     }
     throw new Error('Kiểu đáp án lạ: ' + d.kieu);

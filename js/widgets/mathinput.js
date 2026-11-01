@@ -28,7 +28,7 @@
     inp.addEventListener('input', function () {
       if (opts.kieu !== 'bieuThuc' || !inp.value.trim()) { prev.innerHTML = ''; return; }
       try { prev.innerHTML = 'Máy đọc là: ' + T.tex(T.parser.toLatex(T.parser.parse(inp.value))); }
-      catch (e) { prev.textContent = 'Máy đọc là: …'; }
+      catch (e) { prev.textContent = /[À-ỹđĐ]/.test(inp.value) ? 'Hình như bộ gõ tiếng Việt đang bật – em tắt bộ gõ rồi gõ lại nhé.' : 'Máy đọc là: …'; }
     });
     inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') enter(); });
     return {

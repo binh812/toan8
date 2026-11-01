@@ -108,3 +108,33 @@ test('checkAnswer số, nghiệm, chọn, đúng/sai, nhiều ô', () => {
   assert.strictEqual(r.code, 'sai');
   assert.deepStrictEqual(r.tungO.map(x => x.ok), [true, false]);
 });
+
+test('nhiều ô: hiện lỗi thường gặp / sai dạng của từng ô; ô trống là chưa nhập', () => {
+  const m = { kieu: 'nhieuO', o: [
+    { kieu: 'bieuThuc', gt: 'x^2+2x+1', dang: 'khaiTrien', nhan: 'Ô thứ nhất', loiThuongGap: [{ gt: 'x^2+1', giaiThich: 'Thiếu 2AB' }] },
+    { kieu: 'so', gt: 7, nhan: 'Ô thứ hai' }] };
+  const a = C.checkAnswer(m, ['x^2+1', '7']);
+  assert.strictEqual(a.code, 'sai');
+  assert.match(a.msg, /Thiếu 2AB/);
+  const b = C.checkAnswer(m, ['(x+1)^2', '7']);
+  assert.match(b.msg, /khai triển/);
+  const e = C.checkAnswer(m, ['x^2+2x+1', '']);
+  assert.strictEqual(e.code, 'khongDoc');
+  assert.match(e.msg, /chưa điền/);
+});
+test('số: 0.125 là số thập phân; 1.125 chấp nhận cả hai cách đọc', () => {
+  assert.strictEqual(C.parseNumber('0.125'), 0.125);
+  assert.strictEqual(C.parseNumber('-0.750'), -0.75);
+  assert.strictEqual(C.checkAnswer({ kieu: 'so', gt: 1.125 }, '1.125').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'so', gt: 1125 }, '1.125').code, 'dung');
+});
+test('bộ gõ tiếng Việt đang bật: nhắc tắt bộ gõ', () => {
+  const r = C.checkAnswer({ kieu: 'bieuThuc', gt: 'ax+1' }, 'ãx+1');
+  assert.strictEqual(r.code, 'khongDoc');
+  assert.match(r.msg, /bộ gõ/);
+});
+test('Caps Lock: chữ in hoa đúng giá trị → nhắc, không chấm sai', () => {
+  const r = C.checkAnswer({ kieu: 'bieuThuc', gt: 'x^2+6x+9', dang: 'khaiTrien' }, 'X^2+6X+9');
+  assert.strictEqual(r.code, 'saiDang');
+  assert.match(r.msg, /in hoa/);
+});
