@@ -60,6 +60,19 @@ test('số kiểu Việt Nam', () => {
   assert.strictEqual(C.parseNumber('3/4'), 0.75);
   assert.strictEqual(C.parseNumber('-1,5'), -1.5);
   assert.ok(Number.isNaN(C.parseNumber('abc')));
+  // dấu chấm phân cách hàng nghìn kiểu Việt Nam
+  assert.strictEqual(C.parseNumber('9.801'), 9801);
+  assert.strictEqual(C.parseNumber('1.000.000'), 1000000);
+  assert.strictEqual(C.parseNumber('-4.045'), -4045);
+  assert.strictEqual(C.parseNumber('0.75'), 0.75);
+  assert.strictEqual(C.parseNumber('1.234,5'), 1234.5);
+});
+test('nghiệm: các cách ghi khác', () => {
+  const d = { kieu: 'nghiem', gt: [3, -3] };
+  assert.strictEqual(C.checkAnswer(d, '3, -3').code, 'dung');
+  assert.strictEqual(C.checkAnswer(d, 'x = 3 hoặc x = -3').code, 'dung');
+  assert.strictEqual(C.checkAnswer(d, 'x=3, x=-3').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [0.5] }, '0,5').code, 'dung');
 });
 test('checkAnswer biểu thức', () => {
   const d = { kieu: 'bieuThuc', gt: 'x^2+6x+9', dang: 'khaiTrien' };

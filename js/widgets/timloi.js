@@ -4,7 +4,7 @@
   var el = T.el;
 
   T.tabs.timLoi = function (c, bai) {
-    c.appendChild(el('p', null, 'Bạn Nam làm bài nhưng có một dòng bị sai. Em bấm vào dòng mà em cho là sai nhé!'));
+    c.appendChild(el('p', null, 'Mỗi lời giải dưới đây có một dòng bị sai. Em bấm vào dòng mà em cho là sai nhé!'));
     (bai.timLoi || []).forEach(function (tl, i) {
       var note = el('div', { class: 'fb', hidden: true, role: 'status', 'aria-live': 'polite' });
       var lines = el('div');
@@ -30,7 +30,7 @@
       });
       c.appendChild(el('div', { class: 'q timloi' },
         el('div', { class: 'q-de', html: '<b>Bài ' + (i + 1) + '.</b> ' + T.md(tl.de).replace(/^<p>|<\/p>$/g, '') }),
-        el('div', { class: 'nam' }, el('span', { class: 'av' }, '🧑'), 'Lời giải của bạn Nam:'),
+        el('div', { class: 'nam' }, el('span', { class: 'av' }, '🧑'), 'Lời giải của bạn:'),
         lines, note));
     });
   };

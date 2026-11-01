@@ -12,7 +12,7 @@ TOAN8.bai({
           loiThuongGap: [{ gt: 9, giaiThich: '$(2+1)^3 = 3^3 = 27$, không bằng $2^3 + 1^3 = 9$.' }] },
         { kieu: 'so', gt: 9, nhan: '$(a+b)(a^2 - ab + b^2) = (2+1)(4 - 2 + 1) =$',
           loiThuongGap: [{ gt: 21, giaiThich: 'Em tính $4 + 2 + 1$ rồi. Trong ngoặc là $a^2 \\mathbf{-} ab + b^2 = 4 - 2 + 1 = 3$.' }] }] },
-      goiY: ['$2^3 = 8$, $1^3 = 1$, $3^3 = 27$.', '$(2+1)(4 - 2 + 1) = 3\\cdot 3$.'],
+      goiY: ['Tính từng lũy thừa trước, ví dụ $2^3 = 2\\cdot 2\\cdot 2$.', '$2^3 = 8$, $1^3 = 1$, $3^3 = 27$; còn $(2+1)(4 - 2 + 1) = 3\\cdot 3$.'],
       loiGiai: [
         '$a^3 + b^3 = 8 + 1 = 9$.',
         '$(a+b)^3 = 3^3 = 27$ — **khác** $9$. Vậy $a^3 + b^3 \\ne (a+b)^3$.',

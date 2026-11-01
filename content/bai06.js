@@ -179,7 +179,7 @@
         goiY: ['So với $A^2 + 2AB + B^2 = (A+B)^2$ với $A = x$.', '$2\\cdot x\\cdot B = 6xy$ nên $B = 3y$. Ô thứ nhất là $B^2$.'],
         loiGiai: ['$2\\cdot x\\cdot B = 6xy$ nên $B = 3y$.', '$B^2 = (3y)^2 = 9y^2$.', 'Vậy $x^2 + 6xy + 9y^2 = (x + 3y)^2$.'] },
 
-      { id: '6.11', muc: 3, de: 'Rút gọn biểu thức $(x+2)^2 - (x-2)^2$.',
+      { id: '6.11', muc: 3, de: 'Rút gọn biểu thức $(x+2)^2 - (x-2)^2$ (viết kết quả dưới dạng đa thức thu gọn).',
         dapAn: { kieu: 'bieuThuc', gt: '8x', dang: 'khaiTrien' },
         goiY: ['Khai triển từng bình phương rồi bỏ ngoặc. Cẩn thận dấu trừ đứng trước ngoặc!', 'Hoặc dùng hiệu hai bình phương: $A^2 - B^2$ với $A = x+2$, $B = x-2$.'],
         loiGiai: ['$(x+2)^2 - (x-2)^2 = (x^2 + 4x + 4) - (x^2 - 4x + 4)$', '$= x^2 + 4x + 4 - x^2 + 4x - 4$', '$= 8x$'],

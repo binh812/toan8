@@ -8,7 +8,7 @@
     hang: [{ nhan: 'a^2', dai: 'a^2', mau: CAM }, { nhan: '2ab', dai: '2ab', mau: LA }, { nhan: 'b^2', dai: 'b^2', mau: XANH }],
     cot: [{ nhan: 'a', dai: 'a', mau: CAM }, { nhan: 'b', dai: 'b', mau: XANH }],
     o: [['\\ca{a^3}', 'a^2b'], ['2a^2b', '2ab^2'], ['ab^2', '\\cb{b^3}']],
-    thanhTruot: [{ ten: 'a', min: 1, max: 3, buoc: 0.5, gt: 2 }, { ten: 'b', min: 1, max: 3, buoc: 0.5, gt: 1.5 }],
+    thanhTruot: [{ ten: 'a', min: 1, max: 3, buoc: 0.5, gt: 2 }, { ten: 'b', min: 1.5, max: 3, buoc: 0.5, gt: 1.5 }],
     congThuc: '(\\ca{a}+\\cb{b})^3 = (\\ca{a^2}+\\cc{2ab}+\\cb{b^2})(\\ca{a}+\\cb{b}) = \\ca{a^3} + \\cc{3a^2b} + \\cc{3ab^2} + \\cb{b^3}'
   };
 
@@ -152,15 +152,15 @@
         loiGiai: ['$21^3 = (20+1)^3 = 20^3 + 3\\cdot 20^2\\cdot 1 + 3\\cdot 20\\cdot 1^2 + 1^3$', '$= 8000 + 1200 + 60 + 1$', '$= 9261$'],
         loiThuongGap: [{ gt: 8001, giaiThich: '$(A+B)^3 \\ne A^3 + B^3$. Còn thiếu $3A^2B = 1200$ và $3AB^2 = 60$.' }] },
 
-      { id: '7.11', muc: 3, de: 'Rút gọn biểu thức $(x+1)^3 - (x-1)^3$.',
+      { id: '7.11', muc: 3, de: 'Rút gọn biểu thức $(x+1)^3 - (x-1)^3$ (viết kết quả dưới dạng đa thức thu gọn).',
         dapAn: { kieu: 'bieuThuc', gt: '6x^2+2', dang: 'khaiTrien' },
         goiY: ['Khai triển từng lập phương, đặt mỗi kết quả trong ngoặc.', 'Bỏ ngoặc có dấu trừ đằng trước thì đổi dấu **mọi** hạng tử trong ngoặc.'],
         loiGiai: ['$(x+1)^3 - (x-1)^3 = (x^3 + 3x^2 + 3x + 1) - (x^3 - 3x^2 + 3x - 1)$', '$= x^3 + 3x^2 + 3x + 1 - x^3 + 3x^2 - 3x + 1$', '$= 6x^2 + 2$'],
         loiThuongGap: [
           { gt: '2', giaiThich: 'Em đã dùng $(A+B)^3 = A^3 + B^3$ — sai. Phải khai triển đủ 4 hạng tử.' },
-          { gt: '6x', giaiThich: 'Khi bỏ ngoặc sau dấu trừ phải đổi dấu cả $-3x^2$ (thành $+3x^2$) và $-1$ (thành $+1$).' }] },
+          { gt: '6x', giaiThich: 'Bỏ ngoặc sau dấu trừ phải đổi dấu **mọi** hạng tử: $-(x^3-3x^2+3x-1) = -x^3+3x^2-3x+1$.' }] },
 
-      { id: '7.12', muc: 3, de: 'Rút gọn biểu thức $(2x+1)^3 + (2x-1)^3$.',
+      { id: '7.12', muc: 3, de: 'Rút gọn biểu thức $(2x+1)^3 + (2x-1)^3$ (viết kết quả dưới dạng đa thức thu gọn).',
         dapAn: { kieu: 'bieuThuc', gt: '16x^3+12x', dang: 'khaiTrien' },
         goiY: ['Khai triển $(2x+1)^3$ và $(2x-1)^3$, nhớ $(2x)^3 = 8x^3$, $(2x)^2 = 4x^2$.', 'Cộng lại: các hạng tử $12x^2$ và $-12x^2$, $1$ và $-1$ triệt tiêu.'],
         loiGiai: ['$(2x+1)^3 = 8x^3 + 12x^2 + 6x + 1$', '$(2x-1)^3 = 8x^3 - 12x^2 + 6x - 1$', 'Cộng lại: $(2x+1)^3 + (2x-1)^3 = 16x^3 + 12x$'],

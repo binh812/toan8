@@ -137,7 +137,10 @@
   }
 
   function parseNumber(s) {
-    try { var a = P.parse(s); return isConst(a) ? P.evaluate(a, {}) : NaN; } catch (e) { return NaN; }
+    var t = String(s == null ? '' : s).replace(/\s+/g, '');
+    // "9.801", "1.234,5": dấu chấm phân cách hàng nghìn kiểu Việt Nam (không phải dấu thập phân)
+    if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t = t.replace(/\./g, '');
+    try { var a = P.parse(t); return isConst(a) ? P.evaluate(a, {}) : NaN; } catch (e) { return NaN; }
   }
 
   var MSG = {
@@ -190,7 +193,8 @@
     if (/vô\s*nghiệm|vo\s*nghiem/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
     if (/vô\s*số|vo\s*so/.test(s)) return res(d.gt === 'voSoNghiem' ? 'dung' : 'sai');
     if (!Array.isArray(d.gt)) return res('sai');
-    var parts = s.split(';').map(function (t) { return t.trim().replace(/^[a-z]\s*=/, '').trim(); }).filter(Boolean);
+    // tách nghiệm theo ";", "hoặc", hoặc dấu phẩy đứng trước khoảng trắng / dấu trừ / chữ ("0,5" vẫn là một số)
+    var parts = s.split(/;|hoặc|hoac|,(?=\s|-|[a-z])/).map(function (t) { return t.trim().replace(/^[a-z]\s*=/, '').trim(); }).filter(Boolean);
     var vals = parts.map(parseNumber);
     if (!vals.length || vals.some(Number.isNaN)) return res('khongDoc', 'Ghi các nghiệm cách nhau bằng dấu ; ví dụ: x = 2; x = -3');
     if (sameSet(vals, d.gt)) return res('dung');

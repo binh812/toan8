@@ -18,7 +18,7 @@
       cauHoi: {
         de: 'Viết $2x^2 + 6x$ thành một tích (chiều rộng × chiều dài).',
         dapAn: { kieu: 'bieuThuc', gt: '2x(x+3)', dang: 'nhanTu' },
-        goiY: ['$2x^2 = 2x\\cdot x$ và $6x = 2x\\cdot 3$: cả hai mảnh đều có thừa số $2x$.', 'Chiều rộng chung là $2x$, chiều dài là $x + 3$.'],
+        goiY: ['Số nào và biến nào có mặt ở cả $2x^2$ và $6x$?', '$2x^2 = 2x\\cdot x$ và $6x = 2x\\cdot 3$: chiều rộng chung là $2x$.'],
         loiGiai: [
           '$\\ca{2x^2} = 2x\\cdot \\ca{x}$ và $\\cc{6x} = 2x\\cdot \\cb{3}$.',
           'Chiều rộng chung là $2x$, chiều dài là $\\ca{x} + \\cb{3}$.',
@@ -139,7 +139,7 @@
         loiGiai: ['$x^2 - xy + 4x - 4y = (x^2 - xy) + (4x - 4y)$', '$= x(x - y) + 4(x - y)$', '$= (x - y)(x + 4)$'],
         loiThuongGap: [{ gt: '(x-y)(x-4)', giaiThich: 'Nhóm thứ hai là $4x - 4y = +4(x - y)$, nên thừa số còn lại là $x + 4$.' }] },
 
-      { id: '9.8', muc: 2, de: 'Tìm $x$, biết $x^2 - 5x = 0$.',
+      { id: '9.8', muc: 2, de: 'Tìm $x$, biết $x^2 - 5x = 0$. (Ghi các giá trị cách nhau bằng dấu ; ví dụ: x = 1; x = 2)',
         dapAn: { kieu: 'nghiem', gt: [0, 5] },
         goiY: ['Phân tích vế trái: $x^2 - 5x = x(x - 5)$.', 'Tích bằng 0 khi $x = 0$ hoặc $x - 5 = 0$. Đừng chia hai vế cho $x$!'],
         loiGiai: ['$x^2 - 5x = 0 \\Rightarrow x(x - 5) = 0$', '$x = 0$ hoặc $x - 5 = 0$', 'Vậy $x = 0$ hoặc $x = 5$.'] },
@@ -154,7 +154,7 @@
         goiY: ['Đặt nhân tử chung $x$ trước.', '$x^2 - 4x + 4$ là bình phương của một hiệu.'],
         loiGiai: ['$x^3 - 4x^2 + 4x = x(x^2 - 4x + 4)$', '$= x(x^2 - 2\\cdot x\\cdot 2 + 2^2)$', '$= x(x - 2)^2$'] },
 
-      { id: '9.11', muc: 3, de: 'Tìm $x$, biết $3x^3 - 12x = 0$.',
+      { id: '9.11', muc: 3, de: 'Tìm $x$, biết $3x^3 - 12x = 0$. (Ghi các giá trị cách nhau bằng dấu ;)',
         dapAn: { kieu: 'nghiem', gt: [0, 2, -2] },
         goiY: ['$3x^3 - 12x = 3x(x^2 - 4)$, rồi phân tích tiếp $x^2 - 4$.', '$3x(x - 2)(x + 2) = 0$: có **ba** thừa số chứa $x$, nên có ba giá trị của $x$.'],
         loiGiai: ['$3x^3 - 12x = 3x(x^2 - 4) = 3x(x - 2)(x + 2)$', '$3x(x - 2)(x + 2) = 0 \\Rightarrow x = 0$ hoặc $x - 2 = 0$ hoặc $x + 2 = 0$', 'Vậy $x = 0$; $x = 2$; $x = -2$.'] },
@@ -170,9 +170,9 @@
       { de: 'Bạn Vuông phân tích $x^3 - 25x$ thành nhân tử như sau. Dòng nào sai?',
         loiGiaiSai: ['$x^3 - 25x = x\\cdot x^2 - x\\cdot 25$', '$= x(x^2 - 25)$', 'Vậy kết quả là $x(x^2 - 25)$. Xong!'],
         dongSai: 2, giaiThich: 'Phân tích **chưa triệt để**: nhân tử $x^2 - 25 = (x - 5)(x + 5)$ vẫn còn phân tích tiếp được.', sua: '$x^3 - 25x = x(x - 5)(x + 5)$' },
-      { de: 'Bạn Hoa phân tích $6x^2 - 9x$ như sau. Dòng nào sai?',
-        loiGiaiSai: ['$6x^2 - 9x = 3(2x^2 - 3x)$', 'Vậy $6x^2 - 9x = 3(2x^2 - 3x)$.'],
-        dongSai: 0, giaiThich: 'Nhân tử chung chưa lấy hết: cả hai hạng tử còn có chung $x$. Nhân tử chung đúng là $3x$ (chưa triệt để).', sua: '$6x^2 - 9x = 3x(2x - 3)$' },
+      { de: 'Bạn Hoa phân tích $6x^2 - 9x$ thành nhân tử như sau. Dòng nào sai?',
+        loiGiaiSai: ['$6x^2 - 9x = 3(2x^2 - 3x)$', 'Vậy kết quả phân tích là $3(2x^2 - 3x)$. Xong!'],
+        dongSai: 1, giaiThich: 'Dòng đầu là một đẳng thức đúng nhưng **chưa xong**: trong ngoặc $2x^2 - 3x$ vẫn còn chung $x$. Nhân tử chung đúng là $3x$, nên chưa được dừng ở đây.', sua: '$6x^2 - 9x = 3x(2x - 3)$' },
       { de: 'Bạn Tuấn tìm $x$ biết $x^2 = 3x$ như sau. Dòng nào sai?',
         loiGiaiSai: ['$x^2 = 3x$', 'Chia hai vế cho $x$ được $x = 3$', 'Vậy $x = 3$.'],
         dongSai: 1, giaiThich: 'Không được chia cho $x$ vì $x$ có thể bằng 0 — bạn Tuấn làm **mất nghiệm** $x = 0$. Đúng là: $x^2 - 3x = 0 \\Rightarrow x(x - 3) = 0 \\Rightarrow x = 0$ hoặc $x = 3$.', sua: '$x^2 - 3x = 0 \\Rightarrow x(x-3) = 0 \\Rightarrow x = 0$ hoặc $x = 3$' },
