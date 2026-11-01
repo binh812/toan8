@@ -6,7 +6,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node --test tests/",
+    "test": "node --test \"tests/*.test.js\"",
     "libs": "node tools/copy-libs.js",
     "validate": "node tools/validate-content.js"
   },
