@@ -16,7 +16,7 @@
   function tex(src, display) {
     var K = root && root.katex;
     if (!K) return display ? '<div class="mb">' + src + '</div>' : '<span class="m">' + src + '</span>';
-    return K.renderToString(src, { displayMode: !!display, throwOnError: false, macros: Object.assign({}, MACROS) });
+    return K.renderToString(src, { displayMode: !!display, throwOnError: false, strict: 'ignore', macros: Object.assign({}, MACROS) });
   }
 
   // Thay công thức bằng chỗ giữ (\u0000k\u0000) trước, xử lí chữ (escape, **đậm**, xuống dòng) rồi mới trả công thức về:

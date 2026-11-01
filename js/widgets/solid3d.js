@@ -20,12 +20,13 @@
     return { R: R, r: r, trungDoan: d, canhBen: canhBen, Sday: Sday, Sxq: Sxq, Stp: Sday + Sxq, V: Sday * h / 3 };
   };
 
-  // cfg: { day: 3|4, a, h, thanhTruot?: bool (mặc định có), trai?: bool (có thanh "Trải phẳng"), hienTrungDoan?, hienDuongCao?, an?: bool (ẩn số đo) }
+  // cfg: { day: 3|4, a, h, thanhTruot?: bool (mặc định có), trai?: bool (có thanh "Trải phẳng"), hienTrungDoan?, hienDuongCao?, an?: bool (ẩn số đo),
+  //        tenDinh?: 'S', tenDay?: ['A','B','C'], tenChan?: 'H' (chân đường cao), tenGiua?: 'M' (chân trung đoạn) }
   T.widgets.hinhChop = function (container, cfg) {
     var n = cfg.day === 3 ? 3 : 4;
     var env = { a: cfg.a || 4, h: cfg.h || 4, t: 0 };
     var goc = { quay: -0.5, nghieng: 1.05 }; // nghiêng: góc nhìn từ trục đứng (0 = nhìn từ trên xuống)
-    var ten = n === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
+    var ten = cfg.tenDay || (n === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D']);
     var holder = el('div', { class: 'chop' }), info = el('div', { class: 'dt-tong' });
     container.appendChild(holder);
 
@@ -69,14 +70,14 @@
         var Sp = pr(S), O = pr([0, 0, 0]);
         if (cfg.hienDuongCao !== false) {
           s.appendChild(svg('line', { x1: Sp[0], y1: Sp[1], x2: O[0], y2: O[1], stroke: '#c2255c', 'stroke-width': 2, 'stroke-dasharray': '6 4' }));
-          lbl(s, O, 'H', '#c2255c', 6, 18);
+          lbl(s, O, cfg.tenChan || 'H', '#c2255c', 6, 18);
         }
         if (cfg.hienTrungDoan) {
           var M0 = pr([(base[0][0] + base[1][0]) / 2, (base[0][1] + base[1][1]) / 2, 0]);
           s.appendChild(svg('line', { x1: Sp[0], y1: Sp[1], x2: M0[0], y2: M0[1], stroke: '#1971c2', 'stroke-width': 3 }));
-          lbl(s, M0, 'M', '#1971c2', 4, 20);
+          lbl(s, M0, cfg.tenGiua || 'M', '#1971c2', 4, 20);
         }
-        lbl(s, Sp, 'S', '#343a40', -6, -10);
+        lbl(s, Sp, cfg.tenDinh || 'S', '#343a40', -6, -10);
       }
       base.forEach(function (P, i) { var q = pr(P); lbl(s, q, ten[i], '#343a40', q[0] < W / 2 ? -20 : 8, 16); });
       holder.innerHTML = '';
@@ -84,7 +85,7 @@
       bindDrag(s);
       var f = T.fmtSo;
       info.innerHTML = cfg.an ? '' :
-        'Cạnh đáy ' + T.tex('a') + ' = <b>' + f(env.a) + '</b> · chiều cao ' + T.tex('SH = h') + ' = <b>' + f(env.h) + '</b> · trung đoạn ' + T.tex('d') + ' ≈ <b>' + f(m.trungDoan) + '</b><br>' +
+        'Cạnh đáy ' + T.tex('a') + ' = <b>' + f(env.a) + '</b> · chiều cao ' + T.tex((cfg.tenDinh || 'S') + (cfg.tenChan || 'H') + ' = h') + ' = <b>' + f(env.h) + '</b> · trung đoạn ' + T.tex('d') + ' ≈ <b>' + f(m.trungDoan) + '</b><br>' +
         T.tex('S_{xq} = p \\cdot d') + ' ≈ <b>' + f(m.Sxq) + '</b> &nbsp; · &nbsp; ' + T.tex('V = \\frac{1}{3} S_{\\text{đáy}} \\cdot h') + ' ≈ <b>' + f(m.V) + '</b>';
     }
     function lbl(s, q, txt, mau, dx, dy) {
