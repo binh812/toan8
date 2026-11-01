@@ -14,13 +14,14 @@
   T.ptDuongThang = ptDuongThang;
 
   // cfg: { bbox?, thanhTruot?:[…], duong?:[{a, b, mau?, nhan?}] (a, b: số hoặc tên thanh trượt),
-  //        ham?:[{f:'x^2/2', mau?, nhan?}], diem?:[{x, y, ten, keo?}], giaoTruc?: bool, tamGiacDoc?: bool, an?: bool (ẩn phương trình) }
+  //        ham?:[{f:'x^2/2', mau?, nhan?}], diem?:[{x, y, ten, keo?}], giaoTruc?: bool, tamGiacDoc?: bool, an?: bool (ẩn phương trình),
+  //        doan?:[[x1, y1, x2, y2, {mau?, net?}]], tiLe?: false (hai trục khác tỉ lệ, cho bài toán thực tế), them?: function(board, G, env) }
   T.widgets.doThi = function (container, cfg) {
     var env = {};
     (cfg.thanhTruot || []).forEach(function (t) { env[t.ten] = t.gt != null ? t.gt : (t.min + t.max) / 2; });
     var info = el('div', { class: 'dt-tong' });
     var board = T.widgets.geo(container, {
-      bbox: cfg.bbox || [-6, 6, 6, -6], axis: true, grid: true,
+      bbox: cfg.bbox || [-6, 6, 6, -6], axis: true, grid: true, tiLe: cfg.tiLe,
       build: function (bd, G) {
         (cfg.duong || []).forEach(function (d, i) {
           var mau = d.mau || MAU[i % MAU.length];
@@ -44,6 +45,11 @@
           bd.create('functiongraph', [function (x) { return T.parser.evaluate(ast, Object.assign({ x: x }, env)); }],
             { strokeColor: h.mau || MAU[(i + 1) % MAU.length], strokeWidth: 3, fixed: true, highlight: false });
         });
+        (cfg.doan || []).forEach(function (d) {
+          var k = d[4] || {};
+          bd.create('segment', [[d[0], d[1]], [d[2], d[3]]], { strokeColor: k.mau || '#343a40', strokeWidth: 3, dash: k.net ? 2 : 0, fixed: true, highlight: false });
+        });
+        if (cfg.them) cfg.them(bd, G, env);
         (cfg.diem || []).forEach(function (p) {
           var pt = G.pt(p.ten || '', p.x, p.y, { fixed: !p.keo, size: p.keo ? 7 : 4, snapToGrid: !!p.keo, snapSizeX: 0.5, snapSizeY: 0.5 });
           if (p.keo) pt.on('drag', update);

@@ -12,14 +12,15 @@
     return (Math.round(v * p) / p).toString().replace('.', ',');
   }
 
-  // cfg: { bbox:[x1,y1,x2,y2], axis?, wide?, build:function(board, G) }
+  // cfg: { bbox:[x1,y1,x2,y2], axis?, grid?, wide?, tiLe?: false (hai trục khác tỉ lệ), build:function(board, G),
+  //        thanhTruot?:[{ten,min,max,buoc,gt,nhan}] (giá trị đọc qua G.env.ten; kéo thanh thì board.update()) }
   T.widgets.geo = function (container, cfg) {
     var id = 'jxg' + (++n);
     var div = T.el('div', { id: id, class: 'board' + (cfg.wide ? ' wide' : '') });
     container.appendChild(div);
     var board = JXG.JSXGraph.initBoard(id, {
       boundingbox: cfg.bbox || [-1, 7, 9, -1], axis: !!cfg.axis, grid: !!cfg.grid,
-      showCopyright: false, showNavigation: false, keepAspectRatio: true,
+      showCopyright: false, showNavigation: false, keepAspectRatio: cfg.tiLe !== false,
       pan: { enabled: false }, zoom: { enabled: false, wheel: false },
       defaultAxes: { x: { ticks: { label: { fontSize: 14 } } }, y: { ticks: { label: { fontSize: 14 } } } }
     });
@@ -48,7 +49,10 @@
       label: function (x, y, fn, o) { return board.create('text', [x, y, fn], opt({ fontSize: 18, fixed: true, cssClass: 'geo-label', highlightCssClass: 'geo-label' }, o)); }
     };
     live.push(board);
+    G.env = {};
+    (cfg.thanhTruot || []).forEach(function (t) { G.env[t.ten] = t.gt != null ? t.gt : (t.min + t.max) / 2; });
     cfg.build(board, G);
+    if (cfg.thanhTruot) container.appendChild(T.makeSliders(cfg.thanhTruot, G.env, function () { board.update(); }));
     return board;
   };
 })(window.TOAN8);
