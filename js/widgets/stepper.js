@@ -19,15 +19,18 @@
       for (var k = 0; k < n && shown < vd.buoc.length; k++) list.appendChild(stepItem(vd.buoc[shown++]));
       if (shown >= vd.buoc.length) { next.disabled = true; all.disabled = true; next.textContent = 'Xong ✓'; }
     }
+    var hinh = vd.hinh ? el('div', { class: 'q-hinh' }) : null;
     c.appendChild(el('div', { class: 'vidu' },
-      el('h3', null, 'Ví dụ ' + (i + 1)), el('div', { html: T.md(vd.de) }), list,
+      el('h3', null, 'Ví dụ ' + (i + 1)), el('div', { html: T.md(vd.de) }), hinh, list,
       el('div', { class: 'stepper-actions' }, next, all)));
+    if (hinh) T.mountWidget(hinh, vd.hinh.widget, vd.hinh.config);
     reveal(1);
   }
 
   // Ví dụ mờ dần: các bước thường hiện sẵn; bước "an" là câu hỏi; bước sau bước ẩn chỉ hiện khi đã điền đúng.
   function fadedExample(c, bai, vd, i) {
     var box = el('div', { class: 'vidu' }, el('h3', null, 'Em thử ' + (i + 1)), el('div', { html: T.md(vd.de) }));
+    if (vd.hinh) T.mountWidget(box.appendChild(el('div', { class: 'q-hinh' })), vd.hinh.widget, vd.hinh.config);
     var list = el('ol', { class: 'buoc-list' });
     box.appendChild(list);
     c.appendChild(box);

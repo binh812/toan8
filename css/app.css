@@ -199,6 +199,14 @@ math-field.mf:focus-within { border-color: var(--c); }
 .chon-chuong label { display: flex; gap: 8px; align-items: center; }
 .chon-chuong input { accent-color: var(--c); width: 18px; height: 18px; }
 .de-on-tap { margin-top: 18px; }
+.bd-tranh-wrap { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; max-width: 600px; margin: 0 auto; }
+.bd-tieu-de { text-align: center; font-weight: 700; margin-bottom: 6px; }
+.bd-tranh { border-collapse: collapse; width: 100%; }
+.bd-tranh th { text-align: left; padding: 6px 12px 6px 0; white-space: nowrap; border-right: 2px solid #343a40; width: 1%; }
+.bd-tranh td { padding: 6px 10px; font-size: 1.3rem; line-height: 1; }
+.bd-tranh .bt { margin-right: .3em; }
+.bd-tranh .bt-le { display: inline-block; overflow: hidden; vertical-align: bottom; white-space: nowrap; }
+.bd-tranh .bt-trong { display: inline-block; }
 
 @media (max-width: 700px) {
   body { font-size: 17px; }
