@@ -4,7 +4,9 @@
 Mỗi bài có 5 bước: Khám phá → Lý thuyết → Ví dụ → Tự làm → Tìm lỗi sai.
 
 ## Cách mở
-Bấm đúp `index.html` (Chrome hoặc Edge). Không cần mạng, không cần cài đặt.
+**Dùng ngay trên mạng:** https://binh812.github.io/toan8/
+
+Hoặc tải về rồi bấm đúp `index.html` (Chrome hoặc Edge) – chạy được không cần mạng, không cần cài đặt.
 Tiến độ lưu trong trình duyệt của máy đang dùng; nút "Lưu tiến độ ra file" ở cuối trang chủ để sao lưu.
 
 ## Hướng dẫn cho phụ huynh
