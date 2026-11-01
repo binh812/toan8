@@ -127,9 +127,23 @@
     return Number.isInteger(c) ? c : 1;
   }
 
+  // Có phép chia cho biểu thức chứa biến ở đâu đó bên trong (vd 1/x − 1/(x+2))?
+  function hasVarDiv(n) {
+    if (!n || typeof n !== 'object') return false;
+    if (n.t === 'div' && !isConst(n.b)) return true;
+    return [n.a, n.b].concat(n.fs || [], n.terms || []).some(hasVarDiv);
+  }
+  var MOT_PHAN_THUC = 'Đúng giá trị, nhưng em cần viết gọn thành **một** phân thức (quy đồng, cộng/nhân tử với tử) rồi rút gọn.';
   function isReduced(ast) {
     var n = ast.t === 'neg' ? ast.a : ast;
-    if (n.t !== 'div') return { ok: true };
+    // "5/(4−2x)² · (−2)": một phân thức nhân với đa thức → gộp thành một phân thức rồi xét như thường
+    if (n.t === 'mul') {
+      var phan = n.fs.filter(function (f) { return f.t === 'div' && !isConst(f.b); });
+      var con = n.fs.filter(function (f) { return phan.indexOf(f) < 0; });
+      if (phan.length === 1 && !con.some(hasVarDiv)) n = { t: 'div', a: { t: 'mul', fs: con.concat([phan[0].a]) }, b: phan[0].b };
+    }
+    if (n.t !== 'div') return hasVarDiv(n) ? { ok: false, ly: MOT_PHAN_THUC } : { ok: true };
+    if (hasVarDiv(n.a) || hasVarDiv(n.b)) return { ok: false, ly: MOT_PHAN_THUC };
     var g = P.parse(String(N('gcd(' + P.toNerdamer(n.a) + ',' + P.toNerdamer(n.b) + ')').toString()));
     if (!isConst(g)) return { ok: false, ly: 'Đúng giá trị, nhưng tử và mẫu vẫn còn nhân tử chung. Em rút gọn tiếp nhé.' };
     if (gcdInt(intContent(n.a), intContent(n.b)) > 1) return { ok: false, ly: 'Đúng giá trị, nhưng tử và mẫu còn ước chung là số. Em chia tiếp nhé.' };
@@ -198,7 +212,11 @@
   // Đơn vị đo viết sau số ("6 cm", "12 cm²", "60°", "60 độ") – bỏ đi, chỉ chấm con số.
   var DON_VI = /\s*(mm|cm|dm|km|m|g|kg|l|ml|giây|phút|giờ|ngày|độ|°|đồng|người|học sinh|lần)(2|3|²|³)?\.?$/i;
   function checkNumber(d, input, ltg) {
-    input = String(input == null ? '' : input).trim().replace(DON_VI, '');
+    // "x = 2", "AB = 6 cm": chỉ lấy vế phải
+    input = String(input == null ? '' : input).trim().replace(/^[A-Za-z][A-Za-z0-9']{0,3}\s*=\s*/, '').replace(DON_VI, '');
+    // "12 bạn", "3 quyển sách": con số rồi tới chữ (đơn vị bất kỳ) – chỉ giữ con số
+    var m = /^([-−]?[\d.,/√()\s]*\d[\d.,/√()%\s]*?)\s+[A-Za-zÀ-ỹđĐ][^\d]*$/.exec(input);
+    if (m) input = m[1].trim();
     // "25%": nhận cả 0,25 lẫn 25 (khi đề hỏi "bao nhiêu phần trăm" thì đáp án ghi 25)
     if (/%$/.test(input)) {
       var p = input.replace(/\s*%$/, ''), v = parseNumber(p);
@@ -230,7 +248,7 @@
 
   function checkRoots(d, input, ltg) {
     var s = String(input == null ? '' : input).toLowerCase().trim();
-    if (/vô\s*nghiệm|vo\s*nghiem/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
+    if (/vô\s*nghiệm|vo\s*nghiem|∅|\{\s*\}/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
     if (/vô\s*số|vo\s*so/.test(s)) return res(d.gt === 'voSoNghiem' ? 'dung' : 'sai');
     if (!Array.isArray(d.gt)) return res('sai');
     // tách nghiệm theo ";", "hoặc", hoặc dấu phẩy đứng trước khoảng trắng / dấu trừ / chữ ("0,5" vẫn là một số)

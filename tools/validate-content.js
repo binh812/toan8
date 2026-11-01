@@ -44,7 +44,7 @@ function loadLessons(file) {
 
 // LaTeX đơn giản → ascii-math cho parser (bỏ qua nếu không đọc được)
 function latexToAscii(s) {
-  let t = s.replace(/\\left|\\right/g, '').replace(/\\cdot|\\times/g, '*').replace(/\\[,;!: ]/g, '')
+  let t = s.replace(/\^\{?\\circ\}?|°/g, '').replace(/\\left|\\right/g, '').replace(/\\cdot|\\times/g, '*').replace(/\\[,;!: ]/g, '')
     .replace(/\\c[abcd]\{([^{}]*)\}/g, '$1').replace(/\{,\}/g, '.');
   for (let i = 0; i < 5; i++) t = t.replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)');
   return t.replace(/\{/g, '(').replace(/\}/g, ')').replace(/\s+/g, '');

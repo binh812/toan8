@@ -159,3 +159,32 @@ test('biểu thức: bỏ tiền tố "y =" hoặc "f(x) ="', () => {
   assert.strictEqual(bt('f(x)=2x+3'), 'dung');
   assert.strictEqual(bt('y=2x-3'), 'sai');
 });
+test('số: chữ đơn vị bất kỳ sau con số (có dấu tiếng Việt) được bỏ qua', () => {
+  const so = (gt, s) => C.checkAnswer({ kieu: 'so', gt }, s).code;
+  assert.strictEqual(so(12, '12 bạn'), 'dung');
+  assert.strictEqual(so(3, '3 quyển sách'), 'dung');
+  assert.strictEqual(so(0.5, '0,5 triệu đồng'), 'dung');
+  assert.strictEqual(so(12, '13 bạn'), 'sai');
+  assert.strictEqual(C.checkAnswer({ kieu: 'so', gt: 12 }, 'mười hai').code, 'khongDoc');
+});
+test('rút gọn: phải gọn thành một phân thức, không chép lại tổng/tích trong đề', () => {
+  const rg = (gt, s) => C.checkAnswer({ kieu: 'bieuThuc', gt, dang: 'rutGon' }, s).code;
+  assert.strictEqual(rg('2/(x(x+2))', '1/x-1/(x+2)'), 'saiDang');
+  assert.strictEqual(rg('(3y-2x)/(6x^2y^2)', '1/(2x^2y)-1/(3xy^2)'), 'saiDang');
+  assert.strictEqual(rg('-5/(2(x-2)^2)', '5/(4-2x)^2*(-2)'), 'saiDang');
+  // các cách viết đúng vẫn được nhận
+  assert.strictEqual(rg('2/(x(x+2))', '2/(x^2+2x)'), 'dung');
+  assert.strictEqual(rg('x(x-3)/(x+3)', '(x-3)x/(3+x)'), 'dung');
+  assert.strictEqual(rg('(x+4)/(x+1)', '-(x+4)/(-x-1)'), 'dung');
+  assert.strictEqual(rg('2x^2/(3y^3)', '2/3*x^2/y^3'), 'dung');
+  assert.strictEqual(rg('(x-3)/2', 'x/2-3/2'), 'dung');
+  assert.strictEqual(rg('-5/(2(x-2)^2)', '-5/(2(x-2)^2)'), 'dung');
+  assert.strictEqual(rg('2x^2/(3y^3)', '2/(3y^3)*x^2'), 'dung');
+});
+test('số: nhận "x = 2"; nghiệm: nhận "S = ∅" là vô nghiệm', () => {
+  assert.strictEqual(C.checkAnswer({ kieu: 'so', gt: 2 }, 'x = 2').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'so', gt: 2 }, 'AB = 2 cm').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voNghiem' }, 'S = ∅').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voNghiem' }, '∅').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [2] }, 'S = ∅').code, 'sai');
+});

@@ -78,6 +78,12 @@
         add('path', { d: 'M' + c + ',' + c + 'L' + (c + R * Math.cos(g1)) + ',' + (c + R * Math.sin(g1)) + 'A' + R + ',' + R + ' 0 ' + (N === 1 ? 1 : 0) + ',1 ' +
           (c + R * Math.cos(g2)) + ',' + (c + R * Math.sin(g2)) + 'Z', fill: x.mau || '#dee2e6', stroke: '#fff', 'stroke-width': 2, opacity: thuan(x) || !sk ? 1 : 0.55 });
       });
+      // ghi tên từng ô (số hoặc chữ) khi vòng quay không quá dày
+      if (N <= 24) kq.forEach(function (x, i) {
+        var g = 2 * Math.PI * (i + 0.5) / N - Math.PI / 2, t = add('text', { x: c + R * 0.78 * Math.cos(g), y: c + R * 0.78 * Math.sin(g) + 5,
+          'text-anchor': 'middle', 'font-size': N > 12 ? 12 : 15, 'font-weight': 700, fill: x.mau ? '#fff' : '#212529' });
+        t.textContent = String(x.hien).length <= 3 ? x.hien : String(x.hien).slice(0, 1);
+      });
       if (cuoi) {
         var k = kq.indexOf(cuoi), g = 2 * Math.PI * (k + 0.5) / N - Math.PI / 2;
         add('line', { x1: c, y1: c, x2: c + (R - 14) * Math.cos(g), y2: c + (R - 14) * Math.sin(g), stroke: '#212529', 'stroke-width': 5, 'stroke-linecap': 'round' });
