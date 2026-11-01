@@ -21,6 +21,7 @@
     var board = JXG.JSXGraph.initBoard(id, {
       boundingbox: cfg.bbox || [-1, 7, 9, -1], axis: !!cfg.axis, grid: !!cfg.grid,
       showCopyright: false, showNavigation: false, keepAspectRatio: cfg.tiLe !== false,
+      intl: { enabled: true, locale: 'vi-VN' }, // số thập phân dấu phẩy trên trục, thanh trượt
       pan: { enabled: false }, zoom: { enabled: false, wheel: false },
       defaultAxes: { x: { ticks: { label: { fontSize: 14 } } }, y: { ticks: { label: { fontSize: 14 } } } }
     });
