@@ -138,3 +138,24 @@ test('Caps Lock: chữ in hoa đúng giá trị → nhắc, không chấm sai', 
   assert.strictEqual(r.code, 'saiDang');
   assert.match(r.msg, /in hoa/);
 });
+test('số: nhận phần trăm và đơn vị đo ở cuối', () => {
+  const so = (gt, s) => C.checkAnswer({ kieu: 'so', gt }, s).code;
+  assert.strictEqual(so(0.25, '25%'), 'dung');
+  assert.strictEqual(so(25, '25 %'), 'dung');
+  assert.strictEqual(so(0.25, '30%'), 'sai');
+  assert.strictEqual(so(6, '6 cm'), 'dung');
+  assert.strictEqual(so(12, '12cm2'), 'dung');
+  assert.strictEqual(so(12, '12 cm²'), 'dung');
+  assert.strictEqual(so(36, '36 cm³'), 'dung');
+  assert.strictEqual(so(60, '60°'), 'dung');
+  assert.strictEqual(so(60, '60 độ'), 'dung');
+  assert.strictEqual(so(2.5, '2,5 km'), 'dung');
+  assert.strictEqual(so(5, '5 m'), 'dung');
+  assert.strictEqual(so(5, '7 m'), 'sai');
+});
+test('biểu thức: bỏ tiền tố "y =" hoặc "f(x) ="', () => {
+  const bt = s => C.checkAnswer({ kieu: 'bieuThuc', gt: '2x+3' }, s).code;
+  assert.strictEqual(bt('y = 2x+3'), 'dung');
+  assert.strictEqual(bt('f(x)=2x+3'), 'dung');
+  assert.strictEqual(bt('y=2x-3'), 'sai');
+});

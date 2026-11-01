@@ -52,7 +52,9 @@
     app.appendChild(el('section', { class: 'hero' },
       el('h1', null, 'Chào em! Hôm nay mình học bài nào?'),
       el('p', null, 'Mỗi bài có 5 bước: ', el('b', null, 'Khám phá → Lý thuyết → Ví dụ → Tự làm → Tìm lỗi sai'), '. Cứ làm thử – sai cũng không sao, máy sẽ chỉ cho em chỗ sai.'),
-      due ? el('a', { class: 'btn primary', href: '#/on-tap' }, 'Có ' + due + ' câu cần ôn hôm nay →') : null));
+      el('div', { class: 'hero-nut' },
+        due ? el('a', { class: 'btn primary', href: '#/on-tap' }, 'Có ' + due + ' câu cần ôn hôm nay →') : null,
+        el('a', { class: 'btn', href: '#/on-tap-cuoi-nam' }, 'Ôn tập cuối năm'))));
     T.mucLuc.forEach(function (c) {
       var grid = el('div', { class: 'grid' });
       c.bai.forEach(function (b) { grid.appendChild(lessonCard(c, b)); });
@@ -118,6 +120,7 @@
     try {
       if (h[0] === 'bai') lesson(app, Number(h[1]), h[2] || 'khamPha');
       else if (h[0] === 'on-tap' && T.review) T.review(app);
+      else if (h[0] === 'on-tap-cuoi-nam' && T.onTapCuoiNam) T.onTapCuoiNam(app);
       else home(app);
     } catch (e) {
       console.error(e);

@@ -167,6 +167,8 @@
 
   function checkExpr(d, input, ltg) {
     var a;
+    // "y = 2x + 3", "f(x) = …": chỉ chấm vế phải
+    input = String(input == null ? '' : input).replace(/^\s*(y|[fgh]\s*\(\s*x\s*\))\s*=/, '');
     try { a = P.parse(input); } catch (e) { return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : null); }
     var g = P.parse(d.gt);
     if (!equivalentAst(a, g)) {
@@ -193,7 +195,17 @@
     return changed ? copy : null;
   }
 
+  // Đơn vị đo viết sau số ("6 cm", "12 cm²", "60°", "60 độ") – bỏ đi, chỉ chấm con số.
+  var DON_VI = /\s*(mm|cm|dm|km|m|g|kg|l|ml|giây|phút|giờ|ngày|độ|°|đồng|người|học sinh|lần)(2|3|²|³)?\.?$/i;
   function checkNumber(d, input, ltg) {
+    input = String(input == null ? '' : input).trim().replace(DON_VI, '');
+    // "25%": nhận cả 0,25 lẫn 25 (khi đề hỏi "bao nhiêu phần trăm" thì đáp án ghi 25)
+    if (/%$/.test(input)) {
+      var p = input.replace(/\s*%$/, ''), v = parseNumber(p);
+      var y0 = typeof d.gt === 'number' ? d.gt : parseNumber(d.gt);
+      if (!Number.isNaN(v) && (near(v / 100, y0, d.saiSo || 1e-9) || near(v, y0, d.saiSo || 1e-9))) return res('dung');
+      input = Number.isNaN(v) ? input : String(v / 100);
+    }
     var x = parseNumber(input), y = typeof d.gt === 'number' ? d.gt : parseNumber(d.gt);
     if (Number.isNaN(x)) return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : 'Em nhập một số, ví dụ 12 hoặc 0,5 hoặc 3/4.');
     var tol = d.saiSo != null ? d.saiSo : 1e-9;

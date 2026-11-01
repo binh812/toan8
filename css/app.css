@@ -174,6 +174,32 @@ math-field.mf:focus-within { border-color: var(--c); }
 .toast { position: fixed; right: 24px; bottom: 24px; z-index: 50; background: #212529; color: #fff; padding: 12px 18px; border-radius: 10px; box-shadow: var(--shadow); animation: hien .25s ease; }
 .err { color: var(--bad); background: var(--bad-bg); padding: 10px 14px; border-radius: 10px; }
 
+/* Hình động giai đoạn 2–3: hình chóp, biểu đồ, xác suất, ôn tập cuối năm */
+.hero-nut { display: flex; flex-wrap: wrap; gap: 10px; }
+.goi-y-nho { color: var(--muted); font-size: .9rem; margin: 4px 0 0; }
+.chop-svg { display: block; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; user-select: none; }
+.chop-svg:active { cursor: grabbing; }
+.bieu-do svg { display: block; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.doi-loai { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.chu-giai { display: flex; gap: 18px; justify-content: center; margin-top: 6px; }
+.chu-giai i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.bang-so-lieu { border-collapse: collapse; margin: 12px auto 0; background: #fff; font-size: .95rem; }
+.bang-so-lieu th, .bang-so-lieu td { border: 1px solid #ced4da; padding: 4px 12px; text-align: center; }
+.bang-so-lieu th { background: #f1f3f5; }
+.xs-nhan { font-weight: 600; margin-bottom: 6px; }
+.xs-ds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.xs-o { border: 2px solid #ced4da; border-radius: 8px; padding: 2px 10px; background: #fff; }
+.xs-o.thuan { border-color: var(--c); background: var(--c); color: #fff !important; font-weight: 700; }
+.xs-nut { display: flex; flex-wrap: wrap; gap: 8px; }
+.xs-hien { min-height: 64px; margin: 10px 0 4px; }
+.xs-cuoi { display: inline-block; font-size: 2rem; padding: 4px 18px; border-radius: 12px; border: 3px solid #ced4da; background: #fff; }
+.xs-cuoi.thuan { border-color: var(--c); }
+.xac-suat svg { display: block; margin-top: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.chon-chuong { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 6px 18px; margin: 10px 0 16px; }
+.chon-chuong label { display: flex; gap: 8px; align-items: center; }
+.chon-chuong input { accent-color: var(--c); width: 18px; height: 18px; }
+.de-on-tap { margin-top: 18px; }
+
 @media (max-width: 700px) {
   body { font-size: 17px; }
   main { padding: 14px 16px 60px; }

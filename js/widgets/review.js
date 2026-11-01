@@ -42,4 +42,43 @@
       T.mountQuestion(c, x.q, { record: true });
     });
   };
+
+  // Ôn tập cuối năm: chọn chương, tạo đề trộn câu mức 2–3 lấy lần lượt từ từng chương đã chọn.
+  T.onTapCuoiNam = function (c) {
+    var SO_CAU = 10;
+    var chuong = T.mucLuc.filter(function (ch) { return ch.bai.some(function (b) { return T.lessons[b.id]; }); });
+    c.appendChild(el('h1', null, 'Ôn tập cuối năm'));
+    c.appendChild(el('p', null, 'Chọn các chương muốn ôn rồi bấm "Tạo đề". Mỗi đề có ' + SO_CAU + ' câu vận dụng, lấy xen kẽ từ các chương – bấm lại để có đề mới.'));
+    var chon = el('div', { class: 'chon-chuong' });
+    chuong.forEach(function (ch) {
+      chon.appendChild(el('label', { style: '--c:' + ch.mau }, el('input', { type: 'checkbox', checked: true, value: ch.so }), ' Chương ' + ch.so + '. ' + ch.ten));
+    });
+    var de = el('div', { class: 'de-on-tap' });
+    var nut = el('button', { class: 'btn primary', type: 'button', onclick: taoDe }, 'Tạo đề ' + SO_CAU + ' câu');
+    c.appendChild(chon);
+    c.appendChild(nut);
+    c.appendChild(de);
+
+    function taoDe() {
+      var so = [].filter.call(chon.querySelectorAll('input'), function (i) { return i.checked; }).map(function (i) { return Number(i.value); });
+      var kho = chuong.filter(function (ch) { return so.indexOf(ch.so) >= 0; }).map(function (ch) {
+        var list = [];
+        ch.bai.forEach(function (b) {
+          var L = T.lessons[b.id];
+          (L && L.baiTap || []).forEach(function (q) { if (q.muc >= 2) list.push({ bai: L, q: q }); });
+        });
+        return shuffle(list);
+      }).filter(function (l) { return l.length; });
+      if (T.freeBoards) T.freeBoards(); // hình của đề cũ
+      de.innerHTML = '';
+      if (!kho.length) { de.appendChild(el('p', null, 'Em chọn ít nhất một chương nhé.')); return; }
+      var cau = [];
+      for (var vong = 0; cau.length < SO_CAU && kho.some(function (l) { return l.length; }); vong++)
+        kho.forEach(function (l) { if (l.length && cau.length < SO_CAU) cau.push(l.pop()); });
+      cau.forEach(function (x, i) {
+        de.appendChild(el('div', { class: 'from' }, 'Câu ' + (i + 1) + ' – ', el('a', { href: '#/bai/' + x.bai.id + '/lyThuyet' }, 'Bài ' + x.bai.id + '. ' + x.bai.ten)));
+        T.mountQuestion(de, x.q, { record: true });
+      });
+    }
+  };
 })(window.TOAN8);

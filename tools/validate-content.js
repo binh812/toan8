@@ -26,7 +26,7 @@ function checkBackslashes(src, file) {
   });
 }
 
-const KNOWN_WIDGETS = ['dienTich', 'hieuHaiBinhPhuong', 'geo'];
+const KNOWN_WIDGETS = ['dienTich', 'hieuHaiBinhPhuong', 'geo', 'doThi', 'hinhChop', 'bieuDo', 'xacSuat'];
 const KIEU = ['bieuThuc', 'so', 'nghiem', 'chon', 'dungSai', 'nhieuO'];
 const errors = [];
 const seenIds = {};
