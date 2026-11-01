@@ -141,7 +141,10 @@
       canh: [['A', 'B', { net: 2 }], ['A', 'C', { net: 2 }], ['B', 'C', { net: 2 }], ['P', 'Q', { mau: TIM, day: 3 }]],
       nhan: [['A', 'P', '120 m'], ['P', 'B', '120 m'], ['A', 'Q', '180 m'], ['Q', 'C', '180 m'], ['B', 'C', '260 m']],
       them: function (board) {
-        board.create('ellipse', [Pp, Q, [(Pp[0] + Q[0]) / 2, (Pp[1] + Q[1]) / 2 + 0.6]],
+        // hai tiêu điểm nằm trong đoạn PQ, elip đi qua P (và đối xứng qua Q) nên P, Q nằm đúng trên bờ hồ
+        var Mx = (Pp[0] + Q[0]) / 2, My = (Pp[1] + Q[1]) / 2;
+        var F1 = [Mx + 0.7 * (Pp[0] - Mx), My + 0.7 * (Pp[1] - My)], F2 = [Mx + 0.7 * (Q[0] - Mx), My + 0.7 * (Q[1] - My)];
+        board.create('ellipse', [F1, F2, Pp],
           { fillColor: '#74c0fc', fillOpacity: 0.35, strokeColor: '#74c0fc', fixed: true, highlight: false });
       },
       ghiChu: 'P, Q ở hai bờ hồ' });
@@ -168,7 +171,7 @@
       { loai: 'dinhNghia', tieuDe: 'Đường trung bình của tam giác',
         noiDung: '**Đường trung bình của tam giác** là đoạn thẳng nối **trung điểm hai cạnh** của tam giác.\n\nMỗi tam giác có ba đường trung bình.' },
       { loai: 'dinhLi', tieuDe: 'Tính chất đường trung bình',
-        noiDung: 'Đường trung bình của tam giác **song song** với cạnh thứ ba và **bằng nửa** cạnh đó.\n\n**GT:** $\\triangle ABC$, $AD = DB$, $AE = EC$ ($D \\in AB$, $E \\in AC$).\n\n**KL:** $DE \\parallel BC$; $$\\ca{DE} = \\frac{1}{2}BC = \\ca{BF}.$$' },
+        noiDung: 'Đường trung bình của tam giác **song song** với cạnh thứ ba và **bằng nửa** cạnh đó.\n\n**GT:** $\\triangle ABC$, $AD = DB$, $AE = EC$ ($D \\in AB$, $E \\in AC$); $F$ là trung điểm của $BC$.\n\n**KL:** $DE \\parallel BC$; $$\\ca{DE} = \\frac{1}{2}BC = \\ca{BF}.$$' },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 10, -0.8], build: tinhChatBuild },
         chuThich: '$F$ là trung điểm $BC$. Kéo các đỉnh: đoạn cam $DE$ luôn dài bằng đoạn cam $BF$ (một nửa $BC$). Tứ giác $DEFB$ là hình bình hành.' },
       { loai: 'text', tieuDe: 'Vì sao?',
@@ -228,7 +231,7 @@
         loiThuongGap: [
           { gt: 30, giaiThich: '$30$ là chu vi $\\triangle ABC$. Chu vi $\\triangle MNP$ chỉ bằng một nửa.' },
           { gt: 60, giaiThich: 'Mỗi đường trung bình bằng **nửa** cạnh tương ứng, không phải gấp đôi.' }] },
-      { id: '16.6', muc: 2, de: 'Trong hình, tam giác $ABC$ vuông tại $A$, $M$ là trung điểm của $AB$ ($BM = MA = 4$), $MN \\perp AB$, $BN = 5$, $MN = 3$. Tính $NC$ và $AC$.',
+      { id: '16.6', muc: 2, de: 'Trong hình, tam giác $ABC$ vuông tại $A$, $M$ là trung điểm của $AB$ ($BM = MA = 4$), $MN \\perp AB$ ($N \\in BC$), $BN = 5$, $MN = 3$. Tính $NC$ và $AC$.',
         hinh: h6,
         dapAn: { kieu: 'nhieuO', o: [
           { kieu: 'so', gt: 5, nhan: '$NC =$', loiThuongGap: [{ gt: 10, giaiThich: '$10$ là cả cạnh $BC$. $N$ là trung điểm nên $NC = BN$.' }] },
@@ -242,7 +245,9 @@
         loiGiai: ['$P$, $Q$ là trung điểm của $AB$, $AC$ nên $PQ$ là đường trung bình của $\\triangle ABC$.', '$PQ = \\frac{1}{2} \\cdot 260 = 130$ (m)'],
         loiThuongGap: [{ gt: 520, giaiThich: 'Đường trung bình bằng **nửa** cạnh thứ ba: $PQ = 260 : 2$.' }, { gt: 150, giaiThich: 'Em lấy trung bình cộng $(120 + 180) : 2$. Hãy dùng tính chất đường trung bình: $PQ = \\frac{1}{2}BC$.' }] },
       { id: '16.8', muc: 2, de: 'Cho tam giác $ABC$ có $AC = 9$ cm, $M$ là trung điểm của $AB$. Đường thẳng qua $M$ song song với $BC$ cắt $AC$ tại $N$. Tính $x = AN$ (cm).',
-        hinh: tgTrungBinh(8, 9, 7, { nhan: [['A', 'N', 'x', false, 1.6]] }),
+        // không vạch AN = NC: đó chính là điều em phải suy ra
+        hinh: tgTrungBinh(8, 9, 7, { nhan: [['A', 'N', 'x', false, 1.6]],
+          canh: [['A', 'M', { vach: 1 }], ['M', 'B', { vach: 1 }], ['A', 'N'], ['N', 'C'], ['B', 'C'], ['M', 'N', { mau: TIM, day: 4 }]] }),
         dapAn: { kieu: 'so', gt: '9/2' },
         goiY: ['Đường thẳng qua trung điểm một cạnh và song song với cạnh thứ hai thì đi qua trung điểm cạnh thứ ba.', 'Vậy $N$ là trung điểm của $AC$.'],
         loiGiai: ['$M$ là trung điểm $AB$, $MN \\parallel BC$ nên $N$ là trung điểm $AC$.', '$x = \\frac{1}{2} \\cdot 9 = 4{,}5$'],
@@ -265,7 +270,7 @@
       { de: 'Cho tam giác $ABC$, $M$ và $N$ là trung điểm của $AB$ và $AC$, $BC = 8$ cm. Bạn Tùng tính $MN$ như sau. Dòng nào sai?',
         loiGiaiSai: ['$MN$ là đường trung bình của $\\triangle ABC$', 'Nên $MN = 2 \\cdot BC = 2 \\cdot 8 = 16$ (cm)'],
         dongSai: 1,
-        giaiThich: 'Đường trung bình bằng **nửa** cạnh thứ ba, không phải gấp đôi. Nhìn hình cũng thấy $MN$ ngắn hơn $BC$.',
+        giaiThich: 'Đường trung bình bằng **nửa** cạnh thứ ba, không phải gấp đôi. Đường trung bình nối hai trung điểm nên ngắn hơn $BC$.',
         sua: '$MN = \\frac{1}{2}BC = \\frac{1}{2} \\cdot 8 = 4$ (cm)' },
       { de: 'Cho tam giác $ABC$ có $M$ là trung điểm của $BC$, $AB = 10$ cm. Bạn Hà tính $AM$ như sau. Dòng nào sai?',
         loiGiaiSai: ['$AM$ là đường trung bình của $\\triangle ABC$', 'Nên $AM = \\frac{1}{2}AB = 5$ (cm)'],

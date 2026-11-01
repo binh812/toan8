@@ -188,11 +188,11 @@
           loiThuongGap: [{ gt: 12, giaiThich: 'Em đã nhân $6 \\cdot 4 : 2$. Từ $\\frac{4}{2} = \\frac{6}{NC}$ suy ra $NC = \\frac{6 \\cdot 2}{4}$.' }] } ] },
       { de: 'Cho tam giác $ABC$, $M \\in AB$, $N \\in AC$ với $AM = 6$, $AB = 9$, $AN = 4$, $AC = 6$. Hỏi $MN$ có song song với $BC$ không?', buoc: [
         { lam: '$\\frac{AM}{AB} = \\frac{6}{9} = \\frac{2}{3}$; $\\frac{AN}{AC} = \\frac{4}{6} = \\frac{2}{3}$', vi: 'Tính hai tỉ số đoạn trên / cả cạnh.' },
-        { lam: 'Hai tỉ số bằng nhau nên $MN \\parallel BC$ (Thalès đảo)', vi: 'Vậy $MN$ có song song với $BC$ không?', an: true,
+        { lam: 'Hai tỉ số bằng nhau nên $MN \\parallel BC$ (Thalès đảo)', vi: 'Khẳng định "$MN \\parallel BC$" đúng hay sai?', an: true,
           dapAn: { kieu: 'dungSai', gt: true } } ] }
     ],
     baiTap: [
-      { id: '15.1', muc: 1, de: 'Cho $AB = 6$ cm và $CD = 15$ cm. Tìm tỉ số $\\frac{AB}{CD}$ (viết dạng phân số tối giản, ví dụ 3/4).',
+      { id: '15.1', muc: 1, de: 'Cho $AB = 6$ cm và $CD = 15$ cm. Tìm tỉ số $\\frac{AB}{CD}$ (viết dạng phân số, ví dụ 3/4).',
         dapAn: { kieu: 'so', gt: '2/5' },
         goiY: ['Tỉ số của hai đoạn thẳng là tỉ số độ dài của chúng (cùng đơn vị).', 'Tính $\\frac{6}{15}$ rồi rút gọn.'],
         loiGiai: ['$\\frac{AB}{CD} = \\frac{6}{15}$', '$= \\frac{2}{5}$'],
@@ -236,7 +236,7 @@
         dapAn: { kieu: 'chon', gt: 3, luaChon: ['$\\frac{AM}{AB} = \\frac{AN}{AC}$', '$\\frac{AM}{MB} = \\frac{AN}{NC}$', '$\\frac{MB}{AB} = \\frac{NC}{AC}$', '$\\frac{AM}{MB} = \\frac{AN}{AC}$'] },
         goiY: ['Hai vế phải cùng kiểu đoạn: (trên/dưới), (trên/cả cạnh) hoặc (dưới/cả cạnh).', 'Ở phương án cuối, vế trái là trên/dưới còn vế phải là trên/cả cạnh.'],
         loiGiai: ['Ba tỉ lệ thức đầu đúng theo định lí Thalès.', '$\\frac{AM}{MB} = \\frac{AN}{AC}$ sai vì lệch đoạn: vế trái là đoạn trên/đoạn dưới, vế phải là đoạn trên/cả cạnh.'] },
-      { id: '15.9', muc: 3, de: 'Để đo khoảng cách giữa hai điểm $C$ và $D$ ở hai bờ sông, người ta chọn điểm $E$ trên đường thẳng $AB$ ($AB$ vuông góc với hai bờ) sao cho $E$, $C$, $D$ thẳng hàng. Đo được $EA = 240$ m, $AB = 160$ m (chiều rộng sông), $EC = 300$ m. Tính $CD$ (m).',
+      { id: '15.9', muc: 3, de: 'Để đo khoảng cách giữa hai điểm $C$ và $D$ ở hai bờ sông ($A$, $C$ nằm trên một bờ; $B$, $D$ nằm trên bờ kia; hai bờ song song), người ta chọn điểm $E$ trên đường thẳng $AB$ ($AB$ vuông góc với hai bờ) sao cho $E$, $C$, $D$ thẳng hàng. Đo được $EA = 240$ m, $AB = 160$ m (chiều rộng sông), $EC = 300$ m. Tính $CD$ (m).',
         hinh: hinhSong,
         dapAn: { kieu: 'so', gt: 200 },
         goiY: ['Hai bờ sông song song nên $AC \\parallel BD$. Xét tam giác $EBD$.', 'Định lí Thalès: $\\frac{EA}{AB} = \\frac{EC}{CD}$, tức $\\frac{240}{160} = \\frac{300}{CD}$.'],

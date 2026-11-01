@@ -12,7 +12,7 @@ TOAN8.bai({
       congThuc: '(6x^2 + 4x) : 2x = \\;?'
     },
     cauHoi: {
-      de: 'Cạnh còn lại của hình chữ nhật là đa thức nào?',
+      de: 'Cạnh còn lại của hình chữ nhật là đa thức nào? (Em thực hiện phép chia rồi viết kết quả dạng thu gọn.)',
       dapAn: { kieu: 'bieuThuc', gt: '3x+2', dang: 'khaiTrien' },
       goiY: ['Diện tích = cạnh × cạnh, nên cạnh còn lại = diện tích : $2x$. Chia **từng** mảnh cho $2x$.'],
       loiGiai: ['$6x^2 : 2x = 3x$ vì $2x \\cdot 3x = 6x^2$; $4x : 2x = 2$ vì $2x \\cdot 2 = 4x$.',

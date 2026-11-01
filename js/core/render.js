@@ -59,5 +59,5 @@
     }
     return e;
   }
-  return { md: md, mdInline: mdInline, el: el, tex: tex };
+  return { md: md, mdInline: mdInline, el: el, tex: tex, MACROS: MACROS };
 });

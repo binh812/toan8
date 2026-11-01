@@ -11,6 +11,6 @@ test('bài có lỗi: báo đủ các loại lỗi', () => {
   const r = run('bai-sai.js');
   assert.strictEqual(r.status, 1);
   const out = r.stdout;
-  for (const s of ['nhanTu', 'loiThuongGap', 'baiTap', 'viDu', 'viDuMo', 'dongSai', 'dấu $', 'loiGiai', 'goiY phải là mảng'])
+  for (const s of ['nhanTu', 'loiThuongGap', 'baiTap', 'viDu', 'viDuMo', 'dongSai', 'dấu $', 'loiGiai', 'goiY phải là mảng', 'KaTeX', 'dấu \\ đơn'])
     assert.ok(out.includes(s), 'thiếu báo lỗi: ' + s + '\n' + out);
 });

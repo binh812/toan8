@@ -11,7 +11,7 @@ TOAN8.bai({
       congThuc: 'S = \\ca{3x} \\cdot \\cb{2y} = \\;?'
     },
     cauHoi: {
-      de: 'Diện tích $S$ của mảnh vườn $3x \\times 2y$ bằng đơn thức nào? (Mỗi ô nhỏ có diện tích $xy$.)',
+      de: 'Diện tích $S$ của mảnh vườn $3x \\times 2y$ bằng đơn thức thu gọn nào? (Mỗi ô nhỏ có diện tích $xy$.)',
       dapAn: { kieu: 'bieuThuc', gt: '6xy', dang: 'khaiTrien' },
       goiY: ['Đếm số ô: có mấy cột, mấy hàng?'],
       loiGiai: ['Có $3$ cột và $2$ hàng nên có $3 \\cdot 2 = 6$ ô, mỗi ô có diện tích $xy$.',
@@ -71,10 +71,10 @@ TOAN8.bai({
   ],
   baiTap: [
     { id: '1.1', muc: 1, de: 'Biểu thức nào sau đây **là đơn thức**?',
-      dapAn: { kieu: 'chon', gt: 1, luaChon: ['$x + 3y$', '$-\\frac{2}{5}x^2y$', '$\\frac{4}{x}$', '$2\\surd\overline{x}$'] },
+      dapAn: { kieu: 'chon', gt: 1, luaChon: ['$x + 3y$', '$-\\frac{2}{5}x^2y$', '$\\frac{4}{x}$', '$2\\sqrt{x}$'] },
       goiY: ['Đơn thức chỉ là một số, một biến, hoặc **tích** của số và biến. Không có phép cộng, trừ, không chia cho biến, không có căn của biến.',
         'Xét từng biểu thức: có dấu $+$ không? có biến ở mẫu không? có căn không?'],
-      loiGiai: ['$x + 3y$ có phép cộng; $\\frac{4}{x}$ có biến ở mẫu; $2\\surd\overline{x}$ có căn của biến.',
+      loiGiai: ['$x + 3y$ có phép cộng; $\\frac{4}{x}$ có biến ở mẫu; $2\\sqrt{x}$ có căn của biến.',
         'Chỉ $-\\frac{2}{5}x^2y$ là tích của số và biến, nên nó là đơn thức.'] },
     { id: '1.2', muc: 1, de: 'Đúng hay sai: Hai đơn thức $3x^2y$ và $-5xy^2$ là hai đơn thức đồng dạng.',
       dapAn: { kieu: 'dungSai', gt: false },

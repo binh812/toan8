@@ -1,7 +1,7 @@
 TOAN8.bai({
   id: 902, ten: 'Bài mẫu có lỗi', sgk: { tap: 1, trang: 29 },
   khamPha: { nhiemVu: 'Quan sát hình.', cauHoi: { de: 'Hỏi', dapAn: { kieu: 'so', gt: 2 }, goiY: 'một chuỗi', loiGiai: ['2'] } },
-  lyThuyet: [{ loai: 'text', noiDung: 'Thiếu dấu đô la $x^2' }],
+  lyThuyet: [{ loai: 'text', noiDung: 'Thiếu dấu đô la $x^2' }, { loai: 'text', noiDung: 'Căn viết hỏng $2\\surd\overline{x}$' }],
   viDu: [{ de: 'Một ví dụ', buoc: [{ lam: 'a' }] }],
   viDuMo: [{ de: 'Không có bước ẩn', buoc: [{ lam: 'a' }] }],
   baiTap: [

@@ -21,7 +21,7 @@ TOAN8.bai({
   lyThuyet: [
     { loai: 'dinhNghia', tieuDe: 'Đa thức',
       noiDung: '**Đa thức** là tổng của những đơn thức; mỗi đơn thức trong tổng gọi là một **hạng tử** của đa thức đó.\n\nVí dụ: $A = x^3 - 3x^2y + xy - 1$ viết được thành $x^3 + (-3x^2y) + xy + (-1)$, nên $A$ có 4 hạng tử: $x^3$; $-3x^2y$; $xy$; $-1$.\n\n**Chú ý:** Mỗi đơn thức cũng được coi là một đa thức.' },
-    { loai: 'chuY', noiDung: 'Hạng tử mang theo **dấu** đứng trước nó: trong $x^3 - 3x^2y$, hạng tử thứ hai là $-3x^2y$ (không phải $3x^2y$).\n\nBiểu thức có biến ở mẫu (như $x + \\frac{2}{y}$) hoặc có căn của biến (như $\\surd\overline{x}$) thì **không** là đa thức.' },
+    { loai: 'chuY', noiDung: 'Hạng tử mang theo **dấu** đứng trước nó: trong $x^3 - 3x^2y$, hạng tử thứ hai là $-3x^2y$ (không phải $3x^2y$).\n\nBiểu thức có biến ở mẫu (như $x + \\frac{2}{y}$) hoặc có căn của biến (như $\\sqrt{x}$) thì **không** là đa thức.' },
     { loai: 'dinhNghia', tieuDe: 'Đa thức thu gọn',
       noiDung: '**Đa thức thu gọn** là đa thức không có hai hạng tử nào đồng dạng.\n\nMuốn thu gọn một đa thức: **nhóm** các hạng tử đồng dạng, rồi **cộng** các hạng tử đồng dạng trong mỗi nhóm.\n$$B = 2x^2 - 3xy + x^2 + 5xy = (\\ca{2x^2 + x^2}) + (\\cc{-3xy + 5xy}) = \\ca{3x^2} + \\cc{2xy}$$' },
     { loai: 'hinh', widget: 'dienTich',
@@ -121,7 +121,7 @@ TOAN8.bai({
       giaiThich: 'Bậc của đa thức là bậc **cao nhất** của các hạng tử trong dạng thu gọn, không phải tổng các bậc.',
       sua: 'Bậc của $A$ là $3$.' },
     { de: 'Bạn Nam tìm bậc của đa thức $B = x^4 - 2x^2y + 3 - x^4$ như sau. Dòng nào sai?',
-      loiGiaiSai: ['Hạng tử $x^4$ có bậc $4$, lớn nhất trong các hạng tử.', 'Vậy bậc của $B$ là $4$.'],
+      loiGiaiSai: ['Không cần thu gọn, hạng tử có bậc cao nhất là $x^4$ (bậc $4$).', 'Vậy bậc của $B$ là $4$.'],
       dongSai: 0,
       giaiThich: 'Bạn Nam chưa thu gọn đa thức. $x^4 - x^4 = 0$ nên dạng thu gọn là $B = -2x^2y + 3$, không còn hạng tử $x^4$.',
       sua: 'Thu gọn: $B = -2x^2y + 3$. Hạng tử bậc cao nhất là $-2x^2y$ (bậc 3), nên bậc của $B$ là $3$.' }

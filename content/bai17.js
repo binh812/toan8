@@ -131,7 +131,7 @@
       { loai: 'chuY', noiDung: '**Cách nhớ:** đoạn nào trên $BC$ chạm đỉnh $B$ thì đi với cạnh $AB$; đoạn chạm đỉnh $C$ đi với cạnh $AC$:\n\n$$\\frac{D\\ca{B}}{D\\cb{C}} = \\frac{A\\ca{B}}{A\\cb{C}}.$$\n\n**Hay nhầm:** viết ngược thành $\\frac{DB}{DC} = \\frac{AC}{AB}$ là **sai**.' },
       { loai: 'text', tieuDe: 'Tính DB, DC khi biết BC',
         noiDung: 'Vì $D$ nằm giữa $B$ và $C$ nên $DB + DC = BC$. Từ $\\frac{DB}{AB} = \\frac{DC}{AC}$, dùng tính chất dãy tỉ số bằng nhau:\n\n$$\\frac{DB}{AB} = \\frac{DC}{AC} = \\frac{DB + DC}{AB + AC} = \\frac{BC}{AB + AC}.$$' },
-      { loai: 'chuY', noiDung: '**Chú ý (đảo lại):** trong tam giác $ABC$, nếu $D$ thuộc đoạn $BC$ và $\\frac{DB}{DC} = \\frac{AB}{AC}$ thì $AD$ là đường phân giác của góc $A$.\n\n**Em có biết?** Đường phân giác **ngoài** tại $A$ (cắt đường thẳng $BC$ tại $D\'$) cũng có tính chất $\\frac{D\'B}{D\'C} = \\frac{AB}{AC}$.' }
+      { loai: 'chuY', noiDung: '**Chú ý (đảo lại):** trong tam giác $ABC$, nếu $D$ thuộc đoạn $BC$ và $\\frac{DB}{DC} = \\frac{AB}{AC}$ thì $AD$ là đường phân giác của góc $A$.\n\n**Em có biết?** Đường phân giác **ngoài** tại $A$ (cắt đường thẳng $BC$ tại $D\'$, khi $AB \\ne AC$) cũng có tính chất $\\frac{D\'B}{D\'C} = \\frac{AB}{AC}$.' }
     ],
     viDu: [
       { de: 'Cho tam giác $ABC$ có $AB = 6$ cm, $AC = 9$ cm, $AD$ là phân giác của góc $A$ ($D \\in BC$) và $DB = 4$ cm. Tính $DC$.', buoc: [
@@ -157,7 +157,7 @@
         goiY: ['Tính chất phân giác: $\\frac{DB}{DC} = \\frac{AB}{AC}$.', '$\\frac{3}{x} = \\frac{6}{8}$, nhân chéo.'],
         loiGiai: ['$\\frac{DB}{DC} = \\frac{AB}{AC}$, tức $\\frac{3}{x} = \\frac{6}{8}$', '$x = \\frac{3 \\cdot 8}{6} = 4$'],
         loiThuongGap: [{ gt: 2.25, giaiThich: 'Em ghép ngược ($\\frac{DB}{DC} = \\frac{AC}{AB}$). $DB$ kề $AB$ nên $\\frac{DB}{DC} = \\frac{AB}{AC}$.' }] },
-      { id: '17.2', muc: 1, de: 'Trong hình, $AD$ là phân giác của góc $A$, $AB = 9$, $AC = 15$. Tìm tỉ số $\\frac{DB}{DC}$ (phân số tối giản).',
+      { id: '17.2', muc: 1, de: 'Trong hình, $AD$ là phân giác của góc $A$, $AB = 9$, $AC = 15$. Tìm tỉ số $\\frac{DB}{DC}$ (viết dạng phân số, ví dụ 3/4).',
         hinh: hinhPG(D4, 9, 15, 12, [['A', 'B', '9'], ['A', 'C', '15']]),
         dapAn: { kieu: 'so', gt: '3/5' },
         goiY: ['$\\frac{DB}{DC} = \\frac{AB}{AC}$.', 'Rút gọn $\\frac{9}{15}$.'],

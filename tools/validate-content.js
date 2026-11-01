@@ -4,6 +4,27 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const P = require('../js/core/parser.js');
 const C = require('../js/core/checker.js');
+const R = require('../js/core/render.js');
+const katex = require('../lib/katex/katex.min.js');
+
+// Render thử từng công thức như trên trình duyệt nhưng bật báo lỗi (trên trang, lệnh lạ chỉ hiện chữ đỏ, khó thấy).
+function checkMath(s, where) {
+  const re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g;
+  let m;
+  while ((m = re.exec(s))) {
+    const src = m[1] != null ? m[1] : m[2];
+    try { katex.renderToString(src, { displayMode: m[1] != null, throwOnError: true, strict: 'ignore', macros: Object.assign({}, R.MACROS) }); }
+    catch (e) { errors.push(where + ': công thức KaTeX lỗi "' + src.slice(0, 40) + '" – ' + String(e.message).split('\n')[0].slice(0, 80)); }
+  }
+}
+
+// Trong chuỗi JS, "\o", "\f", "\s"… (một dấu \) bị nuốt hoặc thành kí tự điều khiển: lệnh LaTeX phải viết "\\".
+function checkBackslashes(src, file) {
+  src.split('\n').forEach((line, i) => {
+    if (/(^|[^\\])(\\\\)*\\(?![nu'"\\])[a-zA-Z]/.test(line))
+      errors.push(file + ':' + (i + 1) + ': dấu \\ đơn trước chữ cái (lệnh LaTeX trong chuỗi JS phải viết \\\\) – "' + line.trim().slice(0, 60) + '"');
+  });
+}
 
 const KNOWN_WIDGETS = ['dienTich', 'hieuHaiBinhPhuong', 'geo'];
 const KIEU = ['bieuThuc', 'so', 'nghiem', 'chon', 'dungSai', 'nhieuO'];
@@ -123,13 +144,17 @@ function checkLesson(L, file) {
     need(Array.isArray(t.loiGiaiSai) && t.dongSai >= 0 && t.dongSai < t.loiGiaiSai.length, 'timLoi[' + i + '] dongSai ngoài khoảng');
     need(t.giaiThich, 'timLoi[' + i + '] thiếu giaiThich');
   });
-  walkStrings(L, (s, where) => { if ((s.match(/\$/g) || []).length % 2) errors.push(T + where + ': số dấu $ lẻ: "' + s.slice(0, 50) + '"'); }, '');
+  walkStrings(L, (s, where) => {
+    if ((s.match(/\$/g) || []).length % 2) errors.push(T + where + ': số dấu $ lẻ: "' + s.slice(0, 50) + '"');
+    else checkMath(s, T + where);
+  }, '');
 }
 
 const files = process.argv.slice(2).length ? process.argv.slice(2)
   : fs.readdirSync(path.join(__dirname, '..', 'content')).filter(f => /^bai\d+\.js$/.test(f)).map(f => path.join(__dirname, '..', 'content', f));
 let count = 0;
 for (const f of files) {
+  checkBackslashes(fs.readFileSync(f, 'utf8'), path.basename(f));
   try { loadLessons(f).forEach(L => { count++; checkLesson(L, path.basename(f)); }); }
   catch (e) { errors.push(path.basename(f) + ': không chạy được file (' + e.message + ')'); }
 }
