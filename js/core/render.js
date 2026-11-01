@@ -7,8 +7,8 @@
   'use strict';
   // Màu dùng chung giữa công thức và hình: \ca{A} cam, \cb{B} xanh dương, \cc{} xanh lá, \cd{} tím.
   var MACROS = {
-    '\\ca': '\\textcolor{#d9480f}{#1}', '\\cb': '\\textcolor{#1971c2}{#1}',
-    '\\cc': '\\textcolor{#2f9e44}{#1}', '\\cd': '\\textcolor{#9c36b5}{#1}'
+    '\\ca': '\\textcolor{##d9480f}{#1}', '\\cb': '\\textcolor{##1971c2}{#1}',
+    '\\cc': '\\textcolor{##2f9e44}{#1}', '\\cd': '\\textcolor{##9c36b5}{#1}'
   };
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   function bold(s) { return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }

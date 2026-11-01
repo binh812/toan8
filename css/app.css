@@ -99,6 +99,7 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(60,40,0,
 .sliders label { display: flex; align-items: center; gap: 10px; font-weight: 600; }
 .sliders input[type=range] { width: 200px; accent-color: var(--c); }
 .dt-tong { margin-top: 10px; font-size: 1.05rem; }
+svg.dt { display: block; margin: 0 auto; }
 svg.dt text, svg.dt .lbl { font: 600 18px "Segoe UI", system-ui, sans-serif; }
 
 /* Ví dụ từng bước */
