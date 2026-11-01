@@ -26,6 +26,7 @@ function checkBackslashes(src, file) {
   });
 }
 
+const FIGURE = path.join(__dirname, '..', 'js', 'widgets', 'figure.js');
 const KNOWN_WIDGETS = ['dienTich', 'hieuHaiBinhPhuong', 'geo', 'doThi', 'hinhChop', 'bieuDo', 'xacSuat'];
 const KIEU = ['bieuThuc', 'so', 'nghiem', 'chon', 'dungSai', 'nhieuO'];
 const errors = [];
@@ -34,7 +35,10 @@ const seenIds = {};
 function loadLessons(file) {
   const lessons = [];
   const ctx = { TOAN8: { bai: def => lessons.push(def) }, console };
-  vm.runInNewContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(FIGURE, 'utf8'), ctx, { filename: FIGURE }); // TOAN8.hinhTinh, TOAN8.hh dùng lúc nạp bài
+  vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });
   return lessons;
 }
 
