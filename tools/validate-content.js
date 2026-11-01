@@ -88,6 +88,12 @@ function checkLesson(L, file) {
   need(L.khamPha && L.khamPha.nhiemVu, 'thiếu khamPha.nhiemVu');
   if (L.khamPha && L.khamPha.widget) need(KNOWN_WIDGETS.includes(L.khamPha.widget), 'khamPha.widget lạ: ' + L.khamPha.widget);
   if (L.khamPha && L.khamPha.cauHoi) checkDapAn(T + ' khamPha.cauHoi', L.khamPha.cauHoi.dapAn, []);
+  // goiY ở mọi chỗ phải là mảng (chuỗi sẽ bị tính số nấc theo số kí tự)
+  (function walkGoiY(o, where) {
+    if (!o || typeof o !== 'object') return;
+    if ('goiY' in o && !Array.isArray(o.goiY)) errors.push(T + where + ': goiY phải là mảng');
+    for (const k of Object.keys(o)) if (k !== 'config' && k !== 'goiY') walkGoiY(o[k], where + '.' + k);
+  })(L, '');
   need(Array.isArray(L.lyThuyet) && L.lyThuyet.length >= 1, 'lyThuyet cần ≥ 1 khối');
   (L.lyThuyet || []).forEach((k, i) => { if (k.loai === 'hinh') need(KNOWN_WIDGETS.includes(k.widget), 'lyThuyet[' + i + '] widget lạ: ' + k.widget); });
   need(Array.isArray(L.viDu) && L.viDu.length >= 2, 'viDu cần ≥ 2 ví dụ');

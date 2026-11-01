@@ -15,11 +15,19 @@
   function productLabel(h, c) {
     var wrap = function (s) { return /[+\-]/.test(s) ? '(' + s + ')' : s; };
     if (h === c) return wrap(h) + '^2';
-    var hn = /^\d+$/.test(h), cn = /^\d+$/.test(c);
-    if (hn && cn) return String(h * c);
-    if (cn && !hn) return c + wrap(h);
-    if (/^[a-z]$/.test(h) && /^[a-z]$/.test(c) && c < h) return c + h; // viết ab, không viết ba
-    return wrap(h) + wrap(c);
+    if (/[+\-]/.test(h + c)) return wrap(h) + wrap(c); // nhãn là tổng/hiệu: giữ dạng tích (a-b)b
+    // hai đơn thức: nhân thật (3x·2y → 6xy, x·1 → x), hệ số trước, biến theo thứ tự chữ cái
+    try {
+      var P = T.parser;
+      var ast = P.parse(String(nerdamer(P.toNerdamer(P.parse(h)) + '*' + P.toNerdamer(P.parse(c))).toString()));
+      if (ast.t === 'mul') {
+        var key = function (f) { return f.t === 'num' ? '' : f.t === 'var' ? f.n : f.t === 'pow' && f.b.t === 'var' ? f.b.n : '~'; };
+        ast = { t: 'mul', fs: ast.fs.slice().sort(function (a, b) { return key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0; }) };
+      }
+      return P.toLatex(ast);
+    } catch (e) {
+      return wrap(h) + wrap(c);
+    }
   }
   // Ô giao giữa hai màu khác nhau tô xanh lá – trùng màu \cc dùng cho hạng tử "chéo" (2ab) trong công thức.
   var CROSS = '#2f9e44';

@@ -2,7 +2,7 @@
 (function (root, factory) {
   var m = factory(root);
   if (typeof module === 'object' && module.exports) module.exports = m;
-  else { root.TOAN8 = root.TOAN8 || {}; root.TOAN8.md = m.md; root.TOAN8.el = m.el; root.TOAN8.tex = m.tex; }
+  else { root.TOAN8 = root.TOAN8 || {}; root.TOAN8.md = m.md; root.TOAN8.mdInline = m.mdInline; root.TOAN8.el = m.el; root.TOAN8.tex = m.tex; }
 })(typeof self !== 'undefined' ? self : this, function (root) {
   'use strict';
   // Màu dùng chung giữa công thức và hình: \ca{A} cam, \cb{B} xanh dương, \cc{} xanh lá, \cd{} tím.
@@ -19,24 +19,27 @@
     return K.renderToString(src, { displayMode: !!display, throwOnError: false, macros: Object.assign({}, MACROS) });
   }
 
+  // Thay công thức bằng chỗ giữ (\u0000k\u0000) trước, xử lí chữ (escape, **đậm**, xuống dòng) rồi mới trả công thức về:
+  // nhờ vậy **đậm** bọc được công thức và <br> không lọt vào HTML/SVG của KaTeX.
   function inline(s) {
-    var out = '', re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g, last = 0, m;
-    while ((m = re.exec(s))) {
-      out += bold(esc(s.slice(last, m.index)));
-      out += m[1] != null ? tex(m[1], true) : tex(m[2], false);
-      last = re.lastIndex;
-    }
-    return out + bold(esc(s.slice(last)));
+    var maths = [];
+    var text = s.replace(/\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g, function (_, d, i) {
+      maths.push(d != null ? tex(d, true) : tex(i, false));
+      return '\u0000' + (maths.length - 1) + '\u0000';
+    });
+    return bold(esc(text)).replace(/\n/g, '<br>').replace(/\u0000(\d+)\u0000/g, function (_, k) { return maths[k]; });
   }
 
   function md(s) {
     if (s == null || s === '') return '';
     return String(s).split(/\n\s*\n/).map(function (para) {
-      var p = para.trim(), h = inline(p).replace(/\n/g, '<br>');
+      var p = para.trim(), h = inline(p);
       var onlyDisplay = /^\$\$[^$]+\$\$$/.test(p); // đoạn chỉ gồm một công thức khối: không bọc <p>
       return onlyDisplay ? h : '<p>' + h + '</p>';
     }).join('');
   }
+  // Một dòng (tiêu đề, nhãn): không bọc <p>.
+  function mdInline(s) { return s == null ? '' : inline(String(s).trim()); }
 
   function el(tag, attrs) {
     var e = document.createElement(tag);
@@ -56,5 +59,5 @@
     }
     return e;
   }
-  return { md: md, el: el, tex: tex };
+  return { md: md, mdInline: mdInline, el: el, tex: tex };
 });

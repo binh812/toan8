@@ -53,11 +53,28 @@
     return Object.keys(pw).sort().map(function (k) { return k + '^' + pw[k]; }).join(' ');
   }
 
+  // Đơn thức đã thu gọn: nhiều nhất một hệ số, mỗi biến chỉ xuất hiện một lần (2x·3x²y chưa thu gọn).
+  function isCollectedMono(n) {
+    while (n.t === 'neg') n = n.a;
+    if (n.t !== 'mul') return true;
+    var consts = 0, vars = {};
+    for (var i = 0; i < n.fs.length; i++) {
+      var f = n.fs[i];
+      if (isConst(f)) { consts++; continue; }
+      var v = f.t === 'var' ? f.n : f.t === 'pow' && f.b.t === 'var' ? f.b.n : null;
+      if (v === null) continue;
+      if (vars[v]) return false;
+      vars[v] = 1;
+    }
+    return consts <= 1;
+  }
+
   function isExpanded(ast) {
     var terms = ast.t === 'add' ? ast.terms : [ast], seen = {};
     for (var i = 0; i < terms.length; i++) {
       var s = monoSig(terms[i]);
       if (s === null) return { ok: false, ly: 'Đúng giá trị, nhưng em cần khai triển hết (không còn dấu ngoặc).' };
+      if (!isCollectedMono(terms[i])) return { ok: false, ly: 'Đúng giá trị, nhưng em cần thu gọn đơn thức (nhân các hệ số với nhau, gộp các lũy thừa cùng biến).' };
       if (seen[s]) return { ok: false, ly: 'Đúng giá trị, nhưng em còn các hạng tử đồng dạng chưa thu gọn.' };
       seen[s] = 1;
     }
@@ -94,6 +111,9 @@
       nonConst += mult;
       if (nonConstFactorCount(P.toNerdamer(base)) > 1)
         return { ok: false, ly: 'Gần đúng rồi! Nhân tử $' + P.toLatex(base) + '$ vẫn còn phân tích tiếp được.' };
+      var ct = intContent(base);
+      if (ct > 1)
+        return { ok: false, ly: 'Gần đúng rồi! Nhân tử $' + P.toLatex(base) + '$ còn đặt được nhân tử chung $' + ct + '$.' };
     }
     if (total < 2 || nonConst < 1) return no;
     return { ok: true };
@@ -155,7 +175,17 @@
     return res('sai');
   }
 
-  function checkRoots(d, input) {
+  function sameSet(vals, wanted) {
+    var want = wanted.slice();
+    return vals.length === want.length && vals.every(function (v) {
+      var k = want.findIndex(function (w) { return near(w, v, 1e-9); });
+      if (k < 0) return false;
+      want.splice(k, 1);
+      return true;
+    });
+  }
+
+  function checkRoots(d, input, ltg) {
     var s = String(input == null ? '' : input).toLowerCase().trim();
     if (/vô\s*nghiệm|vo\s*nghiem/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
     if (/vô\s*số|vo\s*so/.test(s)) return res(d.gt === 'voSoNghiem' ? 'dung' : 'sai');
@@ -163,14 +193,9 @@
     var parts = s.split(';').map(function (t) { return t.trim().replace(/^[a-z]\s*=/, '').trim(); }).filter(Boolean);
     var vals = parts.map(parseNumber);
     if (!vals.length || vals.some(Number.isNaN)) return res('khongDoc', 'Ghi các nghiệm cách nhau bằng dấu ; ví dụ: x = 2; x = -3');
-    var want = d.gt.slice();
-    var okAll = vals.length === want.length && vals.every(function (v) {
-      var k = want.findIndex(function (w) { return near(w, v, 1e-9); });
-      if (k < 0) return false;
-      want.splice(k, 1);
-      return true;
-    });
-    if (okAll) return res('dung');
+    if (sameSet(vals, d.gt)) return res('dung');
+    for (var i = 0; i < ltg.length; i++)
+      if (Array.isArray(ltg[i].gt) && sameSet(vals, ltg[i].gt)) return res('loiThuongGap', ltg[i].giaiThich);
     return res('sai', vals.length < d.gt.length ? 'Chưa đủ: em còn thiếu nghiệm.' : null);
   }
 
@@ -179,7 +204,7 @@
     switch (d.kieu) {
       case 'bieuThuc': return checkExpr(d, input, ltg);
       case 'so': return checkNumber(d, input, ltg);
-      case 'nghiem': return checkRoots(d, input);
+      case 'nghiem': return checkRoots(d, input, ltg);
       case 'chon': return res(input != null && Number(input) === d.gt ? 'dung' : 'sai');
       case 'dungSai': return res(input === d.gt ? 'dung' : 'sai');
       case 'nhieuO': {

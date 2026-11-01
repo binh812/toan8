@@ -12,7 +12,7 @@
         if (k.chuThich) box.appendChild(el('div', { class: 'chu-thich', html: T.md(k.chuThich) }));
         return;
       }
-      c.appendChild(el('div', { class: 'the ' + (k.loai || 'text'), html: (k.tieuDe ? '<h3>' + k.tieuDe + '</h3>' : '') + T.md(k.noiDung) }));
+      c.appendChild(el('div', { class: 'the ' + (k.loai || 'text'), html: (k.tieuDe ? '<h3>' + T.mdInline(k.tieuDe) + '</h3>' : '') + T.md(k.noiDung) }));
     });
   };
 

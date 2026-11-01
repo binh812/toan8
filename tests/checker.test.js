@@ -27,6 +27,11 @@ test('dạng khai triển', () => {
   assert.ok(!k('(x+3)^2'));
   assert.ok(!k('x(x+6)+9'));
   assert.ok(!k('x^2+3x+3x+9'));
+  // đơn thức chưa thu gọn
+  assert.ok(!k('2x*3x^2y'));
+  assert.ok(!k('x*x'));
+  assert.ok(!k('2*3x'));
+  assert.ok(k('6x^3y'));
 });
 test('dạng nhân tử', () => {
   const f = s => C.isFactored(P.parse(s)).ok;
@@ -39,6 +44,8 @@ test('dạng nhân tử', () => {
   assert.ok(!f('x^2-9'));
   assert.ok(!f('(x^2-4)(x+1)'));
   assert.ok(!f('x(x+1)+2(x+1)'));
+  assert.ok(!f('x(2x-4)'));                // (2x-4) còn đặt được nhân tử chung 2
+  assert.ok(f('2x(x-2)'));
 });
 test('dạng rút gọn phân thức', () => {
   const r = s => C.isReduced(P.parse(s)).ok;
@@ -77,6 +84,9 @@ test('checkAnswer số, nghiệm, chọn, đúng/sai, nhiều ô', () => {
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [2, -3] }, '2').code, 'sai');
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [0.5] }, 'x = 1/2').code, 'dung');
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voNghiem' }, 'vô nghiệm').code, 'dung');
+  const ln = C.checkAnswer({ kieu: 'nghiem', gt: [0, 5] }, 'x = 5', [{ gt: [5], giaiThich: 'Em chia hai vế cho x nên mất nghiệm x = 0.' }]);
+  assert.strictEqual(ln.code, 'loiThuongGap');
+  assert.match(ln.msg, /mất nghiệm/);
   assert.strictEqual(C.checkAnswer({ kieu: 'chon', gt: 2 }, 2).code, 'dung');
   assert.strictEqual(C.checkAnswer({ kieu: 'dungSai', gt: false }, false).code, 'dung');
   const m = { kieu: 'nhieuO', o: [{ kieu: 'so', gt: 2 }, { kieu: 'bieuThuc', gt: 'x+1' }] };
