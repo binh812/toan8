@@ -1,0 +1,24 @@
+{
+  "name": "toan8-kntt",
+  "version": "1.0.0",
+  "description": "Ứng dụng học Toán 8 Kết nối tri thức",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node --test tests/",
+    "libs": "node tools/copy-libs.js",
+    "validate": "node tools/validate-content.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jsxgraph": "1.14.2",
+    "katex": "0.19.1",
+    "mathlive": "0.111.4",
+    "nerdamer": "2.0.0"
+  },
+  "private": true
+}
