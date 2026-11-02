@@ -18,18 +18,21 @@ Tiến độ lưu trong trình duyệt của máy đang dùng; nút "Lưu tiến
   sẽ báo màu vàng; gõ trúng một lỗi hay gặp (vd $(a+b)^2 = a^2+b^2$) sẽ được giải thích đúng lỗi đó.
 - **Thành thạo:** đúng ≥ 80% bài mức 1–2 mà không phải mở lời giải, và đúng ít nhất 1 bài mức 3.
 - **Ôn 5 câu hôm nay** (góc trên phải): câu làm sai quay lại sau 1 ngày, làm đúng thì giãn ra 2, 4, 8, 16 ngày.
+- **Ôn tập cuối năm** (nút ở trang chủ): chọn các chương cần ôn, bấm "Tạo đề" để có 10 câu vận dụng trộn từ các chương; bấm lại để có đề mới.
 - **Phụ huynh xem tiến độ:** thanh tiến độ trên từng thẻ bài ở trang chủ; tab có dấu ✓ là con đã mở.
 
 ## Hiện có
-Giai đoạn 1: Chương I (Đa thức), Chương II (Hằng đẳng thức), Chương IV (Định lí Thalès) – 12 bài.
-Các chương còn lại hiện "Sắp có" (giai đoạn 2: Chương III, VI, VII, IX, X; giai đoạn 3: Chương V, VIII, ôn tập cuối năm).
+Đủ cả năm: 10 chương, 39 bài của SGK (Tập 1 và Tập 2), 447 bài tập có lời giải.
+Hình động theo từng chương: mô hình diện tích (hằng đẳng thức), hình kéo được (tứ giác, Thalès, đồng dạng), đồ thị có thanh trượt
+(hàm số bậc nhất), biểu đồ đổi dạng (thống kê), thí nghiệm tung đồng xu/gieo xúc xắc/vòng quay (xác suất), hình chóp 3D xoay và trải phẳng.
 
 ## Cho người phát triển
 - `npm install` rồi `npm run libs` – chép thư viện vào `lib/` (đã có sẵn trong repo).
 - `npm test` – kiểm thử parser, chấm đáp án, lưu tiến độ, kiểm tra nội dung.
 - `npm run validate` – kiểm tra toàn bộ file bài học trong `content/`.
 - `node tools/smoke.js bai/6/tuLam --shot out.png` – mở app bằng Edge/Chrome chạy ngầm, báo lỗi console, chụp màn hình.
-- Thêm bài mới: tạo `content/baiNN.js` theo khuôn trong `docs/superpowers/plans/`, thêm thẻ `<script>` vào `index.html`, chạy validate.
+- Sửa/thêm bài: `content/baiNN.js` theo khuôn trong `docs/superpowers/plans/` (mỗi bài có sẵn thẻ `<script>` trong `index.html`), chạy validate.
+- Hình động: `js/widgets/` – `dienTich`, `geo` (JSXGraph), `figure.js` (hình tĩnh cho đề), `doThi`, `hinhChop`, `bieuDo`, `xacSuat`; cấu hình ghi ở chú thích `cfg:` đầu mỗi hàm.
 
 ## Nguồn và giấy phép
 - Nội dung bài tập, ví dụ, lời giải là tự soạn theo dạng bài SGK; mỗi bài ghi trang SGK tương ứng.
