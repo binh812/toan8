@@ -40,10 +40,10 @@
   }
 
   // q: { id, muc?, de, hinh?:{widget,config}, dapAn, goiY?:[], loiGiai:[], loiThuongGap?:[] }
-  // opts: { record: ghi vào tiến độ?, onResult?: fn(kết quả) }
+  // opts: { record: ghi vào tiến độ?, onResult?: fn(kết quả, { soLanSai, xemLoiGiai }), onXemLoiGiai?: fn() }
   T.mountQuestion = function (container, q, opts) {
     opts = opts || { record: true };
-    var hints = q.goiY || [], hintMax = hints.length + 1, level = 0;
+    var hints = q.goiY || [], hintMax = hints.length + 1, level = 0, soLanSai = 0;
     var ctl = answerControl(q.dapAn);
     var fb = el('div', { class: 'fb', hidden: true, role: 'status', 'aria-live': 'polite' });
     var hintBox = el('div', { class: 'hints' });
@@ -69,7 +69,7 @@
       if (level >= hintMax) return;
       level++;
       if (level <= hints.length) hintBox.appendChild(el('div', { class: 'hint', html: '<b>Gợi ý ' + level + ':</b> ' + T.md(hints[level - 1]) }));
-      else hintBox.appendChild(solution());
+      else { hintBox.appendChild(solution()); if (opts.onXemLoiGiai) opts.onXemLoiGiai(); }
       updateHintBtn();
     }
     function solution() {
@@ -90,11 +90,12 @@
       var r;
       try { r = T.checker.checkAnswer(q.dapAn, v, q.loiThuongGap); }
       catch (e) { console.error('Lỗi chấm câu ' + q.id, e); r = { ok: false, code: 'khongDoc', msg: 'Máy chưa đọc được đáp án này. Em kiểm tra lại cách viết nhé.' }; }
+      if (r.code === 'sai' || r.code === 'loiThuongGap' || r.code === 'saiDang') soLanSai++;
       show(r);
       if (r.tungO && ctl.subs) ctl.subs.forEach(function (s, i) { s.el.classList.toggle('o-sai', !r.tungO[i].ok); });
       if (opts.record && r.code !== 'khongDoc') T.store.recordAttempt(q.id, { ok: r.ok, hintLevel: level, hintMax: hintMax });
       if (r.ok) card.classList.add('done');
-      if (opts.onResult) opts.onResult(r);
+      if (opts.onResult) opts.onResult(r, { soLanSai: soLanSai, xemLoiGiai: level >= hintMax });
     }
     return { check: check, card: card, control: ctl };
   };

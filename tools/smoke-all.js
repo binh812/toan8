@@ -8,7 +8,7 @@ const BROWSERS = [
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   'C:/Program Files/Microsoft/Edge/Application/msedge.exe'
 ];
-const TABS = ['khamPha', 'lyThuyet', 'viDu', 'tuLam', 'timLoi'];
+const TABS = ['khamPha', 'lyThuyet', 'viDu', 'tuLam', 'timLoi', 'luyenThem'];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function main() {

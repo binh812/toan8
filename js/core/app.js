@@ -2,7 +2,7 @@
 (function (T) {
   'use strict';
   var el = T.el;
-  var TABS = [['khamPha', 'Khám phá'], ['lyThuyet', 'Lý thuyết'], ['viDu', 'Ví dụ'], ['tuLam', 'Tự làm'], ['timLoi', 'Tìm lỗi sai']];
+  var TABS = [['khamPha', 'Khám phá'], ['lyThuyet', 'Lý thuyết'], ['viDu', 'Ví dụ'], ['tuLam', 'Tự làm'], ['timLoi', 'Tìm lỗi sai'], ['luyenThem', 'Luyện thêm']];
   T.TABS = TABS;
   T.lessons = {};
   T.widgets = T.widgets || {};

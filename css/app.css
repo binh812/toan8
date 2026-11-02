@@ -210,6 +210,9 @@ math-field.mf:focus-within { border-color: var(--c); }
 .bd-tranh .bt-le { display: inline-block; overflow: hidden; vertical-align: bottom; white-space: nowrap; }
 .bd-tranh .bt-trong { display: inline-block; }
 
+.luyen-nut { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+.luyen-status b { color: var(--c); }
+
 @media (max-width: 700px) {
   body { font-size: 17px; }
   main { padding: 14px 16px 60px; }
