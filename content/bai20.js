@@ -114,7 +114,9 @@
     khamPha: {
       nhiemVu: 'Biểu đồ cho biết tỉ lệ học sinh khá, giỏi của một trường: năm 2019 – 2020 là $81\\%$, năm 2020 – 2021 là $82\\%$. Em kéo thanh **Gốc trục đứng** từ $0$ lên dần tới $80$. Số liệu không đổi, nhưng **chiều cao hai cột** thay đổi thế nào? Biểu đồ nào làm người xem tưởng tỉ lệ khá, giỏi "tăng vọt"?',
       widget: 'geo',
-      config: { bbox: [-2.2, 7.9, 10.6, -1.5], build: khamPhaBuild },
+      config: { bbox: [-2.2, 7.9, 10.6, -1.5], build: khamPhaBuild,
+        // nâng dần gốc trục từ 0 lên 80: cột xanh "gấp đôi" cột vàng dù số liệu gần bằng nhau
+        tuChay: [{ cho: 1 }, { thanhTruot: 'goc', den: 60, giay: 2.5 }, { thanhTruot: 'goc', den: 80, giay: 2 }, { cho: 2.5 }, { thanhTruot: 'goc', den: 0, giay: 2 }] },
       cauHoi: {
         de: 'Khi gốc trục đứng là $80$, cột màu xanh cao gấp bao nhiêu lần cột màu vàng?',
         dapAn: { kieu: 'so', gt: 2 },
@@ -137,7 +139,8 @@
 
       { loai: 'dinhNghia', tieuDe: '2. Lưu ý khi đọc biểu đồ đoạn thẳng',
         noiDung: 'Trong biểu đồ đoạn thẳng, khi các điểm quan sát trên **trục ngang không đều nhau**, ta **không thể** dựa vào **độ dốc** để kết luận về tốc độ tăng, giảm của đại lượng được biểu diễn.' },
-      { loai: 'hinh', widget: 'geo', config: duongLech(Object.assign({ nut: true }, doanhThuLech)).config,
+      { loai: 'hinh', widget: 'geo', config: Object.assign(duongLech(Object.assign({ nut: true }, doanhThuLech)).config,
+        { tuChay: [{ cho: 0.8 }, { nut: 'Chia trục ngang đúng' }, { cho: 3 }, { nut: 'Quay lại trục chia đều' }, { cho: 2 }] }),
         chuThich: 'Từ 2015 đến 2018, mỗi năm tăng $2$ người. Từ 2018 đến 2022 tăng $34 - 26 = 8$ người nhưng là trong **4 năm**, tức vẫn $2$ người mỗi năm. Trục chia đều từng mốc làm đoạn cuối (màu cam) dốc đứng như "tăng đột biến". Bấm nút để chia trục đúng: đường gần như thẳng!' },
 
       { loai: 'dinhNghia', tieuDe: '3. Đọc và phân tích số liệu từ biểu đồ',

@@ -90,7 +90,11 @@
     khamPha: {
       nhiemVu: 'Kéo điểm **M** trên cạnh $AB$ (đoạn tím $MN$ luôn song song với $BC$). Em cũng có thể kéo $A$, $B$, $C$ để đổi hình tam giác.\n\nĐoạn **cam** là $AM$, $AN$; đoạn **xanh** là $MB$, $NC$. Hai tỉ số $\\frac{AM}{AB}$ và $\\frac{AN}{AC}$ thay đổi thế nào?',
       widget: 'geo',
-      config: { bbox: [-1, 8.4, 10, -0.8], build: khamPhaBuild },
+      config: { bbox: [-1, 8.4, 10, -0.8], build: khamPhaBuild,
+        // kéo M dọc AB: hai tỉ số luôn bằng nhau; đổi hình tam giác rồi kéo M lần nữa
+        tuChay: [{ diem: 'M', den: [0.6, 1.2], giay: 2 }, { cho: 1 }, { diem: 'M', den: [2.4, 4.8], giay: 2.5 }, { cho: 1 },
+          { diem: 'A', den: [5.5, 6.5], giay: 2 }, { diem: 'M', den: [1.4, 1.6], giay: 2 }, { cho: 1 },
+          { diem: 'A', den: [3, 6], giay: 2 }, { diem: 'M', den: [1.5, 3], giay: 1.5 }] },
       cauHoi: {
         de: 'Khi $MN$ song song với $BC$, em thấy hai tỉ số $\\frac{AM}{AB}$ và $\\frac{AN}{AC}$ thế nào?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Luôn bằng nhau', '$\\frac{AM}{AB}$ luôn lớn hơn', 'Không có quy luật gì'] },
@@ -106,15 +110,20 @@
         noiDung: 'Hai đoạn thẳng $AB$ và $CD$ gọi là **tỉ lệ** với hai đoạn thẳng $A\'B\'$ và $C\'D\'$ nếu có tỉ lệ thức\n\n$$\\frac{AB}{CD} = \\frac{A\'B\'}{C\'D\'} \\quad\\text{hay}\\quad \\frac{AB}{A\'B\'} = \\frac{CD}{C\'D\'}.$$' },
       { loai: 'dinhLi', tieuDe: 'Định lí Thalès (thuận)',
         noiDung: 'Nếu một đường thẳng **song song** với một cạnh của tam giác và cắt hai cạnh còn lại thì nó định ra trên hai cạnh đó những đoạn thẳng tương ứng tỉ lệ.\n\n**GT:** $\\triangle ABC$, $B\'C\' \\parallel BC$ ($B\' \\in AB$, $C\' \\in AC$).\n\n**KL:** $$\\frac{\\ca{AB\'}}{AB} = \\frac{\\ca{AC\'}}{AC};\\quad \\frac{\\ca{AB\'}}{\\cb{B\'B}} = \\frac{\\ca{AC\'}}{\\cb{C\'C}};\\quad \\frac{\\cb{B\'B}}{AB} = \\frac{\\cb{C\'C}}{AC}.$$' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 10, -0.8], build: thuanBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 10, -0.8], build: thuanBuild,
+        tuChay: [{ diem: "B'", den: [0.4, 0.8], giay: 2 }, { cho: 1 }, { diem: "B'", den: [2.6, 5.2], giay: 2.5 }, { cho: 1 }, { diem: "B'", den: [1.2, 2.4], giay: 1.5 }] },
         chuThich: 'Kéo $B\'$. Đoạn **cam** ($AB\'$, $AC\'$) ở phía đỉnh $A$, đoạn **xanh** ($B\'B$, $C\'C$) ở phía đáy. Cam trên xanh của cạnh này luôn bằng cam trên xanh của cạnh kia.' },
       { loai: 'dinhLi', tieuDe: 'Định lí Thalès đảo',
         noiDung: 'Nếu một đường thẳng cắt hai cạnh của một tam giác và định ra trên hai cạnh này những đoạn thẳng tương ứng tỉ lệ thì đường thẳng đó **song song** với cạnh còn lại của tam giác.\n\n**GT:** $\\triangle ABC$, $B\' \\in AB$, $C\' \\in AC$, $\\frac{AB\'}{AB} = \\frac{AC\'}{AC}$.\n\n**KL:** $B\'C\' \\parallel BC$.' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.4, 10, -0.8], build: daoBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.4, 10, -0.8], build: daoBuild,
+        // đưa C' tới đúng tỉ số với B' → đoạn B'C' hoá xanh (song song); đổi B' thì mất song song cho tới khi C' theo kịp
+        tuChay: [{ diem: "C'", den: [5.75, 3], giay: 2 }, { cho: 1.5 }, { diem: "B'", den: [0.6, 1.2], giay: 2 }, { cho: 1 },
+          { diem: "C'", den: [7.4, 1.2], giay: 2 }, { cho: 1.5 }, { diem: "B'", den: [1.5, 3], giay: 1.5 }, { diem: "C'", den: [6.2, 2.4], giay: 1.5 }] },
         chuThich: 'Kéo riêng từng điểm $B\'$ và $C\'$. Khi hai tỉ số bằng nhau, đoạn $B\'C\'$ chuyển sang màu **xanh lá**: lúc đó nó song song với $BC$.' },
       { loai: 'dinhLi', tieuDe: 'Hệ quả của định lí Thalès (mở rộng)',
         noiDung: 'Nếu $B\'C\' \\parallel BC$ ($B\' \\in AB$, $C\' \\in AC$) thì tam giác $AB\'C\'$ có ba cạnh tương ứng tỉ lệ với ba cạnh của tam giác $ABC$:\n\n$$\\frac{\\ca{AB\'}}{AB} = \\frac{\\ca{AC\'}}{AC} = \\frac{\\cd{B\'C\'}}{\\cd{BC}}.$$\n\nDùng hệ quả này để tính độ dài đoạn **song song** $B\'C\'$.' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.4, 10, -0.8], build: heQuaBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.4, 10, -0.8], build: heQuaBuild,
+        tuChay: [{ diem: "B'", den: [0.5, 1], giay: 2 }, { cho: 1 }, { diem: "B'", den: [2.5, 5], giay: 2.5 }, { cho: 1 }, { diem: "B'", den: [1.5, 3], giay: 1.5 }] },
         chuThich: 'Kéo $B\'$: ba tỉ số luôn bằng nhau. Chú ý mẫu số là **cả cạnh** $AB$, $AC$, $BC$.' },
       { loai: 'chuY', noiDung: '**Hay nhầm 1 – lập tỉ số lệch đoạn.** Hai vế phải cùng "kiểu": $\\frac{AM}{MB} = \\frac{AN}{NC}$ (đoạn trên / đoạn dưới) hoặc $\\frac{AM}{AB} = \\frac{AN}{AC}$ (đoạn trên / cả cạnh). **Không** được viết $\\frac{AM}{MB} = \\frac{AN}{AC}$.\n\n**Hay nhầm 2 – chưa có song song.** Chỉ được dùng định lí Thalès khi đề cho (hoặc em đã chứng minh được) $MN \\parallel BC$.' }
     ],
