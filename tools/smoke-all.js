@@ -23,7 +23,13 @@ async function main() {
     page.setDefaultTimeout(30000);
     await page.setViewport({ width: 1366, height: 900 });
     let where = 'trang chủ';
-    page.on('console', m => { if (['error', 'warn', 'warning'].includes(m.type())) issues.push(where + ' – ' + m.type() + ': ' + m.text()); });
+    page.on('console', async m => {
+      if (!['error', 'warn', 'warning'].includes(m.type())) return;
+      const w = where; // ghi lại nơi xảy ra trước khi chờ đọc chi tiết
+      // in cả ngăn xếp lỗi (m.text() chỉ ra "JSHandle@error" khi đối số là đối tượng Error)
+      const chiTiet = await Promise.all(m.args().map(a => a.evaluate(x => (x && x.stack ? x.stack.split('\n').slice(0, 3).join(' | ') : String(x))).catch(() => '?')));
+      issues.push(w + ' – ' + m.type() + ': ' + chiTiet.join(' '));
+    });
     page.on('pageerror', e => issues.push(where + ' – pageerror: ' + e.message));
     page.on('requestfailed', r => issues.push(where + ' – requestfailed: ' + r.url()));
     const base = url.pathToFileURL(path.join(__dirname, '..', 'index.html')).href + q;
