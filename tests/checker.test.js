@@ -226,3 +226,9 @@ test('nghiệm: 1.125 nhận cả hai cách đọc như câu số', () => {
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [1125] }, '1.125').code, 'dung');
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [1.125, -2] }, '1.125; -2').code, 'dung');
 });
+test('nhân tử: đưa dấu trừ ra trước lũy thừa vẫn là đã phân tích (-x^2(1-4x))', () => {
+  const nt = (gt, s) => C.checkAnswer({ kieu: 'bieuThuc', gt, dang: 'nhanTu' }, s).code;
+  assert.strictEqual(nt('x^2(4x-1)', '-x^2(1-4x)'), 'dung');
+  assert.strictEqual(nt('x^2(4x-1)', 'x^2(4x-1)'), 'dung');
+  assert.strictEqual(nt('x^2(4x-1)', '-x(x-4x^2)'), 'saiDang');
+});

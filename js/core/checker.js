@@ -104,7 +104,7 @@
     if (!fs) return no;
     var total = 0, nonConst = 0;
     for (var i = 0; i < fs.length; i++) {
-      var f = fs[i], base = f, mult = 1;
+      var f = fs[i].t === 'neg' ? fs[i].a : fs[i], base = f, mult = 1; // -x^2 là (-1)·x^2: bỏ dấu trừ trước khi xét lũy thừa
       if (f.t === 'pow' && f.e.t === 'num' && Number.isInteger(f.e.v)) { base = f.b; mult = f.e.v; }
       total += mult;
       if (isConst(base)) continue;
