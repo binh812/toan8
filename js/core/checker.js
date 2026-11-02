@@ -259,6 +259,8 @@
     // "S = {2; 3}", "x ∈ {2; 3}": bỏ phần ghi tập hợp, giữ các nghiệm
     s = s.replace(/^s\s*=\s*/, '').replace(/^[a-z]\s*∈\s*/, '').replace(/^\{(.*)\}$/, '$1').trim();
     // tách nghiệm theo ";", "hoặc", hoặc dấu phẩy đứng trước khoảng trắng / dấu trừ / chữ ("0,5" vẫn là một số)
+    // "x ≠ 4" (điều kiện xác định) đọc như "x = 4"; "±4" là hai giá trị 4 và -4
+    s = s.replace(/≠|!=/g, '=').replace(/^([a-z]\s*=\s*)?(±|\+-|\+\/-)\s*([^;]+)$/, function (_, _x, _pm, v) { return v + ';-' + v; });
     var parts = s.split(/;|hoặc|hoac|,(?=\s|-|[a-z])/).map(function (t) { return t.trim().replace(/^[a-z]\s*=/, '').trim(); }).filter(Boolean);
     var vals = parts.map(parseNumber);
     if (!vals.length || vals.some(Number.isNaN)) return res('khongDoc', 'Ghi các nghiệm cách nhau bằng dấu ; ví dụ: x = 2; x = -3' + (Array.isArray(d.gt) ? '' : ' (hoặc ghi "vô nghiệm", "vô số nghiệm")'));

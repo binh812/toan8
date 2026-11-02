@@ -10,7 +10,9 @@ TOAN8.bai({
         { nhan: 'x', dai: 'x', mau: '#1971c2' }, { nhan: '1', dai: 1, mau: '#1971c2' }],
       o: [['\\ca{x^2}', '\\ca{2x}', '\\cc{x^2}', '\\cc{x}']],
       thanhTruot: [{ ten: 'x', min: 1, max: 4, buoc: 0.5, gt: 2 }],
-      congThuc: 'A + B = (\\ca{x^2 + 2x}) + (\\cc{x^2 + x}) = \\;?'
+      congThuc: 'A + B = (\\ca{x^2 + 2x}) + (\\cc{x^2 + x}) = \\;?',
+      // x to dần rồi nhỏ lại: mảnh x² luôn là 2 mảnh vuông, mảnh còn lại luôn là 2x và x
+      tuChay: [{ thanhTruot: 'x', den: 4, giay: 2 }, { cho: 0.8 }, { thanhTruot: 'x', den: 1, giay: 2.5 }, { cho: 0.8 }, { thanhTruot: 'x', den: 2, giay: 1.5 }, { cho: 1 }]
     },
     cauHoi: {
       de: 'Tổng diện tích $A + B$ là đa thức thu gọn nào?',

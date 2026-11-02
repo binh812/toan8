@@ -236,3 +236,10 @@ test('nghiệm: "S = R" / "S = ℝ" là vô số nghiệm', () => {
   for (const s of ['S = R', 'S=ℝ', 'mọi x']) assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voSoNghiem' }, s).code, 'dung', s);
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voNghiem' }, 'S = R').code, 'sai');
 });
+test('nghiệm: nhận "x ≠ 4; x ≠ -4" và "±4", "x = ±4"', () => {
+  const ng = s => C.checkAnswer({ kieu: 'nghiem', gt: [4, -4] }, s).code;
+  assert.strictEqual(ng('x ≠ 4; x ≠ -4'), 'dung');
+  assert.strictEqual(ng('±4'), 'dung');
+  assert.strictEqual(ng('x = ±4'), 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [4] }, '±4').code, 'sai');
+});
