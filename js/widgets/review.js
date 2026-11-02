@@ -74,6 +74,11 @@
         ch.bai.forEach(function (b) {
           var L = T.lessons[b.id];
           (L && L.baiTap || []).forEach(function (q) { if (q.muc >= 2) list.push({ bai: L, q: q }); });
+          // thêm 3 câu sinh tự động (mức 2–3) mỗi bài có luyện thêm – mỗi lần tạo đề là câu mới
+          if (L && T.cauLuyen) for (var k = 0; k < 3; k++) {
+            var q = T.cauLuyen(b.id, 2 + (k % 2), 1 + Math.floor(Math.random() * 2147483646));
+            if (q) list.push({ bai: L, q: q });
+          }
         });
         return shuffle(list);
       }).filter(function (l) { return l.length; });

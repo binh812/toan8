@@ -32,25 +32,12 @@ function checkBackslashes(src, file) {
   });
 }
 
-const FIGURE = path.join(__dirname, '..', 'js', 'widgets', 'figure.js');
 const KNOWN_WIDGETS = ['dienTich', 'hieuHaiBinhPhuong', 'geo', 'doThi', 'hinhChop', 'bieuDo', 'xacSuat'];
 const KIEU = ['bieuThuc', 'so', 'nghiem', 'chon', 'dungSai', 'nhieuO'];
 const errors = [];
 const seenIds = {};
 
-function loadFile(file) {
-  const lessons = [], luyen = [], nen = [];
-  const ctx = { TOAN8: {
-    bai: def => lessons.push(def),
-    luyen: (id, dang, opts) => luyen.push({ id, dang, deCo: (opts && opts.deCo) || [] }),
-    nen: def => nen.push(def)
-  }, console };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(FIGURE, 'utf8'), ctx, { filename: FIGURE }); // TOAN8.hinhTinh, TOAN8.hh dùng lúc nạp bài
-  vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });
-  return { lessons, luyen, nen };
-}
+const { loadFile } = require('./nap-noi-dung.js');
 
 // LaTeX đơn giản → ascii-math cho parser (bỏ qua nếu không đọc được)
 function latexToAscii(s) {
