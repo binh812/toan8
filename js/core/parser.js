@@ -136,11 +136,12 @@
       case 'fn': return '\\sqrt{' + toLatex(n.a) + '}';
       case 'add': return n.terms.map(function (x, i) {
         if (x.t === 'neg') return '-' + negArg(x.a);
-        return (i ? '+' : '') + toLatex(x);
+        var t = toLatex(x);
+        return (i && t.charAt(0) !== '-' ? '+' : '') + t; // hạng tử bắt đầu bằng số âm: không viết "+-"
       }).join('');
       case 'neg': return '-' + negArg(n.a);
       case 'mul': return n.fs.map(function (x, i) {
-        var s = wrap(x);
+        var s = i === 0 && ((x.t === 'num' && x.v < 0) || (x.t === 'neg' && isAtom(x.a))) ? toLatex(x) : wrap(x); // -4x chứ không phải (-4)x
         return i && x.t === 'num' ? '\\cdot ' + s : s;
       }).join('');
       case 'div': return '\\frac{' + toLatex(n.a) + '}{' + toLatex(n.b) + '}';

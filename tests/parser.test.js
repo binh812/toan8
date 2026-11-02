@@ -48,3 +48,9 @@ test('toLatex', () => {
   assert.strictEqual(P.toLatex(P.parse('4x^2-4x+1')), '4x^{2}-4x+1');
   assert.strictEqual(P.toLatex(P.parse('x-(a+b)')), 'x-\\left(a+b\\right)');
 });
+test('toLatex: số âm đứng đầu tích không bọc ngoặc; không ra "+-"', () => {
+  assert.strictEqual(P.toLatex(P.parse('-4x+1')), '-4x+1');
+  assert.strictEqual(P.toLatex(P.parse('-4x^2y')), '-4x^{2}y');
+  assert.strictEqual(P.toLatex(P.parse('2*(-3)')), '2\\left(-3\\right)');
+  assert.strictEqual(P.toLatex(P.parse('x+(-4)x')), 'x-4x');
+});
