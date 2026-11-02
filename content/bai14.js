@@ -132,7 +132,10 @@
     khamPha: {
       nhiemVu: 'Đây là **máy nhận dạng**: $ABCD$ luôn là hình bình hành (kéo $A$, $B$, $D$; các đỉnh bám vào điểm lưới, $C$ tự đi theo).\n\nMáy kiểm tra trực tiếp: hai cạnh kề $AB$, $AD$ có bằng nhau không; góc $A$ có vuông không; hai đường chéo có vuông góc, có bằng nhau không. Em hãy kéo để tạo ra **hình thoi**, **hình chữ nhật** và **hình vuông**.',
       widget: 'geo',
-      config: { bbox: [-1, 9.6, 9.5, -1], build: khamPhaBuild },
+      config: { bbox: [-1, 9.6, 9.5, -1], build: khamPhaBuild,
+        // Hình bình hành → hình thoi (AD = AB) → hình chữ nhật (góc A vuông) → hình vuông, rồi trả về.
+        tuChay: [{ cho: 1 }, { diem: 'D', den: [4, 0], giay: 2 }, { cho: 2.5 }, { diem: 'D', den: [1, 0], giay: 2 }, { cho: 2.5 },
+          { diem: 'B', den: [5, 4], giay: 1.5 }, { cho: 3 }, { diem: 'B', den: [6, 4], giay: 1.5 }, { diem: 'D', den: [0, 0], giay: 1.5 }] },
       cauHoi: {
         de: 'Một hình bình hành vừa có hai cạnh kề bằng nhau, vừa có một góc vuông thì là hình gì?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['Hình thoi', 'Hình chữ nhật', 'Hình vuông', 'Hình thang cân'] },
@@ -145,7 +148,9 @@
         noiDung: '**Hình thoi** là tứ giác có **bốn cạnh bằng nhau**.\n\nHình thoi có các cạnh đối bằng nhau nên **là hình bình hành**: nó có mọi tính chất của hình bình hành (các góc đối bằng nhau, hai đường chéo cắt nhau tại trung điểm mỗi đường…).' },
       { loai: 'dinhLi', tieuDe: 'Tính chất đường chéo của hình thoi (Định lí 1)',
         noiDung: 'Trong hình thoi:\n\na) Hai đường chéo **vuông góc** với nhau;\n\nb) Hai đường chéo là các **đường phân giác** của các góc trong hình thoi.\n\nVí dụ: hình thoi $ABCD$ có $AC \\perp BD$ và $\\widehat{BAC} = \\widehat{DAC} = \\frac{\\widehat{A}}{2}$.' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1.5, 8.6, 9.5, -0.6], build: thoiBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1.5, 8.6, 9.5, -0.6], build: thoiBuild,
+        // Kéo A cho OA = OB: hình thoi thành hình vuông; kéo tiếp cho thoi dẹt; rồi trả về.
+        tuChay: [{ cho: 0.8 }, { diem: 'A', den: [1.8, 3], giay: 2 }, { cho: 2.5 }, { diem: 'A', den: [0.2, 3], giay: 2 }, { cho: 1.5 }, { diem: 'A', den: [0.8, 3], giay: 1.5 }] },
         chuThich: 'Hai đường chéo vuông góc, cắt nhau tại trung điểm $O$ (kéo $A$ hoặc $B$). Bốn cạnh luôn bằng nhau, đường chéo $AC$ chia góc $A$ thành hai góc bằng nhau. Kéo cho $OA = OB$ để được hình vuông.' },
       { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết hình thoi (Định lí 2)',
         noiDung: 'a) Hình bình hành có **hai cạnh kề bằng nhau** là hình thoi.\n\nb) Hình bình hành có **hai đường chéo vuông góc** với nhau là hình thoi.\n\nc) Hình bình hành có **một đường chéo là đường phân giác của một góc** là hình thoi.\n\n(Và theo định nghĩa: tứ giác có bốn cạnh bằng nhau.)' },

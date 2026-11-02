@@ -157,7 +157,10 @@
         chuThich: 'Kéo $A$ trên nửa đường tròn đường kính $BC$: góc $A$ luôn vuông và $\\cd{AM}$ luôn bằng nửa $\\cb{BC}$ (vì $A$, $B$, $C$ là ba đỉnh của một hình chữ nhật có tâm $M$).' },
       { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết (Định lí 2)',
         noiDung: 'a) **Hình bình hành có một góc vuông** là hình chữ nhật.\n\nb) **Hình bình hành có hai đường chéo bằng nhau** là hình chữ nhật.\n\nCùng với định nghĩa và chú ý: tứ giác có **ba góc vuông**; tứ giác có hai đường chéo **bằng nhau và cắt nhau tại trung điểm mỗi đường** cũng là hình chữ nhật.' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9, 9.5, -1], build: kiemTraBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9, 9.5, -1], build: kiemTraBuild,
+        // Kéo D, B cho góc A vuông: hình bình hành thành hình chữ nhật (hai đường chéo cũng bằng nhau), rồi trả về.
+        tuChay: [{ cho: 0.8 }, { diem: 'D', den: [1, 0], giay: 2 }, { diem: 'B', den: [7, 4], giay: 2 }, { cho: 2.5 },
+          { diem: 'B', den: [7, 5], giay: 1.5 }, { diem: 'D', den: [0, 0], giay: 1.5 }] },
         chuThich: 'Hình bình hành $ABCD$ trên lưới (kéo $A$, $B$, $D$). Khi góc $A$ vuông thì hai đường chéo cũng bằng nhau: hình bình hành trở thành hình chữ nhật.' },
       { loai: 'chuY', noiDung: '**Hay nhầm:** "tứ giác có hai đường chéo bằng nhau là hình chữ nhật" là **sai**! Hình thang cân cũng có hai đường chéo bằng nhau. Phải là **hình bình hành** có hai đường chéo bằng nhau (hoặc hai đường chéo bằng nhau **và** cắt nhau tại trung điểm mỗi đường).' }
     ],

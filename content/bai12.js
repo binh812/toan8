@@ -137,7 +137,11 @@
     khamPha: {
       nhiemVu: 'Đây là **hình bình hành** $ABCD$. Kéo $A$, $B$ hoặc $D$ (đỉnh $C$ tự đi theo để các cạnh đối luôn song song). $O$ là giao điểm hai đường chéo.\n\nEm hãy so sánh: các cặp cạnh đối; góc $A$ với góc $C$; đoạn $\\ca{OA}$ với $\\ca{OC}$, đoạn $\\cd{OB}$ với $\\cd{OD}$.',
       widget: 'geo',
-      config: { bbox: [-1.5, 8.8, 10, -1.2], build: khamPhaBuild },
+      config: { bbox: [-1.5, 8.8, 10, -1.2], build: khamPhaBuild,
+        // Kéo lần lượt A, B, D tới vài vị trí (C luôn trong khung): OA = OC, OB = OD và các cạnh đối luôn bằng nhau.
+        tuChay: [{ diem: 'A', den: [0.4, 3.2], giay: 2 }, { cho: 1.2 }, { diem: 'A', den: [2.8, 4.4], giay: 2 }, { cho: 1.2 },
+          { diem: 'B', den: [9, 5.2], giay: 2 }, { cho: 1.2 }, { diem: 'D', den: [-0.8, 0.8], giay: 2 }, { cho: 1.2 },
+          { diem: 'A', den: [1.6, 4], giay: 1.5 }, { diem: 'B', den: [7.6, 4], giay: 1.5 }, { diem: 'D', den: [0, 0], giay: 1.5 }, { cho: 1 }] },
       cauHoi: {
         de: 'Giao điểm $O$ của hai đường chéo nằm ở đâu?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Luôn là trung điểm của **cả hai** đường chéo', 'Chỉ là trung điểm của $AC$', 'Không có quy luật gì'] },
@@ -157,7 +161,10 @@
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1.5, 8.2, 10, -1.2], build: cheoBuild },
         chuThich: 'Hai đoạn $AC$, $BD$ cắt nhau tại trung điểm $O$ của mỗi đoạn (kéo $A$, $B$). Tứ giác $ABCD$ luôn là hình bình hành: các cạnh đối luôn bằng nhau.' },
       { loai: 'chuY', noiDung: '**Tóm tắt 5 cách nhận biết hình bình hành.** Tứ giác có:\n1. Các cạnh đối song song (định nghĩa);\n2. Các cạnh đối bằng nhau;\n3. Một cặp cạnh đối song song **và** bằng nhau;\n4. Các góc đối bằng nhau;\n5. Hai đường chéo cắt nhau tại trung điểm mỗi đường.\n\n**Hay nhầm:** "một cặp cạnh song song, cặp cạnh kia bằng nhau" **không** đủ: hình thang cân cũng như vậy! Ở dấu hiệu 3, **cùng một cặp** cạnh phải vừa song song vừa bằng nhau.' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9, 9, -1], build: kiemTraBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9, 9, -1], build: kiemTraBuild,
+        // Kéo C cho thành hình bình hành (máy báo ✓), rồi đổi thành hình thang cân (máy báo ✗), rồi trả về.
+        tuChay: [{ cho: 0.8 }, { diem: 'C', den: [5, 1], giay: 2 }, { cho: 2 }, { diem: 'B', den: [5, 4], giay: 1.5 }, { diem: 'C', den: [6, 0], giay: 1.5 }, { cho: 2 },
+          { diem: 'B', den: [6, 5], giay: 1.5 }, { diem: 'C', den: [7, 1], giay: 1.5 }] },
         chuThich: 'Máy kiểm tra: kéo bốn đỉnh (chúng bám vào điểm lưới). Em hãy tạo một hình bình hành, rồi thử tạo một hình thang cân để thấy nó **không** đạt.' }
     ],
     viDu: [
