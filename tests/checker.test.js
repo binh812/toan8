@@ -232,3 +232,7 @@ test('nhân tử: đưa dấu trừ ra trước lũy thừa vẫn là đã phân
   assert.strictEqual(nt('x^2(4x-1)', 'x^2(4x-1)'), 'dung');
   assert.strictEqual(nt('x^2(4x-1)', '-x(x-4x^2)'), 'saiDang');
 });
+test('nghiệm: "S = R" / "S = ℝ" là vô số nghiệm', () => {
+  for (const s of ['S = R', 'S=ℝ', 'mọi x']) assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voSoNghiem' }, s).code, 'dung', s);
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voNghiem' }, 'S = R').code, 'sai');
+});

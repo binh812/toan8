@@ -255,7 +255,7 @@
   function checkRoots(d, input, ltg) {
     var s = String(input == null ? '' : input).toLowerCase().trim();
     if (/vô\s*nghiệm|vo\s*nghiem|không\s*có\s*nghiệm|khong\s*co\s*nghiem|rỗng|∅|ø|\{\s*\}/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
-    if (/vô\s*số|vo\s*so/.test(s)) return res(d.gt === 'voSoNghiem' ? 'dung' : 'sai');
+    if (/vô\s*số|vo\s*so|^s\s*=\s*(r|ℝ)$|mọi\s*x|moi\s*x/.test(s)) return res(d.gt === 'voSoNghiem' ? 'dung' : 'sai');
     // "S = {2; 3}", "x ∈ {2; 3}": bỏ phần ghi tập hợp, giữ các nghiệm
     s = s.replace(/^s\s*=\s*/, '').replace(/^[a-z]\s*∈\s*/, '').replace(/^\{(.*)\}$/, '$1').trim();
     // tách nghiệm theo ";", "hoặc", hoặc dấu phẩy đứng trước khoảng trắng / dấu trừ / chữ ("0,5" vẫn là một số)

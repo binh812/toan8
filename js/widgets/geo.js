@@ -18,12 +18,17 @@
     var id = 'jxg' + (++n);
     var div = T.el('div', { id: id, class: 'board' + (cfg.wide ? ' wide' : '') });
     container.appendChild(div);
+    var bb = cfg.bbox || [-1, 7, 9, -1];
+    function buoc(dai) { return dai <= 16 ? 1 : 2; }
+    function truc(dai) { return { ticksDistance: buoc(dai), insertTicks: false, minorTicks: 0, label: { fontSize: 14 } }; }
     var board = JXG.JSXGraph.initBoard(id, {
-      boundingbox: cfg.bbox || [-1, 7, 9, -1], axis: !!cfg.axis, grid: !!cfg.grid,
+      boundingbox: bb, axis: !!cfg.axis,
+      grid: cfg.grid ? { majorStep: [buoc(bb[2] - bb[0]), buoc(bb[1] - bb[3])], minorElements: 0 } : false,
       showCopyright: false, showNavigation: false, keepAspectRatio: cfg.tiLe !== false,
       intl: { enabled: true, locale: 'vi-VN' }, // số thập phân dấu phẩy trên trục, thanh trượt
       pan: { enabled: false }, zoom: { enabled: false, wheel: false },
-      defaultAxes: { x: { ticks: { label: { fontSize: 14 } } }, y: { ticks: { label: { fontSize: 14 } } } }
+      // vạch chia mỗi 1 đơn vị (để đọc toạ độ lẻ) khi khung không quá rộng; rộng thì mỗi 2 đơn vị
+      defaultAxes: { x: { ticks: truc(bb[2] - bb[0]) }, y: { ticks: truc(bb[1] - bb[3]) } }
     });
     var C = getComputedStyle(document.documentElement).getPropertyValue('--c').trim() || '#1971c2';
     var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
