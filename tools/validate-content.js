@@ -115,6 +115,20 @@ function checkLastLine(tag, q) {
   if (!same) errors.push(tag + ': loiGiai dòng cuối "' + v + '" không khớp đáp án "' + d.gt + '"');
 }
 
+// Kịch bản tự chạy: mỗi bước đúng một loại; tên thanh trượt/điểm phải có trong cấu hình hoặc hàm build của hình.
+function checkTuChay(tag, cfg) {
+  if (!cfg || !Array.isArray(cfg.tuChay)) return;
+  const nguon = JSON.stringify(cfg.thanhTruot || []) + JSON.stringify(cfg.diem || []) + String(cfg.build || '') + String(cfg.them || '');
+  const co = ten => nguon.includes("'" + ten + "'") || nguon.includes('"' + ten + '"');
+  cfg.tuChay.forEach((s, i) => {
+    const loai = ['thanhTruot', 'diem', 'nut', 'cho'].filter(k => s && s[k] != null);
+    if (loai.length !== 1) { errors.push(tag + ': tuChay: bước lạ ở bước ' + (i + 1) + ' (' + JSON.stringify(s) + ')'); return; }
+    const ten = s.thanhTruot || s.diem;
+    if (ten && !co(ten)) errors.push(tag + ': tuChay: không thấy "' + ten + '" trong hình (bước ' + (i + 1) + ')');
+    if (s.diem && !(Array.isArray(s.den) && s.den.length === 2)) errors.push(tag + ': tuChay: bước ' + (i + 1) + ' cần den: [x, y]');
+  });
+}
+
 function checkLesson(L, file) {
   const T = 'bai' + L.id;
   const need = (cond, msg) => { if (!cond) errors.push(T + ': ' + msg); };
@@ -122,6 +136,8 @@ function checkLesson(L, file) {
   need(L.sgk && L.sgk.tap && L.sgk.trang, 'thiếu sgk.tap/trang');
   need(L.khamPha && L.khamPha.nhiemVu, 'thiếu khamPha.nhiemVu');
   if (L.khamPha && L.khamPha.widget) need(KNOWN_WIDGETS.includes(L.khamPha.widget), 'khamPha.widget lạ: ' + L.khamPha.widget);
+  if (L.khamPha) checkTuChay(T + ' khamPha', L.khamPha.config);
+  (L.lyThuyet || []).forEach((k, i) => { if (k.loai === 'hinh') checkTuChay(T + ' lyThuyet[' + i + ']', k.config); });
   if (L.khamPha && L.khamPha.cauHoi) checkDapAn(T + ' khamPha.cauHoi', L.khamPha.cauHoi.dapAn, []);
   // goiY ở mọi chỗ phải là mảng (chuỗi sẽ bị tính số nấc theo số kí tự)
   (function walkGoiY(o, where) {

@@ -30,6 +30,7 @@
     var holder = el('div', { class: 'chop', tabindex: '0', role: 'img', 'aria-label': 'Hình chóp đều – kéo chuột hoặc dùng phím mũi tên để xoay' }), info = el('div', { class: 'dt-tong' });
     container.appendChild(holder);
     bindDrag(holder);
+    holder.tuChayXoay = function (dg) { goc.quay += dg; draw(); }; // dùng cho tự chạy
 
     function project(p, k) {
       var c = Math.cos(goc.quay), s = Math.sin(goc.quay);
