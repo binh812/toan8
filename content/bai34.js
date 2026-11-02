@@ -161,7 +161,9 @@
     khamPha: {
       nhiemVu: "Tam giác $ABC$ cố định. Cạnh $B'C'$ của tam giác tím dài gấp $k$ lần $BC$ (chỉnh bằng thanh trượt). Em hãy **kéo đỉnh $A'$** (điểm cam) tới vị trí làm cho ba tỉ số cạnh bằng nhau – khi đó tam giác chuyển sang **màu xanh lá**.\n\nRồi nhìn xuống các dòng số đo góc: em thấy gì?",
       widget: 'geo',
-      config: { bbox: [-1, 10.8, 15.5, -2], wide: true, build: khamPhaBuild },
+      config: { bbox: [-1, 10.8, 15.5, -2], wide: true, build: khamPhaBuild,
+        tuChay: [{ diem: "A'", den: [7.5, 4.5], giay: 2.5 }, { cho: 1.5 }, { thanhTruot: 'k', den: 2, giay: 2 }, { diem: "A'", den: [8, 6], giay: 2 }, { cho: 1.5 },
+          { thanhTruot: 'k', den: 1.5, giay: 1.5 }, { diem: "A'", den: [8.5, 3], giay: 2 }] },
       cauHoi: {
         de: 'Khi ba cặp cạnh tương ứng tỉ lệ (ba tỉ số bằng nhau), các cặp góc tương ứng thế nào?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Tự động bằng nhau từng cặp', 'Góc của tam giác lớn hơn thì lớn hơn', 'Không có quy luật gì'] },
@@ -174,11 +176,14 @@
       { loai: 'chuY', noiDung: '**Mẹo ghép cạnh khi chỉ biết độ dài:** xếp ba cạnh của mỗi tam giác từ **nhỏ đến lớn** rồi chia từng cặp (nhỏ với nhỏ, vừa với vừa, lớn với lớn). Ba thương bằng nhau thì đồng dạng.\n\nVí dụ: $2;\\ 2{,}5;\\ 3$ và $4;\\ 5;\\ 6$ có $\\frac{4}{2} = \\frac{5}{2{,}5} = \\frac{6}{3} = 2$.' },
       { loai: 'dinhLi', tieuDe: '2. Trường hợp cạnh – góc – cạnh (c.g.c)',
         noiDung: "Nếu **hai cạnh** của tam giác này tỉ lệ với hai cạnh của tam giác kia và **hai góc tạo bởi các cặp cạnh đó** bằng nhau thì hai tam giác đồng dạng.\n\n**GT:** $\\frac{A'B'}{AB} = \\frac{A'C'}{AC}$, $\\widehat{A'} = \\widehat{A}$. **KL:** $\\triangle A'B'C' \\backsim \\triangle ABC$." },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9.8, 16.5, -2.7], wide: true, build: cgcBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9.8, 16.5, -2.7], wide: true, build: cgcBuild,
+        tuChay: [{ thanhTruot: "A'B':AB", den: 1.6, giay: 2.5 }, { cho: 1.5 }, { thanhTruot: "A'C':AC", den: 0.8, giay: 2 }, { thanhTruot: "A'B':AB", den: 0.8, giay: 2 }, { cho: 1.5 },
+          { thanhTruot: "A'B':AB", den: 1.2, giay: 1.5 }, { thanhTruot: "A'C':AC", den: 1.6, giay: 1.5 }] },
         chuThich: "Góc $A'$ luôn bằng góc $A$. Hai thanh trượt là hai tỉ số $\\frac{A'B'}{AB}$ và $\\frac{A'C'}{AC}$. Khi chúng **bằng nhau**, tỉ số $\\frac{B'C'}{BC}$ cũng bằng đúng số đó và tam giác chuyển màu xanh lá." },
       { loai: 'dinhLi', tieuDe: '3. Trường hợp góc – góc (g.g)',
         noiDung: "Nếu **hai góc** của tam giác này lần lượt bằng hai góc của tam giác kia thì hai tam giác đó đồng dạng.\n\n**GT:** $\\widehat{A'} = \\widehat{A}$, $\\widehat{B'} = \\widehat{B}$. **KL:** $\\triangle A'B'C' \\backsim \\triangle ABC$." },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 10.8, 16, -2], wide: true, build: ggBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 10.8, 16, -2], wide: true, build: ggBuild,
+        tuChay: [{ thanhTruot: "B'C'", den: 3, giay: 2.5 }, { cho: 1.2 }, { thanhTruot: "B'C'", den: 9, giay: 3 }, { cho: 1.2 }, { thanhTruot: "B'C'", den: 7, giay: 1.5 }] },
         chuThich: "Tam giác tím có góc $B'$, $C'$ chép đúng góc $B$, $C$ (cùng màu). Kéo thanh trượt đổi độ dài $B'C'$, hoặc kéo $A$, $B$, $C$: ba tỉ số cạnh luôn bằng nhau." },
       { loai: 'chuY', noiDung: "**Hay nhầm 1 – góc không xen giữa.** Ở c.g.c, góc bằng nhau phải là góc **tạo bởi** hai cặp cạnh tỉ lệ. Biết $\\frac{A'B'}{AB} = \\frac{A'C'}{AC}$ và $\\widehat{B'} = \\widehat{B}$ thì **chưa đủ** kết luận đồng dạng.\n\n**Hay nhầm 2 – viết sai thứ tự đỉnh.** Sau khi chứng minh, phải viết kí hiệu sao cho các đỉnh có **góc bằng nhau** đứng cùng vị trí. Ví dụ $\\widehat{A} = \\widehat{E}$, $\\widehat{B} = \\widehat{F}$ thì viết $\\triangle ABC \\backsim \\triangle EFD$." },
       { loai: 'chuY', noiDung: "**Nhận xét.** Nếu $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $k$ thì tỉ số hai **đường trung tuyến** tương ứng, hai **đường phân giác** tương ứng cũng bằng $k$; tỉ số **chu vi** cũng bằng $k$." }

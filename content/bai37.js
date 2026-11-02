@@ -45,7 +45,9 @@
     G.label(11, 5.8, function () { return "C'D' : CD = " + fmt(Q[2].Dist(Q[3]) / P[2].Dist(P[3])); });
     G.label(11, 4.8, function () { var v = k.Value(); return v > 1.001 ? 'k > 1: phóng to' : (v < 0.999 ? 'k < 1: thu nhỏ' : 'k = 1: trùng nhau'); }, { strokeColor: TIM });
   };
-  var khamPhaCfg = { bbox: [-4, 8, 15.5, -2.4], wide: true, build: khamPhaBuild };
+  var khamPhaCfg = { bbox: [-4, 8, 15.5, -2.4], wide: true, build: khamPhaBuild,
+    tuChay: [{ thanhTruot: 'k', den: 0.5, giay: 2.5 }, { cho: 1.2 }, { thanhTruot: 'k', den: 2.2, giay: 3 }, { cho: 1.2 }, { thanhTruot: 'k', den: 1.8, giay: 1 },
+      { diem: 'O', den: [12, 3], giay: 2 }, { cho: 1.2 }, { diem: 'O', den: [10, 2], giay: 2 }] };
 
   // Tam giác ABC, trung điểm M của AB và hình phối cảnh (HĐ1).
   var tamGiacBuild = function (board, G) {
@@ -82,7 +84,9 @@
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình đồng dạng phối cảnh',
         noiDung: "Cho điểm $O$ và số $k > 0$. Lấy mỗi điểm $A$ của hình $\\mathcal{H}$, đặt điểm $A'$ trên tia $OA$ sao cho $OA' = k \\cdot OA$. Các điểm $A'$ tạo thành hình $\\mathcal{H}'$.\n\nHình $\\mathcal{H}'$ gọi là **đồng dạng phối cảnh** với hình $\\mathcal{H}$; điểm $O$ là **tâm phối cảnh**, $k = \\frac{OA'}{OA}$ là **tỉ số đồng dạng**.\n\n• $k > 1$: $\\mathcal{H}'$ là hình **phóng to** của $\\mathcal{H}$. • $k < 1$: $\\mathcal{H}'$ là hình **thu nhỏ** của $\\mathcal{H}$.\n\nĐường thẳng nối hai điểm tương ứng **bất kì** ($AA'$, $MM'$, …) đều đi qua tâm $O$." },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 13, -2], wide: true, build: tamGiacBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 13, -2], wide: true, build: tamGiacBuild,
+        tuChay: [{ thanhTruot: 'k', den: 0.9, giay: 2 }, { cho: 1.2 }, { thanhTruot: 'k', den: 0.2, giay: 3 }, { cho: 1.2 }, { thanhTruot: 'k', den: 0.5, giay: 1.5 },
+          { diem: 'O', den: [12, 5], giay: 2 }, { cho: 1.2 }, { diem: 'O', den: [11, 2.5], giay: 2 }] },
         chuThich: "Tam giác $A'B'C'$ là hình thu nhỏ của tam giác $ABC$ với tâm $O$. Trung điểm $M$ của $AB$ biến thành trung điểm $M'$ của $A'B'$ ($A'M' : M'B' = 1$), và đường thẳng $MM'$ cũng đi qua $O$. Ta có $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $k$." },
       { loai: 'dinhNghia', tieuDe: 'Hình đồng dạng',
         noiDung: "Hình $\\mathcal{H}'$ gọi là **đồng dạng** với hình $\\mathcal{H}$ nếu nó **bằng** $\\mathcal{H}$ hoặc bằng **một hình phóng to hay thu nhỏ** của $\\mathcal{H}$.\n\nNói gọn: hai hình đồng dạng có **hình dạng giống nhau**, chỉ có thể khác về kích thước và vị trí (bị dời chỗ, xoay, lật)." },

@@ -102,7 +102,9 @@
     khamPha: {
       nhiemVu: "Kéo thanh trượt **k** để phóng to hoặc thu nhỏ tam giác. Tam giác tím $A'B'C'$ được tạo bằng cách nhân **mọi** khoảng cách của tam giác $ABC$ với $k$. Em cũng kéo được các đỉnh $A$, $B$, $C$.\n\nHãy quan sát: ba tỉ số cạnh ở trên cùng thay đổi thế nào? Các góc (cùng màu) thì sao?",
       widget: 'geo',
-      config: { bbox: [-1, 11.6, 17, -2], wide: true, build: khamPhaBuild },
+      config: { bbox: [-1, 11.6, 17, -2], wide: true, build: khamPhaBuild,
+        tuChay: [{ thanhTruot: 'k', den: 2.2, giay: 2.5 }, { cho: 1.2 }, { thanhTruot: 'k', den: 0.6, giay: 3 }, { cho: 1.2 },
+          { thanhTruot: 'k', den: 1.5, giay: 2 }, { diem: 'A', den: [3, 4.4], giay: 2 }, { cho: 1.2 }, { diem: 'A', den: [1.5, 4], giay: 2 }] },
       cauHoi: {
         de: "Kéo thanh trượt tới $k = 2$. Khi đó ba tỉ số $\\frac{A'B'}{AB}$, $\\frac{B'C'}{BC}$, $\\frac{C'A'}{CA}$ cùng bằng bao nhiêu?",
         dapAn: { kieu: 'so', gt: 2 },
@@ -113,14 +115,17 @@
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hai tam giác đồng dạng',
         noiDung: "Tam giác $A'B'C'$ gọi là **đồng dạng** với tam giác $ABC$ nếu:\n\n$$\\frac{A'B'}{AB} = \\frac{B'C'}{BC} = \\frac{A'C'}{AC};\\qquad \\widehat{A'} = \\widehat{A},\\ \\widehat{B'} = \\widehat{B},\\ \\widehat{C'} = \\widehat{C}.$$\n\nKí hiệu: $\\triangle A'B'C' \\backsim \\triangle ABC$ (viết **theo thứ tự cặp đỉnh tương ứng**).\n\nTỉ số $k = \\frac{A'B'}{AB} = \\frac{B'C'}{BC} = \\frac{A'C'}{AC}$ gọi là **tỉ số đồng dạng** của $\\triangle A'B'C'$ với $\\triangle ABC$." },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 11.6, 17, -2], wide: true, build: khamPhaBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 11.6, 17, -2], wide: true, build: khamPhaBuild,
+        tuChay: [{ thanhTruot: 'k', den: 2.2, giay: 2.5 }, { cho: 1.2 }, { thanhTruot: 'k', den: 0.6, giay: 3 }, { cho: 1.2 },
+          { thanhTruot: 'k', den: 1.5, giay: 2 }, { diem: 'A', den: [3, 4.4], giay: 2 }, { cho: 1.2 }, { diem: 'A', den: [1.5, 4], giay: 2 }] },
         chuThich: 'Ba tỉ số cạnh luôn bằng nhau (bằng $k$), các góc cùng màu luôn bằng nhau. $k > 1$: phóng to; $k < 1$: thu nhỏ; $k = 1$: hai tam giác **bằng nhau**.' },
       { loai: 'chuY', noiDung: "**Đọc kí hiệu đúng thứ tự.** Từ $\\triangle \\ca{A}\\cb{B}\\cc{C} \\backsim \\triangle \\ca{M}\\cb{N}\\cc{P}$, các chữ **cùng vị trí** là cặp đỉnh tương ứng: $\\ca{A} \\leftrightarrow \\ca{M}$, $\\cb{B} \\leftrightarrow \\cb{N}$, $\\cc{C} \\leftrightarrow \\cc{P}$.\n\nSuy ra góc bằng nhau: $\\widehat{A} = \\widehat{M}$, $\\widehat{B} = \\widehat{N}$, $\\widehat{C} = \\widehat{P}$; cạnh tương ứng lấy **cùng vị trí chữ**: $AB \\leftrightarrow MN$, $BC \\leftrightarrow NP$, $AC \\leftrightarrow MP$." },
       { loai: 'dinhLi', tieuDe: 'Nhận xét',
         noiDung: "• Nếu $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $k$ thì $\\triangle ABC \\backsim \\triangle A'B'C'$ theo tỉ số $\\frac{1}{k}$. Ta nói hai tam giác **đồng dạng với nhau**.\n\n• Hai tam giác bằng nhau thì đồng dạng với nhau theo tỉ số $k = 1$. Mọi tam giác đồng dạng với chính nó.\n\n• Nếu $\\triangle A''B''C'' \\backsim \\triangle A'B'C'$ theo tỉ số $k$ và $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $m$ thì $\\triangle A''B''C'' \\backsim \\triangle ABC$ theo tỉ số $k \\cdot m$." },
       { loai: 'dinhLi', tieuDe: 'Định lí (đường thẳng song song với một cạnh)',
         noiDung: 'Nếu một đường thẳng cắt hai cạnh của một tam giác và **song song** với cạnh còn lại thì nó tạo thành một tam giác mới đồng dạng với tam giác đã cho.\n\n**GT:** $\\triangle ABC$, $MN \\parallel BC$ ($M \\in AB$, $N \\in AC$).\n\n**KL:** $\\triangle AMN \\backsim \\triangle ABC$.\n\n**Chú ý.** Định lí vẫn đúng nếu đường thẳng cắt **phần kéo dài** của hai cạnh tam giác.' },
-      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.6, 10, -0.8], build: dinhLiBuild },
+      { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.6, 10, -0.8], build: dinhLiBuild,
+        tuChay: [{ diem: 'M', den: [2.5, 5], giay: 2.5 }, { cho: 1.2 }, { diem: 'M', den: [0.6, 1.2], giay: 3 }, { cho: 1.2 }, { diem: 'M', den: [1.6, 3.2], giay: 2 }] },
         chuThich: 'Kéo $M$ (đoạn tím $MN$ luôn song song với $BC$). Ba tỉ số $\\frac{AM}{AB}$, $\\frac{AN}{AC}$, $\\frac{MN}{BC}$ luôn bằng nhau, góc $A$ chung, $\\widehat{AMN} = \\widehat{ABC}$ (đồng vị): $\\triangle AMN \\backsim \\triangle ABC$.' },
       { loai: 'chuY', noiDung: "**Hay nhầm 1 – ghép sai cặp cạnh.** Với $\\triangle ABC \\backsim \\triangle DEF$, cạnh $AC$ (chữ thứ 1 và 3) tương ứng với $DF$ (chữ thứ 1 và 3), **không** phải $EF$.\n\n**Hay nhầm 2 – lật ngược tỉ số.** Tỉ số đồng dạng của $\\triangle A'B'C'$ với $\\triangle ABC$ là $\\frac{A'B'}{AB}$ (cạnh tam giác **đứng trước** ở trên)." }
     ],
