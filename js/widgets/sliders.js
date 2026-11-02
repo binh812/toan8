@@ -4,7 +4,9 @@
   var el = T.el;
   T.fmtSo = function (v, d) {
     var p = Math.pow(10, d == null ? 2 : d);
-    return (Math.round(v * p) / p).toString().replace('.', ',').replace('-', '−');
+    var s = (Math.round(v * p) / p).toString().replace('-', '−').split('.');
+    if (Math.abs(v) >= 10000) s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' '); // 46 000
+    return s.join(',');
   };
 
   // rangBuoc(env): điều kiện giữa các thanh trượt; sai thì trả thanh về giá trị cũ

@@ -178,7 +178,9 @@ math-field.mf:focus-within { border-color: var(--c); }
 .hero-nut { display: flex; flex-wrap: wrap; gap: 10px; }
 .goi-y-nho { color: var(--muted); font-size: .9rem; margin: 4px 0 0; }
 .chop-svg { display: block; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; user-select: none; }
-.chop-svg:active { cursor: grabbing; }
+.chop { touch-action: none; cursor: grab; }
+.chop:active { cursor: grabbing; }
+.chop:focus-visible { outline: 3px solid var(--c); outline-offset: 4px; border-radius: 12px; }
 .bieu-do svg { display: block; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
 .doi-loai { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .chu-giai { display: flex; gap: 18px; justify-content: center; margin-top: 6px; }

@@ -188,3 +188,36 @@ test('số: nhận "x = 2"; nghiệm: nhận "S = ∅" là vô nghiệm', () => 
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: 'voNghiem' }, '∅').code, 'dung');
   assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [2] }, 'S = ∅').code, 'sai');
 });
+test('phần trăm: 0,1% không phải 10%; nhận sai số làm tròn nhỏ', () => {
+  const so = (gt, s) => C.checkAnswer({ kieu: 'so', gt }, s).code;
+  assert.strictEqual(so(0.1, '0,1%'), 'sai');
+  assert.strictEqual(so('3/200', '0,015%'), 'sai');
+  assert.strictEqual(so(0.1, '10%'), 'dung');
+  assert.strictEqual(so('3/200', '1,5%'), 'dung');
+  assert.strictEqual(so(25, '25%'), 'dung');
+  assert.strictEqual(so('1/3', '33,33%'), 'dung');
+  assert.strictEqual(so('1/3', '33%'), 'sai');
+  assert.strictEqual(so(0.5, '50 phần trăm'), 'dung');
+});
+test('số: nghìn/triệu/tỉ là bậc của số', () => {
+  const so = (gt, s) => C.checkAnswer({ kieu: 'so', gt }, s).code;
+  assert.strictEqual(so(46000, '46 nghìn'), 'dung');
+  assert.strictEqual(so(1500000, '1,5 triệu'), 'dung');
+  assert.strictEqual(so(0.5, '0,5 triệu đồng'), 'dung');
+  assert.strictEqual(so(46000, '47 nghìn'), 'sai');
+});
+test('nghiệm: các cách viết vô nghiệm và tập nghiệm có ngoặc nhọn', () => {
+  const ng = (gt, s) => C.checkAnswer({ kieu: 'nghiem', gt }, s).code;
+  for (const s of ['Ø', 'ø', 'không có nghiệm', 'S = rỗng']) assert.strictEqual(ng('voNghiem', s), 'dung', s);
+  assert.strictEqual(ng('voNghiem', 'abc'), 'khongDoc');
+  assert.strictEqual(ng('voNghiem', 'x = 2'), 'sai');
+  assert.strictEqual(ng([2, 3], 'S = {2; 3}'), 'dung');
+  assert.strictEqual(ng([2], 'S={2}'), 'dung');
+  assert.strictEqual(ng([2, 3], 'x ∈ {2; 3}'), 'dung');
+});
+test('biểu thức: bỏ tiền tố "r =", "Y =" như "y ="', () => {
+  const bt = (gt, s) => C.checkAnswer({ kieu: 'bieuThuc', gt }, s).code;
+  assert.strictEqual(bt('(xy-600)/(50y)', 'r = (xy-600)/(50y)'), 'dung');
+  assert.strictEqual(bt('2x+3', 'Y = 2x+3'), 'dung');
+  assert.strictEqual(bt('2x+3', 'P(x) = 2x+3'), 'dung');
+});

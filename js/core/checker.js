@@ -182,7 +182,7 @@
   function checkExpr(d, input, ltg) {
     var a;
     // "y = 2x + 3", "f(x) = …": chỉ chấm vế phải
-    input = String(input == null ? '' : input).replace(/^\s*(y|[fgh]\s*\(\s*x\s*\))\s*=/, '');
+    input = String(input == null ? '' : input).replace(/^\s*([A-Za-z][A-Za-z0-9']{0,3}|[A-Za-z]\s*\(\s*x\s*\))\s*=/, '');
     try { a = P.parse(input); } catch (e) { return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : null); }
     var g = P.parse(d.gt);
     if (!equivalentAst(a, g)) {
@@ -210,24 +210,30 @@
   }
 
   // Đơn vị đo viết sau số ("6 cm", "12 cm²", "60°", "60 độ") – bỏ đi, chỉ chấm con số.
-  var DON_VI = /\s*(mm|cm|dm|km|m|g|kg|l|ml|giây|phút|giờ|ngày|độ|°|đồng|người|học sinh|lần)(2|3|²|³)?\.?$/i;
+  var DON_VI = /(\d)\s*(mm|cm|dm|km|m|g|kg|l|ml|giây|phút|giờ|ngày|độ|°|đồng|người|học sinh|lần)(2|3|²|³)?\.?$/i;
   function checkNumber(d, input, ltg) {
     // "x = 2", "AB = 6 cm": chỉ lấy vế phải
-    input = String(input == null ? '' : input).trim().replace(/^[A-Za-z][A-Za-z0-9']{0,3}\s*=\s*/, '').replace(DON_VI, '');
+    input = String(input == null ? '' : input).trim().replace(/^[A-Za-z][A-Za-z0-9']{0,3}\s*=\s*/, '').replace(DON_VI, '$1');
+    input = input.replace(/\s*phần\s*trăm$/i, '%');
+    // "46 nghìn", "1,5 triệu đồng": bậc của số – nhận cả khi nhân bậc (46000) lẫn khi đề đã tính theo bậc đó (0,5 triệu)
+    var bac = 1, mb = /^(.*\d)\s*(nghìn|ngàn|triệu|tỉ|tỷ)(\s.*)?$/i.exec(input);
+    if (mb) { bac = { 'nghìn': 1e3, 'ngàn': 1e3, 'triệu': 1e6, 'tỉ': 1e9, 'tỷ': 1e9 }[mb[2].toLowerCase()]; input = mb[1].trim(); }
     // "12 bạn", "3 quyển sách": con số rồi tới chữ (đơn vị bất kỳ) – chỉ giữ con số
     var m = /^([-−]?[\d.,/√()\s]*\d[\d.,/√()%\s]*?)\s+[A-Za-zÀ-ỹđĐ][^\d]*$/.exec(input);
     if (m) input = m[1].trim();
-    // "25%": nhận cả 0,25 lẫn 25 (khi đề hỏi "bao nhiêu phần trăm" thì đáp án ghi 25)
-    if (/%$/.test(input)) {
-      var p = input.replace(/\s*%$/, ''), v = parseNumber(p);
-      var y0 = typeof d.gt === 'number' ? d.gt : parseNumber(d.gt);
-      if (!Number.isNaN(v) && (near(v / 100, y0, d.saiSo || 1e-9) || near(v, y0, d.saiSo || 1e-9))) return res('dung');
-      input = Number.isNaN(v) ? input : String(v / 100);
-    }
-    var x = parseNumber(input), y = typeof d.gt === 'number' ? d.gt : parseNumber(d.gt);
-    if (Number.isNaN(x)) return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : 'Em nhập một số, ví dụ 12 hoặc 0,5 hoặc 3/4.');
+    var y = typeof d.gt === 'number' ? d.gt : parseNumber(d.gt);
     var tol = d.saiSo != null ? d.saiSo : 1e-9;
-    if (near(x, y, tol)) return res('dung');
+    // "25%" = 0,25. Khi đáp án là chính số phần trăm (|đáp án| > 1, vd đề hỏi "bao nhiêu phần trăm" → 25) thì "25%" cũng đúng.
+    // Không bao giờ nhận "0,1%" cho đáp án 0,1. Phần trăm làm tròn 2 chữ số thập phân (33,33% ≈ 1/3) được chấp nhận.
+    if (/%$/.test(input)) {
+      var v = parseNumber(input.replace(/\s*%$/, ''));
+      if (Number.isNaN(v)) return res('khongDoc', 'Em nhập một số, ví dụ 25% hoặc 0,25.');
+      if (near(v / 100, y, Math.max(tol, 5e-5)) || (Math.abs(y) > 1 && near(v, y, tol))) return res('dung');
+      input = String(v / 100);
+    }
+    var x = parseNumber(input);
+    if (Number.isNaN(x)) return res('khongDoc', VIET.test(String(input)) ? MSG_BOGO : 'Em nhập một số, ví dụ 12 hoặc 0,5 hoặc 3/4.');
+    if (near(x, y, tol) || (bac > 1 && near(x * bac, y, tol))) return res('dung');
     // "1.125": vừa có thể là 1125 (chấm hàng nghìn) vừa là 1,125 (chấm thập phân) – nhận nếu một trong hai đúng
     var x2 = parseNumberDot(input);
     if (!Number.isNaN(x2) && near(x2, y, tol)) return res('dung');
@@ -248,13 +254,15 @@
 
   function checkRoots(d, input, ltg) {
     var s = String(input == null ? '' : input).toLowerCase().trim();
-    if (/vô\s*nghiệm|vo\s*nghiem|∅|\{\s*\}/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
+    if (/vô\s*nghiệm|vo\s*nghiem|không\s*có\s*nghiệm|khong\s*co\s*nghiem|rỗng|∅|ø|\{\s*\}/.test(s)) return res(d.gt === 'voNghiem' ? 'dung' : 'sai');
     if (/vô\s*số|vo\s*so/.test(s)) return res(d.gt === 'voSoNghiem' ? 'dung' : 'sai');
-    if (!Array.isArray(d.gt)) return res('sai');
+    // "S = {2; 3}", "x ∈ {2; 3}": bỏ phần ghi tập hợp, giữ các nghiệm
+    s = s.replace(/^s\s*=\s*/, '').replace(/^[a-z]\s*∈\s*/, '').replace(/^\{(.*)\}$/, '$1').trim();
     // tách nghiệm theo ";", "hoặc", hoặc dấu phẩy đứng trước khoảng trắng / dấu trừ / chữ ("0,5" vẫn là một số)
     var parts = s.split(/;|hoặc|hoac|,(?=\s|-|[a-z])/).map(function (t) { return t.trim().replace(/^[a-z]\s*=/, '').trim(); }).filter(Boolean);
     var vals = parts.map(parseNumber);
-    if (!vals.length || vals.some(Number.isNaN)) return res('khongDoc', 'Ghi các nghiệm cách nhau bằng dấu ; ví dụ: x = 2; x = -3');
+    if (!vals.length || vals.some(Number.isNaN)) return res('khongDoc', 'Ghi các nghiệm cách nhau bằng dấu ; ví dụ: x = 2; x = -3' + (Array.isArray(d.gt) ? '' : ' (hoặc ghi "vô nghiệm", "vô số nghiệm")'));
+    if (!Array.isArray(d.gt)) return res('sai');
     if (sameSet(vals, d.gt)) return res('dung');
     for (var i = 0; i < ltg.length; i++)
       if (Array.isArray(ltg[i].gt) && sameSet(vals, ltg[i].gt)) return res('loiThuongGap', ltg[i].giaiThich);

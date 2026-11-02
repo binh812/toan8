@@ -27,8 +27,9 @@
     var env = { a: cfg.a || 4, h: cfg.h || 4, t: 0 };
     var goc = { quay: -0.5, nghieng: 1.05 }; // nghiêng: góc nhìn từ trục đứng (0 = nhìn từ trên xuống)
     var ten = cfg.tenDay || (n === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D']);
-    var holder = el('div', { class: 'chop' }), info = el('div', { class: 'dt-tong' });
+    var holder = el('div', { class: 'chop', tabindex: '0', role: 'img', 'aria-label': 'Hình chóp đều – kéo chuột hoặc dùng phím mũi tên để xoay' }), info = el('div', { class: 'dt-tong' });
     container.appendChild(holder);
+    bindDrag(holder);
 
     function project(p, k) {
       var c = Math.cos(goc.quay), s = Math.sin(goc.quay);
@@ -82,7 +83,6 @@
       base.forEach(function (P, i) { var q = pr(P); lbl(s, q, ten[i], '#343a40', q[0] < W / 2 ? -20 : 8, 16); });
       holder.innerHTML = '';
       holder.appendChild(s);
-      bindDrag(s);
       var f = T.fmtSo;
       info.innerHTML = cfg.an ? '' :
         'Cạnh đáy ' + T.tex('a') + ' = <b>' + f(env.a) + '</b> · chiều cao ' + T.tex((cfg.tenDinh || 'S') + (cfg.tenChan || 'H') + ' = h') + ' = <b>' + f(env.h) + '</b> · trung đoạn ' + T.tex('d') + ' ≈ <b>' + f(m.trungDoan) + '</b><br>' +
@@ -93,21 +93,32 @@
       t.textContent = txt;
       s.appendChild(t);
     }
-    function bindDrag(s) {
+    // Gắn một lần vào khung ngoài: draw() thay <svg> bên trong mỗi lần vẽ, nên không gắn vào svg (mất pointer capture)
+    function bindDrag(box) {
       var start = null;
-      s.addEventListener('pointerdown', function (e) { start = { x: e.clientX, y: e.clientY, q: goc.quay, n: goc.nghieng }; s.setPointerCapture(e.pointerId); });
-      s.addEventListener('pointermove', function (e) {
+      box.addEventListener('pointerdown', function (e) { start = { x: e.clientX, y: e.clientY, q: goc.quay, n: goc.nghieng }; box.setPointerCapture(e.pointerId); });
+      box.addEventListener('pointermove', function (e) {
         if (!start) return;
         goc.quay = start.q - (e.clientX - start.x) / 120;
         goc.nghieng = Math.min(1.5, Math.max(0.2, start.n - (e.clientY - start.y) / 160));
         draw();
       });
-      s.addEventListener('pointerup', function () { start = null; });
+      box.addEventListener('pointerup', function () { start = null; });
+      box.addEventListener('pointercancel', function () { start = null; });
+      // bàn phím: mũi tên trái/phải xoay, lên/xuống nghiêng
+      box.addEventListener('keydown', function (e) {
+        var k = { ArrowLeft: [0.15, 0], ArrowRight: [-0.15, 0], ArrowUp: [0, -0.1], ArrowDown: [0, 0.1] }[e.key];
+        if (!k) return;
+        e.preventDefault();
+        goc.quay += k[0];
+        goc.nghieng = Math.min(1.5, Math.max(0.2, goc.nghieng + k[1]));
+        draw();
+      });
     }
     var list = [];
     if (cfg.thanhTruot !== false) list.push({ ten: 'a', nhan: 'Cạnh đáy', min: 2, max: 8, buoc: 0.5, gt: env.a }, { ten: 'h', nhan: 'Chiều cao', min: 1, max: 8, buoc: 0.5, gt: env.h });
     if (cfg.trai !== false) list.push({ ten: 't', nhan: 'Trải phẳng', min: 0, max: 1, buoc: 0.05, gt: 0 });
-    container.appendChild(el('p', { class: 'goi-y-nho' }, 'Kéo chuột trên hình để xoay.'));
+    container.appendChild(el('p', { class: 'goi-y-nho' }, 'Kéo chuột trên hình (hoặc bấm vào hình rồi dùng phím mũi tên) để xoay.'));
     if (list.length) container.appendChild(T.makeSliders(list, env, draw));
     container.appendChild(info);
     draw();

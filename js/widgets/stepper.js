@@ -30,10 +30,11 @@
   // Ví dụ mờ dần: các bước thường hiện sẵn; bước "an" là câu hỏi; bước sau bước ẩn chỉ hiện khi đã điền đúng.
   function fadedExample(c, bai, vd, i) {
     var box = el('div', { class: 'vidu' }, el('h3', null, 'Em thử ' + (i + 1)), el('div', { html: T.md(vd.de) }));
-    if (vd.hinh) T.mountWidget(box.appendChild(el('div', { class: 'q-hinh' })), vd.hinh.widget, vd.hinh.config);
+    var hinhMo = vd.hinh ? box.appendChild(el('div', { class: 'q-hinh' })) : null;
     var list = el('ol', { class: 'buoc-list' });
     box.appendChild(list);
     c.appendChild(box);
+    if (hinhMo) T.mountWidget(hinhMo, vd.hinh.widget, vd.hinh.config); // gắn sau khi box vào trang: JSXGraph cần tìm thấy phần tử
     (function showFrom(k) {
       for (; k < vd.buoc.length; k++) {
         var b = vd.buoc[k];

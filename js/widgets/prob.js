@@ -16,7 +16,7 @@
       return p;
     }
     if (cfg.loai === 'theSo') {
-      var a = cfg.tu || 1, b = cfg.den || 10, r = [];
+      var a = cfg.tu != null ? cfg.tu : 1, b = cfg.den != null ? cfg.den : 10, r = [];
       for (var k = a; k <= b; k++) r.push({ ten: k, hien: String(k) });
       return r;
     }
@@ -31,6 +31,7 @@
   // Tên kết quả: haiDongXu 'SN'…, haiXucXac 'i-j' (loc nhận v = [i, j], vd function (v) { return v[0] + v[1] === 7; }).
   T.widgets.xacSuat = function (container, cfg) {
     var kq = ketQua(cfg), sk = cfg.suKien;
+    if (!kq.length) throw new Error('xacSuat: chưa có kết quả nào (tui rỗng hoặc tu > den)');
     var thuan = function (x) { return !!sk && (sk.loc ? !!sk.loc(x.v || x.ten) : sk.thuanLoi.indexOf(x.ten) >= 0); };
     var nThuan = kq.filter(thuan).length;
     var dem = 0, co = 0, lichSu = [], cuoi = null;
@@ -46,7 +47,7 @@
     // danh sách kết quả có thể, tô màu kết quả thuận lợi
     var ds = el('div', { class: 'xs-ds' });
     kq.forEach(function (x) {
-      ds.appendChild(el('span', { class: 'xs-o' + (thuan(x) ? ' thuan' : ''), style: !x.mau ? '' : thuan(x) ? 'border-color:' + x.mau + ';background:' + x.mau : 'border-color:' + x.mau + ';color:' + x.mau }, x.hien));
+      ds.appendChild(el('span', { class: 'xs-o' + (thuan(x) ? ' thuan' : ''), style: !x.mau ? '' : thuan(x) ? 'border-color:' + x.mau + ';background:' + x.mau : 'border-color:' + x.mau + ';border-left-width:8px' }, x.hien));
     });
     root.appendChild(el('div', { class: 'xs-nhan' }, 'Các kết quả có thể' + (sk ? ' (ô tô đậm là kết quả thuận lợi cho biến cố "' + sk.ten + '")' : '') + ':'));
     root.appendChild(ds);
@@ -73,6 +74,7 @@
       var R = 110, c = 120, N = kq.length, s = document.createElementNS(NS, 'svg');
       s.setAttribute('viewBox', '0 0 240 240'); s.setAttribute('width', '240');
       var add = function (tag, a) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); s.appendChild(e); return e; };
+      if (N === 1) add('circle', { cx: c, cy: c, r: R, fill: kq[0].mau || '#dee2e6' });
       kq.forEach(function (x, i) {
         var g1 = 2 * Math.PI * i / N - Math.PI / 2, g2 = g1 + 2 * Math.PI / N;
         add('path', { d: 'M' + c + ',' + c + 'L' + (c + R * Math.cos(g1)) + ',' + (c + R * Math.sin(g1)) + 'A' + R + ',' + R + ' 0 ' + (N === 1 ? 1 : 0) + ',1 ' +
@@ -81,8 +83,9 @@
       // ghi tên từng ô (số hoặc chữ) khi vòng quay không quá dày
       if (N <= 24) kq.forEach(function (x, i) {
         var g = 2 * Math.PI * (i + 0.5) / N - Math.PI / 2, t = add('text', { x: c + R * 0.78 * Math.cos(g), y: c + R * 0.78 * Math.sin(g) + 5,
-          'text-anchor': 'middle', 'font-size': N > 12 ? 12 : 15, 'font-weight': 700, fill: x.mau ? '#fff' : '#212529' });
-        t.textContent = String(x.hien).length <= 3 ? x.hien : String(x.hien).slice(0, 1);
+          'text-anchor': 'middle', 'font-size': String(x.hien).length > 3 ? 10 : N > 12 ? 12 : 15, 'font-weight': 700,
+          fill: '#212529', stroke: '#fff', 'stroke-width': 3, 'paint-order': 'stroke' }); // chữ đậm viền trắng: đọc được trên mọi màu ô
+        t.textContent = x.hien;
       });
       if (cuoi) {
         var k = kq.indexOf(cuoi), g = 2 * Math.PI * (k + 0.5) / N - Math.PI / 2;

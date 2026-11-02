@@ -121,6 +121,10 @@ function checkLesson(L, file) {
   })(L, '');
   need(Array.isArray(L.lyThuyet) && L.lyThuyet.length >= 1, 'lyThuyet cần ≥ 1 khối');
   (L.lyThuyet || []).forEach((k, i) => { if (k.loai === 'hinh') need(KNOWN_WIDGETS.includes(k.widget), 'lyThuyet[' + i + '] widget lạ: ' + k.widget); });
+  // trường "hinh" ở ví dụ, ví dụ khuyết, bài tập, tìm lỗi sai
+  ['viDu', 'viDuMo', 'baiTap', 'timLoi'].forEach(k => (L[k] || []).forEach((x, i) => {
+    if (x && x.hinh) need(KNOWN_WIDGETS.includes(x.hinh.widget), k + '[' + i + '].hinh widget lạ: ' + x.hinh.widget);
+  }));
   need(Array.isArray(L.viDu) && L.viDu.length >= 2, 'viDu cần ≥ 2 ví dụ');
   need(Array.isArray(L.viDuMo) && L.viDuMo.length >= 1, 'viDuMo cần ≥ 1');
   (L.viDuMo || []).forEach((v, i) => {
