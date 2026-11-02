@@ -10,7 +10,7 @@
   var MASTERY = 0.8;
 
   function dayNum(d) { return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); }
-  function empty() { return { v: 1, ex: {}, tabs: {}, box: {} }; }
+  function empty() { return { v: 1, ex: {}, tabs: {}, box: {}, luyen: {} }; }
   function isObj(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
   function valid(p) { return isObj(p) && p.v === 1 && isObj(p.ex); }
 
@@ -29,6 +29,17 @@
       var b = p.box[id];
       if (isObj(b) && Number.isInteger(b.box) && b.box >= 1 && b.box <= 5 && Number.isFinite(b.due))
         out.box[id] = { box: b.box, due: b.due, day: Number.isFinite(b.day) ? b.day : null };
+    });
+    // luyện thêm: { lam, dung, ngay: { <số ngày>: [lam, dung] } } – bỏ mục sai cấu trúc
+    if (isObj(p.luyen)) Object.keys(p.luyen).forEach(function (id) {
+      var l = p.luyen[id];
+      if (!isObj(l) || !Number.isFinite(l.lam) || !Number.isFinite(l.dung)) return;
+      var ngay = {};
+      if (isObj(l.ngay)) Object.keys(l.ngay).forEach(function (k) {
+        var v = l.ngay[k];
+        if (/^\d+$/.test(k) && Array.isArray(v) && v.length === 2 && v.every(Number.isFinite)) ngay[k] = [v[0], v[1]];
+      });
+      out.luyen[id] = { lam: l.lam, dung: l.dung, ngay: ngay };
     });
     return out;
   }
@@ -95,6 +106,23 @@
         .filter(function (id) { return data.box[id].due <= today; })
         .sort(function (a, b) { return data.box[a].due - data.box[b].due; })
         .slice(0, limit);
+    };
+    api.recordLuyen = function (baiId, ok) {
+      var l = data.luyen[baiId] || (data.luyen[baiId] = { lam: 0, dung: 0, ngay: {} });
+      var k = String(dayNum(now())), d = l.ngay[k] || (l.ngay[k] = [0, 0]);
+      l.lam++; d[0]++;
+      if (ok) { l.dung++; d[1]++; }
+      var keys = Object.keys(l.ngay).sort(function (a, b) { return a - b; });
+      while (keys.length > 60) delete l.ngay[keys.shift()]; // chỉ giữ 60 ngày gần nhất
+      save();
+    };
+    api.luyenHomNay = function (baiId) {
+      var l = data.luyen[baiId], d = l && l.ngay[String(dayNum(now()))];
+      return d ? { lam: d[0], dung: d[1] } : { lam: 0, dung: 0 };
+    };
+    api.luyenTong = function (baiId) {
+      var l = data.luyen[baiId];
+      return l ? { lam: l.lam, dung: l.dung } : { lam: 0, dung: 0 };
     };
     api.exportJSON = function () { return JSON.stringify(data); };
     api.importJSON = function (s) {

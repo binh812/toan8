@@ -83,3 +83,22 @@ test('ôn tập: bấm Kiểm tra nhiều lần trong ngày chỉ lên hộp m�
   for (let i = 0; i < 4; i++) b.recordAttempt('x', { ok: true, hintLevel: 0, hintMax: 3 });
   assert.deepStrictEqual(createStore(s, day(5)).dueToday(5), ['x']);   // hộp 2 (+2 ngày), không phải hộp 5
 });
+test('luyện thêm: ghi, đếm hôm nay, xuất/nhập; file cũ không có luyen vẫn mở được; luyen hỏng bị bỏ', () => {
+  let d = 2;
+  const s = createStore(mem(), () => new Date(2026, 10, d, 10));
+  s.recordLuyen(6, true); s.recordLuyen(6, false); s.recordLuyen(6, true);
+  assert.deepStrictEqual(s.luyenHomNay(6), { lam: 3, dung: 2 });
+  d = 3;
+  s.recordLuyen(6, true);
+  assert.deepStrictEqual(s.luyenHomNay(6), { lam: 1, dung: 1 });
+  assert.deepStrictEqual(s.luyenTong(6), { lam: 4, dung: 3 });
+  const s2 = createStore(mem(), day(3));
+  assert.ok(s2.importJSON(s.exportJSON()));
+  assert.deepStrictEqual(s2.luyenTong(6), { lam: 4, dung: 3 });
+  assert.deepStrictEqual(s2.luyenHomNay(6), { lam: 1, dung: 1 });
+  assert.ok(s2.importJSON(JSON.stringify({ v: 1, ex: {} })));
+  assert.deepStrictEqual(s2.luyenTong(6), { lam: 0, dung: 0 });
+  assert.ok(s2.importJSON(JSON.stringify({ v: 1, ex: {}, luyen: { 6: 'hỏng', 7: { lam: 2, dung: 1, ngay: { x: 'y' } } } })));
+  assert.deepStrictEqual(s2.luyenTong(6), { lam: 0, dung: 0 });
+  assert.deepStrictEqual(s2.luyenTong(7), { lam: 2, dung: 1 });
+});
