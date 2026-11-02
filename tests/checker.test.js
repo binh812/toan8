@@ -221,3 +221,8 @@ test('biểu thức: bỏ tiền tố "r =", "Y =" như "y ="', () => {
   assert.strictEqual(bt('2x+3', 'Y = 2x+3'), 'dung');
   assert.strictEqual(bt('2x+3', 'P(x) = 2x+3'), 'dung');
 });
+test('nghiệm: 1.125 nhận cả hai cách đọc như câu số', () => {
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [1.125] }, 'x = 1.125').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [1125] }, '1.125').code, 'dung');
+  assert.strictEqual(C.checkAnswer({ kieu: 'nghiem', gt: [1.125, -2] }, '1.125; -2').code, 'dung');
+});

@@ -264,6 +264,9 @@
     if (!vals.length || vals.some(Number.isNaN)) return res('khongDoc', 'Ghi các nghiệm cách nhau bằng dấu ; ví dụ: x = 2; x = -3' + (Array.isArray(d.gt) ? '' : ' (hoặc ghi "vô nghiệm", "vô số nghiệm")'));
     if (!Array.isArray(d.gt)) return res('sai');
     if (sameSet(vals, d.gt)) return res('dung');
+    // "1.125" vừa có thể là 1125 vừa là 1,125 (như câu số): thử cách đọc dấu chấm là dấu thập phân
+    var vals2 = parts.map(function (t) { var x = parseNumberDot(t.replace(/\s+/g, '')); return Number.isNaN(x) ? parseNumber(t) : x; });
+    if (sameSet(vals2, d.gt)) return res('dung');
     for (var i = 0; i < ltg.length; i++)
       if (Array.isArray(ltg[i].gt) && sameSet(vals, ltg[i].gt)) return res('loiThuongGap', ltg[i].giaiThich);
     return res('sai', vals.length < d.gt.length ? 'Chưa đủ: em còn thiếu nghiệm.' : null);
