@@ -245,6 +245,9 @@ math-field.mf:focus-within { border-color: var(--c); }
   @page { size: A4; margin: 15mm; }
 }
 
+.kt-link { font-size: .85rem; font-weight: 600; margin-left: 12px; white-space: nowrap; }
+.kt-ketqua { margin: 14px 0 30px; }
+
 @media (max-width: 700px) {
   body { font-size: 17px; }
   main { padding: 14px 16px 60px; }

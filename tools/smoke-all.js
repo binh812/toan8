@@ -53,6 +53,19 @@ async function main() {
         pages++;
       }
     }
+    // bài nền, kiểm tra đầu chương, phiếu in, ôn tập cuối năm
+    const them = await page.evaluate(() => Object.keys(TOAN8.nenBai || {}).map(id => '#/nen/' + id)
+      .concat(TOAN8.mucLuc.filter(c => c.kiemTra).map(c => '#/kiem-tra/' + c.so))
+      .concat(['#/phieu/bai-6/1', '#/phieu/cuoi-nam-1.2.3.4.5.6.7.8.9.10/1', '#/on-tap-cuoi-nam', '#/on-tap']));
+    for (const h of them) {
+      where = h;
+      await page.evaluate(x => { location.hash = x; }, h);
+      await sleep(300);
+      const r = await page.evaluate(() => ({ katex: document.querySelectorAll('.katex-error').length, err: [...document.querySelectorAll('.err')].map(e => e.textContent) }));
+      if (r.katex) issues.push(where + ' – ' + r.katex + ' công thức KaTeX lỗi');
+      r.err.forEach(t => issues.push(where + ' – ' + t));
+      pages++;
+    }
     console.log('Đã mở ' + ids.length + ' bài, ' + pages + ' trang' + (q ? ' (' + q + ')' : '') + '.');
   } finally {
     await browser.close();

@@ -25,7 +25,20 @@ TOAN8.mucLuc = [
     { id: 18, ten: 'Thu thập và phân loại dữ liệu', trang: 90 },
     { id: 19, ten: 'Biểu diễn dữ liệu bằng bảng, biểu đồ', trang: 93 },
     { id: 20, ten: 'Phân tích số liệu thống kê dựa vào biểu đồ', trang: 99 } ] },
-  { so: 6, ten: 'Phân thức đại số', tap: 2, mau: '#0c8599', bai: [
+  { so: 6, ten: 'Phân thức đại số', tap: 2, mau: '#0c8599', kiemTra: [
+    { nen: 'phanSo', cau: { de: 'Rút gọn phân số $\\frac{18}{24}$ về tối giản.', dapAn: { kieu: 'bieuThuc', gt: '3/4', dang: 'rutGon' },
+      goiY: ['Tìm ƯCLN của $18$ và $24$.'], loiGiai: ['ƯCLN$(18, 24) = 6$.', '$\\frac{18}{24} = \\frac{3}{4}$'] } },
+    { nen: 'phanSo', cau: { de: 'Tính $\\frac{1}{2} + \\frac{1}{3}$.', dapAn: { kieu: 'bieuThuc', gt: '5/6', dang: 'rutGon' },
+      goiY: ['Quy đồng mẫu chung $6$.'], loiGiai: ['$\\frac{1}{2} + \\frac{1}{3} = \\frac{3}{6} + \\frac{2}{6}$', '$= \\frac{5}{6}$'],
+      loiThuongGap: [{ gt: '2/5', giaiThich: 'Không được cộng tử với tử, mẫu với mẫu – phải quy đồng.' }] } },
+    { nen: 'phanSo', cau: { de: 'Tính $\\frac{5}{6} - \\frac{3}{4}$.', dapAn: { kieu: 'bieuThuc', gt: '1/12', dang: 'rutGon' },
+      goiY: ['Mẫu chung nhỏ nhất là $12$.'], loiGiai: ['$\\frac{10}{12} - \\frac{9}{12}$', '$= \\frac{1}{12}$'] } },
+    { nen: 'phanSo', cau: { de: 'Tính $\\frac{2}{3} \\cdot \\frac{9}{8}$.', dapAn: { kieu: 'bieuThuc', gt: '3/4', dang: 'rutGon' },
+      goiY: ['Tử nhân tử, mẫu nhân mẫu, rồi rút gọn.'], loiGiai: ['$\\frac{2 \\cdot 9}{3 \\cdot 8} = \\frac{18}{24}$', '$= \\frac{3}{4}$'] } },
+    { nen: 'phanSo', cau: { de: 'Tính $\\frac{3}{5} : \\frac{6}{7}$.', dapAn: { kieu: 'bieuThuc', gt: '7/10', dang: 'rutGon' },
+      goiY: ['Chia cho một phân số là nhân với phân số đảo ngược.'], loiGiai: ['$\\frac{3}{5} \\cdot \\frac{7}{6} = \\frac{21}{30}$', '$= \\frac{7}{10}$'],
+      loiThuongGap: [{ gt: '18/35', giaiThich: 'Em đã nhân thẳng mà quên đảo ngược phân số chia.' }] } }
+  ], bai: [
     { id: 21, ten: 'Phân thức đại số', trang: 4 },
     { id: 22, ten: 'Tính chất cơ bản của phân thức đại số', trang: 8 },
     { id: 23, ten: 'Phép cộng và phép trừ phân thức đại số', trang: 15 },

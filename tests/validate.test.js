@@ -24,3 +24,8 @@ test('luyện thêm có lỗi: bắt đáp án sai, chia 0 (Infinity/NaN), dạn
   assert.strictEqual(r.status, 1);
   for (const s of ['Sai đáp án', 'Chia 0', 'Infinity', 'Ném lỗi', 'hạt giống', 'mức 1 và mức 2']) assert.ok(r.stdout.includes(s), 'thiếu: ' + s + '\n' + r.stdout);
 });
+test('bài nền thiếu phần: báo tomTat, viDu, luyen', () => {
+  const r = run('nen-sai.js');
+  assert.strictEqual(r.status, 1, r.stdout);
+  for (const s of ['nen thuNghiem', 'tomTat', 'viDu', 'luyen']) assert.ok(r.stdout.includes(s), 'thiếu: ' + s + '\n' + r.stdout);
+});

@@ -64,8 +64,19 @@
       var grid = el('div', { class: 'grid' });
       c.bai.forEach(function (b) { grid.appendChild(lessonCard(c, b)); });
       app.appendChild(el('section', { class: 'chuong', style: '--c:' + c.mau },
-        el('h2', null, el('span', { class: 'chip' }, 'Chương ' + c.so), ' ' + c.ten, el('small', null, ' · SGK Tập ' + c.tap)), grid));
+        el('h2', null, el('span', { class: 'chip' }, 'Chương ' + c.so), ' ' + c.ten, el('small', null, ' · SGK Tập ' + c.tap),
+          c.kiemTra ? el('a', { class: 'kt-link', href: '#/kiem-tra/' + c.so }, '🔎 Kiểm tra đầu chương') : null), grid));
     });
+    var nen = Object.keys(T.nenBai || {});
+    if (nen.length) {
+      var gn = el('div', { class: 'grid' });
+      nen.forEach(function (id) {
+        var N = T.nenBai[id];
+        gn.appendChild(el('a', { class: 'card', href: '#/nen/' + id, style: '--c:#495057' }, el('span', { class: 'num' }, 'Lớp ' + N.lop), el('span', { class: 'ten' }, N.ten)));
+      });
+      app.appendChild(el('section', { class: 'chuong', style: '--c:#495057' },
+        el('h2', null, el('span', { class: 'chip' }, 'Ôn lại'), ' Kiến thức cũ (lớp 6–7)', el('small', null, ' · khi thấy bí, ôn phần nền này trước')), gn));
+    }
     app.appendChild(el('section', { class: 'backup' },
       el('p', null, 'Tiến độ được lưu trên máy này. Muốn chuyển sang máy khác thì lưu ra file rồi mở lại ở máy kia.'),
       el('button', { class: 'btn', onclick: exportProgress }, 'Lưu tiến độ ra file'), ' ',
@@ -127,6 +138,8 @@
       if (h[0] === 'bai') lesson(app, Number(h[1]), h[2] || 'khamPha');
       else if (h[0] === 'on-tap' && T.review) T.review(app);
       else if (h[0] === 'on-tap-cuoi-nam' && T.onTapCuoiNam) T.onTapCuoiNam(app);
+      else if (h[0] === 'nen' && T.trangNen) T.trangNen(app, h[1]);
+      else if (h[0] === 'kiem-tra' && T.kiemTraChuong) T.kiemTraChuong(app, Number(h[1]));
       else if (h[0] === 'phieu' && T.phieu) T.phieu(app, h[1], h[2] ? Number(h[2]) : 0);
       else home(app);
     } catch (e) {
