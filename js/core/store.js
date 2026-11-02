@@ -10,6 +10,8 @@
   var MASTERY = 0.8;
 
   function dayNum(d) { return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); }
+  // Câu sinh tự động (luyện thêm) có id 'L<bài>-<hạt giống>': không bao giờ gặp lại nên không vào bài tập/ôn tập
+  function laCauSinh(id) { return /^L/.test(id); }
   function empty() { return { v: 1, ex: {}, tabs: {}, box: {}, luyen: {} }; }
   function isObj(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
   function valid(p) { return isObj(p) && p.v === 1 && isObj(p.ex); }
@@ -19,7 +21,7 @@
     var out = empty();
     Object.keys(p.ex).forEach(function (id) {
       var e = p.ex[id];
-      if (!isObj(e)) return;
+      if (!isObj(e) || laCauSinh(id)) return;
       out.ex[id] = { tries: Number.isFinite(e.tries) ? e.tries : 0, correct: e.correct === true, usedSolution: e.usedSolution === true, lastOk: e.lastOk === true };
     });
     if (isObj(p.tabs)) Object.keys(p.tabs).forEach(function (id) {
@@ -27,7 +29,7 @@
     });
     if (isObj(p.box)) Object.keys(p.box).forEach(function (id) {
       var b = p.box[id];
-      if (isObj(b) && Number.isInteger(b.box) && b.box >= 1 && b.box <= 5 && Number.isFinite(b.due))
+      if (!laCauSinh(id) && isObj(b) && Number.isInteger(b.box) && b.box >= 1 && b.box <= 5 && Number.isFinite(b.due))
         out.box[id] = { box: b.box, due: b.due, day: Number.isFinite(b.day) ? b.day : null };
     });
     // luyện thêm: { lam, dung, ngay: { <số ngày>: [lam, dung] } } – bỏ mục sai cấu trúc
@@ -68,6 +70,7 @@
     }
 
     api.recordAttempt = function (id, r) {
+      if (laCauSinh(id)) return;
       var e = data.ex[id] || (data.ex[id] = { tries: 0, correct: false, usedSolution: false, lastOk: false });
       var sol = r.hintLevel >= r.hintMax;
       e.tries++;
@@ -100,10 +103,11 @@
       });
       return { done: done, total: list.length, mastered: base > 0 && baseOk / base >= MASTERY && hardOk };
     };
-    api.dueToday = function (limit) {
+    // tonTai(id): câu còn trong nội dung không – lọc TRƯỚC khi cắt, để câu đã bị xoá không chiếm chỗ
+    api.dueToday = function (limit, tonTai) {
       var today = dayNum(now());
       return Object.keys(data.box)
-        .filter(function (id) { return data.box[id].due <= today; })
+        .filter(function (id) { return data.box[id].due <= today && (!tonTai || tonTai(id)); })
         .sort(function (a, b) { return data.box[a].due - data.box[b].due; })
         .slice(0, limit);
     };

@@ -235,6 +235,7 @@ math-field.mf:focus-within { border-color: var(--c); }
 .phieu-lam { height: 90px; border-bottom: 1px dotted #adb5bd; }
 .phieu-hinh .board { max-height: 260px; max-width: 360px; margin: 6px 0; }
 .phieu-hinh .bieu-do, .phieu-hinh svg { max-width: 420px; }
+.phieu-hinh .chop, .phieu-hinh .chop-svg { max-width: 300px !important; } /* hình chóp có max-width trong style riêng */
 .phieu-dapan { margin-top: 24px; }
 .phieu-lg { color: #495057; margin-left: 18px; font-size: .95rem; }
 @media print {
@@ -242,6 +243,7 @@ math-field.mf:focus-within { border-color: var(--c); }
   body { background: #fff; font-size: 13pt; }
   .phieu { border: 0; padding: 0; }
   .phieu-dapan { break-before: page; }
+  .phieu-hinh button, .phieu-hinh input, .phieu-hinh .sliders, .phieu-hinh .goi-y-nho, .phieu-hinh .doi-loai { display: none !important; }
   @page { size: A4; margin: 15mm; }
 }
 

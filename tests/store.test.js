@@ -102,3 +102,19 @@ test('luyện thêm: ghi, đếm hôm nay, xuất/nhập; file cũ không có lu
   assert.deepStrictEqual(s2.luyenTong(6), { lam: 0, dung: 0 });
   assert.deepStrictEqual(s2.luyenTong(7), { lam: 2, dung: 1 });
 });
+test('câu sinh tự động (id L…) không vào ôn tập; dữ liệu bẩn cũ được dọn; dueToday lọc câu không còn tồn tại', () => {
+  const s = createStore(mem(), day(2));
+  s.recordAttempt('6.1', { ok: false, hintLevel: 0, hintMax: 3 });
+  const bam = JSON.parse(s.exportJSON());
+  bam.ex['L17-1650963529'] = { tries: 1, correct: false, usedSolution: false, lastOk: false };
+  bam.box['L17-1650963529'] = { box: 1, due: 1, day: 0 };
+  const s2 = createStore(mem(), day(9));
+  assert.ok(s2.importJSON(JSON.stringify(bam)));
+  assert.deepStrictEqual(s2.dueToday(5), ['6.1']);
+  s2.recordAttempt('L6-123', { ok: false, hintLevel: 0, hintMax: 3 });
+  assert.deepStrictEqual(s2.dueToday(5), ['6.1']);
+  s2.recordAttempt('9.9', { ok: false, hintLevel: 0, hintMax: 3 });
+  const s3 = createStore(mem(), day(20));
+  s3.importJSON(s2.exportJSON());
+  assert.deepStrictEqual(s3.dueToday(5, id => id !== '9.9'), ['6.1']);
+});

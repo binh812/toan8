@@ -19,9 +19,10 @@
   }
   function keo() { if (!raf) raf = requestAnimationFrame(vong); }
 
-  function dat(m, tt) {
+  // boiNguoiDung: em chạm vào hình → dừng tại chỗ (không kéo điểm về vị trí đầu, kẻo điểm nhảy khỏi tay em)
+  function dat(m, tt, boiNguoiDung) {
     if (m.tt === tt) return;
-    if (m.tt === 'chay' && m.trinh.dung) m.trinh.dung();
+    if (m.tt === 'chay' && m.trinh.dung) m.trinh.dung(boiNguoiDung);
     m.tt = tt;
     m.nut.textContent = tt === 'chay' ? '⏸ Dừng' : '▶ Tự chạy';
     m.nut.setAttribute('aria-pressed', tt === 'chay' ? 'true' : 'false');
@@ -37,9 +38,11 @@
     // chỉ thao tác thật của em (isTrusted) mới dừng; sự kiện do tự chạy phát ra thì không
     var thatSu = function (e) {
       if (!e.isTrusted || e.target === nut || nut.contains(e.target)) return;
-      dat(m, 'dung');
+      dat(m, 'dung', true);
     };
-    ['pointerdown', 'keydown', 'wheel', 'input'].forEach(function (t) { khung.addEventListener(t, thatSu, true); });
+    // không dừng khi lăn chuột: lăn chuột qua hình là để cuộn trang, không phải thao tác với hình
+    ['pointerdown', 'keydown', 'input'].forEach(function (t) { khung.addEventListener(t, thatSu, true); });
+    m.dungBoiNguoiDung = function () { dat(m, 'dung', true); };
     if ('IntersectionObserver' in window) {
       m.ob = new IntersectionObserver(function (en) {
         m.hien = en[en.length - 1].intersectionRatio >= 0.5;
@@ -72,7 +75,7 @@
         a.buoc(p);
         if (p >= 1) { if (a.ketThuc) a.ketThuc(); i = (i + 1) % tacTu.length; t = 0; dangNghi = true; }
       },
-      dung: function () { var a = tacTu[i]; if (!dangNghi && a && a.ketThuc) a.ketThuc(); dangNghi = true; t = 0; }
+      dung: function (boiNguoiDung) { var a = tacTu[i]; if (!boiNguoiDung && !dangNghi && a && a.ketThuc) a.ketThuc(); dangNghi = true; t = 0; }
     };
   }
 
@@ -253,6 +256,8 @@
     dangKi: dangKi, huyHet: huyHet, kichBan: kichBan, noiTiep: noiTiep, tuDong: tuDong, tacTu: tacTu, song: song,
     tacTuThanhTruot: tacTuThanhTruot, datRange: datRange,
     themTacTu: function (f) { boTacTu.push(f); },
+    // dùng trong kiểm thử: giống như em vừa chạm vào khung (sự kiện giả lập không có isTrusted)
+    _dungBoiNguoiDung: function (khung) { ds.forEach(function (m) { if (m.khung === khung) m.dungBoiNguoiDung(); }); },
     soDangChay: function () { return ds.filter(function (m) { return m.tt === 'chay'; }).length; }
   };
 })(window.TOAN8);

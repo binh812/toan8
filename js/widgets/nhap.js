@@ -1,7 +1,7 @@
 // Khung nháp vẽ tay dưới mỗi câu hỏi: bút 3 màu, tẩy, xoá hết. Không lưu khi rời trang.
 (function (T) {
   'use strict';
-  var el = T.el, MAU = ['#212529', '#1971c2', '#e03131'], CAO = 260;
+  var el = T.el, MAU = ['#212529', '#1971c2', '#e03131'], CAO = 260, dangMo = 0;
   T.nhap = function (chua) {
     var cv = el('canvas', { class: 'nhap-cv', 'aria-label': 'Khung nháp – vẽ bằng chuột hoặc bút' });
     var mau = MAU[0], tay = false, ve = null;
@@ -22,6 +22,7 @@
 
     // Khớp kích thước điểm ảnh với kích thước hiển thị (nét không mờ), giữ nét đã vẽ khi đổi cỡ cửa sổ
     function coGian() {
+      if (!cv.isConnected && daGan) { go(); return; } // câu đã bị xoá khỏi trang (đổi câu, đổi trang) mà chưa đóng nháp
       var r = cv.getBoundingClientRect();
       if (!r.width) return;
       var cu = null;
@@ -46,8 +47,12 @@
     });
     ['pointerup', 'pointercancel'].forEach(function (t) { cv.addEventListener(t, function () { ve = null; }); });
     function xoa() { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.restore(); }
+    var daGan = true;
+    function go() { if (daGan) { daGan = false; dangMo--; window.removeEventListener('resize', coGian); } }
     coGian();
     window.addEventListener('resize', coGian);
-    return { el: wrap, xoa: xoa, huy: function () { window.removeEventListener('resize', coGian); wrap.remove(); } };
+    dangMo++;
+    return { el: wrap, xoa: xoa, huy: function () { go(); wrap.remove(); } };
   };
+  T.nhap.soDangMo = function () { return dangMo; };
 })(window.TOAN8);

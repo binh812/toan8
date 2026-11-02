@@ -17,7 +17,7 @@
   }
 
   T.review = function (c) {
-    var due = T.store.dueToday(N).map(T.findExercise).filter(Boolean);
+    var due = T.store.dueToday(N, function (id) { return !!T.findExercise(id); }).map(T.findExercise);
     var used = {};
     due.forEach(function (x) { used[x.q.id] = 1; });
     if (due.length < N) {
@@ -90,7 +90,7 @@
         kho.forEach(function (l) { if (l.length && cau.length < SO_CAU) cau.push(l.pop()); });
       cau.forEach(function (x, i) {
         de.appendChild(el('div', { class: 'from' }, 'Câu ' + (i + 1) + ' – ', el('a', { href: '#/bai/' + x.bai.id + '/lyThuyet' }, 'Bài ' + x.bai.id + '. ' + x.bai.ten)));
-        T.mountQuestion(de, x.q, { record: true });
+        T.mountQuestion(de, x.q, { record: !/^L/.test(x.q.id) }); // câu sinh tự động không vào ôn tập
       });
     }
   };

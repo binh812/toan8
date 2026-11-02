@@ -40,7 +40,10 @@
     var kq = C.kiemTra.map(function (k, i) {
       var st = { dung: false }, q = { id: 'kt' + so + '.' + i };
       for (var key in k.cau) q[key] = k.cau[key];
-      T.mountQuestion(app, q, { record: false, onResult: function (r) { if (r.ok) st.dung = true; } });
+      // chỉ tính là "biết" khi tự làm đúng mà chưa xem lời giải; kết quả chốt ở lần đúng đầu tiên hoặc khi xem lời giải
+      T.mountQuestion(app, q, { record: false,
+        onResult: function (r, ct) { if (!st.chot && r.ok) { st.dung = !ct.xemLoiGiai; st.chot = true; } },
+        onXemLoiGiai: function () { if (!st.chot) { st.dung = false; st.chot = true; } } });
       return st;
     });
     var out = el('div', { class: 'kt-ketqua', 'aria-live': 'polite' });

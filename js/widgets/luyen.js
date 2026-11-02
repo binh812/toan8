@@ -47,12 +47,14 @@
       cho.appendChild(el('div', { class: 'from' }, 'Câu ' + soCau));
       T.mountQuestion(cho, q, {
         record: false,
+        // kết quả câu chốt ở lần đúng đầu tiên (khớp với tiến độ đã ghi); bấm gợi ý hay gõ lại sau đó không tính
         onResult: function (r, ct) {
+          if (kq.dung) return;
           kq.soLanSai = ct.soLanSai;
           if (ct.xemLoiGiai) kq.xemLoiGiai = true;
           if (r.ok) { kq.dung = true; ghi(); tiep.hidden = false; boQua.hidden = true; tiep.focus(); }
         },
-        onXemLoiGiai: function () { kq.xemLoiGiai = true; tiep.hidden = false; boQua.hidden = true; }
+        onXemLoiGiai: function () { if (kq.dung) return; kq.xemLoiGiai = true; tiep.hidden = false; boQua.hidden = true; }
       });
       cho.appendChild(el('div', { class: 'luyen-nut' }, tiep, boQua));
       function ghi() {

@@ -53,7 +53,7 @@
   }
 
   function home(app) {
-    var due = T.store.dueToday(5).length;
+    var due = T.store.dueToday(5, function (id) { return !!T.findExercise(id); }).length;
     app.appendChild(el('section', { class: 'hero' },
       el('h1', null, 'Chào em! Hôm nay mình học bài nào?'),
       el('p', null, 'Mỗi bài có 5 bước: ', el('b', null, 'Khám phá → Lý thuyết → Ví dụ → Tự làm → Tìm lỗi sai'), '. Cứ làm thử – sai cũng không sao, máy sẽ chỉ cho em chỗ sai.'),
