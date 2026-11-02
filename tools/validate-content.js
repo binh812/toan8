@@ -1,11 +1,17 @@
 // Kiểm tra nội dung bài học: đủ trường, đủ số bài, đáp án tự khớp, lỗi thường gặp không trùng đáp án,
 // dòng cuối lời giải khớp đáp án, công thức không thiếu dấu $.
-// Dùng: node tools/validate-content.js [file…]  (không truyền file thì quét content/bai*.js)
+// Luyện thêm (content/luyen/*.js): sinh thử SO_HAT đề mỗi dạng, mỗi đề kiểm như một bài tập.
+// Dùng: node tools/validate-content.js [--du-luyen] [file…]  (không truyền file thì quét content/bai*.js, content/luyen/*.js)
+//   --du-luyen: báo bài chưa có luyện thêm hoặc có ít hơn 3 nguồn bài
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const P = require('../js/core/parser.js');
 const C = require('../js/core/checker.js');
 const R = require('../js/core/render.js');
 const katex = require('../lib/katex/katex.min.js');
+const RNG = require('../js/core/rng.js');
+const LL = require('../js/core/luyen.js');
+const CC = RNG.congCu(P);
+const SO_HAT = 300;
 
 // Render thử từng công thức như trên trình duyệt nhưng bật báo lỗi (trên trang, lệnh lạ chỉ hiện chữ đỏ, khó thấy).
 function checkMath(s, where) {
@@ -32,14 +38,18 @@ const KIEU = ['bieuThuc', 'so', 'nghiem', 'chon', 'dungSai', 'nhieuO'];
 const errors = [];
 const seenIds = {};
 
-function loadLessons(file) {
-  const lessons = [];
-  const ctx = { TOAN8: { bai: def => lessons.push(def) }, console };
+function loadFile(file) {
+  const lessons = [], luyen = [], nen = [];
+  const ctx = { TOAN8: {
+    bai: def => lessons.push(def),
+    luyen: (id, dang, opts) => luyen.push({ id, dang, deCo: (opts && opts.deCo) || [] }),
+    nen: def => nen.push(def)
+  }, console };
   ctx.window = ctx;
   vm.createContext(ctx);
   vm.runInContext(fs.readFileSync(FIGURE, 'utf8'), ctx, { filename: FIGURE }); // TOAN8.hinhTinh, TOAN8.hh dùng lúc nạp bài
   vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });
-  return lessons;
+  return { lessons, luyen, nen };
 }
 
 // LaTeX đơn giản → ascii-math cho parser (bỏ qua nếu không đọc được)
@@ -158,13 +168,69 @@ function checkLesson(L, file) {
   }, '');
 }
 
-const files = process.argv.slice(2).length ? process.argv.slice(2)
-  : fs.readdirSync(path.join(__dirname, '..', 'content')).filter(f => /^bai\d+\.js$/.test(f)).map(f => path.join(__dirname, '..', 'content', f));
-let count = 0;
+// ---------- Luyện thêm ----------
+function checkCauSinh(tag, q) {
+  if (!q || typeof q !== 'object') { errors.push(tag + ': sinh() không trả về câu hỏi'); return; }
+  if (!q.de) errors.push(tag + ': thiếu de');
+  if (!q.goiY || !q.goiY.length) errors.push(tag + ': thiếu goiY');
+  if (!q.loiGiai || !q.loiGiai.length) errors.push(tag + ': thiếu loiGiai');
+  if (q.hinh && !KNOWN_WIDGETS.includes(q.hinh.widget)) errors.push(tag + ': hinh widget lạ: ' + q.hinh.widget);
+  walkStrings(q, (s, where) => {
+    if (/undefined|NaN|Infinity|\[object/.test(s)) errors.push(tag + where + ': có "undefined/NaN/Infinity" trong chữ: "' + s.slice(0, 60) + '"');
+    if ((s.match(/\$/g) || []).length % 2) errors.push(tag + where + ': số dấu $ lẻ: "' + s.slice(0, 50) + '"');
+    else checkMath(s, tag + where);
+  }, '');
+  const d = q.dapAn;
+  if (d && d.kieu === 'so' && !Number.isFinite(C.parseNumber(String(d.gt)))) errors.push(tag + ': đáp án không phải số hữu hạn (' + d.gt + ')');
+  else checkDapAn(tag, d, q.loiThuongGap);
+  checkLastLine(tag, q);
+}
+function checkLuyen(g) {
+  const tagBai = 'luyen' + g.id;
+  if (!Array.isArray(g.dang)) { errors.push(tagBai + ': danh sách dạng phải là mảng'); return 0; }
+  g.dang.forEach((d, i) => {
+    const tag = tagBai + ' dạng "' + (d.ten || i) + '"';
+    if (![1, 2, 3].includes(d.muc)) errors.push(tag + ': muc phải là 1/2/3');
+    if (typeof d.sinh !== 'function') { errors.push(tag + ': thiếu hàm sinh'); return; }
+    for (let s = 1; s <= SO_HAT; s++) {
+      let q;
+      try { q = LL.sinhCau(d, s, CC, g.id); } catch (e) { errors.push(tag + ' hạt giống ' + s + ': ném lỗi (' + e.message + ')'); break; }
+      const n = errors.length;
+      checkCauSinh(tag + ' hạt giống ' + s, q);
+      if (errors.length > n) break; // một hạt giống hỏng là đủ để báo dạng này
+    }
+  });
+  g.deCo.forEach(q => {
+    const tag = tagBai + ' ' + q.id;
+    if (seenIds[q.id]) errors.push(tag + ': id trùng với ' + seenIds[q.id]);
+    seenIds[q.id] = tagBai;
+    if (![1, 2, 3].includes(q.muc)) errors.push(tag + ': muc phải là 1/2/3');
+    checkCauSinh(tag, q);
+  });
+  const muc = new Set(g.dang.map(d => d.muc).concat(g.deCo.map(q => q.muc)));
+  if (!(muc.has(1) && muc.has(2))) errors.push(tagBai + ': cần có ít nhất mức 1 và mức 2');
+  return g.dang.length;
+}
+
+const args = process.argv.slice(2), duLuyen = args.includes('--du-luyen');
+const fileArgs = args.filter(a => !a.startsWith('--'));
+const CONTENT = path.join(__dirname, '..', 'content');
+const quet = (dir, re) => fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => re.test(f)).map(f => path.join(dir, f)) : [];
+const files = fileArgs.length ? fileArgs : quet(CONTENT, /^bai\d+\.js$/).concat(quet(path.join(CONTENT, 'luyen'), /^luyen\d+\.js$/));
+let count = 0, soDang = 0;
+const baiCo = [], luyenCo = {};
 for (const f of files) {
   checkBackslashes(fs.readFileSync(f, 'utf8'), path.basename(f));
-  try { loadLessons(f).forEach(L => { count++; checkLesson(L, path.basename(f)); }); }
-  catch (e) { errors.push(path.basename(f) + ': không chạy được file (' + e.message + ')'); }
+  try {
+    const r = loadFile(f);
+    r.lessons.forEach(L => { count++; baiCo.push(L.id); checkLesson(L, path.basename(f)); });
+    r.luyen.forEach(g => { soDang += checkLuyen(g); luyenCo[g.id] = g.dang.length + Math.ceil(g.deCo.length / 3); });
+  } catch (e) { errors.push(path.basename(f) + ': không chạy được file (' + e.message + ')'); }
 }
-if (errors.length) { console.log(errors.join('\n')); console.log('\n' + errors.length + ' lỗi trong ' + count + ' bài.'); process.exitCode = 1; }
-else console.log('OK: ' + count + ' bài, ' + Object.keys(seenIds).length + ' bài tập, không có lỗi.');
+if (duLuyen) baiCo.forEach(id => {
+  if (!luyenCo[id]) errors.push('bai' + id + ': chưa có luyện thêm (content/luyen/luyen' + String(id).padStart(2, '0') + '.js)');
+  else if (luyenCo[id] < 3) errors.push('luyen' + id + ': cần ≥ 3 dạng (câu soạn sẵn tính 3 câu = 1 dạng)');
+});
+const tomTat = count + ' bài, ' + Object.keys(seenIds).length + ' bài tập, ' + soDang + ' dạng luyện thêm (' + soDang * SO_HAT + ' đề thử)';
+if (errors.length) { console.log(errors.join('\n')); console.log('\n' + errors.length + ' lỗi (' + tomTat + ').'); process.exitCode = 1; }
+else console.log('OK: ' + tomTat + ', không có lỗi.');
