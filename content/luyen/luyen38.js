@@ -45,7 +45,7 @@
           loiThuongGap: [{ gt: sxq / d / 3, giaiThich: 'Em coi $S_{xq} : d$ là **chu vi**. Đó là **nửa** chu vi; chu vi phải nhân $2$.' }]
         };
       }
-      var h = r.so(3, 12), S = r.so(2, 15) * 2, V = S * h / 3;
+      var h = r.so(3, 12), S = r.so(2, 15) * (h % 3 === 0 ? 2 : 3), V = S * h / 3; // V nguyên
       return {
         de: 'Một hình chóp tam giác đều có thể tích $' + cc.so(V) + '$ cm³ và chiều cao $' + h + '$ cm. Tính diện tích đáy (cm²).',
         dapAn: { kieu: 'so', gt: S },

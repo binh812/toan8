@@ -103,7 +103,7 @@
         de: 'Cho hàm số $f(x) = ' + tex + '$. Tìm $x$ sao cho $f(x) = ' + y0 + '$.',
         dapAn: { kieu: 'so', gt: x0 },
         goiY: ['$f(x) = ' + y0 + '$ nghĩa là $' + tex + ' = ' + y0 + '$: một phương trình ẩn $x$.', 'Chuyển $' + q + '$ sang vế phải (đổi dấu) rồi chia cho hệ số của $x$.'],
-        loiGiai: ['$' + tex + ' = ' + y0 + '$', '$' + hs + 'x = ' + (y0 - q) + '$', '$x = ' + x0 + '$'],
+        loiGiai: ['$' + tex + ' = ' + y0 + '$', '$' + hs + 'x = ' + (y0 - q) + '$', '$x = ' + x0 + '$'].filter(function (d, i, m) { return d !== m[i - 1]; }),
         loiThuongGap: loc([{ gt: fy, giaiThich: 'Em đã tính $f(' + y0 + ')$. Đề cho **giá trị của hàm số** bằng $' + y0 + '$ và hỏi $x$.' },
           { gt: nua ? 2 * (y0 + q) * p : (y0 + q) / p, giaiThich: 'Chuyển $' + q + '$ sang vế phải phải đổi dấu: $' + hs + 'x = ' + y0 + ' - ' + ng(q) + '$.' }], x0)
       };
@@ -171,7 +171,7 @@
       var v1 = r.chon(uoc), t2;
       do { t2 = r.chon(uoc); } while (V / t2 === v1);
       var be = r.chon([['Một bể chứa', 'lít nước', 'Mở vòi xả, mỗi phút chảy ra $x$ lít thì thời gian xả hết bể là', 'phút', 'lít/phút'],
-        ['Một vòi chảy đầy bể', 'lít', 'Với lưu lượng $x$ (lít/phút) thì thời gian chảy đầy bể là', 'phút', 'lít/phút']]);
+        ['Một bể rỗng chứa được', 'lít nước', 'Một vòi chảy vào bể, mỗi phút $x$ lít, thì thời gian chảy đầy bể là', 'phút', 'lít/phút']]);
       return {
         de: be[0] + ' $' + V + '$ ' + be[1] + '. ' + be[2] + ' $t = \\frac{' + V + '}{x}$ (' + be[3] + ').',
         dapAn: { kieu: 'nhieuO', o: [

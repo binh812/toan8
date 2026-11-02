@@ -138,7 +138,7 @@
         lg = ['$AD \\parallel BC$ nên $\\widehat{BEA} = \\widehat{EAD}$ (so le trong) $= \\widehat{BAE}$ (phân giác). Vậy tam giác $ABE$ cân tại $B$: $BE = AB = ' + S + '$ cm.',
           '$BC = AD = ' + L + '$ cm (cạnh đối).', '$EC = BC - BE = ' + L + ' - ' + S + ' = ' + kq + '$'];
         hinh = hinhTG({ diem: D, vong: ['A', 'B', 'C', 'D'], canh: [['A', 'E', { mau: CAM, day: 3 }]], goc: [['B', 'A', 'E', { r: 0.09 * L }], ['E', 'A', 'D', { r: 0.11 * L }]],
-          nhan: [['A', 'B', S + ' cm'], ['A', 'D', L + ' cm', true], ['E', 'C', '?', false, 1, XANH]], lechTen: { E: [0, 16] } });
+          nhan: [['A', 'B', S + ' cm'], ['A', 'D', L + ' cm'], ['E', 'C', '?', false, 1, XANH]], lechTen: { E: [0, 16] } });
       }
       return {
         de: de, dapAn: { kieu: 'so', gt: kq },
@@ -167,7 +167,8 @@
       var kq = hoi % 2 === 0 ? lon : nho;
       if (hoi >= 2) lg.push('$' + G(t[hoi]) + ' = ' + G(t[hoi - 2]) + ' = ' + d(kq) + '$ (hai góc đối bằng nhau)');
       else lg.push('Vậy $' + G(t[hoi]) + ' = ' + d(kq) + '$');
-      ltg = [{ gt: hoi % 2 === 0 ? nho : lon, giaiThich: 'Em nhầm góc. $' + G(t[hoi]) + '$ ' + (hoi % 2 === 0 ? 'đối với $' + G(t[0]) + '$ (hoặc chính là nó) nên là góc lớn.' : 'đối với $' + G(t[1]) + '$ (hoặc chính là nó) nên là góc nhỏ.') }];
+      ltg = [{ gt: hoi % 2 === 0 ? nho : lon, giaiThich: 'Em nhầm góc. ' + (hoi < 2 ? '$' + G(t[hoi]) + '$ là góc ' + (hoi === 0 ? 'lớn' : 'nhỏ') + ' trong hai góc kề.'
+        : '$' + G(t[hoi]) + '$ đối với $' + G(t[hoi - 2]) + '$ nên bằng nó: là góc ' + (hoi === 2 ? 'lớn' : 'nhỏ') + '.') }];
       return {
         de: de, dapAn: { kieu: 'so', gt: kq },
         goiY: ['Hai góc kề một cạnh của hình bình hành bù nhau: $' + G(t[0]) + ' + ' + G(t[1]) + ' = 180^\\circ$.', 'Tìm $' + G(t[0]) + '$, $' + G(t[1]) + '$ rồi dùng: các góc đối bằng nhau.'],

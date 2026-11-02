@@ -16,12 +16,13 @@
     return { a: a, b: b, c: c };
   }
   // Hình tam giác có hai trung điểm M ∈ AB, N ∈ AC; ten = [A, B, C, M, N].
-  function hinhTB(ten, s, nhan, vachAN) {
+  // ghiChu: ghi độ dài AB, AC ở góc hình (nhãn đặt giữa AB, AC sẽ đè lên tên trung điểm M, N)
+  function hinhTB(ten, s, nhan, vachAN, ghiChu) {
     var T = TOAN8.hh.tg(s.a, s.b, s.c), g = TOAN8.hh.giua, d = {};
     d[ten[0]] = T.A; d[ten[1]] = T.B; d[ten[2]] = T.C; d[ten[3]] = g(T.A, T.B); d[ten[4]] = g(T.A, T.C);
     return TOAN8.hinhGeo({ diem: d, to: [ten[0], ten[1], ten[2]],
       canh: [[ten[0], ten[3], { vach: 1 }], [ten[3], ten[1], { vach: 1 }], [ten[0], ten[4], vachAN === false ? {} : { vach: 2 }], [ten[4], ten[2], vachAN === false ? {} : { vach: 2 }],
-        [ten[1], ten[2]], [ten[3], ten[4], { mau: TIM, day: 4 }]], nhan: nhan });
+        [ten[1], ten[2]], [ten[3], ten[4], { mau: TIM, day: 4 }]], nhan: nhan, ghiChu: ghiChu });
   }
   var BO_TEN = [['A', 'B', 'C', 'M', 'N'], ['A', 'B', 'C', 'D', 'E'], ['D', 'E', 'F', 'M', 'N'], ['M', 'N', 'P', 'I', 'K'], ['P', 'Q', 'R', 'E', 'F']];
 
@@ -82,7 +83,7 @@
         var T = TOAN8.hh.tg(BC, CA, AB), g = TOAN8.hh.giua;
         hinh = TOAN8.hinhGeo({ diem: { A: T.A, B: T.B, C: T.C, M: g(T.A, T.B), N: g(T.A, T.C), P: g(T.B, T.C) }, to: ['A', 'B', 'C'],
           canh: [['A', 'B'], ['A', 'C'], ['B', 'C'], ['M', 'N', { mau: TIM }], ['N', 'P', { mau: TIM }], ['P', 'M', { mau: TIM }]],
-          nhan: [['A', 'B', String(AB), false, 2], ['B', 'C', String(BC)], ['A', 'C', String(CA), false, 2]] });
+          nhan: [['B', 'C', String(BC)]], ghiChu: 'AB = ' + AB + ', AC = ' + CA });
         ltg.push({ gt: P, giaiThich: '$' + P + '$ là chu vi $\\triangle ABC$. Chu vi $\\triangle MNP$ chỉ bằng **một nửa**.' });
         ltg.push({ gt: 2 * P, giaiThich: 'Mỗi đường trung bình bằng **nửa** cạnh tương ứng, không phải gấp đôi.' });
         return {
@@ -102,7 +103,7 @@
       ltg.push({ gt: sai, giaiThich: 'Kiểm tra lại $MN$: đường trung bình bằng **nửa** $BC$, tức $' + so(BC / 2) + '$ cm.' });
       return {
         de: 'Tam giác $ABC$ có $AB = ' + AB + '$ cm, $AC = ' + CA + '$ cm, $BC = ' + BC + '$ cm. $M$, $N$ lần lượt là trung điểm của $AB$, $AC$. Tính chu vi tứ giác $BMNC$ (cm).',
-        hinh: hinhTB(['A', 'B', 'C', 'M', 'N'], s, [['A', 'B', String(AB)], ['B', 'C', String(BC)], ['A', 'C', String(CA)]]),
+        hinh: hinhTB(['A', 'B', 'C', 'M', 'N'], s, [['B', 'C', String(BC)]], undefined, 'AB = ' + AB + ', AC = ' + CA),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Chu vi $BMNC = BM + MN + NC + CB$.', '$BM = \\frac{1}{2}AB$, $NC = \\frac{1}{2}AC$, $MN = \\frac{1}{2}BC$.'],
         loiGiai: ['$BM = ' + so(AB / 2) + '$, $NC = ' + so(CA / 2) + '$, $MN = \\frac{1}{2}BC = ' + so(BC / 2) + '$.',
@@ -129,7 +130,7 @@
       return {
         de: de0 + 'Tính $' + hoi + '$ (cm).',
         // không vạch AN = NC: đó chính là điều em phải suy ra
-        hinh: hinhTB(['A', 'B', 'C', 'M', 'N'], s, [['A', 'C', AC + ' cm', false, 2.4], ['B', 'C', s.a + ' cm']], false),
+        hinh: hinhTB(['A', 'B', 'C', 'M', 'N'], s, [['B', 'C', s.a + ' cm']], false, 'AC = ' + AC + ' cm'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Đường thẳng đi qua trung điểm một cạnh và song song với cạnh thứ hai thì đi qua **trung điểm** của cạnh thứ ba.', 'Vậy $N$ là trung điểm của $AC$' + (hoi === 'MN' ? ' và $MN$ là đường trung bình.' : '.')],
         loiGiai: lg, loiThuongGap: ltg
@@ -149,12 +150,14 @@
         var hinh = TOAN8.hinhGeo({ diem: { A: T.A, B: T.B, C: T.C, P: Pp, Q: Q },
           canh: [['A', 'B', { net: 2 }], ['A', 'C', { net: 2 }], ['B', 'C', { net: 2 }], ['P', 'Q', { mau: TIM, day: 3 }]],
           nhan: hoiPQ ? [['A', 'P', AB / 2 + ' m'], ['P', 'B', AB / 2 + ' m'], ['A', 'Q', AC / 2 + ' m'], ['Q', 'C', AC / 2 + ' m'], ['B', 'C', BC + ' m']] : [['P', 'Q', BC / 2 + ' m', true, 0.8], ['B', 'C', '?']],
+          // hồ chắn đoạn cần tìm: PQ (khi hỏi PQ) hoặc BC (khi hỏi BC) – đoạn đo được phải đi lại được
           them: function (board) {
-            var Mx = (Pp[0] + Q[0]) / 2, My = (Pp[1] + Q[1]) / 2;
-            var F1 = [Mx + 0.7 * (Pp[0] - Mx), My + 0.7 * (Pp[1] - My)], F2 = [Mx + 0.7 * (Q[0] - Mx), My + 0.7 * (Q[1] - My)];
-            board.create('ellipse', [F1, F2, Pp], { fillColor: '#74c0fc', fillOpacity: 0.35, strokeColor: '#74c0fc', fixed: true, highlight: false });
+            var X = hoiPQ ? Pp : T.B, Y = hoiPQ ? Q : T.C, Mx = (X[0] + Y[0]) / 2, My = (X[1] + Y[1]) / 2, f = hoiPQ ? 0.7 : 0.5;
+            var F1 = [Mx + f * (X[0] - Mx), My + f * (X[1] - My)], F2 = [Mx + f * (Y[0] - Mx), My + f * (Y[1] - My)];
+            var Qua = hoiPQ ? Pp : [Mx + 0.62 * (X[0] - Mx), My + 0.62 * (X[1] - My)];
+            board.create('ellipse', [F1, F2, Qua], { fillColor: '#74c0fc', fillOpacity: 0.35, strokeColor: '#74c0fc', fixed: true, highlight: false });
           },
-          ghiChu: hoiPQ ? 'P, Q ở hai bờ hồ' : 'Hồ nằm giữa P và Q' });
+          ghiChu: hoiPQ ? 'P, Q ở hai bờ hồ' : 'Hồ nằm giữa B và C' });
         if (hoiPQ) {
           ltg.push({ gt: 2 * BC, giaiThich: 'Đường trung bình bằng **nửa** cạnh thứ ba: $PQ = ' + BC + ' : 2$.' });
           if (lech((AB + AC) / 4, kq)) ltg.push({ gt: (AB + AC) / 4, giaiThich: 'Em lấy trung bình cộng $AP$ và $AQ$. Hãy dùng tính chất đường trung bình: $PQ = \\frac{1}{2}BC$.' });

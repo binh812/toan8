@@ -41,7 +41,7 @@
         de: 'Hệ số góc của đường thẳng $y = \\frac{' + lin(cc, p, q) + '}{' + k + '}$ là bao nhiêu?',
         dapAn: { kieu: 'so', gt: hs.ascii },
         goiY: ['Chia **từng hạng tử** của tử cho $' + k + '$ để đưa về dạng $y = ax + b$.', 'Ví dụ: $\\frac{3x + 1}{2} = \\frac{3}{2}x + \\frac{1}{2}$ có hệ số góc $\\frac{3}{2}$. Nhớ rút gọn phân số.'],
-        loiGiai: ['$y = \\frac{' + lin(cc, p, q) + '}{' + k + '} = \\frac{' + p + '}{' + k + '}x ' + (q > 0 ? '+ ' : '- ') + '\\frac{' + Math.abs(q) + '}{' + k + '}$', 'Hệ số góc: $a = ' + hs.tex + '$'],
+        loiGiai: ['$y = \\frac{' + lin(cc, p, q) + '}{' + k + '} = \\frac{' + p + '}{' + k + '}x ' + (q > 0 ? '+ ' : '- ') + cc.phanSo(Math.abs(q), k).tex + '$', 'Hệ số góc: $a = ' + hs.tex + '$'],
         loiThuongGap: loc([{ gt: p, giaiThich: 'Phải chia cả hạng tử $' + heSo(p) + 'x$ cho mẫu $' + k + '$: hệ số góc là $\\frac{' + p + '}{' + k + '}$, không phải $' + p + '$.' }], p / k)
       };
     } },
@@ -65,7 +65,7 @@
       do { c = r.khac0(-4, 4); } while (c === a || c === -a);
       var cap = function (a1, q1, a2, q2) { return '$y = ' + lin(cc, a1, q1) + '$ và $y = ' + lin(cc, a2, q2) + '$'; };
       var dung = cap(a, b1, a, b2);
-      var s = r.khac0(-3, 3), trung = '$y = ' + (a === -1 ? '-' : a) + '(x ' + cong(s) + ')$ và $y = ' + lin(cc, a, a * s) + '$';
+      var s = r.khac0(-3, 3), trung = '$y = ' + heSo(a) + '(x ' + cong(s) + ')$ và $y = ' + lin(cc, a, a * s) + '$';
       var ds = r.xaoTron([dung, cap(c, b1, a, b1), cap(a, b1, -a, b2), trung]), gt = ds.indexOf(dung);
       return {
         de: 'Cặp đường thẳng nào dưới đây **song song** với nhau?',
@@ -96,8 +96,8 @@
         de: 'Cho hai hàm số bậc nhất $y = ' + k + 'mx ' + cong(q) + '$ và $y = (m ' + cong(d) + ')x ' + cong(c) + '$. Tìm $m$ để đồ thị của chúng là hai đường thẳng song song.',
         dapAn: { kieu: 'so', gt: m2 },
         goiY: ['Song song khi $' + k + 'm = m ' + cong(d) + '$ (và $' + q + ' \\ne ' + c + '$, luôn đúng).', 'Chuyển $m$ sang vế trái rồi giải. Nhớ kiểm tra hai hệ số góc khác $0$.'],
-        loiGiai: ['$' + k + 'm = m ' + cong(d) + '$, nên $' + heSo(k - 1) + 'm = ' + d + '$, $m = ' + m2 + '$.', 'Khi đó $' + k + 'm = ' + k * m2 + ' \\ne 0$ (thoả mãn).', 'Vậy $m = ' + m2 + '$'],
-        loiThuongGap: loc([{ gt: d / (k + 1), giaiThich: 'Chuyển $m$ sang vế trái phải đổi dấu: $' + k + 'm - m = ' + (k - 1) + 'm$, không phải $' + (k + 1) + 'm$.' }], m2)
+        loiGiai: ['$' + k + 'm = m ' + cong(d) + '$, nên ' + (k === 2 ? '' : '$' + (k - 1) + 'm = ' + d + '$, ') + '$m = ' + m2 + '$.', 'Khi đó $' + k + 'm = ' + k * m2 + ' \\ne 0$ (thoả mãn).', 'Vậy $m = ' + m2 + '$'],
+        loiThuongGap: loc([{ gt: d / (k + 1), giaiThich: 'Chuyển $m$ sang vế trái phải đổi dấu: $' + k + 'm - m = ' + heSo(k - 1) + 'm$, không phải $' + (k + 1) + 'm$.' }], m2)
       };
     } },
     { ten: 'Viết phương trình đường thẳng biết hệ số góc và một điểm', muc: 2, sinh: function (r, cc) {
@@ -146,10 +146,10 @@
         de: 'Tìm toạ độ giao điểm của hai đường thẳng $y = ' + lin(cc, a1, b1) + '$ và $y = ' + lin(cc, a2, b2) + '$.',
         hinh: { widget: 'doThi', config: { bbox: [-6, 6, 6, -6], an: true, duong: [{ a: a1, b: b1 }, { a: a2, b: b2 }] } },
         dapAn: { kieu: 'nhieuO', o: [
-          { nhan: 'Hoành độ giao điểm', kieu: 'so', gt: x0, loiThuongGap: loc([{ gt: (b2 - b1) / (a1 + a2), giaiThich: 'Chuyển $' + heSo(a2) + 'x$ sang vế trái phải đổi dấu: $' + heSo(a1) + 'x - ' + ng(a2) + 'x = ' + (a1 - a2) + 'x$.' }, { gt: y0, giaiThich: '$' + y0 + '$ là tung độ. Hoành độ là nghiệm $x$ của phương trình hoành độ.' }], x0) },
+          { nhan: 'Hoành độ giao điểm', kieu: 'so', gt: x0, loiThuongGap: loc([{ gt: (b2 - b1) / (a1 + a2), giaiThich: 'Chuyển $' + heSo(a2) + 'x$ sang vế trái phải đổi dấu: $' + heSo(a1) + 'x - ' + (a2 < 0 ? '(' + heSo(a2) + 'x)' : heSo(a2) + 'x') + ' = ' + heSo(a1 - a2) + 'x$.' }, { gt: y0, giaiThich: '$' + y0 + '$ là tung độ. Hoành độ là nghiệm $x$ của phương trình hoành độ.' }], x0) },
           { nhan: 'Tung độ giao điểm', kieu: 'so', gt: y0, loiThuongGap: loc([{ gt: x0, giaiThich: '$' + x0 + '$ là hoành độ. Tung độ: thay $x = ' + x0 + '$ vào một trong hai công thức.' }], y0) }] },
         goiY: ['Tại giao điểm hai giá trị $y$ bằng nhau: $' + lin(cc, a1, b1) + ' = ' + lin(cc, a2, b2) + '$.', 'Tìm $x$ rồi thay vào một trong hai công thức để tìm $y$. Nhìn hình để kiểm tra.'],
-        loiGiai: ['$' + lin(cc, a1, b1) + ' = ' + lin(cc, a2, b2) + '$, nên $' + lin(cc, h, 0) + ' = ' + (b2 - b1) + '$, $x = ' + x0 + '$.',
+        loiGiai: ['$' + lin(cc, a1, b1) + ' = ' + lin(cc, a2, b2) + '$, nên ' + (h === 1 ? '' : '$' + lin(cc, h, 0) + ' = ' + (b2 - b1) + '$, ') + '$x = ' + x0 + '$.',
           'Thay vào: $y = ' + (Math.abs(a1) === 1 ? (a1 < 0 ? '-' : '') + ng(x0) : a1 + '\\cdot ' + ng(x0)) + (b1 ? ' ' + cong(b1) : '') + ' = ' + y0 + '$.',
           'Giao điểm là $(' + x0 + '; ' + y0 + ')$.']
       };
@@ -161,10 +161,10 @@
         de: 'Cho hàm số bậc nhất $y = (m ' + cong(-p) + ')x ' + cong(q) + '$ $(m \\ne ' + p + ')$. a) Tìm $m$ để đồ thị song song với đường thẳng $y = ' + heSo(a) + 'x$. b) Với $m$ đó, đồ thị cắt trục hoành tại điểm có hoành độ bằng bao nhiêu?',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'a) $m =$', kieu: 'so', gt: m, loiThuongGap: loc([{ gt: a - p, giaiThich: '$m ' + cong(-p) + ' = ' + a + '$ thì $m = ' + a + ' ' + cong(p) + ' = ' + m + '$ (chuyển vế đổi dấu).' }], m) },
-          { nhan: 'b) Hoành độ giao điểm với trục hoành', kieu: 'so', gt: x0, loiThuongGap: loc([{ gt: -x0, giaiThich: 'Giải $' + lin(cc, a, q) + ' = 0$: $' + heSo(a) + 'x = ' + (-q) + '$, $x = ' + x0 + '$ (chú ý dấu).' }, { gt: q, giaiThich: '$' + q + '$ là tung độ giao điểm với trục **tung**.' }], x0) }] },
+          { nhan: 'b) Hoành độ giao điểm với trục hoành', kieu: 'so', gt: x0, loiThuongGap: loc([{ gt: -x0, giaiThich: 'Giải $' + lin(cc, a, q) + ' = 0$: ' + (a === 1 ? '' : '$' + heSo(a) + 'x = ' + (-q) + '$, ') + '$x = ' + x0 + '$ (chú ý dấu).' }, { gt: q, giaiThich: '$' + q + '$ là tung độ giao điểm với trục **tung**.' }], x0) }] },
         goiY: ['a) Song song khi hệ số góc bằng nhau: $m ' + cong(-p) + ' = ' + a + '$ (và $' + q + ' \\ne 0$).', 'b) Thay $m$ vào được $y = ' + lin(cc, a, q) + '$. Cho $y = 0$ rồi giải.'],
         loiGiai: ['a) $m ' + cong(-p) + ' = ' + a + '$, nên $m = ' + m + '$ (thoả mãn $m \\ne ' + p + '$; $' + q + ' \\ne 0$ nên không trùng).',
-          'b) Hàm số $y = ' + lin(cc, a, q) + '$. Cho $y = 0$: $' + heSo(a) + 'x = ' + (-q) + '$, $x = ' + x0 + '$.']
+          'b) Hàm số $y = ' + lin(cc, a, q) + '$. Cho $y = 0$: ' + (a === 1 ? '' : '$' + heSo(a) + 'x = ' + (-q) + '$, ') + '$x = ' + x0 + '$.']
       };
     } }
   ]);

@@ -31,7 +31,7 @@
         '$y = \\frac{' + k + '}{x} ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$',
         '$y = x(x ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + ')$']).slice(0, 3);
       var ds = r.xaoTron([dung].concat(sai)), gt = ds.indexOf(dung);
-      var thuGon = /frac\{x/.test(dung) ? 'viết được thành $y = \\frac{1}{' + k + '}x ' + (b > 0 ? '+ ' : '- ') + '\\frac{' + Math.abs(b) + '}{' + k + '}$ với $a = \\frac{1}{' + k + '} \\ne 0$'
+      var thuGon = /frac\{x/.test(dung) ? 'viết được thành $y = \\frac{1}{' + k + '}x ' + (b > 0 ? '+ ' : '- ') + cc.phanSo(Math.abs(b), k).tex + '$ với $a = \\frac{1}{' + k + '} \\ne 0$'
         : /\(x/.test(dung) ? 'thu gọn được $y = ' + lin(cc, c, c * b) + '$ với $a = ' + c + ' \\ne 0$'
           : 'viết được thành $y = ' + lin(cc, -a, Math.abs(b)) + '$ với $a = ' + (-a) + ' \\ne 0$';
       return {
@@ -72,7 +72,7 @@
         de: 'Đường thẳng $y = ' + lin(cc, a, b) + '$ cắt trục tung tại $P$ và cắt trục hoành tại $Q$. Tìm tung độ của $P$ và hoành độ của $Q$.',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Tung độ của $P$', kieu: 'so', gt: b, loiThuongGap: loc([{ gt: x0, giaiThich: '$' + x0 + '$ là hoành độ của $Q$. Với $P$ trên trục tung, cho $x = 0$: $y = ' + b + '$.' }], b) },
-          { nhan: 'Hoành độ của $Q$', kieu: 'so', gt: x0, loiThuongGap: loc([{ gt: -x0, giaiThich: 'Giải $' + lin(cc, a, b) + ' = 0$: $' + heSo(a) + 'x = ' + (-b) + '$, nên $x = ' + x0 + '$ (chú ý dấu).' }, { gt: b, giaiThich: '$' + b + '$ là tung độ của $P$ (giao với trục **tung**).' }], x0) }] },
+          { nhan: 'Hoành độ của $Q$', kieu: 'so', gt: x0, loiThuongGap: loc([{ gt: -x0, giaiThich: 'Giải $' + lin(cc, a, b) + ' = 0$: ' + (a === 1 ? '' : '$' + heSo(a) + 'x = ' + (-b) + '$, nên ') + '$x = ' + x0 + '$ (chú ý dấu).' }, { gt: b, giaiThich: '$' + b + '$ là tung độ của $P$ (giao với trục **tung**).' }], x0) }] },
         goiY: ['Điểm trên trục tung có $x = 0$; điểm trên trục hoành có $y = 0$.', 'Cho $y = 0$: giải $' + lin(cc, a, b) + ' = 0$.'],
         loiGiai: ['Cho $x = 0$: $y = ' + b + '$, được $P(0; ' + b + ')$.', 'Cho $y = 0$: $' + lin(cc, a, b) + ' = 0$, $x = ' + x0 + '$, được $Q(' + x0 + '; 0)$.']
       };
@@ -96,8 +96,8 @@
         return {
           de: 'Cho hàm số bậc nhất $y = ax ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$. Tìm $a$, biết đồ thị đi qua điểm $(' + t + '; ' + y + ')$.',
           dapAn: { kieu: 'so', gt: a },
-          goiY: ['Thay $x = ' + t + '$, $y = ' + y + '$ vào công thức.', '$' + y + ' = ' + ng(t) + 'a ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$. Giải ra $a$.'],
-          loiGiai: ['$' + y + ' = a\\cdot ' + ng(t) + ' ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$', '$' + heSo(t) + 'a = ' + (y - b) + '$', '$a = ' + a + '$'],
+          goiY: ['Thay $x = ' + t + '$, $y = ' + y + '$ vào công thức.', '$' + y + ' = ' + heSo(t) + 'a ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$. Giải ra $a$.'],
+          loiGiai: ['$' + y + ' = a\\cdot ' + ng(t) + ' ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$', '$' + heSo(t) + 'a = ' + (y - b) + '$', '$a = ' + a + '$'].filter(function (d, i, m) { return d !== m[i - 1]; }),
           loiThuongGap: loc([{ gt: (y + b) / t, giaiThich: 'Chuyển $' + b + '$ sang vế trái phải đổi dấu: $' + heSo(t) + 'a = ' + y + ' - ' + ng(b) + '$.' }, { gt: -a, giaiThich: 'Chú ý dấu khi chia cho $' + t + '$.' }], a)
         };
       }
@@ -128,7 +128,7 @@
     { ten: 'Hàm số bậc nhất trong thực tế', muc: 3, sinh: function (r, cc) {
       var loai = r.chon(['cuoc', 'taxi', 'khauHao']);
       if (loai === 'cuoc') {
-        var tb = r.chon([20, 25, 30, 40]), gia = r.chon([0.5, 0.8, 0.9, 1, 1.2]), phut = r.chon([50, 60, 80, 100, 120, 150]), T = Math.round((tb + gia * phut) * 10) / 10;
+        var tb = r.chon([20, 25, 30, 40]), gia = r.chon([0.5, 0.8, 0.9, 1.2, 1.5]), phut = r.chon([50, 60, 80, 100, 120, 150]), T = Math.round((tb + gia * phut) * 10) / 10;
         return {
           de: 'Cước điện thoại gồm thuê bao $' + tb + '$ nghìn đồng/tháng và $' + cc.so(gia) + '$ nghìn đồng mỗi phút gọi. Gọi $y$ (nghìn đồng) là số tiền phải trả trong tháng khi gọi $x$ phút. Tháng này nhà bạn ' + r.chon(['Lan', 'Minh', 'Hà']) + ' trả $' + cc.so(T) + '$ nghìn đồng. Hỏi tháng này đã gọi bao nhiêu phút?',
           dapAn: { kieu: 'so', gt: phut },

@@ -109,7 +109,7 @@
         goiY: ['Diện tích hình thoi bằng **nửa** tích hai đường chéo.', '$S = \\frac{1}{2} \\cdot d_1 \\cdot d_2$.'],
         loiGiai: ['Hai đường chéo của hình thoi vuông góc với nhau, nên $S = \\frac{1}{2} \\cdot ' + t[0] + t[2] + ' \\cdot ' + t[1] + t[3] + '$.',
           '$S = \\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + ' = ' + cc.so(S) + '$ (cm²)'],
-        loiThuongGap: boTrung(S, [{ gt: d1 * d2, giaiThich: 'Em quên nhân $\\frac{1}{2}$. Diện tích hình thoi bằng **nửa** tích hai đường chéo.' }, { gt: d1 * d2 / 4, giaiThich: 'Em lấy tích hai **nửa** đường chéo rồi lại chia đôi. Dùng cả hai đường chéo: $\\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + '$.' }]),
+        loiThuongGap: boTrung(S, [{ gt: d1 * d2, giaiThich: 'Em quên nhân $\\frac{1}{2}$. Diện tích hình thoi bằng **nửa** tích hai đường chéo.' }, { gt: d1 * d2 / 4, giaiThich: 'Em nhân hai **nửa** đường chéo với nhau ($' + cc.so(d1 / 2) + ' \\cdot ' + cc.so(d2 / 2) + '$). Công thức dùng cả hai đường chéo: $\\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + '$.' }]),
         hinh: hinhTG({ diem: thoi(t, d1 * f / 2, d2 * f / 2), vong: t, vach: vach4(t), canh: cheo(t, 2), goc: [[t[1], 'O', t[2], VUONG]],
           nhan: [['O', t[2], d1 + ' cm', false, 1.2, TIM], ['O', t[1], d2 + ' cm', false, 1.6, TIM]], lechTen: { O: [12, -14] } })
       };
@@ -173,7 +173,7 @@
         loiThuongGap: boTrung(kq, [{ gt: dai * rong * gia, giaiThich: '$' + dai * rong + '$ ' + dv + '² là diện tích **cả** hình chữ nhật. Hình thoi chỉ bằng một nửa.' }, { gt: S, giaiThich: 'Đó mới là diện tích. Còn phải nhân với $' + gia + '$ nghìn đồng mỗi ' + dv + '².' }]),
         hinh: hinhTG({ diem: R, vong: ['A', 'B', 'C', 'D'],
           canh: [['E', 'F', { mau: LA, day: 4 }], ['F', 'G', { mau: LA, day: 4 }], ['G', 'H', { mau: LA, day: 4 }], ['H', 'E', { mau: LA, day: 4 }]],
-          nhan: [['D', 'C', 'dài ' + dai + ' ' + dv, false, 1.3], ['A', 'B', 'rộng ' + rong + ' ' + dv, false, 1.3]], lechTen: { E: [0, -16], G: [0, 16] } })
+          nhan: [['D', 'C', 'dài ' + dai + ' ' + dv, false, 1.3]], ghiChu: 'Chiều rộng ' + rong + ' ' + dv, lechTen: { E: [0, -16], G: [0, 16] } })
       };
     } },
     { ten: 'Tìm đường chéo từ diện tích', muc: 3, sinh: function (r, cc) {

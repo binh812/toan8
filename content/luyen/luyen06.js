@@ -15,7 +15,7 @@
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Dùng $(A ' + dau + ' B)^2 = A^2 ' + dau + ' 2AB + B^2$ với $A = ' + cc.tex(nhan(a) + 'x') + '$ và $B = ' + b + '$.',
           'Tính lần lượt $A^2$, $2AB$ và $B^2$ rồi ghép lại.'],
-        loiGiai: ['$A^2 = ' + cc.tex(a * a + 'x^2') + '$; $2AB = ' + cc.tex(2 * a * b + 'x') + '$; $B^2 = ' + b * b + '$.',
+        loiGiai: ['$A^2 = ' + cc.tex(cc.daThuc([[a * a, 'x^2']])) + '$; $2AB = ' + cc.tex(2 * a * b + 'x') + '$; $B^2 = ' + b * b + '$.',
           '$' + cc.tex(de) + ' = ' + cc.tex(kq) + '$'],
         loiThuongGap: [{ gt: cc.daThuc([[a * a, 'x^2'], [b * b, '']]), giaiThich: 'Em quên hạng tử ở giữa $2AB$: $(A ' + dau + ' B)^2$ **không** bằng $A^2 + B^2$.' }]
       };

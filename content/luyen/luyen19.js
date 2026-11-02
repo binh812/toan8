@@ -33,7 +33,7 @@
   var TRANH = [
     { td: 'Số bạn lớp 8A tham gia câu lạc bộ', nhan: ['Tiếng Anh', 'Võ thuật', 'Nghệ thuật', 'Cờ vua'], bt: '😊', dv: 'bạn', moi: [2, 3, 4, 5] },
     { td: 'Số cây các tổ trồng được', nhan: ['Tổ 1', 'Tổ 2', 'Tổ 3', 'Tổ 4'], bt: '🌳', dv: 'cây', moi: [2, 4, 5, 10] },
-    { td: 'Số quả cam bán được trong ngày', nhan: ['Sáng', 'Trưa', 'Chiều'], bt: '🍊', dv: 'kg', moi: [5, 10, 20] },
+    { td: 'Số ki-lô-gam cam bán được trong ngày', nhan: ['Sáng', 'Trưa', 'Chiều'], bt: '🍊', dv: 'kg', moi: [5, 10, 20] },
     { td: 'Số sách mỗi bạn đọc trong năm', nhan: ['An', 'Bình', 'Chi', 'Dũng'], bt: '📘', dv: 'cuốn', moi: [2, 3, 5] }
   ];
   var QUAT = [
@@ -133,16 +133,16 @@
 
     { ten: 'So sánh trên biểu đồ cột kép', muc: 2, sinh: function (r) {
       var b = r.chon([
-        { td: 'Học sinh tham gia câu lạc bộ', tenNhan: 'Lớp', nhan: ['8A', '8B', '8C', '8D'], chuoi: ['Thể thao', 'Nghệ thuật'], dv: 'bạn', lo: 4, hi: 16 },
-        { td: 'Cỡ áo của học sinh lớp 8A', tenNhan: 'Cỡ áo', nhan: ['S', 'M', 'L', 'XL'], chuoi: ['Nam', 'Nữ'], dv: 'bạn', lo: 2, hi: 12 },
-        { td: 'Điểm thi đua của các tổ', tenNhan: 'Tổ', nhan: ['Tổ 1', 'Tổ 2', 'Tổ 3'], chuoi: ['Học kì I', 'Học kì II'], dv: 'điểm', lo: 60, hi: 95 }]);
+        { td: 'Học sinh tham gia câu lạc bộ', tenNhan: 'Lớp', o: 'lớp ', nhan: ['8A', '8B', '8C', '8D'], chuoi: ['Thể thao', 'Nghệ thuật'], dv: 'bạn', lo: 4, hi: 16 },
+        { td: 'Cỡ áo của học sinh lớp 8A', tenNhan: 'Cỡ áo', o: 'cỡ ', nhan: ['S', 'M', 'L', 'XL'], chuoi: ['Nam', 'Nữ'], dv: 'bạn', lo: 2, hi: 12 },
+        { td: 'Điểm thi đua của các tổ', tenNhan: 'Tổ', o: '', nhan: ['Tổ 1', 'Tổ 2', 'Tổ 3'], chuoi: ['Học kì I', 'Học kì II'], dv: 'điểm', lo: 60, hi: 95 }]);
       var s1 = b.nhan.map(function () { return r.so(b.lo, b.hi); }), s2 = b.nhan.map(function () { return r.so(b.lo, b.hi); });
       var i = r.so(0, b.nhan.length - 1);
       if (s1[i] === s2[i]) s2[i] = s1[i] + r.so(2, 4);
       var lon = s1[i] > s2[i] ? 0 : 1, a = [s1[i], s2[i]], kq = Math.abs(s1[i] - s2[i]), ltg = [];
       ltg.push({ gt: s1[i] + s2[i], giaiThich: '$' + (s1[i] + s2[i]) + '$ là tổng. Đề hỏi **nhiều hơn bao nhiêu**: phép trừ.' });
       return {
-        de: 'Biểu đồ cột kép cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Ở **' + b.nhan[i] + '**, ' + b.chuoi[lon] + ' nhiều hơn ' + b.chuoi[1 - lon] + ' bao nhiêu ' + b.dv + '?',
+        de: 'Biểu đồ cột kép cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Ở ' + b.o + '**' + b.nhan[i] + '**, ' + b.chuoi[lon] + ' nhiều hơn ' + b.chuoi[1 - lon] + ' bao nhiêu ' + b.dv + '?',
         hinh: { widget: 'bieuDo', config: { loai: 'cotKep', tieuDe: b.td, tenNhan: b.tenNhan, nhan: b.nhan.slice(), chuoi: [{ ten: b.chuoi[0], so: s1 }, { ten: b.chuoi[1], so: s2 }], donVi: b.dv } },
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tìm hai cột của ' + b.nhan[i] + ': cột xanh dương là ' + b.chuoi[0] + ', cột cam là ' + b.chuoi[1] + '.', 'Lấy số lớn trừ số nhỏ.'],

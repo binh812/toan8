@@ -59,7 +59,7 @@
           goiY: ['Nhân mỗi hạng tử của ngoặc đầu với từng hạng tử của ngoặc sau: $4$ tích.', 'Hai tích chứa $xy$ là hạng tử đồng dạng, nhớ gộp lại.'],
           loiGiai: ['$= x^2 ' + (b < 0 ? '- ' + cc.tex(cc.daThuc([[-b, 'xy']])) : '+ ' + cc.tex(cc.daThuc([[b, 'xy']]))) + ' ' + (a < 0 ? '- ' + cc.tex(cc.daThuc([[-a, 'xy']])) : '+ ' + cc.tex(cc.daThuc([[a, 'xy']]))) + ' ' + (a * b < 0 ? '- ' : '+ ') + cc.tex(cc.daThuc([[Math.abs(a * b), 'y^2']])) + '$',
             '$= ' + tx(cc, kq) + '$'],
-          loiThuongGap: [{ gt: cc.daThuc([[1, 'x^2'], [a * b, 'y^2']]), giaiThich: 'Thiếu hai tích ở giữa $x \\cdot ' + cc.tex(cc.daThuc([[b, 'y']])) + '$ và $' + cc.tex(cc.daThuc([[a, 'y']])) + ' \\cdot x$.' }]
+          loiThuongGap: [{ gt: cc.daThuc([[1, 'x^2'], [a * b, 'y^2']]), giaiThich: 'Thiếu hai tích ở giữa $x \\cdot ' + (b < 0 ? '(' + tx(cc, cc.daThuc([[b, 'y']])) + ')' : cc.tex(cc.daThuc([[b, 'y']]))) + '$ và $' + cc.tex(cc.daThuc([[a, 'y']])) + ' \\cdot x$.' }]
         };
       }
       var p = r.so(2, 4), q = r.so(1, 3), c = r.khac0(-6, 6), d = r.khac0(-6, 6);

@@ -6,7 +6,7 @@
   // Hình động "bảng giá trị": kéo điểm cam trên trục hoành để chọn x; bảng dưới hình cho giá trị từng biểu thức.
   // o: { bbox, x0, buoc, ham:[{fn, mau, dash, day, mo, diem}], tiemCan:[x mà mẫu = 0], lo:[[x, y, mau]] (điểm rỗng), dong:[{chu, tex, fn, mau, mau0}] }
   function bangGiaTri(o) {
-    return { bbox: o.bbox, axis: true, grid: true, build: function (board, G) {
+    return { bbox: o.bbox, axis: true, grid: true, tuChay: o.tuChay, build: function (board, G) {
       var T = TOAN8, buoc = o.buoc || 0.5, X;
       function xv() { return Math.round(X.X() / buoc) * buoc; }
       (o.tiemCan || []).forEach(function (a) {
@@ -18,7 +18,7 @@
       (o.lo || []).forEach(function (p) {
         board.create('point', [p[0], p[1]], { name: '', size: 5, fillColor: '#fff', strokeColor: p[2] || '#343a40', strokeWidth: 2, fixed: true, showInfobox: false, highlight: false });
       });
-      X = G.glider('', o.x0, 0, board.defaultAxes.x, { color: CAM });
+      X = G.glider('x', o.x0, 0, board.defaultAxes.x, { color: CAM, withLabel: false }); // tên 'x' cho kịch bản tự chạy
       X.on('up', function () { X.moveTo([xv(), 0]); });
       (o.ham || []).forEach(function (h) {
         if (h.diem === false) return;
@@ -47,10 +47,15 @@
   function B(x) { return (x - 1) / x; }
   function tich(x) { return A(x) * B(x); }
   function gon(x) { return 2 * (x - 1) / (x + 1); }
+  // Đường nét đứt cắt bỏ phần quá xa khung (gần x = −1): nét đứt dài hàng triệu điểm ảnh làm trình duyệt đứng hình ~1,5 giây
+  function gonVe(x) { var v = gon(x); return Math.abs(v) > 30 ? NaN : v; }
   var hinhKhamPha = bangGiaTri({
     bbox: [-5, 5, 5, -2.5], x0: 3,
-    ham: [{ fn: tich, mau: LA, day: 8, mo: 0.45 }, { fn: gon, mau: XANH, dash: 2, diem: false }],
+    ham: [{ fn: tich, mau: LA, day: 8, mo: 0.45 }, { fn: gonVe, mau: XANH, dash: 2, diem: false }],
     tiemCan: [-1], lo: [[0, -2, LA]],
+    // Kéo x từ 3 về 0 (lỗ hổng: tích không xác định dù 2(x−1)/(x+1) vẫn tính được), qua −1 (cả hai không xác định), rồi trở lại
+    tuChay: [{ diem: 'x', den: [1, 0], giay: 1.5 }, { cho: 0.8 }, { diem: 'x', den: [0, 0], giay: 1 }, { cho: 1.8 },
+      { diem: 'x', den: [-1, 0], giay: 1 }, { cho: 1.8 }, { diem: 'x', den: [-3, 0], giay: 1.5 }, { cho: 0.8 }, { diem: 'x', den: [3, 0], giay: 2.5 }, { cho: 1 }],
     dong: [
       { chu: 'Phân thức thứ nhất', tex: '\\dfrac{2x}{x+1}', fn: A, mau: CAM },
       { chu: 'Phân thức thứ hai', tex: '\\dfrac{x-1}{x}', fn: B, mau: CAM },
@@ -66,6 +71,9 @@
   var hinhChia = bangGiaTri({
     bbox: [-4, 4, 4, -2], x0: 2,
     ham: [{ fn: thuong, mau: XANH }], tiemCan: [-1], lo: [[0, 0, XANH], [1, 5 / 6, XANH]],
+    // Lần lượt đưa x tới 1, 0, −1: ba chỗ thương không xác định (dù kết quả rút gọn vẫn tính được ở 1 và 0)
+    tuChay: [{ diem: 'x', den: [1, 0], giay: 1.2 }, { cho: 1.5 }, { diem: 'x', den: [0, 0], giay: 1 }, { cho: 1.5 },
+      { diem: 'x', den: [-1, 0], giay: 1 }, { cho: 1.5 }, { diem: 'x', den: [-3, 0], giay: 1.2 }, { cho: 0.6 }, { diem: 'x', den: [2, 0], giay: 2.2 }, { cho: 1 }],
     dong: [
       { chu: 'Phân thức bị chia', tex: '\\dfrac{5}{x^2-1}', fn: bi, mau: CAM },
       { chu: 'Phân thức chia', tex: '\\dfrac{3}{x^2-x}', fn: chia, mau: CAM },

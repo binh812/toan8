@@ -46,17 +46,17 @@
       };
     } },
     { ten: 'Giải ax + b = 0 (nghiệm phân số)', muc: 2, sinh: function (r, cc) {
-      var a = r.chon([2, 3, 4, 5, 6, 7, 9, -2, -3, -4, -5, -6]), b;
+      var a = r.chon([2, 3, 4, 5, 6, 7, 8, 9, -2, -3, -4, -5, -6, -8]), b;
       do { b = r.khac0(-15, 15); } while (b % a === 0);
       var kq = cc.phanSo(-b, a), sai = cc.phanSo(b, a), dao = cc.phanSo(-a, b);
       var ltg = [];
       them(ltg, b / a, -b / a, 'Chuyển $' + b + '$ sang vế phải phải **đổi dấu** thành $' + (-b) + '$ (em được $' + sai.tex + '$ là sai dấu).');
-      them(ltg, -a / b, -b / a, 'Em chia ngược: $' + heSo(a) + 'x = ' + (-b) + '$ thì $x = \\frac{' + (-b) + '}{' + a + '}$ (vế phải chia cho hệ số), không phải $' + dao.tex + '$.');
+      them(ltg, -a / b, -b / a, 'Em chia ngược: $' + heSo(a) + 'x = ' + (-b) + '$ thì $x = ' + (-b) + ' : ' + ng(a) + '$ (vế phải chia cho hệ số), không phải $' + dao.tex + '$.');
       return {
         de: 'Giải phương trình $' + lin(cc, a, b) + ' = 0$ (nghiệm viết dạng phân số tối giản).',
         dapAn: { kieu: 'nghiem', gt: [-b / a] },
         goiY: ['Chuyển $' + b + '$ sang vế phải, nhớ đổi dấu.', 'Chia hai vế cho $' + a + '$ rồi rút gọn phân số (chú ý dấu).'],
-        loiGiai: ['$' + heSo(a) + 'x = ' + (-b) + '$', '$x = \\frac{' + (-b) + '}{' + a + '}$', '$x = ' + kq.tex + '$'],
+        loiGiai: boLap(['$' + heSo(a) + 'x = ' + (-b) + '$', '$x = ' + (-b) + ' : ' + ng(a) + '$', '$x = ' + kq.tex + '$']),
         loiThuongGap: ltg
       };
     } },
@@ -169,8 +169,8 @@
           de: ten[0] + ' mua $' + p + '$ ' + vat[0] + ' và một món quà giá $' + A + '$ nghìn đồng. ' + ten[1] + ' mua $' + q + '$ ' + vat[0] + ' cùng loại và một món quà khác giá $' + B + '$ nghìn đồng. Hai bạn trả số tiền bằng nhau. Mỗi ' + vat[0] + ' giá bao nhiêu nghìn đồng?',
           dapAn: { kieu: 'so', gt: x },
           goiY: ['Gọi $x$ (nghìn đồng) là giá một ' + vat[0] + '. Viết số tiền mỗi bạn trả theo $x$.', 'Lập phương trình $' + p + 'x + ' + A + ' = ' + (q === 1 ? '' : q) + 'x + ' + B + '$ rồi giải.'],
-          loiGiai: ['Gọi $x$ (nghìn đồng) là giá một ' + vat[0] + ', $x > 0$.', '$' + p + 'x + ' + A + ' = ' + (q === 1 ? '' : q) + 'x + ' + B + '$',
-            '$' + (p - q === 1 ? '' : p - q) + 'x = ' + (B - A) + '$', '$x = ' + x + '$'],
+          loiGiai: boLap(['Gọi $x$ (nghìn đồng) là giá một ' + vat[0] + ', $x > 0$.', '$' + p + 'x + ' + A + ' = ' + (q === 1 ? '' : q) + 'x + ' + B + '$',
+            '$' + (p - q === 1 ? '' : p - q) + 'x = ' + (B - A) + '$', '$x = ' + x + '$']),
           loiThuongGap: p - q > 1 ? [{ gt: B - A, giaiThich: '$' + (B - A) + '$ nghìn đồng là giá của $' + (p - q) + '$ ' + vat[0] + '. Em còn phải chia cho $' + (p - q) + '$.' }] : []
         };
       }

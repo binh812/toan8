@@ -10,10 +10,11 @@
     return t + out;
   }
   function pTex(cc, m, n) { var p = cc.phanSo(m, n); return '\\dfrac{' + so(m) + '}{' + so(n) + '}' + (p.mau === n ? '' : ' = ' + p.tex); }
-  // số lượng "tròn" trong danh sách, chia hết cho mẫu của xác suất (để dự đoán ra số nguyên), khác số đã khảo sát
+  // số lượng "tròn" trong danh sách, chia hết cho mẫu của xác suất (để dự đoán ra số nguyên), LỚN HƠN số đã khảo sát
+  // (tổng thể phải lớn hơn mẫu khảo sát; mẫu của xác suất luôn là ước của số đã khảo sát nên tranh·j chia hết cho mau)
   function chonM(r, mau, ds, tranh) {
-    var hop = ds.filter(function (M) { return M % mau === 0 && M !== tranh; });
-    return hop.length ? r.chon(hop) : mau * r.chon([3, 4, 5, 10].filter(function (j) { return mau * j !== tranh; }));
+    var hop = ds.filter(function (M) { return M % mau === 0 && M > tranh; });
+    return hop.length ? r.chon(hop) : tranh * r.chon([2, 3, 4, 5, 10]);
   }
   function tong(m) { return m.reduce(function (s, x) { return s + x; }, 0); }
   // lỗi dạng phân số: bỏ nếu mẫu ≤ 0, trùng đáp án hoặc trùng nhau

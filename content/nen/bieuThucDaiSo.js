@@ -30,7 +30,7 @@
         var a = r.khac0(-4, 4), b = r.khac0(-6, 6), c = r.so(-9, 9), v = r.khac0(-4, 4);
         var bt = tx(cc.daThuc([[a, 'x^2'], [b, 'x'], [c, '']]));
         var A1 = a * v * v, B1 = b * v, kq = A1 + B1 + c;
-        var thay = a + ' \\cdot ' + ngoac(v) + '^2 ' + coDau(b) + ' \\cdot ' + ngoac(v) + (c ? ' ' + coDau(c) : '');
+        var thay = (a === 1 ? '' : a === -1 ? '-' : a + ' \\cdot ') + ngoac(v) + '^2 ' + (b === 1 ? '+ ' : b === -1 ? '- ' : coDau(b) + ' \\cdot ') + ngoac(v) + (c ? ' ' + coDau(c) : '');
         var ltg = [];
         if (v < 0 && -A1 + B1 + c !== kq) ltg.push({ gt: -A1 + B1 + c, giaiThich: '$(' + v + ')^2 = ' + v * v + '$ là số **dương**. Em nhớ đặt số âm trong ngoặc khi thay vào.' });
         return {
@@ -96,8 +96,9 @@
           var kx = tx(cc.daThuc([[k, 'x']])), trong = tx(cc.daThuc([[a, 'x'], [b, '']]));
           kq = cc.daThuc([[k * a, 'x^2'], [k * b, 'x']]); dang = 'khaiTrien';
           de = 'Thực hiện phép nhân: $' + kx + '(' + trong + ')$.';
-          goiY = ['Nhân đơn thức $' + kx + '$ với **từng** hạng tử trong ngoặc.', '$' + kx + ' \\cdot ' + tx(cc.daThuc([[a, 'x']])) + '$ và $' + kx + ' \\cdot ' + ngoac(b) + '$.'];
-          loiGiai = ['$' + kx + '(' + trong + ') = ' + kx + ' \\cdot ' + (a < 0 ? '(' + tx(cc.daThuc([[a, 'x']])) + ')' : tx(cc.daThuc([[a, 'x']]))) + ' + ' + kx + ' \\cdot ' + ngoac(b) + '$', '$= ' + tx(kq) + '$'];
+          var ax = a < 0 ? '(' + tx(cc.daThuc([[a, 'x']])) + ')' : tx(cc.daThuc([[a, 'x']])), kx2 = k < 0 ? '(' + kx + ')' : kx;
+          goiY = ['Nhân đơn thức $' + kx + '$ với **từng** hạng tử trong ngoặc.', '$' + kx + ' \\cdot ' + ax + '$ và $' + kx + ' \\cdot ' + ngoac(b) + '$.'];
+          loiGiai = ['$' + kx + '(' + trong + ') = ' + kx + ' \\cdot ' + ax + ' + ' + kx2 + ' \\cdot ' + ngoac(b) + '$', '$= ' + tx(kq) + '$'];
           ltg.push({ gt: cc.daThuc([[k * a, 'x^2'], [b, '']]), giaiThich: 'Em mới nhân $' + kx + '$ với hạng tử đầu. Phải nhân với **cả** $' + ngoac(b) + '$.' });
         } else if (loai === 1) {
           var m = r.khac0(-9, 9), n = r.khac0(-9, 9);
@@ -105,7 +106,8 @@
           kq = cc.daThuc([[1, 'x^2'], [m + n, 'x'], [m * n, '']]); dang = 'khaiTrien';
           de = 'Thực hiện phép nhân: $(' + x1 + ')(' + x2 + ')$.';
           goiY = ['Nhân mỗi hạng tử của đa thức này với **từng** hạng tử của đa thức kia.', '$x \\cdot x + x \\cdot ' + ngoac(n) + ' + ' + ngoac(m) + ' \\cdot x + ' + ngoac(m) + ' \\cdot ' + ngoac(n) + '$.'];
-          loiGiai = ['$(' + x1 + ')(' + x2 + ') = x^2 ' + coDau(n) + 'x ' + coDau(m) + 'x ' + coDau(m * n) + '$', '$= ' + tx(kq) + '$'];
+          var hx = function (t) { return (t < 0 ? '- ' : '+ ') + (Math.abs(t) === 1 ? '' : Math.abs(t)) + 'x'; };
+          loiGiai = ['$(' + x1 + ')(' + x2 + ') = x^2 ' + hx(n) + ' ' + hx(m) + ' ' + coDau(m * n) + '$', '$= ' + tx(kq) + '$'];
           if (m + n !== 0) ltg.push({ gt: cc.daThuc([[1, 'x^2'], [m * n, '']]), giaiThich: 'Em quên hai tích "chéo" $x \\cdot ' + ngoac(n) + '$ và $' + ngoac(m) + ' \\cdot x$.' });
         } else {
           var g = r.so(1, 5), p = r.so(1, 6), q = r.khac0(-9, 9);

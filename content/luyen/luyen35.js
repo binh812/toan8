@@ -49,7 +49,9 @@
     } },
     { ten: 'Kết quả dạng căn', muc: 2, sinh: function (r, cc) {
       var T = r.chon(TEN), a, b, n, hoiHuyen = r.dau() > 0;
-      do { a = r.so(1, 9); b = r.so(2, 9); n = hoiHuyen ? a * a + b * b : b * b - a * a; } while (n <= 1 || chinhPhuong(n));
+      do { a = r.so(1, 9); b = r.so(2, 9); n = hoiHuyen ? a * a + b * b : b * b - a * a; }
+      // hai cạnh góc vuông không chênh quá 4 lần để hình không quá dẹt, nhãn không đè nhau
+      while (n <= 1 || chinhPhuong(n) || (hoiHuyen ? Math.max(a, b) > 4 * Math.min(a, b) : Math.max(a * a, n) > 16 * Math.min(a * a, n)));
       var ten1 = T[0] + T[1], ten2 = T[0] + T[2], huyen = T[1] + T[2], kq = Math.sqrt(n), lam = cc.so(Math.round(kq * 100) / 100);
       var de, lg, hinh, ltg;
       if (hoiHuyen) {
@@ -76,7 +78,11 @@
     } },
     { ten: 'Pythagore đảo: có phải tam giác vuông?', muc: 1, sinh: function (r, cc) {
       var x = boBa(r).slice().sort(function (p, q) { return p - q; }), vuongDung = r.dau() > 0;
-      if (!vuongDung) x = [x[0], x[1], x[2] + r.chon([-1, 1])];
+      if (!vuongDung) {
+        var lech = r.chon([-1, 1]);
+        if (x[0] + x[1] <= x[2] + lech) lech = -1; // tránh ba số không tạo thành tam giác (vd 1,5; 2; 3,5)
+        x = [x[0], x[1], x[2] + lech];
+      }
       var c3 = x.slice().sort(function (p, q) { return p - q; }), dung = Math.abs(c3[0] * c3[0] + c3[1] * c3[1] - c3[2] * c3[2]) < 1e-9;
       var hien = r.xaoTron(x), tong = c3[0] * c3[0] + c3[1] * c3[1];
       return {

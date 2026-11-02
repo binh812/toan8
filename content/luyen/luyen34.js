@@ -56,7 +56,7 @@
         de: 'Tam giác $ABC$ có $\\widehat{A} = ' + g[0] + '^\\circ$, $\\widehat{B} = ' + g[1] + '^\\circ$. Tam giác $' + U.join('') + '$ có $' + bo.join('$, $') + '$. Kí hiệu đồng dạng nào **đúng**?',
         dapAn: { kieu: 'chon', gt: luaChon.indexOf(dung), luaChon: luaChon.map(function (s) { return '$\\triangle ABC \\backsim \\triangle ' + s + '$'; }) },
         goiY: ['Tính góc còn lại của mỗi tam giác (tổng ba góc bằng $180^\\circ$).', 'Ghép đỉnh có góc bằng nhau rồi viết đúng thứ tự: đỉnh ứng với $A$ đứng đầu, ứng với $B$ đứng thứ hai.'],
-        loiGiai: ['$\\widehat{C} = 180^\\circ - ' + g[0] + '^\\circ - ' + g[1] + '^\\circ = ' + g[2] + '^\\circ$; $\\widehat{' + U[lo] + '} = ' + g[gan[lo]] + '^\\circ$.',
+        loiGiai: ['$\\widehat{C} = 180^\\circ - ' + g[0] + '^\\circ - ' + g[1] + '^\\circ = ' + g[2] + '^\\circ$; $\\widehat{' + U[lo] + '} = 180^\\circ - ' + bo.map(function (s) { return s.split(' = ')[1]; }).join(' - ') + ' = ' + g[gan[lo]] + '^\\circ$.',
           '$\\widehat{A} = \\widehat{' + dinhCo[0] + '}$, $\\widehat{B} = \\widehat{' + dinhCo[1] + '}$ nên $\\triangle ABC \\backsim \\triangle ' + dung + '$ (g.g).']
       };
     } },

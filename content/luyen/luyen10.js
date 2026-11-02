@@ -115,7 +115,6 @@
         loiGiai: ['$' + t.map(G).join(' + ') + ' = 360^\\circ$ (tổng các góc của một tứ giác).',
           '$' + G(t[k]) + ' = 360^\\circ - (' + biet.map(function (i) { return d(g[i]); }).join(' + ') + ') = 360^\\circ - ' + d(s) + '$',
           '$' + G(t[k]) + ' = ' + d(g[k]) + '$'],
-        loiThuongGap: boTrung(g[k], [{ gt: 180 - s, giaiThich: 'Em dùng tổng $180^\\circ$ của **tam giác**. Tổng bốn góc của tứ giác là $360^\\circ$.' }]),
         hinh: hinhBonGoc(q.P, t, g, [k])
       };
     } },
@@ -163,7 +162,7 @@
         goiY: ['Đặt các góc là $' + tl.map(function (a) { return (a === 1 ? '' : a) + 'x'; }).join('$, $') + '$.',
           'Cộng lại: $' + n + 'x = 360^\\circ$. Tìm $x$ rồi nhân với số phần của góc cần tìm.'],
         loiGiai: ['$' + tl.map(function (a) { return (a === 1 ? '' : a) + 'x'; }).join(' + ') + ' = 360^\\circ$, tức $' + n + 'x = 360^\\circ$, $x = ' + d(x) + '$',
-          'Góc ' + (hoiLon ? 'lớn' : 'nhỏ') + ' nhất ứng với $' + m + '$ phần: $' + (m === 1 ? 'x' : m + 'x') + ' = ' + (m === 1 ? '' : m + ' \\cdot ') + d(x) + ' = ' + d(kq) + '$'],
+          'Góc ' + (hoiLon ? 'lớn' : 'nhỏ') + ' nhất ứng với $' + m + '$ phần: $' + (m === 1 ? 'x = ' + d(kq) : m + 'x = ' + m + ' \\cdot ' + d(x) + ' = ' + d(kq)) + '$'],
         loiThuongGap: boTrung(kq, ltg)
       };
     } },

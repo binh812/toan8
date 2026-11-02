@@ -135,8 +135,8 @@
         de: 'Mỗi ' + bc.x + ' giá $x$ nghìn đồng, mỗi ' + bc.y + ' giá $y$ nghìn đồng. ' + ten[0] + ' mua $' + a + '$ ' + bc.x + ' và $' + b + '$ ' + bc.hop + ' (mỗi ' + bc.hop.split(' ')[0] + ' có $' + k + '$ ' + bc.donY + '). ' + ten[1] + ' mua $' + c + '$ ' + bc.x + ' và $' + d + '$ ' + bc.y + '. Viết đa thức thu gọn biểu thị **tổng** số tiền cả hai bạn đã trả.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: [ten[0] + ' mua bao nhiêu ' + bc.y + '? ($' + b + '$ ' + bc.hop + ', mỗi ' + bc.hop.split(' ')[0] + ' $' + k + '$ ' + bc.donY + '.)', 'Viết số tiền của từng bạn, cộng lại rồi thu gọn các hạng tử đồng dạng.'],
-        loiGiai: [ten[0] + ' trả: $' + a + 'x + ' + b + ' \\cdot ' + k + 'y = ' + a + 'x + ' + b * k + 'y$; ' + ten[1] + ' trả: $' + c + 'x + ' + d + 'y$.',
-          'Tổng: $(' + a + 'x + ' + c + 'x) + (' + b * k + 'y + ' + d + 'y) = ' + cc.tex(kq) + '$'],
+        loiGiai: [ten[0] + ' trả: $' + a + 'x + ' + b + ' \\cdot ' + k + 'y = ' + a + 'x + ' + b * k + 'y$; ' + ten[1] + ' trả: $' + cc.tex(cc.daThuc([[c, 'x'], [d, 'y']])) + '$.',
+          'Tổng: $(' + cc.tex(cc.daThuc([[a, 'x'], [c, 'x']])) + ') + (' + b * k + 'y + ' + d + 'y) = ' + cc.tex(kq) + '$'],
         loiThuongGap: [{ gt: cc.daThuc([[a + c, 'x'], [b + d, 'y']]), giaiThich: 'Mỗi ' + bc.hop.split(' ')[0] + ' có $' + k + '$ ' + bc.donY + ' nên ' + ten[0] + ' mua $' + b * k + '$ ' + bc.y + ', tiền là $' + b * k + 'y$.' }]
       };
     } }

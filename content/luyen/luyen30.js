@@ -251,7 +251,7 @@
       goiY: ['Quả đỏ số 1 và quả xanh số 1 là **hai** quả khác nhau.', 'Kí hiệu Đ1–Đ4 và X1–X3 rồi đếm.'],
       loiGiai: ['Các kết quả có thể: Đ1, Đ2, Đ3, Đ4, X1, X2, X3.', 'Số kết quả có thể $= 4 + 3 = 7$'],
       loiThuongGap: [{ gt: 4, giaiThich: 'Em chỉ đếm các **số** khác nhau. Quả đỏ số 1 và quả xanh số 1 là hai kết quả khác nhau.' }] },
-    { id: '30.L9', muc: 2, de: 'Hộp ở câu trên có 4 quả cầu đỏ đánh số 1 đến 4 và 3 quả cầu xanh đánh số 1 đến 3. Lấy ngẫu nhiên một quả. Có bao nhiêu kết quả thuận lợi cho biến cố "Lấy được quả cầu ghi số chẵn"?',
+    { id: '30.L9', muc: 2, de: 'Hộp có 4 quả cầu đỏ đánh số 1 đến 4 và 3 quả cầu xanh đánh số 1 đến 3. Lấy ngẫu nhiên một quả. Có bao nhiêu kết quả thuận lợi cho biến cố "Lấy được quả cầu ghi số chẵn"?',
       dapAn: { kieu: 'so', gt: 3 },
       goiY: ['Quả đỏ ghi số chẵn: Đ2, Đ4. Còn quả xanh?', 'Đừng quên quả xanh ghi số 2.'],
       loiGiai: ['Kết quả thuận lợi: Đ2, Đ4, X2.', 'Số kết quả thuận lợi $= 3$'],

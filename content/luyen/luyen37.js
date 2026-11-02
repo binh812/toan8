@@ -27,7 +27,7 @@
           de: "Điểm $" + P + "'$ là ảnh của điểm $" + P + "$ qua phép đồng dạng phối cảnh tâm $O$ ($" + P + "'$ nằm trên tia $O" + P + "$). Biết $O" + P + " = " + oa + "$ cm, $O" + P + "' = " + cc.so(oa1) + "$ cm. Tìm tỉ số đồng dạng $k$ (viết dạng phân số tối giản hoặc số).",
           dapAn: { kieu: 'so', gt: kq.ascii },
           goiY: ["Tỉ số đồng dạng phối cảnh là $k = \\frac{O" + P + "'}{O" + P + "}$.", 'Chia rồi rút gọn. $k > 1$ là phóng to, $k < 1$ là thu nhỏ.'],
-          loiGiai: ["$k = \\frac{O" + P + "'}{O" + P + "} = \\frac{" + cc.so(oa1) + '}{' + oa + '}' + (Number.isInteger(oa1) && cc.ucln(oa1, oa) === 1 ? '' : ' = ' + kq.tex) + '$'],
+          loiGiai: ["$k = \\frac{O" + P + "'}{O" + P + "} = \\frac{" + cc.so(oa1) + '}{' + oa + '}' + (Number.isInteger(oa1) && cc.ucln(oa1, oa) === 1 && oa > 1 ? '' : ' = ' + kq.tex) + '$'],
           loiThuongGap: [{ gt: cc.phanSo(oa * 2, Math.round(oa1 * 2)).ascii, giaiThich: "Em lật ngược tỉ số: $k = \\frac{O" + P + "'}{O" + P + "}$ (ảnh ở trên tử)." }]
         };
       }
@@ -46,8 +46,12 @@
       var k = r.chon([2, 3, 1.5]);
       if (k === 1.5 && (a % 2 || b % 2)) k = 2;
       var dung = [a * k, b * k];
-      var d = r.so(1, 3), sai = [[a + d, b + d], [a * k, b * k + r.chon([1, 2])], [a + 1, 2 * b], [a * 2, b + a]];
-      var ok = sai.filter(function (s) { return s[0] * b !== s[1] * a && s[1] * b !== s[0] * a && s[0] !== s[1]; });
+      var d = r.so(1, 3), sai = [[a + d, b + d], [a * k, b * k + r.chon([1, 2])], [a + 1, 2 * b], [a * 2, b + a], [a * k + 1, b * k], [a + b, 2 * b]];
+      var ok = sai.filter(function (s, i) {
+      // bỏ phương án đồng dạng, hình vuông, và phương án trùng (vd d = a làm [a+d, b+d] trùng [2a, b+a])
+      return s[0] * b !== s[1] * a && s[1] * b !== s[0] * a && s[0] !== s[1] &&
+        !sai.slice(0, i).some(function (t) { return t[0] === s[0] && t[1] === s[1]; });
+    });
       var luaChon = r.xaoTron([dung].concat(r.xaoTron(ok).slice(0, 3)));
       var hinhChu = function (s) { return '$' + String(s[0]).replace('.', '{,}') + ' \\times ' + String(s[1]).replace('.', '{,}') + '$'; };
       return {

@@ -63,7 +63,7 @@
         return {
           de: 'Chị ' + r.chon(['Linh', 'Hoa', 'Thảo', 'Yến']) + ' được thưởng Tết bằng $' + th + '$ tháng lương. Tổng thu nhập một năm (lương $12$ tháng và thưởng Tết) là $' + T + '$ triệu đồng. Lương mỗi tháng của chị là bao nhiêu triệu đồng?',
           dapAn: { kieu: 'so', gt: x },
-          goiY: ['Gọi $x$ (triệu đồng) là lương một tháng. Thưởng Tết là $' + th + 'x$.', 'Lập phương trình $12x + ' + th + 'x = ' + T + '$.'],
+          goiY: ['Gọi $x$ (triệu đồng) là lương một tháng. Thưởng Tết là $' + heSo(th) + 'x$.', 'Lập phương trình $12x + ' + heSo(th) + 'x = ' + T + '$.'],
           loiGiai: ['Gọi $x$ (triệu đồng) là lương một tháng, $x > 0$.', '$12x + ' + heSo(th) + 'x = ' + T + '$', '$' + (12 + th) + 'x = ' + T + '$', '$x = ' + x + '$'],
           loiThuongGap: loc([{ gt: T / 12, giaiThich: 'Thu nhập gồm $12$ tháng lương **và** $' + th + '$ tháng thưởng, tức là $' + (12 + th) + '$ lần lương tháng.' }], x)
         };
@@ -106,7 +106,11 @@
             { gt: c + n, giaiThich: '$' + (c + n) + '$ là tuổi ' + ten + ' **sau** $' + n + '$ năm. Đề hỏi tuổi hiện nay.' }], c)
         };
       }
-      var x = r.so(5, 14), k2 = r.so(3, 5), y = r.so(2, 8), S = (k2 + 1) * x + 2 * y;
+      // bố/mẹ hơn con từ 20 đến 40 tuổi cho hợp lí thực tế
+      var x, k2, lan2 = 0;
+      do { x = r.so(5, 14); k2 = r.so(3, 5); lan2++; } while (((k2 - 1) * x < 20 || (k2 - 1) * x > 40) && lan2 < 100);
+      if ((k2 - 1) * x < 20 || (k2 - 1) * x > 40) { x = 10; k2 = 4; }
+      var y = r.so(2, 8), S = (k2 + 1) * x + 2 * y;
       return {
         de: 'Hiện nay tuổi ' + nguoi.toLowerCase() + ' gấp $' + k2 + '$ lần tuổi ' + ten + '. Sau $' + y + '$ năm nữa, tổng số tuổi của hai người là $' + S + '$. Hỏi hiện nay ' + ten + ' bao nhiêu tuổi?',
         dapAn: { kieu: 'so', gt: x },
@@ -132,7 +136,7 @@
           loiGiai: ['Gọi $x$ (giờ) là thời gian ' + xe[1] + ' đi, $x > 0$.', '$' + v2 + 'x = ' + v1 + '(x + ' + h + ')$, tức là $' + v2 + 'x = ' + v1 + 'x + ' + v1 * h + '$',
             '$' + (v2 - v1) + 'x = ' + v1 * h + '$', '$x = ' + t + '$'],
           loiThuongGap: loc([{ gt: t + h, giaiThich: '$' + (t + h) + '$ giờ là thời gian **' + xe[0] + '** đã đi. ' + xe[1].charAt(0).toUpperCase() + xe[1].slice(1) + ' xuất phát sau $' + h + '$ giờ.' },
-            { gt: v1 / (v2 - v1), giaiThich: 'Khi ' + xe[1] + ' đi $x$ giờ thì ' + xe[0] + ' đã đi $x + ' + h + '$ giờ: $' + v1 + '(x + ' + h + ')$, nhớ nhân $' + v1 + '$ với $' + h + '$.' }], t)
+            { gt: h / (v2 - v1), giaiThich: 'Khi ' + xe[1] + ' đi $x$ giờ thì ' + xe[0] + ' đã đi $x + ' + h + '$ giờ: $' + v1 + '(x + ' + h + ')$, nhớ nhân $' + v1 + '$ với $' + h + '$.' }], t)
         };
       }
       var tg = r.so(1, 4), a = r.chon([30, 35, 40, 45, 50]), b = r.chon([40, 45, 50, 55, 60]), D = tg * (a + b);

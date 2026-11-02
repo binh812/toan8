@@ -163,7 +163,7 @@
         : [{ gt: c * e / L, giaiThich: 'Em lật ngược tỉ số. Cột đèn xa $E$ hơn cọc nên phải cao hơn cọc.' }];
       return {
         de: de,
-        hinh: geo({ diem: { E: [0, 0], C: [e, 0], D: [e, c], B: [L, 0], A: [L, h] }, ve: [[[0, -0.16 * Math.max(L, h)], [0.01, -0.16 * Math.max(L, h)], { mau: '#ffffff', day: 0 }]],
+        hinh: geo({ diem: { E: [0, 0], C: [e, 0], D: [e, c], B: [L, 0], A: [L, h] }, ve: [[[0, -0.25 * Math.max(L, h)], [0.01, -0.25 * Math.max(L, h)], { mau: '#ffffff', day: 0 }]],
           canh: [['E', 'B'], ['C', 'D', { mau: CAM, day: 5 }], ['B', 'A', { mau: XANH, day: 5 }], ['E', 'A', { mau: '#f59f00', day: 2, net: 2 }]],
           nhan: [['C', 'D', nh(c) + ' m', true, 1.6], choCB ? ['C', 'B', nh(cb) + ' m'] : ['E', 'B', nh(L) + ' m', false, 4.2], ['E', 'C', nh(e) + ' m', false, 2.4], ['B', 'A', 'h', true]],
           lechTen: { A: [14, 8], D: [-12, 10], C: [10, -14], E: [-14, 2] }, goc: [['C', 'B', 'A', { mau: '#495057', r: 0.06 * L }]] }),

@@ -91,8 +91,8 @@
       var D = tgVuong(a, gB);
       return {
         de: hoiAM
-          ? 'Tam giác $ABC$ trong hình vuông tại $A$, cạnh huyền $BC = ' + a + '$ cm, $M$ là trung điểm $BC$. Tính $AM$ (cm).'
-          : 'Tam giác $ABC$ trong hình vuông tại $A$, $M$ là trung điểm $BC$ và trung tuyến $AM = ' + cc.so(a / 2) + '$ cm. Tính cạnh huyền $BC$ (cm).',
+          ? 'Tam giác $ABC$ vuông tại $A$ (hình) có cạnh huyền $BC = ' + a + '$ cm, $M$ là trung điểm $BC$. Tính $AM$ (cm).'
+          : 'Tam giác $ABC$ vuông tại $A$ (hình), $M$ là trung điểm $BC$ và trung tuyến $AM = ' + cc.so(a / 2) + '$ cm. Tính cạnh huyền $BC$ (cm).',
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Trong tam giác vuông, đường trung tuyến ứng với cạnh huyền bằng **một nửa** cạnh huyền.', hoiAM ? '$AM = BC : 2$.' : '$BC = 2 \\cdot AM$.'],
         loiGiai: ['Tam giác $ABC$ vuông tại $A$, $AM$ là trung tuyến ứng với cạnh huyền $BC$ nên $AM = \\frac{BC}{2}$.',

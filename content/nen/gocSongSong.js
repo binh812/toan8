@@ -55,9 +55,9 @@
       { loai: 'dinhNghia', tieuDe: 'Góc kề bù, góc đối đỉnh',
         noiDung: 'Hai góc **kề bù** (chung một cạnh, hai cạnh còn lại là hai tia đối nhau) có tổng bằng $180^\\circ$.\n\nHai góc **đối đỉnh** (mỗi cạnh góc này là tia đối của một cạnh góc kia) thì **bằng nhau**.\n\nTia phân giác của một góc chia góc đó thành hai góc bằng nhau.' },
       { loai: 'dinhLi', tieuDe: 'Hai đường thẳng song song',
-        noiDung: 'Nếu đường thẳng $c$ cắt hai đường thẳng **song song** $a$ và $b$ thì:\n\n• hai góc **so le trong** bằng nhau;\n\n• hai góc **đồng vị** bằng nhau;\n\n• hai góc **trong cùng phía** bù nhau (tổng $180^\\circ$).\n\nNgược lại, nếu có một cặp góc so le trong (hoặc đồng vị) bằng nhau thì $a \\parallel b$. **Tiên đề Euclid:** qua một điểm ở ngoài một đường thẳng chỉ có **một** đường thẳng song song với đường thẳng đó.' },
+        noiDung: 'Nếu đường thẳng $c$ cắt hai đường thẳng **song song** $a$ và $b$ thì:\n\n• hai góc **so le trong** bằng nhau;\n\n• hai góc **đồng vị** bằng nhau;\n\n• hai góc **trong cùng phía** bù nhau (tổng $180^\\circ$) – suy ra từ hai ý trên và hai góc kề bù.\n\nNgược lại, nếu có một cặp góc so le trong (hoặc đồng vị) bằng nhau thì $a \\parallel b$. **Tiên đề Euclid:** qua một điểm ở ngoài một đường thẳng chỉ có **một** đường thẳng song song với đường thẳng đó.' },
       { loai: 'dinhLi', tieuDe: 'Tổng ba góc của một tam giác',
-        noiDung: '$\\widehat{A} + \\widehat{B} + \\widehat{C} = 180^\\circ$.\n\nTam giác vuông: hai góc nhọn **phụ nhau** (tổng $90^\\circ$).\n\nGóc ngoài của tam giác bằng **tổng hai góc trong không kề** với nó.' },
+        noiDung: '$\\widehat{A} + \\widehat{B} + \\widehat{C} = 180^\\circ$.\n\nTam giác vuông: hai góc nhọn **phụ nhau** (tổng $90^\\circ$).\n\n**Góc ngoài** của tam giác (góc kề bù với một góc của tam giác) bằng **tổng hai góc trong không kề** với nó.' },
       { loai: 'chuY', noiDung: 'Muốn tính một góc, em tìm xem nó có quan hệ gì với góc đã biết: kề bù ($180^\\circ - $), đối đỉnh (bằng), so le trong / đồng vị (bằng), trong cùng phía ($180^\\circ - $), hay nằm trong một tam giác (tổng $180^\\circ$).' }
     ],
     viDu: [

@@ -19,7 +19,8 @@
     var p, q, t, s, n = 0;
     do {
       p = r.so(1, 5); q = r.so(1, 5); t = r.so(1, 3); s = r.so(1, 3); n++;
-    } while (n < 50 && (p === q || (p + q) * t < 4 || (p + q) * s < 4 || Math.max(t, s) > 2 * Math.min(t, s)));
+    // max(p, q) ≤ 2,5·min(p, q): tránh M sát B (hay N sát C) làm nhãn đè nhau
+    } while (n < 80 && (p === q || Math.max(p, q) > 2.5 * Math.min(p, q) || (p + q) * t < 4 || (p + q) * s < 4 || Math.max(t, s) > 2 * Math.min(t, s)));
     if (p === q) q = p + 1;
     return { AM: p * t, MB: q * t, AN: p * s, NC: q * s };
   }

@@ -2,6 +2,8 @@
 (function () {
   'use strict';
   var MAU = ['#e03131', '#1971c2', '#f08c00', '#2f9e44', '#9c36b5', '#0c8599'];
+  // màu vẽ đúng tên màu của bi/bóng (để hình không nói "Xanh" mà tô đỏ)
+  var MAU_TEN = { 'đỏ': '#e03131', 'xanh': '#1971c2', 'vàng': '#f08c00', 'trắng': '#adb5bd' };
   var VONG = ['#94d82d', '#fcc419', '#ffa94d', '#fd7e14', '#e03131', '#c2255c', '#9c36b5', '#6741d9', '#1971c2', '#1098ad', '#2f9e44', '#74b816'];
 
   function laNT(n) { if (n < 2) return false; for (var d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; }
@@ -59,7 +61,7 @@
       var loi = [{ tu: 1, mau: 3, giaiThich: 'Ba ' + (loai.kieu ? 'loại kẹo' : 'màu') + ' **không** đồng khả năng (số lượng khác nhau). Mỗi ' + loai.vat + ' mới là một kết quả.' }, chiaKhongTL(so[j], tong)];
       return {
         de: 'Một túi có ' + so[0] + ' ' + ten(0) + ', ' + so[1] + ' ' + ten(1) + ' và ' + so[2] + ' ' + ten(2) + ', giống hệt nhau trừ ' + (loai.kieu ? 'vị' : 'màu') + '. Lấy ngẫu nhiên một ' + loai.vat + '. Tính xác suất lấy được ' + ten(j) + '.',
-        hinh: { widget: 'xacSuat', config: { loai: 'tui', tui: [0, 1, 2].map(function (i) { return { ten: loai.mau[i].charAt(0).toUpperCase() + loai.mau[i].slice(1), so: so[i], mau: MAU[i] }; }) } },
+        hinh: { widget: 'xacSuat', config: { loai: 'tui', tui: [0, 1, 2].map(function (i) { return { ten: loai.mau[i].charAt(0).toUpperCase() + loai.mau[i].slice(1), so: so[i], mau: loai.kieu ? MAU[i] : MAU_TEN[loai.mau[i]] }; }) } },
         dapAn: { kieu: 'so', gt: kq.ascii },
         goiY: ['Mỗi ' + loai.vat + ' là một kết quả có thể, các kết quả đồng khả năng.', 'Số kết quả thuận lợi là số ' + ten(j) + '; chia cho **tổng** số ' + loai.vat + '.'],
         loiGiai: ['Có $' + so.join(' + ') + ' = ' + tong + '$ kết quả có thể, đồng khả năng.', 'Có ' + so[j] + ' kết quả thuận lợi (' + so[j] + ' ' + ten(j) + ').', '$P = ' + pTex(cc, so[j], tong) + '$'],
@@ -169,7 +171,7 @@
         bc = r.chon([
           { ten: 'Đồng xu ra mặt ' + tenMat + ' và xúc xắc ra số chấm chẵn', loc: function (x) { return x[0] === mat && Number(x[1]) % 2 === 0; }, mot: 3 },
           { ten: 'Đồng xu ra mặt ' + tenMat + ' và xúc xắc ra số chấm lớn hơn ' + k, loc: function (x) { return x[0] === mat && Number(x[1]) > k; }, mot: 6 - k },
-          { ten: 'Đồng xu ra mặt ' + tenMat + ' và xúc xắc ra số nguyên tố', loc: function (x) { return x[0] === mat && laNT(Number(x[1])); }, mot: 3 }]);
+          { ten: 'Đồng xu ra mặt ' + tenMat + ' và xúc xắc ra số chấm là số nguyên tố', loc: function (x) { return x[0] === mat && laNT(Number(x[1])); }, mot: 3 }]);
         var tl1 = kqCo.filter(bc.loc);
         sai = [{ tu: bc.mot, mau: 6, giaiThich: 'Em mới xét con xúc xắc, quên bước tung đồng xu. Mỗi kết quả là một **cặp** (mặt đồng xu, số chấm): có $2 \\cdot 6 = 12$ cặp.' }];
         return cauHaiBuoc(cc, 'Tung một đồng xu cân đối rồi gieo một con xúc xắc cân đối.', bc.ten, kqCo, tl1, sai,

@@ -49,7 +49,7 @@
           de: 'Tìm $x$, biết $' + de + '$.',
           dapAn: { kieu: 'so', gt: kq },
           goiY: ['Chuyển số hạng sang vế kia thì phải đổi dấu.', loai === 2 ? 'Chuyển $x$ sang vế phải và $' + b + '$ sang vế trái: $' + a + ' - ' + ngoac(b) + ' = x$.' : 'Đưa $' + a + '$ sang vế phải với dấu ngược lại.'],
-          loiGiai: [loai === 2 ? '$' + a + ' - ' + ngoac(b) + ' = x$ (chuyển $x$ sang vế phải, $' + b + '$ sang vế trái).' : 'Chuyển $' + a + '$ sang vế phải và đổi dấu.', buoc],
+          loiGiai: [loai === 2 ? '$' + a + ' - ' + ngoac(b) + ' = x$ (chuyển $x$ sang vế phải, $' + b + '$ sang vế trái).' : 'Chuyển $' + (loai === 1 ? '-' : '+') + a + '$ sang vế phải và đổi dấu.', buoc],
           loiThuongGap: ltg
         };
       } },
@@ -77,19 +77,19 @@
           de = P + ' \\cdot x = ' + U;
           lg = ['$x = ' + U + ' : ' + P + ' = ' + U + ' \\cdot \\frac{' + q + '}{' + p + '}$', '$x = \\frac{' + u * q + '}{' + v * p + '} = ' + kq.tex + '$'];
           if (kq.tu === u * q && kq.mau === v * p) lg[1] = '$x = ' + kq.tex + '$';
-          themLoi(ltg, cc.phanSo(u * p, v * q).ascii, kq.ascii, 'Chia cho $' + P + '$ là **nhân với phân số đảo ngược** $\\frac{' + q + '}{' + p + '}$.');
+          themLoi(ltg, cc.phanSo(u * p, v * q).ascii, kq.ascii, 'Chia cho $' + P + '$ là **nhân với phân số nghịch đảo** $\\frac{' + q + '}{' + p + '}$.');
         } else {
           kq = cc.phanSo(u * q - p * v, v * q);
           de = 'x + ' + P + ' = ' + U;
           var M = v * q / cc.ucln(v, q);
           lg = ['$x = ' + U + ' - ' + P + '$', '$x = \\frac{' + u * M / v + '}{' + M + '} - \\frac{' + p * M / q + '}{' + M + '} = ' + kq.tex + '$'];
-          if (v === q) lg = ['$x = ' + U + ' - ' + P + ' = \\frac{' + (u - p) + '}{' + q + '} = ' + kq.tex + '$'];
+          if (v === q) lg = ['$x = ' + U + ' - ' + P + ' = \\frac{' + (u - p) + '}{' + q + '}' + (kq.tu === u - p && kq.mau === q ? '' : ' = ' + kq.tex) + '$'];
           themLoi(ltg, cc.phanSo(u * q + p * v, v * q).ascii, kq.ascii, 'Chuyển $+' + P + '$ sang vế phải phải **đổi dấu** thành $-' + P + '$.');
         }
         return {
           de: 'Tìm $x$, biết $' + de + '$.',
           dapAn: { kieu: 'so', gt: kq.ascii },
-          goiY: [nhan ? 'Tìm thừa số chưa biết: lấy tích chia cho thừa số đã biết.' : 'Chuyển $' + P + '$ sang vế phải (đổi dấu).', nhan ? 'Chia cho một phân số là nhân với phân số đảo ngược.' : 'Quy đồng mẫu rồi trừ hai phân số.'],
+          goiY: [nhan ? 'Tìm thừa số chưa biết: lấy tích chia cho thừa số đã biết.' : 'Chuyển $' + P + '$ sang vế phải (đổi dấu).', nhan ? 'Chia cho một phân số là nhân với phân số nghịch đảo.' : 'Quy đồng mẫu rồi trừ hai phân số.'],
           loiGiai: lg, loiThuongGap: ltg
         };
       } },
@@ -104,7 +104,7 @@
           de: 'Tìm $x$, biết $' + trai + ' = ' + phai + '$.',
           dapAn: { kieu: 'so', gt: x0 },
           goiY: ['Đưa các số hạng chứa $x$ về vế trái, các số về vế phải (đổi dấu khi chuyển vế).', '$' + tx(cc.daThuc([[a, 'x'], [-c, 'x']])) + ' = ' + tru(d, b) + '$.'],
-          loiGiai: ['$' + tx(cc.daThuc([[a, 'x'], [-c, 'x']])) + ' = ' + tru(d, b) + '$', '$' + tx(cc.daThuc([[hs, 'x']])) + ' = ' + (d - b) + '$', '$x = ' + (d - b) + ' : ' + ngoac(hs) + ' = ' + x0 + '$'],
+          loiGiai: ['$' + tx(cc.daThuc([[a, 'x'], [-c, 'x']])) + ' = ' + tru(d, b) + '$', '$' + tx(cc.daThuc([[hs, 'x']])) + ' = ' + (d - b) + '$'].concat(hs === 1 ? [] : ['$x = ' + (d - b) + ' : ' + ngoac(hs) + ' = ' + x0 + '$']),
           loiThuongGap: ltg
         };
       } }

@@ -95,7 +95,7 @@
         de: "Cho $\\triangle A'B'C' \\backsim \\triangle ABC$; đường cao $A'H' = " + h1 + "$ cm, đường cao tương ứng $AH = " + h0 + "$ cm. Diện tích $\\triangle ABC$ là $" + S + "$ cm². Tính diện tích $\\triangle A'B'C'$ (cm²).",
         dapAn: { kieu: 'so', gt: kq },
         goiY: ["Tỉ số hai đường cao tương ứng bằng tỉ số đồng dạng $k = \\frac{A'H'}{AH}$. Cạnh đáy $B'C'$ cũng bằng $k \\cdot BC$.", 'Diện tích $= \\frac{1}{2}$ đáy $\\cdot$ cao: cả đáy và cao cùng nhân $k$ nên diện tích nhân $k^2$.'],
-        loiGiai: ["$k = \\frac{A'H'}{AH} = \\frac{" + h1 + '}{' + h0 + '}' + (t > 1 ? ' = ' + kt : '') + "$; $B'C' = k \\cdot BC$, $A'H' = k \\cdot AH$.",
+        loiGiai: ["$k = \\frac{A'H'}{AH} = \\frac{" + h1 + '}{' + h0 + '}' + (t > 1 || k[1] === 1 ? ' = ' + kt : '') + "$; $B'C' = k \\cdot BC$, $A'H' = k \\cdot AH$.",
           "$S_{A'B'C'} = \\frac{1}{2} B'C' \\cdot A'H' = k^2 \\cdot S_{ABC}$.",
           "$S_{A'B'C'} = \\left(" + kt + '\\right)^2 \\cdot ' + S + ' = ' + cc.so(kq) + '$'],
         loiThuongGap: [{ gt: S * k[0] / k[1], giaiThich: 'Em chỉ nhân với $k$. Diện tích tỉ lệ với $k^2$ (cả đáy và chiều cao đều nhân $k$).' }]

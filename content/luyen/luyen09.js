@@ -10,7 +10,7 @@
       // g·x^e·(p·x + q) với ƯCLN(p, q) = 1
       var g = r.chon([1, 2, 3, 4, 5, 6]), e = r.so(1, 2), p = r.so(1, 5), q = r.khac0(-9, 9);
       while (cc.ucln(p, q) !== 1) q = r.khac0(-9, 9);
-      if (g === 1 && e === 1 && p === 1) p = 2;
+      if (g === 1 && e === 1 && p === 1) { p = 2; while (cc.ucln(p, q) !== 1) q = r.khac0(-9, 9); }
       var chung = nhan(g) + (e === 1 ? 'x' : 'x^2');
       var trong = cc.daThuc([[p, 'x'], [q, '']]);
       var de = cc.daThuc([[g * p, 'x^' + (e + 1)], [g * q, e === 1 ? 'x' : 'x^2']]);
@@ -81,7 +81,7 @@
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'nhanTu' },
         goiY: ['Nhóm hai hạng tử đầu và hai hạng tử cuối: $(' + cc.tex(nh1) + ') + (' + tx(cc, nh2) + ')$.', 'Đặt nhân tử chung trong mỗi nhóm, sẽ xuất hiện nhân tử chung $(' + cc.tex(by) + ')$.'],
         loiGiai: ['$= (' + cc.tex(nh1) + ') + (' + tx(cc, nh2) + ')$',
-          '$= x(' + cc.tex(by) + ') ' + (a < 0 ? '- ' + -a : '+ ' + a) + '(' + cc.tex(by) + ')$',
+          '$= x(' + cc.tex(by) + ') ' + (a < 0 ? '- ' : '+ ') + (Math.abs(a) === 1 ? '' : Math.abs(a)) + '(' + cc.tex(by) + ')$',
           '$= ' + cc.tex(kq) + '$'],
         loiThuongGap: [{ gt: '(' + cc.daThuc([[1, 'x'], [-a, '']]) + ')(' + by + ')', giaiThich: 'Nhóm thứ hai là $' + tx(cc, nh2) + ' = ' + a + '(' + cc.tex(by) + ')$, nên thừa số còn lại là $' + cc.tex(cc.daThuc([[1, 'x'], [a, '']])) + '$.' }]
       };
@@ -171,10 +171,10 @@
       return {
         de: 'Tính nhanh giá trị của $A = ' + cc.tex(de) + '$ tại $x = ' + x + '$, $y = ' + y + '$.',
         dapAn: { kieu: 'so', gt: kq2 },
-        goiY: ['Phân tích $A$ thành nhân tử bằng cách nhóm: $(x^2 - xy) + (' + k + 'x - ' + k + 'y)$.', '$A = (x - y)(x + ' + k + ')$; thay số vào dạng tích sẽ nhanh hơn.'],
-        loiGiai: ['$A = x(x - y) + ' + k + '(x - y) = (x - y)(x + ' + k + ')$',
+        goiY: ['Phân tích $A$ thành nhân tử bằng cách nhóm: $(x^2 - xy) + (' + cc.tex(cc.daThuc([[k, 'x'], [-k, 'y']])) + ')$.', '$A = (x - y)(x + ' + k + ')$; thay số vào dạng tích sẽ nhanh hơn.'],
+        loiGiai: ['$A = x(x - y) + ' + (k === 1 ? '' : k) + '(x - y) =(x - y)(x + ' + k + ')$',
           'Tại $x = ' + x + '$, $y = ' + y + '$: $A = (' + x + ' - ' + y + ')(' + x + ' + ' + k + ') = ' + hieu + ' \\cdot ' + (x + k) + ' = ' + kq2 + '$'],
-        loiThuongGap: [{ gt: hieu * (x - k), giaiThich: 'Nhóm thứ hai là $+' + k + '(x - y)$ nên thừa số còn lại là $x + ' + k + '$.' }]
+        loiThuongGap: [{ gt: hieu * (x - k), giaiThich: 'Nhóm thứ hai là $+' + (k === 1 ? '' : k) + '(x - y)$ nên thừa số còn lại là $x + ' + k + '$.' }]
       };
     } }
   ]);

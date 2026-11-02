@@ -9,6 +9,8 @@
   }
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
+  // lũy thừa trong lời giải: x^1 viết gọn là x
+  function lt(b, e) { return e === 1 ? b : b + '^{' + e + '}'; }
   // đa thức = [[hệ số, mũ x, mũ y], …]
   function ds(cc, D) { return cc.daThuc(D.map(function (h) { return [h[0], bien(h[1], h[2])]; })); }
   function nhanDon(D, b, r, s) { return D.map(function (h) { return [h[0] * b, h[1] + r, h[2] + s]; }); }
@@ -39,8 +41,8 @@
       return {
         de: 'Thực hiện phép chia $' + tx(cc, A) + ' : ' + chiaTex(cc, b, rr, s) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: Q, dang: 'khaiTrien' },
-        goiY: ['Chia hệ số cho hệ số; chia lũy thừa của từng biến cho lũy thừa cùng biến (trừ số mũ).', 'Hệ số: $' + q * b + ' : ' + ngoac(b) + '$. Phần $x$: $x^{' + px + '} : x^{' + rr + '}$' + (s ? '; phần $y$: $y^{' + (f + s) + '} : y^{' + s + '}$' : '') + '.'],
-        loiGiai: ['$= [' + q * b + ' : ' + ngoac(b) + '] \\cdot (x^{' + px + '} : x^{' + rr + '})' + (s ? ' \\cdot (y^{' + (f + s) + '} : y^{' + s + '})' : f ? ' \\cdot y^{' + f + '}' : '') + '$',
+        goiY: ['Chia hệ số cho hệ số; chia lũy thừa của từng biến cho lũy thừa cùng biến (trừ số mũ).', 'Hệ số: $' + q * b + ' : ' + ngoac(b) + '$. Phần $x$: $' + lt('x', px) + ' : ' + lt('x', rr) + '$' + (s ? '; phần $y$: $' + lt('y', f + s) + ' : ' + lt('y', s) + '$' : '') + '.'],
+        loiGiai: ['$= [' + q * b + ' : ' + ngoac(b) + '] \\cdot (' + lt('x', px) + ' : ' + lt('x', rr) + ')' + (s ? ' \\cdot (' + lt('y', f + s) + ' : ' + lt('y', s) + ')' : f ? ' \\cdot ' + lt('y', f) : '') + '$',
           '$' + tx(cc, A) + ' : ' + chiaTex(cc, b, rr, s) + ' = ' + tx(cc, Q) + '$'],
         loiThuongGap: ltg
       };

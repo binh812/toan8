@@ -104,7 +104,8 @@
           var c = r.chon(['AB', 'BC', 'CA']), d = r.xaoTron(dinhCanh[c]), con = ['A', 'B', 'C'].filter(function (x) { return dinhCanh[c].indexOf(x) < 0; })[0];
           var cKhac = ['AB', 'BC', 'CA'].filter(function (x) { return x !== c; });
           de = '$\\triangle ABC$ và $\\triangle DEF$ có $' + ccd(c) + '$, $' + gcd(d[0]) + '$. Cần thêm điều kiện nào để $\\triangle ABC = \\triangle DEF$ theo trường hợp **góc – cạnh – góc**?';
-          dung = gcd(d[1]); sai = [gcd(con), ccd(cKhac[0]), ccd(cKhac[1])];
+          // không dùng góc thứ ba (con) làm phương án nhiễu: thêm góc thứ ba bằng nhau thì (nhờ tổng ba góc) cũng suy ra được g.c.g
+          dung = gcd(d[1]); sai = [goc(d[1]) + ' = ' + goc(doi[con]), ccd(cKhac[0]), ccd(cKhac[1])];
           giai = 'Trường hợp g.c.g cần **hai góc kề** cạnh $' + c + '$, tức là $' + goc(d[0]) + '$ và $' + goc(d[1]) + '$. Vậy cần thêm $' + gcd(d[1]) + '$.';
         }
         var lc = r.xaoTron([dung].concat(sai));

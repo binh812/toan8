@@ -123,7 +123,11 @@
       var s = day(kieu);
       // đảm bảo "lúc tăng lúc giảm" thật sự có cả tăng và giảm
       if (kieu === 2) { var coT = false, coG = false; for (var t = 1; t < 5; t++) { if (s[t] > s[t - 1]) coT = true; if (s[t] < s[t - 1]) coG = true; } if (!(coT && coG)) { s[2] = s[1] - 2; s[3] = s[2] + 3; } }
-      var khac = day(r.chon([0, 1, 2]));
+      // đường thứ hai phải cách đường được hỏi ở mọi năm (nếu không, số ghi trên hai điểm đè lên nhau, không đọc được)
+      var gap = 3 * Math.max(1, Math.round((b.hi - b.lo) / 10)), khac, lanK = 0;
+      var gan = function (m) { return m.some(function (x, t) { return Math.abs(x - s[t]) < gap; }); };
+      do { khac = day(r.chon([0, 1, 2])); } while (gan(khac) && ++lanK < 30);
+      if (gan(khac)) { var day0 = Math.max.apply(null, s) - Math.min.apply(null, khac) + gap; khac = khac.map(function (x) { return x + day0; }); }
       var chuoi = ai === 0 ? [{ ten: b.chuoi[0], so: s }, { ten: b.chuoi[1], so: khac }] : [{ ten: b.chuoi[0], so: khac }, { ten: b.chuoi[1], so: s }];
       var lc = ['Tăng liên tục.', 'Giảm liên tục.', 'Lúc tăng lúc giảm.', 'Không thay đổi.'];
       return {

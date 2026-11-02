@@ -12,6 +12,8 @@
   // cc.tex viết hệ số âm đứng đầu thành (−4)x; tách dấu trừ ra cho gọn
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
   function ngoac(c) { return c < 0 ? '(' + c + ')' : String(c); }
+  // lũy thừa trong lời giải: x^1 viết gọn là x
+  function lt(b, e) { return e === 1 ? b : b + '^{' + e + '}'; }
 
   TOAN8.luyen(1, [
     { ten: 'Thu gọn tích hai đơn thức', muc: 1, sinh: function (r, cc) {
@@ -22,13 +24,13 @@
       var A = don(cc, a, p, q), B = don(cc, b, m, n), kq = don(cc, a * b, p + m, q + n);
       var ltg = [];
       if (a + b !== a * b && a + b !== 0) ltg.push({ gt: don(cc, a + b, p + m, q + n), giaiThich: 'Khi **nhân** hai đơn thức thì hệ số cũng **nhân**: $' + ngoac(a) + ' \\cdot ' + ngoac(b) + ' = ' + a * b + '$, không cộng.' });
-      if (p * m !== p + m) ltg.push({ gt: don(cc, a * b, p * m, q + n), giaiThich: 'Nhân hai lũy thừa cùng cơ số thì **cộng** số mũ: $x^{' + p + '} \\cdot x^{' + m + '} = x^{' + (p + m) + '}$, không nhân số mũ.' });
+      if (p * m !== p + m) ltg.push({ gt: don(cc, a * b, p * m, q + n), giaiThich: 'Nhân hai lũy thừa cùng cơ số thì **cộng** số mũ: $' + lt('x', p) + ' \\cdot ' + lt('x', m) + ' = x^{' + (p + m) + '}$, không nhân số mũ.' });
       return {
         de: 'Thu gọn đơn thức $' + tx(cc, A) + ' \\cdot ' + (b < 0 ? '(' + tx(cc, B) + ')' : tx(cc, B)) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Nhân các số với nhau, nhân các lũy thừa của cùng một biến với nhau.',
-          'Hệ số: $' + ngoac(a) + ' \\cdot ' + ngoac(b) + '$. Phần biến: $x^{' + p + '} \\cdot x^{' + m + '} = x^{' + p + ' + ' + m + '}$, làm tương tự với $y$ (nhớ $y = y^1$).'],
-        loiGiai: ['$= [' + a + ' \\cdot ' + ngoac(b) + '] \\cdot (x^{' + p + '} \\cdot x^{' + m + '}) \\cdot ' + (q ? '(y^{' + q + '} \\cdot y^{' + n + '})' : 'y^{' + n + '}') + '$',
+          'Hệ số: $' + ngoac(a) + ' \\cdot ' + ngoac(b) + '$. Phần biến: $' + lt('x', p) + ' \\cdot ' + lt('x', m) + ' = x^{' + p + ' + ' + m + '}$, làm tương tự với $y$ (nhớ $y = y^1$).'],
+        loiGiai: ['$= [' + a + ' \\cdot ' + ngoac(b) + '] \\cdot (' + lt('x', p) + ' \\cdot ' + lt('x', m) + ') \\cdot ' + (q ? '(' + lt('y', q) + ' \\cdot ' + lt('y', n) + ')' : lt('y', n)) + '$',
           '$' + tx(cc, A) + ' \\cdot ' + (b < 0 ? '(' + tx(cc, B) + ')' : tx(cc, B)) + ' = ' + tx(cc, kq) + '$'],
         loiThuongGap: ltg.slice(0, 2)
       };
@@ -112,7 +114,7 @@
             loiThuongGap: [{ gt: bac - 1, giaiThich: 'Biến $z$ có số mũ $1$, cũng phải cộng vào bậc.' }] }] },
         goiY: ['Nhân các số với nhau, nhân các lũy thừa cùng biến (cộng số mũ). Bậc = tổng số mũ các biến.',
           'Hệ số: $' + deA.replace(tx(cc, phanA), '') + ' \\cdot ' + ngoac(b) + '$. Đừng quên biến $z$ (số mũ $1$).'],
-        loiGiai: ['$= \\left(' + dauA + '\\frac{' + Math.abs(a) + '}{' + mau + '} \\cdot ' + ngoac(b) + '\\right)(x^{' + p + '} \\cdot x^{' + m + '})(y^{' + q + '} \\cdot y^{' + n + '})z = ' + tx(cc, kq) + '$',
+        loiGiai: ['$= \\left(' + dauA + '\\frac{' + Math.abs(a) + '}{' + mau + '} \\cdot ' + ngoac(b) + '\\right)(' + lt('x', p) + ' \\cdot ' + lt('x', m) + ')(' + lt('y', q) + ' \\cdot ' + lt('y', n) + ')z = ' + tx(cc, kq) + '$',
           'Hệ số là $' + hs + '$; bậc là $' + (p + m) + ' + ' + (q + n) + ' + 1 = ' + bac + '$.']
       };
     } },
@@ -130,7 +132,7 @@
       return {
         de: 'Tính giá trị của đơn thức $' + tex + '$ tại $x = ' + x + '$, $y = ' + y + '$.',
         dapAn: { kieu: 'so', gt: kq },
-        goiY: ['Thay giá trị của $x$, $y$ vào đơn thức. Tính lũy thừa trước rồi mới nhân.', 'Số âm thì đặt trong ngoặc: $(' + x + ')^' + p + ' = ' + Math.pow(x, p) + '$.'],
+        goiY: ['Thay giá trị của $x$, $y$ vào đơn thức. Tính lũy thừa trước rồi mới nhân.', x < 0 ? 'Số âm thì đặt trong ngoặc: $(' + x + ')^' + p + ' = ' + Math.pow(x, p) + '$.' : y < 0 && q > 1 ? 'Số âm thì đặt trong ngoặc: $(' + y + ')^' + q + ' = ' + Math.pow(y, q) + '$.' : 'Tính lũy thừa trước: $' + x + '^' + p + ' = ' + Math.pow(x, p) + '$, rồi mới nhân (số âm thì đặt trong ngoặc).'],
         loiGiai: ['$' + tex + ' = ' + c + ' \\cdot ' + ngoac(x) + '^' + p + ' \\cdot ' + ngoac(y) + (q > 1 ? '^' + q : '') + '$',
           '$= ' + c + ' \\cdot ' + ngoac(Math.pow(x, p)) + ' \\cdot ' + ngoac(Math.pow(y, q)) + ' = ' + kq + '$'],
         loiThuongGap: ltg

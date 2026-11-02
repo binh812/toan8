@@ -9,13 +9,14 @@
   function tron(x) { return Math.round(x * 1e6) / 1e6; }
 
   // Tam giác có phân giác (giống bai17.js): ten = [đỉnh có phân giác, hai đỉnh còn lại, chân phân giác].
-  function hinhPG(ten, ab, ac, bc, nhan) {
+  // ghiChu: độ dài cạnh bị chia (nhãn đặt giữa cạnh đó dễ đè lên tên chân phân giác)
+  function hinhPG(ten, ab, ac, bc, nhan, ghiChu) {
     var hh = TOAN8.hh, T = hh.tg(bc, ac, ab), Dd = hh.lerp(T.B, T.C, ab / (ab + ac)), s = Math.max(bc, ab, ac), diem = {};
     diem[ten[0]] = T.A; diem[ten[1]] = T.B; diem[ten[2]] = T.C; diem[ten[3]] = Dd;
     return TOAN8.hinhGeo({ diem: diem, to: [ten[0], ten[1], ten[2]],
       canh: [[ten[0], ten[1]], [ten[0], ten[2]], [ten[1], ten[2]], [ten[0], ten[3], { mau: TIM, day: 3 }]],
       goc: [[ten[1], ten[0], ten[3], { mau: CAM, r: 0.11 * s }], [ten[3], ten[0], ten[2], { mau: XANH, r: 0.14 * s }]],
-      nhan: nhan || [] });
+      nhan: nhan || [], ghiChu: ghiChu });
   }
   // Bộ số: AB = p·k, AC = q·k, DB = p·t, DC = q·t (BC = (p + q)·t), tam giác không dẹt.
   function boSo(r) {
@@ -78,7 +79,7 @@
       var ti = d.BC + ' : ' + (d.AB + d.AC);
       return {
         de: 'Tam giác $ABC$ có $AB = ' + d.AB + '$ ' + dv + ', $AC = ' + d.AC + '$ ' + dv + ', $BC = ' + d.BC + '$ ' + dv + '. Đường phân giác của góc $A$ cắt $BC$ tại $D$. Tính $DB$ và $DC$ (' + dv + ').',
-        hinh: hinhPG(['A', 'B', 'C', 'D'], d.AB, d.AC, d.BC, [['A', 'B', String(d.AB)], ['A', 'C', String(d.AC)], ['B', 'C', String(d.BC), false, 2.6]]),
+        hinh: hinhPG(['A', 'B', 'C', 'D'], d.AB, d.AC, d.BC, [['A', 'B', String(d.AB)], ['A', 'C', String(d.AC)]], 'BC = ' + d.BC + ' ' + dv),
         dapAn: { kieu: 'nhieuO', o: [
           { kieu: 'so', gt: d.DB, nhan: '$DB =$', loiThuongGap: ltgB },
           { kieu: 'so', gt: d.DC, nhan: '$DC =$', loiThuongGap: ltgC }] },
@@ -129,7 +130,7 @@
       if (lech(e.BC / 2, kq2) && lech(e.BC / 2, e.DC)) ltg.push({ gt: tron(e.BC / 2), giaiThich: '$D$ không phải trung điểm của $AC$ vì $BA \\ne BC$.' });
       return {
         de: 'Tam giác $ABC$ có $AB = ' + e.AB + '$ cm, $BC = ' + e.AC + '$ cm, $AC = ' + e.BC + '$ cm. Đường phân giác của góc $B$ cắt $AC$ tại $D$. Tính $AD$ (cm).',
-        hinh: hinhPG(['B', 'A', 'C', 'D'], e.AB, e.AC, e.BC, [['B', 'A', String(e.AB)], ['B', 'C', String(e.AC)], ['A', 'C', String(e.BC), false, 3]]),
+        hinh: hinhPG(['B', 'A', 'C', 'D'], e.AB, e.AC, e.BC, [['B', 'A', String(e.AB)], ['B', 'C', String(e.AC)]], 'AC = ' + e.BC + ' cm'),
         dapAn: { kieu: 'so', gt: kq2 },
         goiY: ['Phân giác góc $B$ chia cạnh **đối diện** $AC$: $' + fr('DA', 'DC') + ' = ' + fr('BA', 'BC') + '$.', '$' + fr('DA', e.AB) + ' = ' + fr('DC', e.AC) + ' = ' + fr('DA + DC', e.AB + ' + ' + e.AC) + ' = ' + fr(e.BC, e.AB + e.AC) + '$.'],
         loiGiai: ['$BD$ là phân giác của góc $B$ nên $' + fr('DA', 'DC') + ' = ' + fr('BA', 'BC') + '$, tức $' + fr('DA', e.AB) + ' = ' + fr('DC', e.AC) + ' = ' + fr(e.BC, e.AB + e.AC) + '$',
@@ -147,7 +148,7 @@
       if (lech(BC / 2, kq) && lech(BC / 2, khac)) ltg.push({ gt: tron(BC / 2), giaiThich: 'Phân giác không chia đôi cạnh $BC$ (vì $AB \\ne AC$).' });
       return {
         de: vat + ' hình tam giác $ABC$ có $AB = ' + AB + '$ m, $AC = ' + AC + '$ m, $BC = ' + BC + '$ m. ' + nguoi + ' làm lối đi $AD$ theo đường phân giác của góc $A$ ($D \\in BC$). Tính $' + (hoiDB ? 'DB' : 'DC') + '$ (m).',
-        hinh: hinhPG(['A', 'B', 'C', 'D'], AB, AC, BC, [['A', 'B', AB + ' m'], ['A', 'C', AC + ' m'], ['B', 'C', BC + ' m', false, 2.6]]),
+        hinh: hinhPG(['A', 'B', 'C', 'D'], AB, AC, BC, [['A', 'B', AB + ' m'], ['A', 'C', AC + ' m']], 'BC = ' + BC + ' m'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$' + fr('DB', 'AB') + ' = ' + fr('DC', 'AC') + ' = ' + fr('BC', 'AB + AC') + '$.', '$' + fr(hoiDB ? 'DB' : 'DC', hoiDB ? AB : AC) + ' = ' + fr(BC, AB + AC) + '$.'],
         loiGiai: ['$' + fr('DB', AB) + ' = ' + fr('DC', AC) + ' = ' + fr('DB + DC', AB + ' + ' + AC) + ' = ' + fr(BC, AB + AC) + '$',
