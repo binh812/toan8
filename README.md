@@ -19,6 +19,10 @@ Tiến độ lưu trong trình duyệt của máy đang dùng; nút "Lưu tiến
 - **Thành thạo:** đúng ≥ 80% bài mức 1–2 mà không phải mở lời giải, và đúng ít nhất 1 bài mức 3.
 - **Ôn 5 câu hôm nay** (góc trên phải): câu làm sai quay lại sau 1 ngày, làm đúng thì giãn ra 2, 4, 8, 16 ngày.
 - **Ôn tập cuối năm** (nút ở trang chủ): chọn các chương cần ôn, bấm "Tạo đề" để có 10 câu vận dụng trộn từ các chương; bấm lại để có đề mới.
+- **Hình động tự chạy**: ở Khám phá và Lý thuyết, hình tự chuyển động khi hiện ra để con nhìn thấy quy luật; con chạm vào hình là dừng để tự kéo thử, nút ▶/⏸ ở góc hình để bật lại.
+- **6. Luyện thêm** (tab cuối mỗi bài): máy tự tạo bài tương tự bài học, làm bao nhiêu cũng được; đúng 3 câu liền thì lên mức khó hơn, sai nhiều thì xuống mức dễ hơn. Có nút **In phiếu 10 câu** (đáp án ở trang sau).
+- **Kiểm tra đầu chương** (bên cạnh tên chương ở trang chủ): 5–6 câu kiến thức cũ; làm xong máy chỉ ra phần lớp 6–7 cần ôn. Các bài **Ôn kiến thức cũ** nằm cuối trang chủ.
+- **✏️ Nháp**: nút dưới mỗi câu hỏi mở khung vẽ tay bằng chuột hoặc bút.
 - **Phụ huynh xem tiến độ:** thanh tiến độ trên từng thẻ bài ở trang chủ; tab có dấu ✓ là con đã mở.
 
 ## Hiện có
@@ -32,6 +36,9 @@ Hình động theo từng chương: mô hình diện tích (hằng đẳng thứ
 - `npm run validate` – kiểm tra toàn bộ file bài học trong `content/`.
 - `node tools/smoke.js bai/6/tuLam --shot out.png` – mở app bằng Edge/Chrome chạy ngầm, báo lỗi console, chụp màn hình.
 - Sửa/thêm bài: `content/baiNN.js` theo khuôn trong `docs/superpowers/plans/` (mỗi bài có sẵn thẻ `<script>` trong `index.html`), chạy validate.
+- Luyện thêm: `content/luyen/luyenNN.js` – `TOAN8.luyen(id, [{ ten, muc, sinh(r, cc) }], { deCo })`, mỗi dạng trả về một câu hỏi theo hạt giống (`js/core/rng.js`); validator sinh thử 300 đề mỗi dạng. In mẫu đề để soát: `node tools/dump-luyen.js <id>`.
+- Bài nền lớp 6–7: `content/nen/*.js` – `TOAN8.nen({ id, ten, lop, tomTat, viDu, luyen })`; kiểm tra đầu chương: `kiemTra` trong `content/index.js`.
+- Tự chạy: `js/widgets/autoplay.js` dựng sẵn cho thanh trượt, điểm kéo, xác suất, hình chóp, biểu đồ; kịch bản riêng qua `config.tuChay`. Kiểm: `node tools/smoke-tuchay.js`.
 - Hình động: `js/widgets/` – `dienTich`, `geo` (JSXGraph), `figure.js` (hình tĩnh cho đề), `doThi`, `hinhChop`, `bieuDo`, `xacSuat`; cấu hình ghi ở chú thích `cfg:` đầu mỗi hàm.
 
 ## Nguồn và giấy phép
