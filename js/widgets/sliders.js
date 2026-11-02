@@ -15,7 +15,7 @@
     (list || []).forEach(function (t) {
       if (env[t.ten] == null) env[t.ten] = t.gt != null ? t.gt : (t.min + t.max) / 2;
       var out = el('b', null, T.fmtSo(env[t.ten]));
-      var inp = el('input', { type: 'range', min: t.min, max: t.max, step: t.buoc || 0.5, value: env[t.ten], 'aria-label': t.nhan || t.ten });
+      var inp = el('input', { type: 'range', min: t.min, max: t.max, step: t.buoc || 0.5, value: env[t.ten], 'aria-label': t.nhan || t.ten, 'data-ten': t.ten });
       inp.addEventListener('input', function () {
         var prev = env[t.ten];
         env[t.ten] = Number(inp.value);

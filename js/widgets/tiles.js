@@ -100,7 +100,7 @@
       var sl = el('div', { class: 'sliders' });
       cfg.thanhTruot.forEach(function (t) {
         var out = el('b', null, fmt(env[t.ten]));
-        var inp = el('input', { type: 'range', min: t.min, max: t.max, step: t.buoc || 0.5, value: env[t.ten], 'aria-label': t.ten });
+        var inp = el('input', { type: 'range', min: t.min, max: t.max, step: t.buoc || 0.5, value: env[t.ten], 'aria-label': t.ten, 'data-ten': t.ten });
         inp.addEventListener('input', function () {
           var prev = env[t.ten];
           env[t.ten] = Number(inp.value);
@@ -174,7 +174,7 @@
     var sl = el('div', { class: 'sliders' });
     [['a', 2, 8], ['b', 1, 6]].forEach(function (d) {
       var out = el('b', null, String(env[d[0]]));
-      var inp = el('input', { type: 'range', min: d[1], max: d[2], step: 0.5, value: env[d[0]] });
+      var inp = el('input', { type: 'range', min: d[1], max: d[2], step: 0.5, value: env[d[0]], 'data-ten': d[0] });
       inp.addEventListener('input', function () {
         var v = Number(inp.value), nb = d[0] === 'b' ? v : env.b, na = d[0] === 'a' ? v : env.a;
         if (nb >= na) { inp.value = env[d[0]]; return; } // giữ b < a

@@ -8,7 +8,7 @@
       if (k.loai === 'hinh') {
         var box = el('div', { class: 'the hinh' });
         c.appendChild(box);
-        T.mountWidget(box, k.widget, k.config);
+        T.mountWidget(box, k.widget, k.config, { tuChay: true });
         if (k.chuThich) box.appendChild(el('div', { class: 'chu-thich', html: T.md(k.chuThich) }));
         return;
       }
@@ -22,7 +22,7 @@
     if (kp.widget) {
       var box = el('div', { class: 'widget' });
       c.appendChild(box);
-      T.mountWidget(box, kp.widget, kp.config);
+      T.mountWidget(box, kp.widget, kp.config, { tuChay: true });
     }
     if (kp.cauHoi) {
       c.appendChild(el('h2', { class: 'muc-h' }, 'Em rút ra được gì?'));

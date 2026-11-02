@@ -213,6 +213,11 @@ math-field.mf:focus-within { border-color: var(--c); }
 .luyen-nut { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
 .luyen-status b { color: var(--c); }
 
+.co-tu-chay { position: relative; }
+.nut-tu-chay { position: absolute; top: 8px; right: 8px; z-index: 5; border: 1px solid var(--line); background: rgba(255,255,255,.92); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: .85rem; cursor: pointer; }
+.nut-tu-chay[aria-pressed=true] { color: var(--c); border-color: var(--c); }
+@media print { .nut-tu-chay { display: none; } }
+
 @media (max-width: 700px) {
   body { font-size: 17px; }
   main { padding: 14px 16px 60px; }

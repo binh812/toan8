@@ -24,10 +24,15 @@
   };
 
   // Gắn widget theo tên; nếu widget lỗi thì báo ngay trên trang thay vì im lặng.
-  T.mountWidget = function (container, name, config) {
+  // opts.tuChay: hình ở Khám phá/Lý thuyết – tự chạy khi hiện ra (xem js/widgets/autoplay.js)
+  T.mountWidget = function (container, name, config, opts) {
     var w = T.widgets[name];
     if (!w) { container.appendChild(el('p', { class: 'err' }, 'Thiếu hình minh họa "' + name + '".')); return null; }
-    try { return w(container, config || {}); }
+    try {
+      var kq = w(container, config || {});
+      if (opts && opts.tuChay && T.tuChay) T.tuChay.tuDong(container, name, config || {});
+      return kq;
+    }
     catch (e) { console.error(e); container.appendChild(el('p', { class: 'err' }, 'Hình minh họa bị lỗi: ' + e.message)); return null; }
   };
 
@@ -113,6 +118,7 @@
 
   function route() {
     var app = document.getElementById('app');
+    if (T.tuChay) T.tuChay.huyHet(); // tắt tự chạy của trang trước
     if (T.freeBoards) T.freeBoards(); // giải phóng hình JSXGraph của trang trước
     app.innerHTML = '';
     document.documentElement.style.removeProperty('--c');
