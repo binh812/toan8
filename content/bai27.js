@@ -8,7 +8,9 @@
     khamPha: {
       nhiemVu: 'Đây là **mặt phẳng toạ độ** $Oxy$. Em hãy **kéo điểm $M$** đi khắp nơi. Con số đứng trước trong ngoặc là **hoành độ** (đọc trên trục ngang $Ox$), con số đứng sau là **tung độ** (đọc trên trục dọc $Oy$). Thử đưa $M$ đến điểm $(-3; 2)$, rồi đến $(2; -3)$: hai điểm này có trùng nhau không?',
       widget: 'doThi',
-      config: { bbox: [-6, 6, 6, -6], diem: [{ x: 2, y: 1, ten: 'M', keo: true }] },
+      config: { bbox: [-6, 6, 6, -6], diem: [{ x: 2, y: 1, ten: 'M', keo: true }],
+        tuChay: [{ diem: 'M', den: [-3, 2], giay: 2 }, { cho: 1.2 }, { diem: 'M', den: [2, -3], giay: 2 }, { cho: 1.2 },
+          { diem: 'M', den: [-3, -2], giay: 2 }, { cho: 1.2 }, { diem: 'M', den: [2, 1], giay: 2 }] },
       cauHoi: {
         de: 'Kéo $M$ tới một điểm có **hoành độ âm** và **tung độ âm**, ví dụ $(-3; -2)$. Điểm đó nằm ở góc phần tư thứ mấy (gõ một số từ 1 đến 4)?',
         dapAn: { kieu: 'so', gt: 3 },

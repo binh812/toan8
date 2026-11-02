@@ -48,7 +48,8 @@
     khamPha: {
       nhiemVu: 'Một xe máy xuất phát lúc **7 giờ** với vận tốc $\\cb{40}$ km/h. Sau đó **1 giờ**, một ô tô xuất phát từ cùng chỗ, đi cùng đường với vận tốc $\\ca{60}$ km/h. Em kéo thanh thời gian và theo dõi quãng đường hai xe. Lúc nào ô tô đuổi kịp xe máy?',
       widget: 'geo',
-      config: { bbox: [-0.8, 4.8, 11.2, -2.6], build: duoiBuild },
+      config: { bbox: [-0.8, 4.8, 11.2, -2.6], build: duoiBuild,
+        tuChay: [{ thanhTruot: 't', den: 3, giay: 5 }, { cho: 2.5 }, { thanhTruot: 't', den: 4.5, giay: 1.5 }, { thanhTruot: 't', den: 0, giay: 1.5 }] },
       cauHoi: {
         de: 'Ô tô đuổi kịp xe máy lúc mấy giờ?',
         dapAn: { kieu: 'so', gt: 10 },

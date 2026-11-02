@@ -87,6 +87,11 @@
     { L: { x: 2, c: 0 }, R: { x: 0, c: 6 }, pt: '2x = 6', ghi: 'Bỏ đi 2 quả cân 1 kg ở CẢ HAI đĩa' },
     { L: { x: 1, c: 0 }, R: { x: 0, c: 3 }, pt: 'x = 3', ghi: 'Giữ lại một nửa ở CẢ HAI đĩa (chia hai vế cho 2)' }] });
 
+  // Tự chạy: trượt x để cân nghiêng bên này rồi bên kia, dừng ở x = 3 (cân thăng bằng = nghiệm)
+  canKhamPha.tuChay = [{ thanhTruot: 'x', den: 0, giay: 1.5 }, { thanhTruot: 'x', den: 6, giay: 3 }, { thanhTruot: 'x', den: 3, giay: 1.5 }, { cho: 2.5 }];
+  // Tự chạy: đi lần lượt từng bước giải, cân luôn thăng bằng, rồi quay về đầu
+  canGiai.tuChay = [{ thanhTruot: 'buoc', den: 3, giay: 5 }, { cho: 2 }, { thanhTruot: 'buoc', den: 0, giay: 1 }];
+
   TOAN8.bai({
     id: 25, ten: 'Phương trình bậc nhất một ẩn', sgk: { tap: 2, trang: 27 },
 

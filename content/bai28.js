@@ -10,7 +10,9 @@
       widget: 'doThi',
       config: { bbox: [-6, 6, 6, -6], giaoTruc: true,
         thanhTruot: [{ ten: 'a', min: -3, max: 3, buoc: 0.5, gt: 2 }, { ten: 'b', min: -5, max: 5, buoc: 1, gt: 1 }],
-        duong: [{ a: 'a', b: 'b' }] },
+        duong: [{ a: 'a', b: 'b' }],
+        tuChay: [{ thanhTruot: 'a', den: 0.5, giay: 1.5 }, { thanhTruot: 'a', den: -2, giay: 2 }, { cho: 1 }, { thanhTruot: 'a', den: 2, giay: 2 },
+          { thanhTruot: 'b', den: 4, giay: 2 }, { thanhTruot: 'b', den: -3, giay: 2.5 }, { thanhTruot: 'b', den: 1, giay: 1.5 }] },
       cauHoi: {
         de: 'Đặt $a = 2$, $b = -4$. Đường thẳng $y = 2x - 4$ cắt **trục hoành** tại điểm có hoành độ bằng bao nhiêu?',
         dapAn: { kieu: 'so', gt: 2 },
