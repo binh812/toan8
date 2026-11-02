@@ -31,7 +31,10 @@ TOAN8.bai({
         cot: [{ nhan: 'x', dai: 'x', mau: '#d9480f' }, { nhan: '3', dai: 3, mau: '#1971c2' }],
         o: [['2x^2', '6x']],
         thanhTruot: [{ ten: 'x', min: 1, max: 4, buoc: 0.5, gt: 2 }],
-        congThuc: '2x(x + 3) = 2x \\cdot x + 2x \\cdot 3 = 2x^2 + 6x'
+        congThuc: '2x(x + 3) = 2x \\cdot x + 2x \\cdot 3 = 2x^2 + 6x',
+        // x đổi: hình co giãn nhưng luôn gồm đúng hai mảnh 2x·x và 2x·3
+        tuChay: [{ thanhTruot: 'x', den: 4, giay: 2 }, { cho: 1 }, { thanhTruot: 'x', den: 1, giay: 2.5 }, { cho: 1 },
+          { thanhTruot: 'x', den: 2, giay: 1.5 }, { cho: 1 }]
       },
       chuThich: 'Cạnh $2x$ nhân với **từng** đoạn của cạnh kia: được hai mảnh $2x^2$ và $6x$.' },
     { loai: 'dinhLi', tieuDe: 'Nhân đa thức với đa thức',

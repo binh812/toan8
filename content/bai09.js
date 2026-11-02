@@ -13,7 +13,10 @@
         cot: [{ nhan: '?', dai: 'x', mau: CAM }, { nhan: '?', dai: '3', mau: XANH }],
         o: [['2x^2', '6x']],
         thanhTruot: [{ ten: 'x', min: 1, max: 5, buoc: 0.5, gt: 2 }],
-        congThuc: '\\ca{2x^2} + \\cc{6x} =\\;?\\cdot(\\;?\\;+\\;?\\;)'
+        congThuc: '\\ca{2x^2} + \\cc{6x} =\\;?\\cdot(\\;?\\;+\\;?\\;)',
+        // x đổi: hai mảnh luôn chung chiều rộng (2x), chiều dài là x + 3
+        tuChay: [{ thanhTruot: 'x', den: 5, giay: 2.5 }, { cho: 1 }, { thanhTruot: 'x', den: 1, giay: 2.5 }, { cho: 1 },
+          { thanhTruot: 'x', den: 2, giay: 1.5 }, { cho: 1 }]
       },
       cauHoi: {
         de: 'Viết $2x^2 + 6x$ thành một tích (chiều rộng × chiều dài).',

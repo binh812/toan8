@@ -31,7 +31,10 @@ TOAN8.bai({
           { nhan: 'x', dai: 'x', mau: '#1971c2' }, { nhan: '1', dai: 1, mau: '#1971c2' }],
         o: [['\\ca{x^2}', '\\ca{2x}', '\\cc{x^2}', '\\cc{x}']],
         thanhTruot: [{ ten: 'x', min: 1, max: 4, buoc: 0.5, gt: 2 }],
-        congThuc: '(\\ca{x^2 + 2x}) + (\\cc{x^2 + x}) = (x^2 + x^2) + (2x + x) = 2x^2 + 3x'
+        congThuc: '(\\ca{x^2 + 2x}) + (\\cc{x^2 + x}) = (x^2 + x^2) + (2x + x) = 2x^2 + 3x',
+        // x đổi thì các mảnh co giãn nhưng vẫn gộp được: hai mảnh x^2 và các mảnh dạng x
+        tuChay: [{ thanhTruot: 'x', den: 4, giay: 2 }, { cho: 1 }, { thanhTruot: 'x', den: 1, giay: 2.5 }, { cho: 1 },
+          { thanhTruot: 'x', den: 2, giay: 1.5 }, { cho: 1 }]
       },
       chuThich: 'Cộng hai đa thức = ghép hai hình. Sau đó gộp các mảnh cùng loại (hạng tử đồng dạng): hai mảnh $x^2$, các mảnh dạng $x$.' },
     { loai: 'chuY',

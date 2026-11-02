@@ -2,6 +2,8 @@
 (function () {
   'use strict';
   function nhan(a) { return a === 1 ? '' : String(a); }
+  // (3x)^2 nhưng x^2, 9^2 (không cần ngoặc)
+  function bp(s) { return /^([0-9]+|[a-z])$/.test(s) ? s + '^2' : '(' + s + ')^2'; }
 
   TOAN8.luyen(6, [
     { ten: 'Khai triển (ax ± b)²', muc: 1, sinh: function (r, cc) {
@@ -53,6 +55,50 @@
         loiGiai: ['$' + z + '^2 = (' + trong + ' ' + dau + ' ' + d + ')^2 = ' + trong * trong + ' ' + dau + ' ' + 2 * trong * d + ' + ' + d * d + '$',
           '$= ' + kq2 + '$'],
         loiThuongGap: [{ gt: trong * trong + d * d, giaiThich: 'Em quên hạng tử $2AB = ' + 2 * trong * d + '$.' }]
+      };
+    } },
+    { ten: 'Viết hiệu hai bình phương thành tích', muc: 2, sinh: function (r, cc) {
+      var a = r.chon([1, 1, 2, 3, 4]), b = r.so(1, 9), coY = r.dau() > 0, nguoc = r.dau() > 0;
+      while (cc.ucln(a, b) !== 1) b = r.so(1, 9);
+      if (a === 1 && b === 1) b = r.so(2, 9);
+      var A = nhan(a) + 'x', B = coY ? nhan(b) + 'y' : String(b);
+      var A2 = cc.daThuc([[a * a, 'x^2']]), B2 = coY ? cc.daThuc([[b * b, 'y^2']]) : String(b * b);
+      // nguoc: B² − A² = (B − A)(B + A)
+      var P = nguoc ? B : A, Q = nguoc ? A : B, P2 = nguoc ? B2 : A2, Q2 = nguoc ? A2 : B2;
+      var kq = '(' + P + '-' + Q + ')(' + P + '+' + Q + ')';
+      return {
+        de: 'Viết $' + cc.tex(P2 + '-' + Q2) + '$ dưới dạng tích.',
+        dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'nhanTu' },
+        goiY: ['Viết mỗi hạng tử thành một bình phương: $' + cc.tex(P2) + ' = ' + bp(P) + '$, $' + cc.tex(Q2) + ' = ' + bp(Q) + '$.',
+          'Dùng $A^2 - B^2 = (A - B)(A + B)$.'],
+        loiGiai: ['$' + cc.tex(P2 + '-' + Q2) + ' = ' + bp(P) + ' - ' + bp(Q) + '$',
+          '$= ' + cc.tex(kq) + '$'],
+        loiThuongGap: [{ gt: '(' + P + '-' + Q + ')^2', giaiThich: 'Hiệu hai bình phương là $(A - B)(A + B)$, không phải $(A - B)^2$ (vì $(A - B)^2$ còn có hạng tử $-2AB$).' }]
+      };
+    } },
+    { ten: 'Rút gọn biểu thức', muc: 3, sinh: function (r, cc) {
+      var a = r.so(1, 7);
+      if (r.dau() > 0) {
+        var kq = 4 * a + 'x';
+        return {
+          de: 'Rút gọn biểu thức $(x + ' + a + ')^2 - (x - ' + a + ')^2$.',
+          dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
+          goiY: ['Khai triển từng bình phương, hoặc dùng luôn $A^2 - B^2 = (A - B)(A + B)$ với $A = x + ' + a + '$, $B = x - ' + a + '$.',
+            'Trước ngoặc thứ hai có dấu trừ: phải đổi dấu **cả ba** hạng tử.'],
+          loiGiai: ['$= (' + cc.tex(cc.daThuc([[1, 'x^2'], [2 * a, 'x'], [a * a, '']])) + ') - (' + cc.tex(cc.daThuc([[1, 'x^2'], [-2 * a, 'x'], [a * a, '']])) + ')$',
+            '$= ' + cc.tex(cc.daThuc([[1, 'x^2'], [2 * a, 'x'], [a * a, '']])) + ' - x^2 + ' + 2 * a + 'x - ' + a * a + ' = ' + kq + '$'],
+          loiThuongGap: [{ gt: cc.daThuc([[4 * a, 'x'], [2 * a * a, '']]), giaiThich: 'Khi bỏ ngoặc có dấu trừ, hạng tử $' + a * a + '$ cũng phải đổi thành $-' + a * a + '$.' }]
+        };
+      }
+      // (x + a)(x − a) − (x − a)² = 2ax − 2a²
+      var kq2 = cc.daThuc([[2 * a, 'x'], [-2 * a * a, '']]);
+      return {
+        de: 'Rút gọn biểu thức $(x + ' + a + ')(x - ' + a + ') - (x - ' + a + ')^2$.',
+        dapAn: { kieu: 'bieuThuc', gt: kq2, dang: 'khaiTrien' },
+        goiY: ['$(x + ' + a + ')(x - ' + a + ')$ là hiệu hai bình phương; $(x - ' + a + ')^2$ là bình phương của một hiệu.', 'Khai triển xong, bỏ ngoặc có dấu trừ phải đổi dấu cả ba hạng tử.'],
+        loiGiai: ['$= (x^2 - ' + a * a + ') - (' + cc.tex(cc.daThuc([[1, 'x^2'], [-2 * a, 'x'], [a * a, '']])) + ')$',
+          '$= x^2 - ' + a * a + ' - x^2 + ' + 2 * a + 'x - ' + a * a + ' = ' + cc.tex(kq2) + '$'],
+        loiThuongGap: [{ gt: -2 * a + 'x', giaiThich: 'Bỏ ngoặc có dấu trừ phải đổi dấu **tất cả**: $-(x^2 - ' + 2 * a + 'x + ' + a * a + ') = -x^2 + ' + 2 * a + 'x - ' + a * a + '$.' }]
       };
     } }
   ]);

@@ -30,7 +30,11 @@ TOAN8.bai({
         cot: [{ nhan: 'x', dai: 'x', mau: '#d9480f' }, { nhan: 'y', dai: 'y', mau: '#1971c2' }, { nhan: 'x', dai: 'x', mau: '#d9480f' },
           { nhan: 'y', dai: 'y', mau: '#1971c2' }, { nhan: 'y', dai: 'y', mau: '#1971c2' }],
         thanhTruot: [{ ten: 'x', min: 1, max: 3, buoc: 0.5, gt: 2 }, { ten: 'y', min: 1, max: 3, buoc: 0.5, gt: 1.5 }],
-        congThuc: '\\ca{x^2} + \\cc{xy} + \\ca{x^2} + \\cc{xy} + \\cc{xy} = \\ca{2x^2} + \\cc{3xy}'
+        congThuc: '\\ca{x^2} + \\cc{xy} + \\ca{x^2} + \\cc{xy} + \\cc{xy} = \\ca{2x^2} + \\cc{3xy}',
+        // x, y đổi nhưng các mảnh cùng màu luôn bằng nhau: vẫn 2 mảnh x^2 và 3 mảnh xy
+        tuChay: [{ thanhTruot: 'x', den: 3, giay: 2 }, { cho: 1 }, { thanhTruot: 'y', den: 3, giay: 2 }, { cho: 1 },
+          { thanhTruot: 'x', den: 1, giay: 2 }, { thanhTruot: 'y', den: 1, giay: 2 }, { cho: 1 },
+          { thanhTruot: 'x', den: 2, giay: 1.5 }, { thanhTruot: 'y', den: 1.5, giay: 1.5 }, { cho: 1 }]
       },
       chuThich: 'Các mảnh cùng màu là các hạng tử **đồng dạng**: $x^2 + x^2 = 2x^2$; $xy + xy + xy = 3xy$. Mảnh $x^2$ và mảnh $xy$ khác loại nên không gộp được.' },
     { loai: 'dinhNghia', tieuDe: 'Bậc của đa thức',

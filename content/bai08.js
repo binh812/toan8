@@ -3,7 +3,18 @@ TOAN8.bai({
   id: 8, ten: 'Tổng và hiệu hai lập phương', sgk: { tap: 1, trang: 37 },
 
   khamPha: {
-    nhiemVu: 'Bạn Tròn hỏi: $a^3 + b^3$ có bằng $(a+b)^3$ không? Em hãy **kiểm chứng bằng số** với $a = 2$, $b = 1$: tính $a^3 + b^3$, tính $(a+b)^3$, và tính thêm tích $(a+b)(a^2 - ab + b^2)$. Biểu thức nào bằng $a^3 + b^3$?',
+    nhiemVu: 'Bạn Tròn hỏi: $a^3 + b^3$ có bằng $(a+b)^3$ không? Em hãy **kiểm chứng bằng số** với $a = 2$, $b = 1$: tính $a^3 + b^3$, tính $(a+b)^3$, và tính thêm tích $(a+b)(a^2 - ab + b^2)$. Biểu thức nào bằng $a^3 + b^3$?\n\nHình dưới là $(a+b)^3 = (a^2 + 2ab + b^2)(a + b)$ chia thành 6 mảnh (như Bài 7). Chỉ có mảnh **cam** $\\ca{a^3}$ và mảnh **xanh** $\\cb{b^3}$ là $a^3 + b^3$; kéo thanh trượt để thấy bốn mảnh còn lại không bao giờ biến mất.',
+    widget: 'dienTich',
+    config: {
+      hang: [{ nhan: 'a', dai: 'a', mau: '#d9480f' }, { nhan: 'b', dai: 'b', mau: '#1971c2' }],
+      cot: [{ nhan: 'a^2', dai: 'a^2', mau: '#d9480f' }, { nhan: '2ab', dai: '2ab', mau: '#2f9e44' }, { nhan: 'b^2', dai: 'b^2', mau: '#1971c2' }],
+      o: [['\\ca{a^3}', '2a^2b', 'ab^2'], ['a^2b', '2ab^2', '\\cb{b^3}']],
+      thanhTruot: [{ ten: 'a', min: 1, max: 3, buoc: 0.5, gt: 2 }, { ten: 'b', min: 1, max: 3, buoc: 0.5, gt: 1 }],
+      congThuc: '(a+b)^3 = \\ca{a^3} + \\cb{b^3} + \\cc{3a^2b + 3ab^2} \\ne \\ca{a^3} + \\cb{b^3}',
+      // a, b đổi: mảnh cam và mảnh xanh luôn chỉ là một phần nhỏ của cả hình (a+b)^3
+      tuChay: [{ thanhTruot: 'a', den: 3, giay: 2 }, { cho: 1 }, { thanhTruot: 'b', den: 2.5, giay: 2 }, { cho: 1 },
+        { thanhTruot: 'a', den: 1.5, giay: 2 }, { cho: 1 }, { thanhTruot: 'a', den: 2, giay: 1 }, { thanhTruot: 'b', den: 1, giay: 1.5 }, { cho: 1 }]
+    },
     cauHoi: {
       de: 'Với $a = 2$, $b = 1$, em hãy tính:',
       dapAn: { kieu: 'nhieuO', o: [

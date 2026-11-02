@@ -8,7 +8,11 @@ TOAN8.bai({
       hang: [{ nhan: 'y', dai: 'y', mau: '#1971c2' }, { nhan: 'y', dai: 'y', mau: '#1971c2' }],
       cot: [{ nhan: 'x', dai: 'x', mau: '#d9480f' }, { nhan: 'x', dai: 'x', mau: '#d9480f' }, { nhan: 'x', dai: 'x', mau: '#d9480f' }],
       thanhTruot: [{ ten: 'x', min: 1, max: 4, buoc: 0.5, gt: 2 }, { ten: 'y', min: 1, max: 4, buoc: 0.5, gt: 1.5 }],
-      congThuc: 'S = \\ca{3x} \\cdot \\cb{2y} = \\;?'
+      congThuc: 'S = \\ca{3x} \\cdot \\cb{2y} = \\;?',
+      // x, y đổi thì ô to/nhỏ đi nhưng vẫn luôn là 3 cột × 2 hàng = 6 ô xy
+      tuChay: [{ thanhTruot: 'x', den: 4, giay: 2 }, { cho: 1 }, { thanhTruot: 'y', den: 3, giay: 2 }, { cho: 1 },
+        { thanhTruot: 'x', den: 1, giay: 2 }, { thanhTruot: 'y', den: 1, giay: 1.5 }, { cho: 1 },
+        { thanhTruot: 'x', den: 2, giay: 1.5 }, { thanhTruot: 'y', den: 1.5, giay: 1.5 }, { cho: 1 }]
     },
     cauHoi: {
       de: 'Diện tích $S$ của mảnh vườn $3x \\times 2y$ bằng đơn thức thu gọn nào? (Mỗi ô nhỏ có diện tích $xy$.)',
@@ -38,7 +42,10 @@ TOAN8.bai({
           { nhan: 'x', dai: 'x', mau: '#1971c2' }, { nhan: 'x', dai: 'x', mau: '#1971c2' }, { nhan: 'x', dai: 'x', mau: '#1971c2' }],
         o: [['\\ca{x^2}', '\\ca{x^2}', '\\cc{x^2}', '\\cc{x^2}', '\\cc{x^2}']],
         thanhTruot: [{ ten: 'x', min: 1, max: 3, buoc: 0.5, gt: 2 }],
-        congThuc: '\\ca{2x^2} + \\cc{3x^2} = 5x^2'
+        congThuc: '\\ca{2x^2} + \\cc{3x^2} = 5x^2',
+        // x đổi thì mỗi hình vuông to/nhỏ, nhưng vẫn là 5 hình vuông x^2
+        tuChay: [{ thanhTruot: 'x', den: 3, giay: 2 }, { cho: 1 }, { thanhTruot: 'x', den: 1, giay: 2.5 }, { cho: 1 },
+          { thanhTruot: 'x', den: 2, giay: 1.5 }, { cho: 1 }]
       },
       chuThich: '2 hình vuông cam và 3 hình vuông xanh lá, mỗi hình đều là $x^2$. Ghép lại được **5 hình vuông** $x^2$, tức là $5x^2$. Hình vuông vẫn là $x^2$, số mũ **không** đổi.' },
     { loai: 'chuY', noiDung: '**Hay nhầm:** $2x^2 + 3x^2 \\ne 5x^4$. Khi **cộng** đơn thức đồng dạng, số mũ giữ nguyên. Chỉ khi **nhân** mới cộng số mũ: $x^2 \\cdot x^3 = x^5$.' }

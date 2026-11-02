@@ -43,7 +43,10 @@ TOAN8.bai({
         cot: [{ nhan: '3x', dai: '3x', mau: '#d9480f' }, { nhan: '2', dai: 2, mau: '#1971c2' }],
         o: [['\\ca{6x^2}', '\\cc{4x}']],
         thanhTruot: [{ ten: 'x', min: 1, max: 3, buoc: 0.5, gt: 2 }],
-        congThuc: '(6x^2 + 4x) : 2x = 3x + 2'
+        congThuc: '(6x^2 + 4x) : 2x = 3x + 2',
+        // x đổi: cạnh 2x và hai đoạn 3x, 2 của cạnh kia co giãn theo, phép chia vẫn đúng
+        tuChay: [{ thanhTruot: 'x', den: 3, giay: 2 }, { cho: 1 }, { thanhTruot: 'x', den: 1, giay: 2.5 }, { cho: 1 },
+          { thanhTruot: 'x', den: 2, giay: 1.5 }, { cho: 1 }]
       },
       chuThich: 'Mỗi mảnh chia cho cạnh $2x$ ra một đoạn của cạnh kia. **Kiểm tra lại:** $2x \\cdot (3x + 2) = 6x^2 + 4x$. Đúng!' }
   ],
