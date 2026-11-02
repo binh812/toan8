@@ -10,7 +10,7 @@
   function normalize(s) {
     return String(s == null ? '' : s)
       .replace(/[−–]/g, '-').replace(/[·×⋅]/g, '*').replace(/:/g, '/')
-      .replace(/²/g, '^2').replace(/³/g, '^3').replace(/√/g, 'sqrt')
+      .replace(/²/g, '^2').replace(/³/g, '^3').replace(/√/g, 'sqrt').replace(/{/g, '(').replace(/}/g, ')') // x^{2} kiểu LaTeX
       .replace(/\s+/g, '');
   }
 

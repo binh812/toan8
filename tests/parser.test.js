@@ -54,3 +54,7 @@ test('toLatex: số âm đứng đầu tích không bọc ngoặc; không ra "+-
   assert.strictEqual(P.toLatex(P.parse('2*(-3)')), '2\\left(-3\\right)');
   assert.strictEqual(P.toLatex(P.parse('x+(-4)x')), 'x-4x');
 });
+test('ngoặc nhọn kiểu LaTeX đọc như ngoặc tròn: x^{2}+1', () => {
+  assert.strictEqual(P.evaluate(P.parse('x^{2}+1'), { x: 3 }), 10);
+  assert.strictEqual(P.evaluate(P.parse('2^{x+1}'), { x: 2 }), 8);
+});
