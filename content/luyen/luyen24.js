@@ -97,13 +97,18 @@
       if (A.am && B.am) ltg.push({ gt: vietDon(cc, doiDau).ascii, giaiThich: 'Hai phân thức đều âm: âm nhân (chia) âm được **dương**.' });
       var Bdao = frac(don(B.m, Math.max(-B.x, 0), Math.max(-B.y, 0)), don(Math.abs(B.t), Math.max(B.x, 0), Math.max(B.y, 0)));
       var de = A.tex + (chia ? ' : ' : '\\cdot ') + B.tex;
+      // Bước giữa: tử nhân tử, mẫu nhân mẫu (với phép chia: nhân với phân thức đã lật)
+      var tuA = don(Math.abs(A.t), Math.max(A.x, 0), Math.max(A.y, 0)), mauA = don(A.m, Math.max(-A.x, 0), Math.max(-A.y, 0));
+      var tuB = don(Math.abs(B.t), Math.max(B.x, 0), Math.max(B.y, 0)), mauB = don(B.m, Math.max(-B.x, 0), Math.max(-B.y, 0));
+      var giua = (A.am !== B.am ? '-' : '') + (chia ? frac(tuA + '\\cdot ' + mauB, mauA + '\\cdot ' + tuB) : frac(tuA + '\\cdot ' + tuB, mauA + '\\cdot ' + mauB));
       return {
         de: (chia ? 'Làm tính chia: $' : 'Làm tính nhân: $') + de + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq.ascii, dang: 'rutGon' },
         goiY: chia ? ['Chia cho một phân thức là nhân với phân thức **nghịch đảo** của nó: lật $' + frac(don(Math.abs(B.t), Math.max(B.x, 0), Math.max(B.y, 0)), don(B.m, Math.max(-B.x, 0), Math.max(-B.y, 0))) + '$ thành $' + Bdao + '$.', 'Nhân tử với tử, mẫu với mẫu, xét dấu rồi rút gọn.']
           : ['Nhân tử với tử, mẫu với mẫu.', 'Xét dấu trước, rồi rút gọn hệ số và lũy thừa của từng biến.'],
         loiGiai: [chia ? '$' + de + ' = ' + A.tex + '\\cdot ' + (B.am ? '\\left(-' + Bdao + '\\right)' : Bdao) + '$' : 'Tử nhân tử, mẫu nhân mẫu; dấu: ' + (A.am !== B.am ? 'âm.' : 'dương.'),
-          '$' + de + ' = ' + kq.tex + '$'],
+          '$' + (chia ? '= ' : de + ' = ') + giua + '$',
+          '$= ' + kq.tex + '$'],
         loiThuongGap: ltg
       };
     } },

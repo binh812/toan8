@@ -15,6 +15,15 @@
     for (var i = p.length - 1; i >= 0; i--) h.push([p[i], i === 0 ? '' : i === 1 ? 'x' : 'x^' + i]);
     return cc.daThuc(h);
   }
+  // Viết để hiển thị: hệ số đầu âm mà còn hạng tử dương thì đưa hạng tử dương lên trước (6-x thay cho -x+6)
+  function vietDTD(cc, p) {
+    var bac = p.length - 1;
+    while (bac > 0 && !p[bac]) bac--;
+    if (p[bac] >= 0 || !p.slice(0, bac).some(function (a) { return a > 0; })) return vietDT(cc, p);
+    var h = [];
+    for (var i = 0; i <= bac; i++) h.push([p[i], i === 0 ? '' : i === 1 ? 'x' : 'x^' + i]);
+    return cc.daThuc(h);
+  }
   function giaTri(p, x) { return p.reduceRight(function (s, a) { return s * x + a; }, 0); }
   function bangDT(p, q) {
     for (var i = 0; i < Math.max(p.length, q.length); i++) if ((p[i] || 0) !== (q[i] || 0)) return false;
@@ -28,7 +37,7 @@
     for (var i = p.length - 1; i >= 0; i--) {
       var a = p[i];
       if (!a) continue;
-      var abs = Math.abs(a), dau = a < 0 ? ' - ' : (s ? ' + ' : '');
+      var abs = Math.abs(a), dau = a < 0 ? (s ? ' - ' : '-') : (s ? ' + ' : '');
       s += dau + (i === 0 ? String(abs) : (abs !== 1 ? abs + ' \\cdot ' : '') + X + (i > 1 ? '^' + i : ''));
     }
     return s || '0';
@@ -48,7 +57,7 @@
         var a = r.chon([1, 2, 3]);
         mau = vietDT(cc, trienKhai(a, [q])); kq = [q];
         goi = 'Giải $' + mau + ' = 0$.';
-        buoc = ['$' + mau + ' = 0$ khi $' + (a === 1 ? 'x' : a + 'x') + ' = ' + a * q + '$, tức $x = ' + q + '$.'];
+        buoc = [a === 1 ? '$' + mau + ' = 0$ khi $x = ' + q + '$.' : '$' + mau + ' = 0$ khi $' + a + 'x = ' + a * q + '$, tức $x = ' + q + '$.'];
       } else if (loai === 1) {
         mau = vietDT(cc, trienKhai(1, [0, q])); mauNT = 'x(' + coSo(q) + ')'; kq = [0, q];
         goi = 'Đặt nhân tử chung: $' + mau + ' = ' + mauNT + '$. Tích bằng $0$ khi một thừa số bằng $0$.';
@@ -70,7 +79,7 @@
       }
       var s = r.so(-6, 6);
       while (kq.indexOf(s) >= 0 || s === -q) s = r.so(-6, 6);
-      var c = r.chon([1, 1, 2, 3, -1]), tu = vietDT(cc, trienKhai(c, [s]));
+      var c = r.chon([1, 1, 2, 3, -1]), tu = vietDTD(cc, trienKhai(c, [s]));
       ltg.push({ gt: [s], giaiThich: 'Em cho **tử** bằng $0$. Phân thức không xác định khi **mẫu** bằng $0$.' });
       var F = frac(tu, mau);
       return {
@@ -119,7 +128,7 @@
           de: 'Tìm đa thức $A$ sao cho $' + frac('A', coSo(-a)) + ' = ' + frac(tu2, mau2) + '$.',
           dapAn: { kieu: 'bieuThuc', gt: Ustr },
           goiY: ['Phân tích mẫu bên phải: $' + mau2 + ' = (' + coSo(a) + ')(' + coSo(-a) + ')$; phân tích cả tử bên phải.', 'Chia cả tử và mẫu bên phải cho nhân tử chung $' + coSo(a) + '$ để có mẫu $' + coSo(-a) + '$.'],
-          loiGiai: ['$' + frac(tu2, mau2) + ' = ' + frac((k < 0 ? '(' + Ustr + ')' : Ustr) + '(' + coSo(a) + ')', '(' + coSo(-a) + ')(' + coSo(a) + ')') + ' = ' + frac(Ustr, coSo(-a)) + '$.',
+          loiGiai: ['$' + frac(tu2, mau2) + ' = ' + frac((Ustr === '-1' ? '-' : k < 0 ? '(' + Ustr + ')' : Ustr) + '(' + coSo(a) + ')', '(' + coSo(-a) + ')(' + coSo(a) + ')') + ' = ' + frac(Ustr, coSo(-a)) + '$.',
             'Hai phân thức có cùng mẫu $' + coSo(-a) + '$ nên tử bằng nhau: $A = ' + Ustr + '$'],
           loiThuongGap: [{ gt: tu2, giaiThich: 'Mẫu bên trái là $' + coSo(-a) + '$ (đã chia cho $' + coSo(a) + '$), nên tử cũng phải **chia** cho $' + coSo(a) + '$.' }]
         };
@@ -168,10 +177,10 @@
         var v, d, S, lan = 0;
         do { v = r.chon(xe.v); d = r.chon(xe.d); S = lcm(cc, v, v + d); } while (S > xe.max && ++lan < 80);
         if (S > xe.max) { v = xe.v[1]; d = xe.v[1] / 2; S = 3 * d; }
-        var ten = r.chon(['Bạn An', 'Bạn Bình', 'Chị Mai', 'Anh Dũng', 'Bạn Lan', 'Cô Hoa']);
+        var nguoi = r.chon([['Bạn An', 'An'], ['Bạn Bình', 'Bình'], ['Chị Mai', 'chị'], ['Anh Dũng', 'anh'], ['Bạn Lan', 'Lan'], ['Cô Hoa', 'cô']]), ten = nguoi[0];
         var t1 = S / v, t2 = S / (v + d), noi = r.chon(['một khu du lịch', 'nhà ông bà', 'một thị trấn']);
         return {
-          de: ten + ' ' + xe.di + ' từ nhà đến ' + noi + ' cách đó $' + S + '$ km với vận tốc $x$ (km/h). Lúc về, ' + ten.split(' ').pop() + ' đi nhanh hơn lúc đi $' + d + '$ km/h.\n\na) Viết biểu thức (tổng hai phân thức) biểu thị tổng thời gian cả đi và về (giờ).\n\nb) Tính tổng thời gian đó khi $x = ' + v + '$.',
+          de: ten + ' ' + xe.di + ' từ nhà đến ' + noi + ' cách đó $' + S + '$ km với vận tốc $x$ (km/h). Lúc về, ' + nguoi[1] + ' đi nhanh hơn lúc đi $' + d + '$ km/h.\n\na) Viết biểu thức (tổng hai phân thức) biểu thị tổng thời gian cả đi và về (giờ).\n\nb) Tính tổng thời gian đó khi $x = ' + v + '$.',
           dapAn: { kieu: 'nhieuO', o: [
             { nhan: 'a) Tổng thời gian (giờ)', kieu: 'bieuThuc', gt: S + '/x+' + S + '/(x+' + d + ')',
               loiThuongGap: [{ gt: S + '/x+' + S + '/(x-' + d + ')', giaiThich: 'Lúc về đi **nhanh hơn** nên vận tốc là $x + ' + d + '$.' },

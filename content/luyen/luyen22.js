@@ -225,15 +225,16 @@
       var ltgM = [], tichMau = function (x) { return giaTri(trienKhai(A.k, A.ng), x) * giaTri(trienKhai(B.k, B.ng), x); };
       if (!trung(tichMau, hamPT({ k: L, m: 1, n: mtc, d: [] }))) ltgM.push({ gt: '(' + D1 + ')(' + D2 + ')', giaiThich: 'Em nhân hai mẫu với nhau. Mẫu chung **gọn nhất**: mỗi nhân tử chỉ lấy một lần với số mũ cao nhất.' });
       var tichP = function (P) { return tich(P.k, P.ng, true); };
+      var pt1 = D1 === tich(A.k, A.ng, true) ? D1 : D1 + ' = ' + tich(A.k, A.ng, true), pt2 = D2 === tich(B.k, B.ng, true) ? D2 : D2 + ' = ' + tich(B.k, B.ng, true);
       return {
         de: 'Quy đồng mẫu thức hai phân thức $' + frac(c1, D1) + '$ và $' + frac(c2, D2) + '$. Điền mẫu thức chung (gọn nhất) và tử mới của từng phân thức.',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Mẫu thức chung', kieu: 'bieuThuc', gt: mtcS, loiThuongGap: ltgM },
           { nhan: 'Tử mới của phân thức thứ nhất', kieu: 'bieuThuc', gt: tu1, loiThuongGap: quenPhu(c1, phu1) },
           { nhan: 'Tử mới của phân thức thứ hai', kieu: 'bieuThuc', gt: tu2, loiThuongGap: quenPhu(c2, phu2) }] },
-        goiY: ['Phân tích các mẫu thành nhân tử: $' + D1 + ' = ' + tich(A.k, A.ng, true) + '$; $\\;' + D2 + ' = ' + tich(B.k, B.ng, true) + '$.',
+        goiY: ['Phân tích các mẫu thành nhân tử: $' + pt1 + '$; $\\;' + pt2 + '$.',
           'Mẫu chung: lấy BCNN của các hệ số và mỗi nhân tử với số mũ cao nhất. Nhân tử phụ = mẫu chung : mẫu riêng.'],
-        loiGiai: ['$' + D1 + ' = ' + tich(A.k, A.ng, true) + '$; $\\;' + D2 + ' = ' + tich(B.k, B.ng, true) + '$.',
+        loiGiai: ['$' + pt1 + '$; $\\;' + pt2 + '$.',
           'MTC $= ' + mtcS + '$. Nhân tử phụ: $' + tichP(phu1) + '$ và $' + tichP(phu2) + '$.',
           '$' + frac(c1, D1) + ' = ' + frac(tu1, mtcS) + '$; $\\;' + frac(c2, D2) + ' = ' + frac(tu2, mtcS) + '$.']
       };
@@ -260,7 +261,7 @@
         goiY: ['Phân tích mẫu (và tử) thành nhân tử: $P = ' + frac(tich(F.k, F.n, true), tich(F.m, F.d, true)) + '$.', 'Câu a: cho mẫu bằng $0$. Câu c: thay $x = ' + x0 + '$ vào phân thức đã rút gọn.'],
         loiGiai: ['a) $P = ' + frac(tich(F.k, F.n, true), tich(F.m, F.d, true)) + '$; mẫu bằng $0$ khi ' + dk.map(function (x) { return '$x = ' + x + '$'; }).join(' hoặc ') + '.',
           'b) $P = ' + kq.tex + '$ (với điều kiện xác định).',
-          'c) Tại $x = ' + x0 + '$: $P = ' + thayS + ' = ' + v.tex + '$']
+          'c) Tại $x = ' + x0 + '$: $P = ' + thayS + (mauG === 1 || v.tex === frac(tuG, mauG) ? '' : ' = ' + frac(tuG, mauG)) + ' = ' + v.tex + '$']
       };
     } }
   ]);

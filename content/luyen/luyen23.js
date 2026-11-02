@@ -21,6 +21,15 @@
     for (var i = p.length - 1; i >= 0; i--) h.push([p[i], i === 0 ? '' : i === 1 ? 'x' : 'x^' + i]);
     return cc.daThuc(h);
   }
+  // Viết để hiển thị: hệ số đầu âm mà còn hạng tử dương thì đưa hạng tử dương lên trước (17-3x thay cho -3x+17)
+  function vietDTD(cc, p) {
+    var bac = p.length - 1;
+    while (bac > 0 && !p[bac]) bac--;
+    if (p[bac] >= 0 || !p.slice(0, bac).some(function (a) { return a > 0; })) return vietDT(cc, p);
+    var h = [];
+    for (var i = 0; i <= bac; i++) h.push([p[i], i === 0 ? '' : i === 1 ? 'x' : 'x^' + i]);
+    return cc.daThuc(h);
+  }
   function giaTri(p, x) { return p.reduceRight(function (s, a) { return s * x + a; }, 0); }
   function coSo(r) { return r === 0 ? 'x' : 'x' + (r > 0 ? '-' + r : '+' + (-r)); }
   function frac(t, m) { return '\\frac{' + t + '}{' + m + '}'; }
@@ -58,8 +67,11 @@
   }
   function vietND(cc, N, D) {
     if (D.length === 1 && D[0] === 1) return { ascii: vietDT(cc, N), tex: vietDT(cc, N) };
-    return { ascii: '(' + vietDT(cc, N) + ')/(' + vietDT(cc, D) + ')', tex: frac(vietDT(cc, N), vietDT(cc, D)) };
+    var tex = toanAm(N) ? '-' + frac(vietDT(cc, N.map(function (a) { return -a; })), vietDT(cc, D)) : frac(vietDTD(cc, N), vietDT(cc, D));
+    return { ascii: '(' + vietDT(cc, N) + ')/(' + vietDT(cc, D) + ')', tex: tex };
   }
+  // Mọi hệ số khác 0 đều âm (vd −3x − 4): khi hiển thị nên đưa dấu trừ ra ngoài
+  function toanAm(p) { return p.some(function (a) { return a < 0; }) && !p.some(function (a) { return a > 0; }); }
 
   TOAN8.luyen(23, [
     { ten: 'Cộng, trừ hai phân thức cùng mẫu', muc: 1, sinh: function (r, cc) {
@@ -76,7 +88,7 @@
       }
       var N1 = [r.so(-7, 7), r.khac0(-5, 5)], N2 = congDT(S, N1, -1).map(function (a) { return s * a; });
       if (N2.every(function (a) { return !a; })) { N1 = [N1[0] + 1, N1[1]]; N2 = congDT(S, N1, -1).map(function (a) { return s * a; }); }
-      var dau = s > 0 ? '+' : '-', Ms = vietDT(cc, M), n1 = vietDT(cc, N1), n2 = vietDT(cc, N2), Ss = vietDT(cc, S);
+      var dau = s > 0 ? '+' : '-', Ms = vietDT(cc, M), n1 = vietDTD(cc, N1), n2 = vietDTD(cc, N2), Ss = vietDTD(cc, S);
       var kq, buoc;
       if (rutDuoc) {
         var k = S[S.length - 1], con = Mng.slice(); con.splice(con.indexOf(goc), 1);
@@ -114,23 +126,31 @@
         if (N2.every(function (c) { return !c; })) { N1 = [N1[0] + 1, N1[1]]; N2 = congDT(N1, S0, -1).map(function (c) { return s * c; }); }
       }
       var dau = s > 0 ? '+' : '-', S = congDT(N1, N2, -s);
-      var n1 = vietDT(cc, N1), n2 = vietDT(cc, N2), Ss = vietDT(cc, S), kq, buoc;
+      var n1 = vietDTD(cc, N1), n2 = vietDTD(cc, N2), Ss = vietDTD(cc, S), kq, buoc;
+      var m2 = vietDT(cc, N2.map(function (c) { return -c; }));
+      // tử gộp trên mẫu x − a, bỏ bước lặp khi viết gộp đã trùng tử thu gọn (vd x² − 25)
+      var gop = function (tuGop) { return frac(tuGop, coSo(a)) + (tuGop.replace(/ /g, '') === Ss ? '' : ' = ' + frac(Ss, coSo(a))); };
       if (giaTri(S, a) === 0) { // S = (x − a)·thương
         var thuong = S.length === 3 ? [S[0] / -a, 1] : [S[1]];
         kq = vietDT(cc, thuong);
-        buoc = '$= ' + frac((thuong.length > 1 ? '(' + kq + ')' : kq) + '(' + coSo(a) + ')', coSo(a)) + ' = ' + kq + '$';
+        buoc = '$= ' + frac((thuong.length > 1 ? '(' + kq + ')' : kq === '-1' ? '-' : kq === '1' ? '' : kq) + '(' + coSo(a) + ')', coSo(a)) + ' = ' + kq + '$';
       } else {
         var R = rutSo(cc, S, [-a, 1]); kq = vietND(cc, R.N, R.D).ascii;
-        buoc = '$= ' + vietND(cc, R.N, R.D).tex + '$';
+        buoc = 'Tử và mẫu không có nhân tử chung, nên kết quả là $' + vietND(cc, R.N, R.D).tex + '$';
       }
       var sai = congDT(N1, N2, s), ltg = [];
-      if (!trung(hamDT(sai, [-a, 1]), hamDT(S, [-a, 1]))) ltg.push({ gt: '(' + vietDT(cc, sai) + ')/(' + coSo(a) + ')', giaiThich: 'Mẫu $' + amx + '$ và $' + coSo(a) + '$ **đối nhau**: phải đổi dấu $' + frac(n2, amx) + ' = ' + frac('-' + ngoac(n2), coSo(a)) + '$, rồi mới ' + (s > 0 ? 'cộng' : 'trừ') + '.' });
+      if (!trung(hamDT(sai, [-a, 1]), hamDT(S, [-a, 1]))) ltg.push({ gt: '(' + vietDT(cc, sai) + ')/(' + coSo(a) + ')', giaiThich: 'Mẫu $' + amx + '$ và $' + coSo(a) + '$ **đối nhau**: phải đổi dấu $' + frac(n2, amx) + ' = ' + (N2[N2.length - 1] < 0 ? frac(m2, coSo(a)) : '-' + frac(n2, coSo(a))) + '$, rồi mới ' + (s > 0 ? 'cộng' : 'trừ') + '.' });
       var deS = frac(n1, coSo(a)) + ' ' + dau + ' ' + frac(n2, amx);
       return {
         de: 'Tính và rút gọn: $' + deS + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'rutGon' },
         goiY: ['Mẫu $' + amx + ' = -(' + coSo(a) + ')$. Đổi dấu phân thức thứ hai để có cùng mẫu $' + coSo(a) + '$.', 'Cùng mẫu rồi thì cộng (trừ) các tử, sau đó rút gọn.'],
-        loiGiai: ['$' + frac(n2, amx) + ' = ' + frac('-' + ngoac(n2), coSo(a)) + '$, nên biểu thức bằng $' + frac(n1 + ' ' + (s > 0 ? '-' : '+') + ' ' + ngoac(n2), coSo(a)) + ' = ' + frac(Ss, coSo(a)) + '$.', buoc],
+        loiGiai: (N2[N2.length - 1] < 0
+          // tử thứ hai có hệ số đầu âm: đổi dấu cả tử và mẫu cho gọn (17 − 3x)/(5 − x) = (3x − 17)/(x − 5)
+          ? ['Đổi dấu cả tử và mẫu: $' + frac(n2, amx) + ' = ' + frac(m2, coSo(a)) + '$.',
+            'Biểu thức bằng $' + frac(n1, coSo(a)) + ' ' + dau + ' ' + frac(m2, coSo(a)) + ' = ' + gop(n1 + ' ' + dau + ' ' + ngoac(m2)) + '$.']
+          : ['Vì $' + amx + ' = -(' + coSo(a) + ')$ nên $' + frac(n2, amx) + ' = -' + frac(n2, coSo(a)) + '$.',
+            'Biểu thức bằng $' + frac(n1, coSo(a)) + ' ' + (s > 0 ? '-' : '+') + ' ' + frac(n2, coSo(a)) + ' = ' + gop(n1 + ' ' + (s > 0 ? '-' : '+') + ' ' + ngoac(n2)) + '$.']).concat([buoc]),
         loiThuongGap: ltg
       };
     } },
@@ -142,12 +162,12 @@
         var p = r.so(-5, 5), q = r.so(-5, 5), a = r.khac0(-5, 5), b = r.so(1, 5);
         while (q === p) q = r.so(-5, 5);
         var N = congDT(trienKhai(a, [q]), trienKhai(b, [p]), s), D = trienKhai(1, [p, q]);
-        var R = rutSo(cc, N, D), kq = { ascii: '(' + vietDT(cc, R.N) + ')/(' + tich(R.D[R.D.length - 1], [p, q], true) + ')', tex: frac(vietDT(cc, R.N), tich(R.D[R.D.length - 1], [p, q], true)) };
+        var R = rutSo(cc, N, D), kq = { ascii: '(' + vietDT(cc, R.N) + ')/(' + tich(R.D[R.D.length - 1], [p, q], true) + ')', tex: toanAm(R.N) ? '-' + frac(vietDT(cc, R.N.map(function (c) { return -c; })), tich(R.D[R.D.length - 1], [p, q], true)) : frac(vietDTD(cc, R.N), tich(R.D[R.D.length - 1], [p, q], true)) };
         var ltg = [];
         if (s > 0) ltg.push({ gt: '(' + (a + b) + ')/(' + vietDT(cc, congDT([-p, 1], [-q, 1], 1)) + ')', giaiThich: 'Không được cộng tử với tử, mẫu với mẫu! Phải **quy đồng** mẫu thức trước.' });
         else if (p !== 0) {
           var sai = congDT(trienKhai(a, [q]), [b * p, b], -1);
-          if (!trung(hamDT(sai, D), hamDT(N, D))) ltg.push({ gt: '(' + vietDT(cc, sai) + ')/(' + tich(1, [p, q], true) + ')', giaiThich: 'Quên đổi dấu: $-' + b + '(' + coSo(p) + ') = ' + vietDT(cc, trienKhai(-b, [p])) + '$ (đổi dấu **cả hai** hạng tử).' });
+          if (!trung(hamDT(sai, D), hamDT(N, D))) ltg.push({ gt: '(' + vietDT(cc, sai) + ')/(' + tich(1, [p, q], true) + ')', giaiThich: 'Quên đổi dấu: $-' + (b === 1 ? '' : b) + '(' + coSo(p) + ') = ' + vietDT(cc, trienKhai(-b, [p])) + '$ (đổi dấu **cả hai** hạng tử).' });
         }
         var deS = frac(a, coSo(p)) + ' ' + dau + ' ' + frac(b, coSo(q)), mtc = tich(1, [p, q], true);
         return {
@@ -209,7 +229,7 @@
         de = frac('x', coSo(a)) + ' + ' + frac(a, coSo(-a)) + ' - ' + frac(2 * a * a, m2);
         kq = { ascii: '(' + coSo(-3 * a) + ')/(' + coSo(-a) + ')', tex: frac(coSo(-3 * a), coSo(-a)) };
         lg = ['MTC $= ' + m2 + ' = ' + mtc2 + '$.',
-          '$' + de + ' = ' + frac('x(' + coSo(-a) + ') + ' + a + '(' + coSo(a) + ') - ' + 2 * a * a, mtc2) + '$',
+          '$' + de + ' = ' + frac('x(' + coSo(-a) + ') + ' + (a === 1 ? '' : a) + '(' + coSo(a) + ') - ' + 2 * a * a, mtc2) + '$',
           '$= ' + frac(vietDT(cc, [-3 * a * a, 2 * a, 1]), mtc2) + ' = ' + frac('(' + coSo(a) + ')(' + coSo(-3 * a) + ')', mtc2) + ' = ' + kq.tex + '$'];
         dung = function (x) { return (x + 3 * a) / (x + a); };
         var saiN = [-3 * a * a, 1 + a]; // quên nhân x với (x + a): x + a(x − a) − 2a²
