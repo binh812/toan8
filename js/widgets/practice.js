@@ -48,11 +48,12 @@
     var fb = el('div', { class: 'fb', hidden: true, role: 'status', 'aria-live': 'polite' });
     var hintBox = el('div', { class: 'hints' });
     var hintBtn = el('button', { class: 'btn ghost', type: 'button', onclick: showHint });
+    var nhap = null, nhapBtn = el('button', { class: 'btn ghost', type: 'button', onclick: batNhap }, '✏️ Nháp');
     var card = el('div', { class: 'q muc' + (q.muc || 1) },
       el('div', { class: 'q-de', html: (q.muc ? '<span class="muc-tag">Mức ' + q.muc + '</span>' : '') + T.md(q.de) }),
       q.hinh ? el('div', { class: 'q-hinh' }) : null,
       el('div', { class: 'q-input' }, ctl.el, el('button', { class: 'btn primary', type: 'button', onclick: check }, 'Kiểm tra')),
-      fb, el('div', { class: 'q-actions' }, hintBtn), hintBox);
+      fb, el('div', { class: 'q-actions' }, hintBtn, nhapBtn), hintBox);
     container.appendChild(card);
     if (q.hinh) T.mountWidget(card.querySelector('.q-hinh'), q.hinh.widget, q.hinh.config);
     ctl.onEnter(check);
@@ -60,6 +61,11 @@
     var st = opts.record ? T.store.exState(q.id) : null;
     if (st && st.correct) card.classList.add('done');
 
+    function batNhap() {
+      if (nhap) { nhap.huy(); nhap = null; nhapBtn.textContent = '✏️ Nháp'; return; }
+      nhap = T.nhap(card);
+      nhapBtn.textContent = '✏️ Đóng nháp';
+    }
     function updateHintBtn() {
       hintBtn.textContent = level < hints.length ? '💡 Gợi ý (' + (level + 1) + '/' + hintMax + ')'
         : level === hints.length ? '📖 Xem lời giải' : 'Đã hiện lời giải';

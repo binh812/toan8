@@ -218,6 +218,14 @@ math-field.mf:focus-within { border-color: var(--c); }
 .nut-tu-chay[aria-pressed=true] { color: var(--c); border-color: var(--c); }
 @media print { .nut-tu-chay { display: none; } }
 
+.nhap { margin-top: 10px; border: 1px dashed #adb5bd; border-radius: 10px; background: #fffef8; }
+.nhap-thanh { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 6px 8px; border-bottom: 1px dashed #dee2e6; }
+.nhap-mau { width: 26px; height: 26px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px #adb5bd; cursor: pointer; }
+.nhap-mau.on { box-shadow: 0 0 0 3px var(--c); }
+.nhap-thanh .btn.on { border-color: var(--c); color: var(--c); }
+.nhap-cv { display: block; width: 100%; height: 260px; touch-action: none; cursor: crosshair; }
+@media print { .nhap, .q-actions { display: none; } }
+
 @media (max-width: 700px) {
   body { font-size: 17px; }
   main { padding: 14px 16px 60px; }
