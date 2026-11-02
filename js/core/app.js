@@ -127,6 +127,7 @@
       if (h[0] === 'bai') lesson(app, Number(h[1]), h[2] || 'khamPha');
       else if (h[0] === 'on-tap' && T.review) T.review(app);
       else if (h[0] === 'on-tap-cuoi-nam' && T.onTapCuoiNam) T.onTapCuoiNam(app);
+      else if (h[0] === 'phieu' && T.phieu) T.phieu(app, h[1], h[2] ? Number(h[2]) : 0);
       else home(app);
     } catch (e) {
       console.error(e);

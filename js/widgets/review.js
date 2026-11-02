@@ -55,8 +55,16 @@
     });
     var de = el('div', { class: 'de-on-tap' });
     var nut = el('button', { class: 'btn primary', type: 'button', onclick: taoDe }, 'Tạo đề ' + SO_CAU + ' câu');
+    // phiếu in theo các chương đang chọn
+    var inPhieu = el('a', { class: 'btn' }, '🖨 In phiếu 10 câu');
+    function capNhatIn() {
+      var so = [].filter.call(chon.querySelectorAll('input'), function (i) { return i.checked; }).map(function (i) { return i.value; });
+      inPhieu.href = so.length ? '#/phieu/cuoi-nam-' + so.join('.') : '#/on-tap-cuoi-nam';
+    }
+    chon.addEventListener('change', capNhatIn);
+    capNhatIn();
     c.appendChild(chon);
-    c.appendChild(nut);
+    c.appendChild(el('div', { class: 'luyen-nut' }, nut, inPhieu));
     c.appendChild(de);
 
     function taoDe() {
