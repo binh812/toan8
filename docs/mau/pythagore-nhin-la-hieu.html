@@ -1,0 +1,252 @@
+<title>Pythagore nhìn là hiểu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap&subset=vietnamese">
+<style>
+/* Bố cục: hình lớn một bên, lời ngắn một bên; màu a, b, c giữ nguyên trong cả hình lẫn công thức. */
+:root {
+  --giay: #edf3f6; --mat: #fbfdfe; --muc: #15222d; --nhat: #55687a; --ke: #cfdbe3; --luoi: #dfe8ee;
+  --a: #d9480f; --b: #1864ab; --c: #2b8a3e; --tg: #34495e; --sai: #c2255c;
+  --hien-thi: "Bricolage Grotesque", "Be Vietnam Pro", system-ui, sans-serif;
+  --than: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --toan: "Cambria Math", Cambria, Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --giay: #0f1a23; --mat: #17252f; --muc: #e9f0f4; --nhat: #9db0bf; --ke: #2d404e; --luoi: #1a2a35;
+  --a: #ff8a4c; --b: #63b3ff; --c: #5fd07a; --tg: #7890a6; --sai: #ff7aa8; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --giay: #0f1a23; --mat: #17252f; --muc: #e9f0f4; --nhat: #9db0bf; --ke: #2d404e; --luoi: #1a2a35;
+  --a: #ff8a4c; --b: #63b3ff; --c: #5fd07a; --tg: #7890a6; --sai: #ff7aa8; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--giay); color: var(--muc); font: 400 17px/1.6 var(--than);
+  background-image: linear-gradient(var(--luoi) 1px, transparent 1px), linear-gradient(90deg, var(--luoi) 1px, transparent 1px); background-size: 28px 28px; }
+.trang { max-width: 1160px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+.nhan { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--nhat); margin: 0 0 6px }
+h1, h2 { font-family: var(--hien-thi); font-weight: 800; line-height: 1.12; margin: 0; text-wrap: balance }
+h1 { font-size: clamp(32px, 5vw, 54px) } h2 { font-size: clamp(25px, 3.4vw, 36px) }
+.mo { margin: 10px 0 0; max-width: 62ch; color: var(--nhat) }
+.hai-ben { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: start; margin-top: 20px }
+.khung { background: var(--mat); border: 1px solid var(--ke); border-radius: 8px; padding: 14px }
+.khung svg { display: block; width: 100%; height: auto; touch-action: manipulation }
+svg text { fill: var(--muc); font-family: var(--toan); text-anchor: middle; dominant-baseline: middle }
+.ca { color: var(--a) } .cb { color: var(--b) } .cc { color: var(--c) }
+.t { font-family: var(--toan); font-size: 1.08em; font-weight: 700; white-space: nowrap }
+.dk { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; margin-top: 12px; font-size: 15px }
+.dk input { width: 100%; accent-color: var(--c) } .dk output { min-width: 3ch; text-align: right; font-variant-numeric: tabular-nums }
+button { font: 700 15px var(--than); border-radius: 6px; padding: 9px 15px; cursor: pointer; border: 1px solid var(--muc); background: var(--muc); color: var(--mat) }
+button.nhe { background: transparent; color: var(--muc); border-color: var(--ke) }
+:focus-visible { outline: 3px solid var(--b); outline-offset: 2px }
+.buoc { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px }
+.buoc li { padding: 11px 14px; border-left: 4px solid transparent; color: var(--nhat); transition: color .25s }
+.buoc li.dang { color: var(--muc); border-left-color: var(--c); background: var(--mat) }
+.ket { margin-top: 16px; padding: 14px 16px; background: var(--mat); border: 1px solid var(--ke); border-radius: 8px; font-size: 18px; font-variant-numeric: tabular-nums }
+.ket b { font-family: var(--toan); font-size: 26px; display: block; margin-top: 4px }
+.tra-loi { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px }
+.tra-loi input { font: 500 17px var(--than); width: 96px; padding: 8px 10px; border: 1px solid var(--nhat); border-radius: 6px; background: var(--giay); color: var(--muc) }
+.tin { min-height: 3.2em; margin: 10px 0 0 }
+.tin.dung { color: var(--c); font-weight: 500 } .tin.sai { color: var(--sai); font-weight: 500 }
+.ba { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px }
+.the { display: flex; flex-direction: column } .the p.de { margin: 12px 0 0; flex: 1 }
+.an { opacity: 0; transition: opacity .45s } .hien .an { opacity: 1 }
+.ket-luan { font-family: var(--hien-thi); font-weight: 700; font-size: clamp(21px, 2.6vw, 28px); margin: 22px 0 0; text-wrap: balance }
+@media (max-width: 820px) { .hai-ben, .ba { grid-template-columns: minmax(0, 1fr) } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<main class="trang">
+  <header>
+    <p class="nhan">Bản mẫu · Bài 35 · SGK Tập 2, trang 93</p>
+    <h1>Vì sao <span class="ca">a</span>² + <span class="cb">b</span>² = <span class="cc">c</span>²?</h1>
+    <p class="mo">Cùng một cái khung, cùng bốn tam giác vuông. Chỉ cần trượt chúng đi là thấy.</p>
+  </header>
+
+  <section aria-labelledby="h-cm">
+    <p class="nhan">Nhìn</p>
+    <h2 id="h-cm">Xếp lại bốn tam giác, phần trống không đổi</h2>
+    <div class="hai-ben">
+      <div class="khung">
+        <svg id="cm" role="img" aria-label="Khung vuông cạnh a cộng b chứa bốn tam giác vuông. Phần trống là hình vuông c bình phương, sau khi trượt thành hai hình vuông a bình phương và b bình phương."></svg>
+        <div class="dk">
+          <button id="chay" type="button" class="nhe">Dừng</button>
+          <input id="t" type="range" min="0" max="100" value="0" aria-label="Trượt các tam giác"><span></span>
+          <label for="a">Cạnh <span class="t ca">a</span></label><input id="a" type="range" min="1" max="6" step="0.5" value="3"><output id="ra">3</output>
+          <label for="b">Cạnh <span class="t cb">b</span></label><input id="b" type="range" min="1" max="6" step="0.5" value="4"><output id="rb">4</output>
+        </div>
+      </div>
+      <div>
+        <ol class="buoc" id="buoc">
+          <li>Trong khung là bốn tam giác vuông giống nhau. Phần còn trống là một hình vuông cạnh <span class="t cc">c</span>.</li>
+          <li>Trượt các tam giác đi. Không cắt, không đổi kích thước. Khung cũng giữ nguyên.</li>
+          <li>Phần trống giờ là hai hình vuông, cạnh <span class="t ca">a</span> và cạnh <span class="t cb">b</span>.</li>
+        </ol>
+        <div class="ket">
+          Trước: phần trống <span id="kq-c"></span><br>Sau: phần trống <span id="kq-ab"></span>
+          <b><span class="ca">a</span>² + <span class="cb">b</span>² = <span class="cc">c</span>²</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-thang">
+    <p class="nhan">Dùng</p>
+    <h2 id="h-thang">Cái thang này chạm tường ở độ cao nào?</h2>
+    <div class="hai-ben">
+      <div class="khung"><svg id="thang" viewBox="-6.8 -9.3 16.2 12.4" role="img" aria-label="Thang dài 6,5 mét dựa tường, chân thang cách tường 2,5 mét, trên ba cạnh có ba hình vuông."></svg></div>
+      <div>
+        <p style="margin:0">Thang dài <b>6,5 m</b>, chân thang cách tường <b>2,5 m</b>. Trên mỗi cạnh là một hình vuông, số bên trong là diện tích.</p>
+        <p>Hình vuông lớn bằng tổng hai hình vuông nhỏ. Vậy ô dấu hỏi có diện tích bao nhiêu, và cạnh của nó dài bao nhiêu?</p>
+        <form class="tra-loi" id="f-thang"><label for="h">Độ cao <span class="t">h</span> =</label><input id="h" inputmode="decimal" autocomplete="off"><span>m</span><button type="submit">Thử lên hình</button></form>
+        <p class="tin" id="tin-thang" role="status">Gõ bất kì số nào. Nếu sai, hình sẽ cho thấy vì sao.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-an">
+    <p class="nhan">Suy ra bài khác</p>
+    <h2 id="h-an">Đề đổi, nhưng tam giác vuông vẫn nấp trong hình</h2>
+    <div class="ba" id="ba"></div>
+    <p class="ket-luan">Ba đề khác nhau, cùng một việc: tìm tam giác vuông, rồi xem cạnh nào là cạnh huyền.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(tag, at, cha, chu) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (chu !== undefined) e.textContent = chu; if (cha) cha.appendChild(e); return e; }
+  function fmt(n) { return String(Math.round(n * 100) / 100).replace('.', ','); }
+  function $(id) { return document.getElementById(id); }
+  function diem(p) { return p.map(function (q) { return q[0] + ',' + q[1]; }).join(' '); }
+  function kep(x) { return Math.max(0, Math.min(1, x)); }
+  function muot(x) { x = kep(x); return x * x * (3 - 2 * x); }
+  var yeuChuyenDong = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Chứng minh: bốn tam giác trượt tịnh tiến trong khung cạnh a+b ---------- */
+  var cm = $('cm');
+  var nen = mk('rect', { fill: 'var(--mat)' }, cm);
+  var oC = mk('polygon', { fill: 'var(--c)', 'fill-opacity': .32 }, cm);
+  var oA = mk('rect', { fill: 'var(--a)', 'fill-opacity': .32 }, cm);
+  var oB = mk('rect', { fill: 'var(--b)', 'fill-opacity': .32 }, cm);
+  var tg = [0, 1, 2, 3].map(function () { return mk('polygon', { fill: 'var(--tg)', stroke: 'var(--mat)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }, cm); });
+  var vien = mk('rect', { fill: 'none', stroke: 'var(--muc)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke' }, cm);
+  function nhan(mau) { return mk('text', { 'font-style': 'italic', 'font-weight': 700, style: mau ? 'fill:var(' + mau + ')' : '' }, cm); }
+  var nC = nhan('--c'), nA = nhan('--a'), nB = nhan('--b'), tA = nhan('--a'), tB = nhan('--b'), lA = nhan('--a'), lB = nhan('--b');
+  nC.textContent = 'c²'; nA.textContent = 'a²'; nB.textContent = 'b²'; tA.textContent = 'a'; tB.textContent = 'b'; lA.textContent = 'a'; lB.textContent = 'b';
+
+  function ve() {
+    var a = +$('a').value, b = +$('b').value, s = a + b, t = +$('t').value / 100, e = muot(t), d = .1 * s, cs = .062 * s;
+    cm.setAttribute('viewBox', [-d, -d, s + 2 * d, s + 2 * d].join(' '));
+    [nen, vien].forEach(function (r) { r.setAttribute('width', s); r.setAttribute('height', s); });
+    var goc = [
+      { p: [[0, 0], [a, 0], [0, b]], d: [0, a], tu: .6 },
+      { p: [[s, 0], [s, a], [a, 0]], d: [0, 0], tu: 0 },
+      { p: [[s, s], [b, s], [s, a]], d: [-b, 0], tu: .3 },
+      { p: [[0, s], [0, b], [b, s]], d: [a, -b], tu: 0 }
+    ];
+    /* Trượt lần lượt từng tam giác để mắt theo kịp và chúng không đè lên nhau */
+    goc.forEach(function (g, i) { var k = muot((t - g.tu) / .4); tg[i].setAttribute('points', diem(g.p.map(function (q) { return [q[0] + g.d[0] * k, q[1] + g.d[1] * k]; }))); });
+    oC.setAttribute('points', diem([[a, 0], [s, a], [b, s], [0, b]]));
+    oA.setAttribute('width', a); oA.setAttribute('height', a);
+    oB.setAttribute('x', a); oB.setAttribute('y', a); oB.setAttribute('width', b); oB.setAttribute('height', b);
+    var mC = 1 - muot(t / .2), mS = muot((t - .8) / .2);
+    oC.style.opacity = nC.style.opacity = mC; oA.style.opacity = oB.style.opacity = nA.style.opacity = nB.style.opacity = mS;
+    function dat(n, x, y, co) { n.setAttribute('x', x); n.setAttribute('y', y); n.setAttribute('font-size', co); }
+    dat(nC, s / 2, s / 2, cs * 1.5); dat(nA, a / 2, a / 2, cs * 1.3); dat(nB, a + b / 2, a + b / 2, cs * 1.3);
+    dat(tA, a / 2, -d / 2, cs); dat(tB, a + b / 2, -d / 2, cs);
+    dat(lB, -d / 2, b / 2 + a * e, cs); dat(lA, -d / 2, b + a / 2 - b * e, cs);
+    var c2 = a * a + b * b, dang = t < .04 ? 0 : t > .96 ? 2 : 1;
+    [].forEach.call($('buoc').children, function (li, i) { li.className = i === dang ? 'dang' : ''; });
+    $('ra').textContent = fmt(a); $('rb').textContent = fmt(b);
+    $('kq-c').innerHTML = '<span class="t cc">c²</span> = ' + fmt(c2);
+    $('kq-ab').innerHTML = '<span class="t ca">a²</span> + <span class="t cb">b²</span> = ' + fmt(a * a) + ' + ' + fmt(b * b) + ' = ' + fmt(c2);
+  }
+
+  /* Tự chạy lặp: đứng, trượt, đứng, trượt về. Chạm vào hình hoặc thanh trượt thì dừng. */
+  var chay = false, moc = 0, DAI = 9000;
+  function khung(n) {
+    if (!chay) return;
+    var p = ((n - moc) % DAI) / DAI, t;
+    if (p < .14) t = 0; else if (p < .46) t = (p - .14) / .32; else if (p < .68) t = 1; else t = 1 - (p - .68) / .32;
+    $('t').value = t * 100; ve(); requestAnimationFrame(khung);
+  }
+  function batTat(co) { chay = co; $('chay').textContent = co ? 'Dừng' : 'Tự chạy'; if (co) { moc = performance.now(); if ($('t').value > 50) moc -= .46 * DAI; requestAnimationFrame(khung); } }
+  $('chay').addEventListener('click', function () { batTat(!chay); });
+  [cm, $('t'), $('a'), $('b')].forEach(function (e) { e.addEventListener('pointerdown', function () { batTat(false); }); });
+  ['t', 'a', 'b'].forEach(function (id) { $(id).addEventListener('input', function () { batTat(false); ve(); }); });
+  ve();
+  batTat(!yeuChuyenDong);
+
+  /* ---------- Cái thang ---------- */
+  var th = $('thang'), X = 2.5, C = 6.5, H = 6;
+  function chu(cha, x, y, s, co, mau) { return mk('text', { x: x, y: y, 'font-size': co || .55, style: mau ? 'fill:var(' + mau + ')' : '', 'font-weight': 700 }, cha, s); }
+  mk('rect', { x: 0, y: 0, width: X, height: X, fill: 'var(--b)', 'fill-opacity': .3 }, th);
+  mk('polygon', { points: diem([[X, 0], [0, -H], [H, -H - X], [H + X, -X]]), fill: 'var(--c)', 'fill-opacity': .3 }, th);
+  var oH = mk('rect', { x: -H, y: -H, width: H, height: H, fill: 'var(--a)', 'fill-opacity': .06, stroke: 'var(--a)', 'stroke-width': .05, 'stroke-dasharray': '.2 .15' }, th);
+  mk('line', { x1: -6.8, y1: 0, x2: 9.4, y2: 0, stroke: 'var(--muc)', 'stroke-width': .07 }, th);
+  mk('line', { x1: 0, y1: 0, x2: 0, y2: -9.3, stroke: 'var(--muc)', 'stroke-width': .16 }, th);
+  mk('line', { x1: X, y1: 0, x2: 0, y2: -H, stroke: 'var(--tg)', 'stroke-width': .2, 'stroke-linecap': 'round' }, th);
+  var thu = mk('line', { x1: X, y1: 0, x2: X, y2: 0, stroke: 'var(--sai)', 'stroke-width': .09, 'stroke-dasharray': '.25 .15' }, th);
+  var thuChu = chu(th, 0, 0, '', .5, '--sai');
+  chu(th, X / 2, X / 2, fmt(X * X), .55, '--b');
+  chu(th, 5.2, -5, fmt(C * C), .8, '--c');
+  var nH = chu(th, -H / 2, -H / 2, '?', 1.3, '--a');
+  chu(th, 1.25, -.45, '2,5 m', .45);
+  chu(th, 2.5, -3.1, '6,5 m', .45);
+  $('f-thang').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var tin = $('tin-thang'), h = parseFloat($('h').value.trim().replace(',', '.'));
+    thu.setAttribute('x2', X); thu.setAttribute('y2', 0); thuChu.textContent = '';
+    if (!(h > 0)) { tin.className = 'tin sai'; tin.textContent = 'Gõ một số lớn hơn 0, ví dụ 5,5.'; return; }
+    if (Math.abs(h - H) < .005) {
+      oH.setAttribute('fill-opacity', .3); nH.textContent = '36'; nH.setAttribute('font-size', 1);
+      tin.className = 'tin dung'; tin.textContent = 'Đúng! 42,25 − 6,25 = 36, và 36 là diện tích hình vuông cạnh 6.'; return;
+    }
+    var v = Math.min(h, 9.1), L = Math.sqrt(X * X + h * h);
+    thu.setAttribute('x2', 0); thu.setAttribute('y2', -v);
+    thuChu.setAttribute('x', -.1); thuChu.setAttribute('y', -v + .05); thuChu.setAttribute('text-anchor', 'end'); thuChu.style.textAnchor = 'end';
+    thuChu.textContent = 'h = ' + fmt(h) + ' ';
+    tin.className = 'tin sai';
+    tin.textContent = (h >= C ? 'Độ cao ' + fmt(h) + ' m thì cao hơn cả cái thang 6,5 m. Có thể em đã cộng hai diện tích, trong khi hình vuông lớn là tổng rồi. ' : 'Để chạm độ cao ' + fmt(h) + ' m, thang chỉ cần dài ' + fmt(L) + ' m, mà thang dài 6,5 m. ') + 'Thử tính 42,25 − 6,25.';
+  });
+
+  /* ---------- Tam giác nấp trong hình ---------- */
+  var DE = [
+    { vb: '-2.2 -1.4 16.4 12.8', de: 'Hình chữ nhật rộng 9 cm, đường chéo 15 cm. Chiều dài bằng bao nhiêu?', don: 'cm', gt: 12,
+      dung: '15² − 9² = 225 − 81 = 144, mà 144 = 12².', sai: 'Trong tam giác tô màu, 15 là cạnh huyền. Thử 15² − 9².',
+      ve: function (s) { mk('rect', { x: 0, y: 0, width: 12, height: 9, fill: 'none', stroke: 'var(--muc)', 'stroke-width': .14 }, s); mk('line', { x1: 0, y1: 0, x2: 12, y2: 9, stroke: 'var(--muc)', 'stroke-width': .14 }, s); chu(s, -1, 4.5, '9', .95); chu(s, 6.9, 3.6, '15', .95); chu(s, 6, 10.2, '?', 1.1, '--a'); },
+      an: function (g) { mk('polygon', { points: '0,0 0,9 12,9', fill: 'var(--c)', 'fill-opacity': .32 }, g); mk('path', { d: 'M0 8H1V9', fill: 'none', stroke: 'var(--c)', 'stroke-width': .12 }, g); } },
+    { vb: '-1.3 -.7 8.6 6.3', de: 'Tam giác cân có đường cao 4 cm, đáy 6 cm. Cạnh bên dài bao nhiêu?', don: 'cm', gt: 5,
+      dung: '3² + 4² = 9 + 16 = 25, mà 25 = 5².', sai: 'Đường cao chia đôi đáy, nên cạnh góc vuông là 3 chứ không phải 6.',
+      ve: function (s) { mk('polygon', { points: '3,0 0,4 6,4', fill: 'none', stroke: 'var(--muc)', 'stroke-width': .07 }, s); mk('line', { x1: 3, y1: 0, x2: 3, y2: 4, stroke: 'var(--muc)', 'stroke-width': .07, 'stroke-dasharray': '.15 .1' }, s); chu(s, 3.35, 2.2, '4', .5); chu(s, 3, 4.95, '6', .5); chu(s, 1, 1.5, '?', .6, '--a'); },
+      an: function (g) { mk('polygon', { points: '3,0 0,4 3,4', fill: 'var(--c)', 'fill-opacity': .32 }, g); mk('path', { d: 'M2.6 4V3.6H3', fill: 'none', stroke: 'var(--c)', 'stroke-width': .06 }, g); chu(g, 1.5, 4.4, '3', .45, '--c'); } },
+    { vb: '-1.6 -1.6 10.2 11.2', de: 'Taxi đi thẳng 5 km, rẽ trái đi 8 km, rẽ phải đi 1 km. Lúc này xe cách điểm xuất phát bao nhiêu km theo đường thẳng?', don: 'km', gt: 10,
+      dung: '6² + 8² = 36 + 64 = 100, mà 100 = 10².', sai: 'Cạnh ngang của tam giác là 5 + 1 = 6 km, cạnh dọc là 8 km.',
+      ve: function (s) { mk('polyline', { points: '0,8 5,8 5,0 6,0', fill: 'none', stroke: 'var(--muc)', 'stroke-width': .13 }, s); mk('line', { x1: 0, y1: 8, x2: 6, y2: 0, stroke: 'var(--a)', 'stroke-width': .1, 'stroke-dasharray': '.28 .2' }, s); chu(s, 2.5, 7.4, '5', .65); chu(s, 4.45, 4, '8', .65); chu(s, 5.5, -.6, '1', .65); chu(s, 2.3, 4, '?', .9, '--a'); chu(s, -.6, 8.2, 'A', .6); chu(s, 6.6, -.2, 'D', .6); },
+      an: function (g) { mk('polygon', { points: '0,8 6,8 6,0', fill: 'var(--c)', 'fill-opacity': .32 }, g); mk('polyline', { points: '5,8 6,8 6,0', fill: 'none', stroke: 'var(--c)', 'stroke-width': .1, 'stroke-dasharray': '.2 .14' }, g); chu(g, 3, 8.8, '5 + 1 = 6', .6, '--c'); chu(g, 6.7, 4, '8', .65, '--c'); } }
+  ];
+  DE.forEach(function (d, i) {
+    var the = document.createElement('article'); the.className = 'khung the';
+    var s = mk('svg', { viewBox: d.vb, role: 'img', 'aria-label': d.de }, the);
+    var g = mk('g', { class: 'an' }); s.appendChild(g); d.an(g); d.ve(s);
+    var p = document.createElement('p'); p.className = 'de'; p.textContent = d.de; the.appendChild(p);
+    var f = document.createElement('form'); f.className = 'tra-loi';
+    var lb = document.createElement('label'); lb.htmlFor = 'dap-' + i; lb.textContent = 'Đáp số';
+    var o = document.createElement('input'); o.id = 'dap-' + i; o.inputMode = 'decimal'; o.autocomplete = 'off';
+    var dv = document.createElement('span'); dv.textContent = d.don;
+    var kt = document.createElement('button'); kt.type = 'submit'; kt.textContent = 'Kiểm tra';
+    var tim = document.createElement('button'); tim.type = 'button'; tim.className = 'nhe'; tim.textContent = 'Tìm tam giác vuông';
+    tim.addEventListener('click', function () { the.classList.add('hien'); });
+    [lb, o, dv, kt, tim].forEach(function (e) { f.appendChild(e); }); the.appendChild(f);
+    var tin = document.createElement('p'); tin.className = 'tin'; tin.setAttribute('role', 'status'); the.appendChild(tin);
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var v = parseFloat(o.value.trim().replace(',', '.'));
+      if (isNaN(v)) { tin.className = 'tin sai'; tin.textContent = 'Gõ một số, ví dụ 7.'; return; }
+      the.classList.add('hien');
+      var ok = Math.abs(v - d.gt) < .005;
+      tin.className = 'tin ' + (ok ? 'dung' : 'sai'); tin.textContent = (ok ? 'Đúng! ' : '') + (ok ? d.dung : d.sai);
+    });
+    $('ba').appendChild(the);
+  });
+})();
+</script>
