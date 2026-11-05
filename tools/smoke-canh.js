@@ -44,8 +44,22 @@ async function main() {
     page.on('pageerror', e => loi.push('pageerror: ' + e.message));
     await page.goto(url.pathToFileURL(path.join(__dirname, '..', 'index.html')).href + '#/', { waitUntil: 'load' });
     await sleep(300);
-    for (let i = 0; i < CAU_HINH.length; i++) {
-      const kq = await page.evaluate(c => {
+    // Gom mọi cấu hình cảnh có trong bài học và câu luyện thêm, để cảnh nào được dùng cũng được kiểm
+    const soTuDong = await page.evaluate(() => {
+      const ds = [], them = c => { if (c && c.ten) ds.push(c); }, hinh = h => { if (h && h.widget === 'canh') them(h.config); };
+      Object.values(TOAN8.lessons).forEach(L => {
+        const n = L.nhin;
+        if (n) { them(n.canh); them(n.dung && n.dung.canh); ((n.suyRa && n.suyRa.baDe) || []).forEach(d => them(d.canh)); }
+        (L.viDu || []).forEach(v => { them(v.canh); hinh(v.hinh); });
+        (L.baiTap || []).forEach(q => { hinh(q.hinh); hinh(q.hinhGiai); (q.loiThuongGap || []).forEach(l => hinh(l.hinh)); });
+        [1, 2].forEach(muc => [1, 2, 3].forEach(s => { try { const q = TOAN8.cauLuyen(L.id, muc, s); if (q) { hinh(q.hinh); hinh(q.hinhGiai); } } catch (e) { ds.push({ ten: 'loiSinh-' + L.id + ': ' + e.message }); } }));
+      });
+      window.__gomCanh = ds;
+      return ds.length;
+    });
+    for (let i = 0; i < CAU_HINH.length + soTuDong; i++) {
+      const kq = await page.evaluate((c, j) => {
+        if (!c) c = window.__gomCanh[j];
         const T = TOAN8, ra = [], hop = document.createElement('div');
         hop.style.cssText = 'position:fixed;left:0;top:0;width:640px;background:#fff;z-index:99';
         document.body.appendChild(hop);
@@ -60,9 +74,9 @@ async function main() {
             ra.push('t=' + t + ' tràn khung: bbox ' + [g.x, g.y, g.width, g.height].map(v => v.toFixed(2)) + ' viewBox ' + [vb.x, vb.y, vb.width, vb.height].map(v => v.toFixed(2)));
         });
         w.datT(.5);
-        return { ra, id: (hop.id = 'phong-' + Date.now()) };
-      }, CAU_HINH[i]);
-      kq.ra.forEach(s => loi.push(CAU_HINH[i].ten + ' #' + i + ': ' + s));
+        return { ra, ten: c.ten, id: (hop.id = 'phong-' + Date.now()) };
+      }, CAU_HINH[i] || null, i - CAU_HINH.length);
+      kq.ra.forEach(s => loi.push(kq.ten + ' #' + i + ': ' + s));
       if (thuMuc) { const e = await page.$('#' + kq.id); await e.screenshot({ path: path.join(thuMuc, 'canh-' + i + '.png') }); }
       await page.evaluate(id => document.getElementById(id).remove(), kq.id);
     }
@@ -89,7 +103,7 @@ async function main() {
     await page.evaluate(() => { location.hash = '#/bai/1/khamPha'; }); await sleep(250);
     await page.evaluate(() => { location.hash = '#/'; }); await sleep(250);
     if (await page.evaluate(() => TOAN8.tuChay.soDangChay())) loi.push('đổi trang mà cảnh vẫn chạy');
-    console.log('Đã kiểm ' + CAU_HINH.length + ' cấu hình cảnh.');
+    console.log('Đã kiểm ' + (CAU_HINH.length + soTuDong) + ' cấu hình cảnh (' + soTuDong + ' lấy từ nội dung).');
   } finally { await browser.close(); }
   if (loi.length) { console.log(loi.join('\n')); process.exitCode = 1; } else console.log('Không có lỗi.');
 }

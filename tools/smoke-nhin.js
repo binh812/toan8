@@ -183,6 +183,34 @@ async function main() {
     }
     await page.setViewport({ width: 1366, height: 1000 });
 
+    // Vòng chung: mọi bài có nhin đủ ba phần; gõ đáp án đúng, lỗi đã biết và chữ lạ đều không vỡ hình
+    const coNhin = await page.evaluate(() => Object.values(TOAN8.lessons).filter(L => L.nhin).map(L => L.id));
+    for (const id of coNhin) {
+      await moBai('#/bai/' + id + '/khamPha');
+      can(await page.evaluate(() => ['.nhin-nhin', '.nhin-dung', '.nhin-suy-ra'].every(s => document.querySelector(s)) && document.querySelectorAll('.nhin-the').length === 3), 'bài ' + id + ': thiếu phần');
+      const thu = await page.evaluate(id => {
+        const L = TOAN8.lessons[id], n = L.nhin, ra = [];
+        const goc = tuBai => (L.baiTap || []).filter(q => q.id === tuBai)[0] || {};
+        const chu = d => d.kieu === 'nghiem' ? (Array.isArray(d.gt) ? d.gt.join('; ') : (d.gt === 'voNghiem' ? 'vô nghiệm' : 'vô số nghiệm')) : String(d.gt);
+        [[n.dung, '.nhin-dung', 0]].concat(n.suyRa.baDe.map((d, i) => [d, '.nhin-suy-ra', i])).forEach(([d, phan, i]) => {
+          const dapAn = d.dapAn || goc(d.tuBai).dapAn;
+          if (!['so', 'bieuThuc', 'nghiem'].includes(dapAn.kieu)) return;
+          const cac = [[chu(dapAn), 'dung'], ['abc', '']].concat((d.phanUng || []).map(u => [String(u.gt), 'sai']));
+          cac.forEach(([gt, mong]) => {
+            const q = document.querySelectorAll(phan + ' .q')[i], o = q.querySelector('.q-input input');
+            o.value = gt; o.dispatchEvent(new Event('input', { bubbles: true }));
+            [...q.querySelectorAll('.q-input button')].pop().click();
+            const goi = phan === '.nhin-dung' ? document.querySelector(phan) : document.querySelectorAll(phan + ' .nhin-the')[i];
+            const tin = goi.querySelector('.nhin-tin'), hinh = goi.querySelector('svg.c-svg').textContent;
+            if (mong && !tin.classList.contains(mong)) ra.push(phan + '[' + i + '] gõ "' + gt + '" mong ' + mong + ', được "' + tin.textContent.slice(0, 80) + '"');
+            if (/NaN|undefined|Infinity/.test(hinh + tin.textContent)) ra.push(phan + '[' + i + '] gõ "' + gt + '" sinh NaN/undefined');
+          });
+        });
+        return ra;
+      }, id);
+      thu.forEach(s => loi.push('bài ' + id + ': ' + s));
+    }
+
     // Bài chưa có nhin giữ nguyên
     await moBai('#/bai/1/khamPha');
     can(await page.evaluate(() => document.querySelector('.tabs a').textContent.includes('Khám phá') && !document.querySelector('.nhin-nhin')), 'bài 1 phải giữ nguyên Khám phá');

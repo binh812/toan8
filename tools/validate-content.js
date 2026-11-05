@@ -13,9 +13,7 @@ const LL = require('../js/core/luyen.js');
 const CC = RNG.congCu(P);
 const SO_HAT = 300;
 const CANH = require('../js/canh/loi.js');
-require('../js/canh/hinhVuong.js');
-require('../js/canh/manhDaiSo.js');
-require('../js/canh/caiCan.js');
+fs.readdirSync(path.join(__dirname, '..', 'js', 'canh')).filter(f => f.endsWith('.js') && f !== 'loi.js').forEach(f => require('../js/canh/' + f));
 
 // Render thử từng công thức như trên trình duyệt nhưng bật báo lỗi (trên trang, lệnh lạ chỉ hiện chữ đỏ, khó thấy).
 function checkMath(s, where) {
@@ -244,6 +242,9 @@ function checkCauSinh(tag, q) {
   if (!q.goiY || !q.goiY.length) errors.push(tag + ': thiếu goiY');
   if (!q.loiGiai || !q.loiGiai.length) errors.push(tag + ': thiếu loiGiai');
   if (q.hinh && !KNOWN_WIDGETS.includes(q.hinh.widget)) errors.push(tag + ': hinh widget lạ: ' + q.hinh.widget);
+  if (q.hinhGiai && !KNOWN_WIDGETS.includes(q.hinhGiai.widget)) errors.push(tag + ': hinhGiai widget lạ: ' + q.hinhGiai.widget);
+  checkHinhCanh(tag, q.hinh);
+  checkHinhCanh(tag + ' hinhGiai', q.hinhGiai);
   walkStrings(q, (s, where) => {
     if (/undefined|NaN|Infinity|\[object/.test(s)) errors.push(tag + where + ': có "undefined/NaN/Infinity" trong chữ: "' + s.slice(0, 60) + '"');
     if ((s.match(/\$/g) || []).length % 2) errors.push(tag + where + ': số dấu $ lẻ: "' + s.slice(0, 50) + '"');
@@ -254,6 +255,7 @@ function checkCauSinh(tag, q) {
   else checkDapAn(tag, d, q.loiThuongGap);
   checkLastLine(tag, q);
 }
+const baiCoNhin = new Set();
 function checkLuyen(g) {
   const tagBai = 'luyen' + g.id;
   if (!Array.isArray(g.dang)) { errors.push(tagBai + ': danh sách dạng phải là mảng'); return 0; }
@@ -261,13 +263,17 @@ function checkLuyen(g) {
     const tag = tagBai + ' dạng "' + (d.ten || i) + '"';
     if (![1, 2, 3].includes(d.muc)) errors.push(tag + ': muc phải là 1/2/3');
     if (typeof d.sinh !== 'function') { errors.push(tag + ': thiếu hàm sinh'); return; }
+    let coHinh = false;
     for (let s = 1; s <= SO_HAT; s++) {
       let q;
       try { q = LL.sinhCau(d, s, CC, g.id); } catch (e) { errors.push(tag + ' hạt giống ' + s + ': ném lỗi (' + e.message + ')'); break; }
       const n = errors.length;
+      if (q && (q.hinhGiai || q.hinh)) coHinh = true;
       checkCauSinh(tag + ' hạt giống ' + s, q);
       if (errors.length > n) break; // một hạt giống hỏng là đủ để báo dạng này
     }
+    // Bài đã học theo cách Nhìn là hiểu: dạng dễ và vừa cũng cần hình theo chính số của đề
+    if (baiCoNhin.has(g.id) && d.muc <= 2 && !coHinh && !d.khongHinh) errors.push(tag + ': mức ' + d.muc + ' cần hinhGiai (hoặc ghi khongHinh: lí do)');
   });
   g.deCo.forEach(q => {
     const tag = tagBai + ' ' + q.id;
@@ -317,7 +323,7 @@ for (const f of files) {
   checkBackslashes(fs.readFileSync(f, 'utf8'), path.basename(f));
   try {
     const r = loadFile(f);
-    r.lessons.forEach(L => { count++; baiCo.push(L.id); checkLesson(L, path.basename(f)); });
+    r.lessons.forEach(L => { count++; baiCo.push(L.id); if (L.nhin) baiCoNhin.add(L.id); checkLesson(L, path.basename(f)); });
     r.luyen.forEach(g => { soDang += checkLuyen(g); luyenCo[g.id] = g.dang.length + Math.ceil(g.deCo.length / 3); });
     r.nen.forEach(N => { nenIds.push(N.id); soDang += checkNen(N); });
   } catch (e) { errors.push(path.basename(f) + ': không chạy được file (' + e.message + ')'); }
