@@ -10,6 +10,7 @@
   --bad: #e03131; --bad-bg: #fff5f5;
   --warn: #e67700; --warn-bg: #fff9db;
   --radius: 14px;
+  --a: #d9480f; --b: #1864ab; --cc: #2b8a3e; --tg: #34495e; --sai: #c2255c; --muc: #15222d; --mat: #fbfdfe; --nhat: #55687a;
   --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 14px rgba(60,40,0,.06);
 }
 * { box-sizing: border-box; }
@@ -260,3 +261,15 @@ math-field.mf:focus-within { border-color: var(--c); }
   .sliders input[type=range] { width: 140px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Cảnh hình động */
+.c-khung { background: var(--mat); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+.c-svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
+.c-svg .c-chu { fill: var(--muc); font-family: "Cambria Math", Cambria, Georgia, "Times New Roman", serif; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+.c-dk { display: grid; gap: 6px; margin-top: 12px; font-size: .92rem; }
+.c-dong { display: grid; grid-template-columns: 5.5em minmax(0, 1fr) 2.5em; gap: 10px; align-items: center; }
+.c-dong input { width: 100%; }
+.c-dong output { text-align: right; font-variant-numeric: tabular-nums; }
+.c-buoc { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.c-buoc li { padding: 10px 14px; border-left: 4px solid transparent; color: var(--nhat); cursor: pointer; }
+.c-buoc li.dang { color: var(--muc); border-left-color: var(--cc); background: var(--mat); }

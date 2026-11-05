@@ -48,4 +48,102 @@
       throw new Error('tamGiacAn: mẫu lạ ' + o.mau);
     }
   });
+
+  /* ---------- Phần vẽ ---------- */
+  C.lay('toHopHinhVuong').ve = function (svg, k, p, t) {
+    var s = k.s, d = 0.1 * s, co = 0.062 * s, mk = C.mk, a = k.a, b = k.b;
+    svg.setAttribute('viewBox', [-d, -d, s + 2 * d, s + 2 * d].join(' '));
+    mk('rect', { width: s, height: s, fill: 'var(--mat)' }, svg);
+    var mC = 1 - C.muot(t / 0.15), mS = C.muot((t - 0.85) / 0.15);
+    mk('polygon', { points: C.diem(k.oC), fill: 'var(--cc)', 'fill-opacity': 0.32, opacity: mC }, svg);
+    [[k.oA, '--a'], [k.oB, '--b']].forEach(function (x) {
+      mk('rect', { x: x[0].x, y: x[0].y, width: x[0].w, height: x[0].h, fill: 'var(' + x[1] + ')', 'fill-opacity': 0.32, opacity: mS }, svg);
+    });
+    k.tamGiac.forEach(function (g) {
+      mk('polygon', { points: C.diem(g), fill: 'var(--tg)', stroke: 'var(--mat)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }, svg);
+    });
+    mk('rect', { width: s, height: s, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke' }, svg);
+    var it = { 'font-style': 'italic' };
+    C.chu(svg, s / 2, s / 2, 'c²', co * 1.5, '--cc', Object.assign({ opacity: mC }, it));
+    C.chu(svg, a / 2, a / 2, 'a²', co * 1.3, '--a', Object.assign({ opacity: mS }, it));
+    C.chu(svg, a + b / 2, a + b / 2, 'b²', co * 1.3, '--b', Object.assign({ opacity: mS }, it));
+    C.chu(svg, a / 2, -d / 2, 'a', co, '--a', it);
+    C.chu(svg, a + b / 2, -d / 2, 'b', co, '--b', it);
+    // Cạnh trái đổi thứ tự b, a thành a, b khi tam giác đã trượt xong
+    var e = C.muot(t / 0.9);
+    C.chu(svg, -d / 2, b / 2 + a * e, 'b', co, '--b', it);
+    C.chu(svg, -d / 2, b + a / 2 - b * e, 'a', co, '--a', it);
+  };
+
+  C.lay('baHinhVuong').ve = function (svg, k, p, t, o) {
+    var mk = C.mk, a = k.a, h = k.h, c = k.c, don = o.don == null ? ' m' : o.don, tren = h + a + 0.8;
+    svg.setAttribute('viewBox', [-h - 0.8, -tren, 2 * h + a + 1.6, tren + a + 0.8].join(' '));
+    var trai = -h - 0.8, phai = h + a + 0.8, xong = t >= 1 || p.trangThai === 'giai';
+    mk('rect', { x: 0, y: 0, width: a, height: a, fill: 'var(--b)', 'fill-opacity': 0.3 }, svg);
+    mk('polygon', { points: C.diem([[a, 0], [0, -h], [h, -h - a], [h + a, -a]]), fill: 'var(--cc)', 'fill-opacity': 0.3 }, svg);
+    mk('rect', { x: -h, y: -h, width: h, height: h, fill: 'var(--a)', 'fill-opacity': xong ? 0.3 : 0.06, stroke: 'var(--a)', 'stroke-width': 0.05, 'stroke-dasharray': '.2 .15' }, svg);
+    mk('line', { x1: trai, y1: 0, x2: phai, y2: 0, stroke: 'var(--muc)', 'stroke-width': 0.07 }, svg);
+    mk('line', { x1: 0, y1: 0, x2: 0, y2: -tren, stroke: 'var(--muc)', 'stroke-width': 0.16 }, svg);
+    mk('line', { x1: a, y1: 0, x2: 0, y2: -h, stroke: 'var(--tg)', 'stroke-width': 0.2, 'stroke-linecap': 'round' }, svg);
+    C.chu(svg, a / 2, a / 2, C.fmt(k.dienTich.a), 0.55, '--b');
+    C.chu(svg, (h + a) * 0.62, -(h + a) * 0.59, C.fmt(k.dienTich.c), 0.8, '--cc');
+    C.chu(svg, -h / 2, -h / 2, xong ? C.fmt(k.dienTich.h) : '?', xong ? 1 : 1.3, '--a');
+    C.chu(svg, a / 2, -0.45, C.fmt(a) + don, 0.45);
+    C.chu(svg, a * 0.95, -h * 0.52, C.fmt(c) + don, 0.45);
+    if (k.thu) {
+      // Vẽ đúng độ cao em vừa gõ (quá cao thì dừng ở mép khung và ghi số)
+      var v = Math.min(k.thu.h, tren - 0.4);
+      mk('line', { x1: a, y1: 0, x2: 0, y2: -v, stroke: 'var(--sai)', 'stroke-width': 0.09, 'stroke-dasharray': '.25 .15' }, svg);
+      C.chu(svg, -0.15, -v + 0.05, 'h = ' + C.fmt(k.thu.h), 0.5, '--sai', { style: 'fill:var(--sai);text-anchor:end' });
+    }
+  };
+
+  // Tam giác vuông nấp trong đề: t chạy thì tam giác hiện ra
+  C.lay('tamGiacAn').ve = function (svg, k, p, t, o) {
+    var mk = C.mk, hien = C.muot(t), net = { fill: 'none', stroke: 'var(--muc)' };
+    function tamGiac(g, co) {
+      var goc = mk('g', { opacity: hien }, svg);
+      mk('polygon', { points: C.diem(k.dinh), fill: 'var(--cc)', 'fill-opacity': 0.32 }, goc);
+      if (g) g(goc, co);
+    }
+    function chuDap() { return p.trangThai === 'giai' ? C.fmt(o.mau === 'hcn' ? k.canhB : k.huyen) : '?'; }
+    if (o.mau === 'hcn') {
+      var w = k.canhB, h = k.canhA, u = Math.max(w, h) / 12;
+      svg.setAttribute('viewBox', [-2.2 * u, -1.4 * u, w + 4.4 * u, h + 3.6 * u].join(' '));
+      tamGiac(function (g) { mk('path', { d: 'M0 ' + (h - u) + 'H' + u + 'V' + h, fill: 'none', stroke: 'var(--cc)', 'stroke-width': 0.12 * u }, g); });
+      mk('rect', Object.assign({ width: w, height: h, 'stroke-width': 0.14 * u }, net), svg);
+      mk('line', { x1: 0, y1: 0, x2: w, y2: h, stroke: 'var(--muc)', 'stroke-width': 0.14 * u }, svg);
+      C.chu(svg, -u, h / 2, C.fmt(h), 0.95 * u);
+      C.chu(svg, w * 0.58, h * 0.4, C.fmt(k.huyen), 0.95 * u);
+      C.chu(svg, w / 2, h + 1.2 * u, chuDap(), 1.1 * u, '--a');
+    } else if (o.mau === 'can') {
+      var n = k.canhA, cao = k.canhB, v = Math.max(2 * n, cao) / 6;
+      svg.setAttribute('viewBox', [-1.3 * v, -0.7 * v, 2 * n + 2.6 * v, cao + 2 * v].join(' '));
+      tamGiac(function (g) {
+        mk('path', { d: 'M' + (n - 0.4 * v) + ' ' + cao + 'V' + (cao - 0.4 * v) + 'H' + n, fill: 'none', stroke: 'var(--cc)', 'stroke-width': 0.06 * v }, g);
+        C.chu(g, n / 2, cao + 0.4 * v, C.fmt(n), 0.45 * v, '--cc');
+      });
+      mk('polygon', Object.assign({ points: C.diem([[n, 0], [0, cao], [2 * n, cao]]), 'stroke-width': 0.07 * v }, net), svg);
+      mk('line', { x1: n, y1: 0, x2: n, y2: cao, stroke: 'var(--muc)', 'stroke-width': 0.07 * v, 'stroke-dasharray': (0.15 * v) + ' ' + (0.1 * v) }, svg);
+      C.chu(svg, n + 0.35 * v, cao * 0.55, C.fmt(cao), 0.5 * v);
+      C.chu(svg, n, cao + 0.95 * v, C.fmt(2 * n), 0.5 * v);
+      C.chu(svg, n * 0.33, cao * 0.38, chuDap(), 0.6 * v, '--a');
+    } else {
+      var ng = k.canhA, doc = k.canhB, x = Math.max(ng, doc) / 8, d = k.duong;
+      svg.setAttribute('viewBox', [-1.6 * x, -1.6 * x, ng + 4.2 * x, doc + 3.2 * x].join(' '));
+      tamGiac(function (g) {
+        mk('polyline', { points: C.diem([d[1], [ng, doc], [ng, 0]]), fill: 'none', stroke: 'var(--cc)', 'stroke-width': 0.1 * x, 'stroke-dasharray': (0.2 * x) + ' ' + (0.14 * x) }, g);
+        C.chu(g, ng / 2, doc + 0.8 * x, C.fmt(o.d1) + ' + ' + C.fmt(o.d3) + ' = ' + C.fmt(ng), 0.6 * x, '--cc');
+        C.chu(g, ng + 0.7 * x, doc / 2, C.fmt(doc), 0.65 * x, '--cc');
+      });
+      mk('polyline', Object.assign({ points: C.diem(d), 'stroke-width': 0.13 * x }, net), svg);
+      mk('line', { x1: 0, y1: doc, x2: ng, y2: 0, stroke: 'var(--a)', 'stroke-width': 0.1 * x, 'stroke-dasharray': (0.28 * x) + ' ' + (0.2 * x) }, svg);
+      C.chu(svg, o.d1 / 2, doc - 0.6 * x, C.fmt(o.d1), 0.65 * x);
+      C.chu(svg, o.d1 - 0.55 * x, doc / 2, C.fmt(doc), 0.65 * x);
+      C.chu(svg, o.d1 + o.d3 / 2, -0.6 * x, C.fmt(o.d3), 0.65 * x);
+      C.chu(svg, ng * 0.38, doc * 0.5, chuDap(), 0.9 * x, '--a');
+      C.chu(svg, -0.6 * x, doc + 0.2 * x, 'A', 0.6 * x);
+      C.chu(svg, ng + 0.6 * x, -0.2 * x, 'D', 0.6 * x);
+    }
+  };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);
