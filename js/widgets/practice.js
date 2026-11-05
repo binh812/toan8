@@ -74,11 +74,22 @@
     function showHint() {
       if (level >= hintMax) return;
       level++;
+      moHinhGiai();
       if (level <= hints.length) hintBox.appendChild(el('div', { class: 'hint', html: '<b>Gợi ý ' + level + ':</b> ' + T.md(hints[level - 1]) }));
       else { hintBox.appendChild(solution()); if (opts.onXemLoiGiai) opts.onXemLoiGiai(); }
       updateHintBtn();
     }
+    // Hình của lời giải hiện cùng gợi ý đầu tiên hoặc khi xem lời giải, chỉ gắn một lần
+    var daCoHinhGiai = false;
+    function moHinhGiai() {
+      if (daCoHinhGiai || !q.hinhGiai) return;
+      daCoHinhGiai = true;
+      var o = el('div', { class: 'q-hinh hinh-giai' });
+      hintBox.insertBefore(o, hintBox.firstChild);
+      T.mountWidget(o, q.hinhGiai.widget, q.hinhGiai.config);
+    }
     function solution() {
+      moHinhGiai();
       var s = el('div', { class: 'loigiai' }, el('h4', null, 'Lời giải'));
       (q.loiGiai || []).forEach(function (b) { s.appendChild(el('div', { class: 'buoc', html: T.md(b) })); });
       return s;
@@ -90,6 +101,16 @@
       if (r.ok && level < hintMax && (q.loiGiai || []).length)
         fb.appendChild(el('button', { class: 'link', type: 'button', onclick: function () { hintBox.appendChild(solution()); this.remove(); } }, 'Xem lời giải mẫu'));
     }
+    // Lỗi thường gặp có hình: vẽ đúng lỗi em vừa mắc ngay dưới lời nhắc
+    function hinhLoi(v) {
+      (q.loiThuongGap || []).some(function (l) {
+        if (!l.hinh || !T.checker.checkAnswer({ kieu: q.dapAn.kieu, gt: l.gt }, v).ok) return false;
+        var o = el('div', { class: 'q-hinh hinh-loi' });
+        fb.appendChild(o);
+        T.mountWidget(o, l.hinh.widget, l.hinh.config);
+        return true;
+      });
+    }
     function check() {
       var v = ctl.getValue();
       if (isEmpty(v)) { show({ ok: false, code: 'khongDoc', msg: 'Em chưa nhập đáp án.' }); return; }
@@ -98,10 +119,11 @@
       catch (e) { console.error('Lỗi chấm câu ' + q.id, e); r = { ok: false, code: 'khongDoc', msg: 'Máy chưa đọc được đáp án này. Em kiểm tra lại cách viết nhé.' }; }
       if (r.code === 'sai' || r.code === 'loiThuongGap' || r.code === 'saiDang') soLanSai++;
       show(r);
+      if (r.code === 'loiThuongGap') hinhLoi(v);
       if (r.tungO && ctl.subs) ctl.subs.forEach(function (s, i) { s.el.classList.toggle('o-sai', !r.tungO[i].ok); });
       if (opts.record && r.code !== 'khongDoc') T.store.recordAttempt(q.id, { ok: r.ok, hintLevel: level, hintMax: hintMax });
       if (r.ok) card.classList.add('done');
-      if (opts.onResult) opts.onResult(r, { soLanSai: soLanSai, xemLoiGiai: level >= hintMax });
+      if (opts.onResult) opts.onResult(r, { soLanSai: soLanSai, xemLoiGiai: level >= hintMax, giaTri: v });
     }
     return { check: check, card: card, control: ctl };
   };

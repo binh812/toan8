@@ -12,6 +12,10 @@ const RNG = require('../js/core/rng.js');
 const LL = require('../js/core/luyen.js');
 const CC = RNG.congCu(P);
 const SO_HAT = 300;
+const CANH = require('../js/canh/loi.js');
+require('../js/canh/hinhVuong.js');
+require('../js/canh/manhDaiSo.js');
+require('../js/canh/caiCan.js');
 
 // Render thử từng công thức như trên trình duyệt nhưng bật báo lỗi (trên trang, lệnh lạ chỉ hiện chữ đỏ, khó thấy).
 function checkMath(s, where) {
@@ -116,6 +120,66 @@ function checkTuChay(tag, cfg) {
   });
 }
 
+// Một cấu hình cảnh phải có cảnh thật và tính được ở đầu, cuối
+function checkCanh(tag, c) {
+  if (!c || !c.ten) { errors.push(tag + ': thiếu tên cảnh'); return; }
+  let canh;
+  try { canh = CANH.lay(c.ten); } catch (e) { errors.push(tag + ': cảnh lạ: ' + c.ten); return; }
+  const p = {};
+  Object.keys(canh.thamSo || {}).forEach(k => { p[k] = canh.thamSo[k].md; });
+  Object.assign(p, c.thamSo || {});
+  [0, 1].forEach(t => { try { canh.tinh(p, t, c.tuyChon || {}); } catch (e) { errors.push(tag + ': cảnh ' + c.ten + ' lỗi ở t=' + t + ': ' + e.message); } });
+}
+function checkHinhCanh(tag, h) { if (h && h.widget === 'canh') checkCanh(tag, h.config); }
+
+// Khối "Nhìn là hiểu"; câu Dùng và Suy ra lấy đề từ bài tập gốc (tuBai), có thể ghi đè từng trường
+function checkCauNhin(tag, d, bt) {
+  const goc = bt.find(q => q.id === d.tuBai);
+  if (!goc) errors.push(tag + ': tuBai không có: ' + d.tuBai);
+  const q = Object.assign({}, goc, d);
+  if (!q.de) errors.push(tag + ': thiếu de');
+  checkDapAn(tag, q.dapAn, q.loiThuongGap);
+  checkCanh(tag, d.canh);
+  return q;
+}
+function checkNhin(L, T) {
+  const n = L.nhin, bt = L.baiTap || [];
+  if (!['chungMinh', 'minhHoa'].includes(n.loai)) errors.push(T + ' nhin: loai lạ: ' + n.loai);
+  ['tieuDe', 'ketLuan'].forEach(k => { if (!n[k]) errors.push(T + ' nhin: thiếu ' + k); });
+  checkCanh(T + ' nhin', n.canh);
+  const buoc = n.buoc || [];
+  if (!buoc.length) errors.push(T + ' nhin: thiếu buoc');
+  buoc.forEach((b, i) => { if (i && b.t <= buoc[i - 1].t) errors.push(T + ' nhin: buoc[' + i + '] t không tăng'); });
+  if (!n.dung) errors.push(T + ' nhin: thiếu dung');
+  else {
+    const q = checkCauNhin(T + ' nhin.dung', n.dung, bt);
+    if (!n.dung.dungChu) errors.push(T + ' nhin.dung: thiếu dungChu');
+    (n.dung.phanUng || []).forEach((u, i) => {
+      if (q.dapAn && C.checkAnswer(q.dapAn, String(u.gt)).ok) errors.push(T + ' nhin.dung: phanUng[' + i + '] phanUng trùng đáp án');
+      if (!u.loi) errors.push(T + ' nhin.dung: phanUng[' + i + '] thiếu loi');
+    });
+  }
+  const ba = (n.suyRa && n.suyRa.baDe) || [];
+  if (ba.length !== 3) errors.push(T + ' nhin.suyRa: cần đúng 3 đề (đang có ' + ba.length + ')');
+  if (!n.suyRa || !n.suyRa.cachNhan) errors.push(T + ' nhin.suyRa: thiếu cachNhan');
+  ba.forEach((d, i) => {
+    const tag = T + ' nhin.suyRa[' + i + ']';
+    checkCauNhin(tag, d, bt);
+    ['tenNut', 'dungChu', 'saiChu'].forEach(k => { if (!d[k]) errors.push(tag + ': thiếu ' + k); });
+  });
+  (L.viDu || []).forEach((v, i) => {
+    if (!v.hinh && !v.canh) errors.push(T + ' viDu[' + i + '] cần hình (hinh hoặc canh)');
+    if (v.canh) checkCanh(T + ' viDu[' + i + ']', v.canh);
+    checkHinhCanh(T + ' viDu[' + i + ']', v.hinh);
+  });
+  bt.forEach(q => {
+    if (!q.hinh && !q.hinhGiai && !q.khongHinh) errors.push(T + ' ' + q.id + ': thiếu hình (hinh, hinhGiai hoặc khongHinh)');
+    checkHinhCanh(T + ' ' + q.id, q.hinh);
+    checkHinhCanh(T + ' ' + q.id + ' hinhGiai', q.hinhGiai);
+    (q.loiThuongGap || []).forEach((l, i) => checkHinhCanh(T + ' ' + q.id + ' loiThuongGap[' + i + ']', l.hinh));
+  });
+}
+
 function checkLesson(L, file) {
   const T = 'bai' + L.id;
   const need = (cond, msg) => { if (!cond) errors.push(T + ': ' + msg); };
@@ -160,6 +224,7 @@ function checkLesson(L, file) {
     checkDapAn(tag, q.dapAn, q.loiThuongGap);
     checkLastLine(tag, q);
   });
+  if (L.nhin) checkNhin(L, T);
   need(Array.isArray(L.timLoi) && L.timLoi.length >= 1, 'timLoi cần ≥ 1');
   (L.timLoi || []).forEach((t, i) => {
     need(Array.isArray(t.loiGiaiSai) && t.dongSai >= 0 && t.dongSai < t.loiGiaiSai.length, 'timLoi[' + i + '] dongSai ngoài khoảng');

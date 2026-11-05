@@ -109,7 +109,7 @@
     var seen = T.store.tabsSeen(id);
     var bar = el('nav', { class: 'tabs' });
     TABS.forEach(function (t, i) {
-      bar.appendChild(el('a', { href: '#/bai/' + id + '/' + t[0], class: t[0] === tab ? 'on' : (seen.indexOf(t[0]) >= 0 ? 'seen' : '') }, (i + 1) + '. ' + t[1]));
+      bar.appendChild(el('a', { href: '#/bai/' + id + '/' + t[0], class: t[0] === tab ? 'on' : (seen.indexOf(t[0]) >= 0 ? 'seen' : '') }, (i + 1) + '. ' + (t[0] === 'khamPha' && L.nhin ? 'Nhìn là hiểu' : t[1])));
     });
     app.appendChild(el('div', { class: 'lesson-head' },
       el('a', { href: '#/', class: 'back' }, '← Mục lục'),

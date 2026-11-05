@@ -29,3 +29,17 @@ test('bài nền thiếu phần: báo tomTat, viDu, luyen', () => {
   assert.strictEqual(r.status, 1, r.stdout);
   for (const s of ['nen thuNghiem', 'tomTat', 'viDu', 'luyen']) assert.ok(r.stdout.includes(s), 'thiếu: ' + s + '\n' + r.stdout);
 });
+test('khối nhin hợp lệ: không lỗi', () => {
+  const r = run('nhin-dung.js');
+  assert.strictEqual(r.status, 0, r.stdout + r.stderr);
+});
+test('khối nhin có lỗi: báo cảnh lạ, loại lạ, t không tăng, tuBai không có, phanUng trùng đáp án, thiếu đề suy ra, thiếu hình', () => {
+  const r = run('nhin-sai.js');
+  assert.strictEqual(r.status, 1, r.stdout);
+  for (const s of ['cảnh lạ', 'loai lạ', 't không tăng', 'tuBai không có', 'phanUng trùng đáp án', 'cần đúng 3 đề', 'thiếu hình', 'viDu[0] cần hình'])
+    assert.ok(r.stdout.includes(s), 'thiếu báo lỗi: ' + s + '\n' + r.stdout);
+});
+test('bài không có nhin: không đòi hình, các lỗi riêng của nhin không xuất hiện', () => {
+  const r = run('bai-dung.js');
+  assert.ok(!/thiếu hình|cần hình/.test(r.stdout), r.stdout);
+});

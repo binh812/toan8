@@ -15,15 +15,23 @@
     var shown = 0;
     var next = el('button', { class: 'btn primary', type: 'button', onclick: function () { reveal(1); } }, 'Bước tiếp ▸');
     var all = el('button', { class: 'btn ghost', type: 'button', onclick: function () { reveal(vd.buoc.length); } }, 'Hiện hết');
+    var hinhCanh = null;
     function reveal(n) {
-      for (var k = 0; k < n && shown < vd.buoc.length; k++) list.appendChild(stepItem(vd.buoc[shown++]));
+      for (var k = 0; k < n && shown < vd.buoc.length; k++) {
+        var b = vd.buoc[shown++];
+        list.appendChild(stepItem(b));
+        if (hinhCanh && b.canh) { if (b.canh.trangThai !== undefined) hinhCanh.datTrangThai(b.canh.trangThai); hinhCanh.datT(b.canh.t); }
+      }
       if (shown >= vd.buoc.length) { next.disabled = true; all.disabled = true; next.textContent = 'Xong ✓'; }
     }
     var hinh = vd.hinh ? el('div', { class: 'q-hinh' }) : null;
+    var hinhBen = vd.canh ? el('div', { class: 'vidu-hinh' }) : null;
+    var loiGiai = [list, el('div', { class: 'stepper-actions' }, next, all)];
     c.appendChild(el('div', { class: 'vidu' },
-      el('h3', null, 'Ví dụ ' + (i + 1)), el('div', { html: T.md(vd.de) }), hinh, list,
-      el('div', { class: 'stepper-actions' }, next, all)));
+      el('h3', null, 'Ví dụ ' + (i + 1)), el('div', { html: T.md(vd.de) }), hinh,
+      hinhBen ? el('div', { class: 'hai-ben' }, hinhBen, el('div', null, loiGiai)) : loiGiai));
     if (hinh) T.mountWidget(hinh, vd.hinh.widget, vd.hinh.config);
+    if (hinhBen) hinhCanh = T.mountWidget(hinhBen, 'canh', Object.assign({ chiXem: true }, vd.canh));
     reveal(1);
   }
 

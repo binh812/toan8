@@ -18,6 +18,11 @@
 
   T.tabs.khamPha = function (c, bai) {
     var kp = bai.khamPha || {};
+    if (bai.nhin) {
+      T.nhin(c, bai);
+      if (!kp.nhiemVu) return;
+      c.appendChild(el('h2', { class: 'muc-h' }, 'Tự kéo thử'));
+    }
     c.appendChild(el('div', { class: 'nhiem-vu', html: '<b>Nhiệm vụ:</b> ' + T.md(kp.nhiemVu).replace(/^<p>|<\/p>$/g, '') }));
     if (kp.widget) {
       var box = el('div', { class: 'widget' });

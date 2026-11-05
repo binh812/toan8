@@ -90,6 +90,7 @@
       datTrangThai: function (ten) { dung(); p.trangThai = ten; capNhat(); },
       layT: function () { return t; },
       dung: dung,
+      svg: svg,
       huy: function () { dung(); khung.remove(); }
     };
   };
