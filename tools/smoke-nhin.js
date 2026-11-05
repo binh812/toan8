@@ -17,6 +17,7 @@ async function main() {
     await page.setViewport({ width: 1366, height: 1000 });
     page.on('console', m => { if (['error', 'warn', 'warning'].includes(m.type())) loi.push('console: ' + m.text()); });
     page.on('pageerror', e => loi.push('pageerror: ' + e.message));
+    page.on('requestfailed', r => loi.push('tải lỗi: ' + r.url()));
     const goc = url.pathToFileURL(path.join(__dirname, '..', 'index.html')).href + '?nomathlive';
     await page.goto(goc + '#/', { waitUntil: 'load' });
     const moBai = async h => { await page.evaluate(x => { location.hash = x; }, h); await sleep(300); };
@@ -110,6 +111,27 @@ async function main() {
       return q.querySelectorAll('.hinh-loi svg').length;
     });
     can(r === 1, 'lỗi thường gặp x²+25 phải hiện hình');
+
+    // Giao diện: phông riêng có đủ dấu tiếng Việt, không tải file nào lỗi; thẻ bài có hình nhỏ
+    await moBai('#/');
+    await page.evaluate(() => document.fonts.ready);
+    const phong = await page.evaluate(() => {
+      const co = (f) => document.fonts.check(f + ' "Be Vietnam Pro"', 'Pythagore ấ ệ đ ơ ữ') && [...document.fonts].some(x => x.family.includes('Be Vietnam Pro') && x.status === 'loaded');
+      return { than: co('400 18px'), body: getComputedStyle(document.body).fontFamily, tieuDe: getComputedStyle(document.querySelector('h1')).fontFamily };
+    });
+    can(phong.than && /Be Vietnam Pro/.test(phong.body), 'phông thân chưa nạp: ' + JSON.stringify(phong));
+    can(/Bricolage/.test(phong.tieuDe), 'phông tiêu đề chưa dùng: ' + phong.tieuDe);
+    can(await page.evaluate(() => !!document.querySelector('a[href="#/bai/35/khamPha"] .hinh-nho svg') && !document.querySelector('a[href="#/bai/1/khamPha"] .hinh-nho')), 'thẻ bài 35 phải có hình nhỏ, bài 1 thì không');
+    await chup('trang-chu');
+
+    // Khổ hẹp: không tràn ngang
+    await page.setViewport({ width: 400, height: 800 });
+    for (const h of ['#/', '#/bai/6/khamPha', '#/bai/35/khamPha', '#/bai/25/khamPha', '#/bai/6/viDu']) {
+      await moBai(h);
+      const rong = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
+      can(rong[0] <= rong[1], h + ' tràn ngang ở 400px: ' + rong);
+    }
+    await page.setViewport({ width: 1366, height: 1000 });
 
     // Bài chưa có nhin giữ nguyên
     await moBai('#/bai/1/khamPha');

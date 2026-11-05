@@ -1,6 +1,11 @@
 const fs = require('fs'), path = require('path');
 const NM = path.join(__dirname, '..', 'node_modules'), LIB = path.join(__dirname, '..', 'lib');
 const jobs = [
+  ...[['be-vietnam-pro', [400, 500, 700]], ['bricolage-grotesque', [700, 800]]].flatMap(([ten, cacDo]) =>
+    ['vietnamese', 'latin-ext', 'latin'].flatMap(bo => cacDo.map(d => {
+      const f = ten + '-' + bo + '-' + d + '-normal.woff2';
+      return ['@fontsource/' + ten + '/files/' + f, 'fonts/' + f];
+    })).concat([['@fontsource/' + ten + '/LICENSE', 'fonts/' + ten + '-LICENSE']])),
   ['katex/dist/katex.min.js', 'katex/katex.min.js'],
   ['katex/dist/katex.min.css', 'katex/katex.min.css'],
   ['katex/dist/fonts', 'katex/fonts'],

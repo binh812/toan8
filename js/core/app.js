@@ -41,10 +41,13 @@
   function lessonCard(c, b) {
     var L = T.lessons[b.id], st = L ? T.store.lessonStatus(L) : null;
     var pct = st && st.total ? Math.round(100 * st.done / st.total) : 0;
+    var hinhNho = L && L.nhin ? el('span', { class: 'hinh-nho' }) : null;
+    if (hinhNho) T.canh.veTinh(hinhNho, L.nhin.canh.ten, L.nhin.canh.tuyChon, 1, L.nhin.canh.thamSo);
     return el(L ? 'a' : 'div', {
       class: 'card' + (L ? '' : ' locked') + (st && st.mastered ? ' mastered' : ''),
       href: L ? '#/bai/' + b.id + '/khamPha' : null, style: '--c:' + c.mau
     },
+      hinhNho,
       el('span', { class: 'num' }, 'Bài ' + b.id),
       el('span', { class: 'ten' }, b.ten),
       L ? el('span', { class: 'bar', title: pct + '% bài tập đã làm đúng' }, el('i', { style: 'width:' + pct + '%' }))
@@ -56,7 +59,7 @@
     var due = T.store.dueToday(5, function (id) { return !!T.findExercise(id); }).length;
     app.appendChild(el('section', { class: 'hero' },
       el('h1', null, 'Chào em! Hôm nay mình học bài nào?'),
-      el('p', null, 'Mỗi bài có 5 bước: ', el('b', null, 'Khám phá → Lý thuyết → Ví dụ → Tự làm → Tìm lỗi sai'), '. Cứ làm thử – sai cũng không sao, máy sẽ chỉ cho em chỗ sai.'),
+      el('p', null, 'Mỗi bài bắt đầu từ một hình để em tự thấy vì sao đúng, rồi mới đến lý thuyết, ví dụ và bài tập. Cứ làm thử – sai cũng không sao, máy sẽ chỉ cho em chỗ sai.'),
       el('div', { class: 'hero-nut' },
         due ? el('a', { class: 'btn primary', href: '#/on-tap' }, 'Có ' + due + ' câu cần ôn hôm nay →') : null,
         el('a', { class: 'btn', href: '#/on-tap-cuoi-nam' }, 'Ôn tập cuối năm'))));
