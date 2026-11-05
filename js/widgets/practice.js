@@ -74,12 +74,12 @@
     function showHint() {
       if (level >= hintMax) return;
       level++;
-      moHinhGiai();
+      if (level >= hints.length) moHinhGiai();
       if (level <= hints.length) hintBox.appendChild(el('div', { class: 'hint', html: '<b>Gợi ý ' + level + ':</b> ' + T.md(hints[level - 1]) }));
       else { hintBox.appendChild(solution()); if (opts.onXemLoiGiai) opts.onXemLoiGiai(); }
       updateHintBtn();
     }
-    // Hình của lời giải hiện cùng gợi ý đầu tiên hoặc khi xem lời giải, chỉ gắn một lần
+    // Hình của lời giải hiện từ gợi ý cuối (sớm hơn thì lộ đáp án) hoặc khi xem lời giải, chỉ gắn một lần
     var daCoHinhGiai = false;
     function moHinhGiai() {
       if (daCoHinhGiai || !q.hinhGiai) return;

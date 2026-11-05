@@ -20,7 +20,12 @@
       for (var k = 0; k < n && shown < vd.buoc.length; k++) {
         var b = vd.buoc[shown++];
         list.appendChild(stepItem(b));
-        if (hinhCanh && b.canh) { if (b.canh.trangThai !== undefined) hinhCanh.datTrangThai(b.canh.trangThai); hinhCanh.datT(b.canh.t); }
+        if (hinhCanh) {
+          var ch = b.canh || {};
+          if (ch.thamSo) hinhCanh.datThamSo(ch.thamSo);
+          if (ch.trangThai !== undefined) hinhCanh.datTrangThai(ch.trangThai);
+          hinhCanh.datT(ch.t != null ? ch.t : shown / vd.buoc.length);
+        }
       }
       if (shown >= vd.buoc.length) { next.disabled = true; all.disabled = true; next.textContent = 'Xong ✓'; }
     }

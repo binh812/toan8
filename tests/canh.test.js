@@ -65,6 +65,10 @@ test('manhVuong tong: thieuHaiManh ẩn đúng hai mảnh ab, phần còn lại 
   assert.deepStrictEqual(k.manh.filter(m => m.an).map(m => m.ten).sort(), ['ab1', 'ab2']);
   GAN(k.manh.filter(m => !m.an).reduce((s, m) => s + dtManh(m), 0), 34);
 });
+test('manhVuong tong: thieuMotManh ẩn đúng một mảnh ab', () => {
+  const k = tinh('manhVuong', { a: 3, b: 5, trangThai: 'thieuMotManh' }, 1, { dang: 'tong' });
+  assert.deepStrictEqual(k.manh.filter(m => m.an).map(m => m.ten), ['ab2']);
+});
 test('manhVuong hieu: tổng có dấu = (a-b)² với a>b', () => {
   AB.filter(p => p.a > p.b).forEach(p => TT.forEach(t => {
     const k = tinh('manhVuong', p, t, { dang: 'hieu' });

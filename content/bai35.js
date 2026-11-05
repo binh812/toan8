@@ -100,8 +100,55 @@
     goc: [['A', 'H', 'C', { mau: '#495057', r: 0.5 }]],
     nhan: [['A', 'C', '6 cm'], ['A', 'H', 'h', true, 0.7, TIM]], lechTen: { H: [0, -16] } });
 
+  // Cấu hình hình cho "Nhìn là hiểu"
+  function ba(a, c, an) { return { ten: 'baHinhVuong', tuyChon: { a: a, c: c, an: an, don: ' cm' } }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  var hViDu3 = geo({ diem: { A: [3.6, 4.8], B: [0, 0], C: [10, 0], H: [3.6, 0] }, to: ['A', 'B', 'C'],
+    canh: [['A', 'B'], ['A', 'C'], ['B', 'C'], ['A', 'H', { mau: TIM, net: 2 }]],
+    goc: [['B', 'A', 'C', { mau: '#495057', r: 0.7 }], ['A', 'H', 'C', { mau: '#495057', r: 0.5 }]],
+    nhan: [['A', 'B', '6'], ['A', 'C', '8']], lechTen: { H: [0, -16] } });
+
   TOAN8.bai({
     id: 35, ten: 'Định lí Pythagore và ứng dụng', sgk: { tap: 2, trang: 93 },
+    nhin: {
+      tieuDe: 'Xếp lại bốn tam giác, phần trống không đổi', loai: 'chungMinh',
+      canh: { ten: 'toHopHinhVuong', moTa: 'Khung vuông cạnh a cộng b chứa bốn tam giác vuông. Phần trống là hình vuông c bình phương; sau khi trượt, phần trống là hai hình vuông a bình phương và b bình phương.',
+        dongSo: function (p, f) { var so = function (x) { return f(x).replace(',', '{,}'); };
+          return 'Trước: phần trống $\\cc{c^2} = ' + so(p.a * p.a + p.b * p.b) + '$. Sau: $\\ca{a^2} + \\cb{b^2} = ' + so(p.a * p.a) + ' + ' + so(p.b * p.b) + ' = ' + so(p.a * p.a + p.b * p.b) + '$.'; } },
+      buoc: [
+        { t: 0, chu: 'Trong khung là bốn tam giác vuông giống nhau. Phần còn trống là một hình vuông cạnh $\\cc{c}$.' },
+        { t: 0.5, chu: 'Trượt các tam giác đi. Không cắt, không đổi kích thước. Khung cũng giữ nguyên.' },
+        { t: 1, chu: 'Phần trống giờ là hai hình vuông, cạnh $\\ca{a}$ và cạnh $\\cb{b}$.' }
+      ],
+      ketLuan: 'Khung và bốn tam giác không đổi nên phần trống không đổi: $$\\ca{a}^2 + \\cb{b}^2 = \\cc{c}^2$$',
+      dung: {
+        tieuDe: 'Cái thang này chạm tường ở độ cao nào?', tuBai: '35.11',
+        canh: { ten: 'baHinhVuong', tuyChon: { a: 2.5, c: 6.5 }, moTa: 'Thang dài 6,5 mét dựa tường, chân thang cách tường 2,5 mét. Trên mỗi cạnh có một hình vuông, số bên trong là diện tích.' },
+        moiThu: 'Hình vuông lớn bằng tổng hai hình vuông nhỏ. Gõ bất kì số nào: nếu sai, hình sẽ vẽ đúng độ cao đó để em thấy vì sao.',
+        soBatKi: function (v) {
+          if (v <= 0) return { loi: 'Độ cao phải lớn hơn $0$.' };
+          var so = function (x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); };
+          return { thamSo: { thu: v }, t: 0, loi: v >= 6.5
+            ? 'Độ cao $' + so(v) + '$ m thì cao hơn cả cái thang $6{,}5$ m. Có thể em đã cộng hai diện tích, trong khi hình vuông lớn đã là tổng rồi. Thử tính $42{,}25 - 6{,}25$.'
+            : 'Để chạm độ cao $' + so(v) + '$ m, thang chỉ cần dài $' + so(Math.sqrt(6.25 + v * v)) + '$ m, mà thang dài $6{,}5$ m. Thử tính $42{,}25 - 6{,}25$.' };
+        },
+        dungChu: '$42{,}25 - 6{,}25 = 36$, và $36$ là diện tích hình vuông cạnh $6$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng tam giác vuông vẫn nấp trong hình',
+        baDe: [
+          { tuBai: '35.7', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'hcn', rong: 9, cheo: 15 }, moTa: 'Hình chữ nhật rộng 9, đường chéo 15.' }, tenNut: 'Tìm tam giác vuông',
+            de: 'Một hình chữ nhật có chiều rộng $9$ cm và đường chéo $15$ cm. Chiều dài bằng bao nhiêu cm?', dapAn: { kieu: 'so', gt: 12 },
+            goiY: ['Đường chéo chia hình chữ nhật thành hai tam giác vuông. Cạnh huyền là cạnh nào?'], loiGiai: ['Đường chéo $15$ là cạnh huyền, nên chiều dài bình phương bằng $15^2 - 9^2 = 144$.', 'Chiều dài bằng $12$ cm.'], loiThuongGap: [],
+            dungChu: '$15^2 - 9^2 = 225 - 81 = 144$, mà $144 = 12^2$.', saiChu: 'Trong tam giác tô màu, $15$ là cạnh huyền. Thử $15^2 - 9^2$.' },
+          { tuBai: '35.6', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'can', cao: 4, day: 6 }, moTa: 'Tam giác cân có đường cao 4, đáy 6.' }, tenNut: 'Tìm tam giác vuông',
+            dungChu: '$3^2 + 4^2 = 9 + 16 = 25$, mà $25 = 5^2$.', saiChu: 'Đường cao chia đôi đáy, nên cạnh góc vuông là $3$ chứ không phải $6$.' },
+          { tuBai: '35.10', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'taxi', d1: 5, d2: 8, d3: 1 }, moTa: 'Đường đi của taxi: 5 km, rẽ trái 8 km, rẽ phải 1 km.' }, tenNut: 'Tìm tam giác vuông',
+            dungChu: '$6^2 + 8^2 = 36 + 64 = 100$, mà $100 = 10^2$.', saiChu: 'Cạnh ngang của tam giác là $5 + 1 = 6$ km, cạnh dọc là $8$ km.' }
+        ],
+        cachNhan: 'Ba đề khác nhau, cùng một việc: tìm tam giác vuông, rồi xem cạnh nào là cạnh huyền.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Tam giác $ABC$ vuông tại $A$. Trên mỗi cạnh có dựng một hình vuông; con số ở giữa mỗi hình vuông là **diện tích** của nó.\n\nKéo hai thanh trượt để đổi độ dài $\\ca{AB}$ và $\\cb{AC}$. Em so sánh diện tích hình vuông **tím** (trên cạnh $BC$) với tổng hai hình vuông **cam** và **xanh**.',
       widget: 'geo',
@@ -129,24 +176,24 @@
       { loai: 'chuY', noiDung: '**Hay nhầm 1 – cộng thay vì trừ.** Tính cạnh góc vuông khi biết cạnh huyền phải **trừ**: $AC^2 = BC^2 - AB^2$.\n\n**Hay nhầm 2 – quên lấy căn.** $BC^2 = 25$ thì $BC = 5$, **không** phải $25$.\n\n**Hay nhầm 3 – cộng cạnh chứ không cộng bình phương.** $BC \\ne AB + AC$: với $3$, $4$ thì $BC = 5$ chứ không phải $7$.' }
     ],
     viDu: [
-      { de: 'Cho tam giác $ABC$ vuông tại $A$ có $AB = 6$ cm, $AC = 8$ cm. Tính $BC$.', buoc: [
+      { de: 'Cho tam giác $ABC$ vuông tại $A$ có $AB = 6$ cm, $AC = 8$ cm. Tính $BC$.', canh: ba(6, 10, 'c'), buoc: [
         { lam: '$BC^2 = AB^2 + AC^2$', vi: '$BC$ đối diện góc vuông $A$ nên là cạnh huyền. Tính cạnh huyền thì **cộng**.' },
         { lam: '$BC^2 = 6^2 + 8^2 = 36 + 64 = 100$', vi: 'Thay số, bình phương từng cạnh rồi cộng.' },
         { lam: '$BC = \\sqrt{100} = 10$ (cm).', vi: 'Lấy căn bậc hai (độ dài luôn dương).' } ] },
-      { de: 'Cho tam giác $ABC$ vuông tại $A$ có $BC = 13$ cm, $AB = 5$ cm. Tính $AC$.', buoc: [
+      { de: 'Cho tam giác $ABC$ vuông tại $A$ có $BC = 13$ cm, $AB = 5$ cm. Tính $AC$.', canh: ba(5, 13), buoc: [
         { lam: '$AC^2 = BC^2 - AB^2$', vi: '$BC$ là cạnh huyền. Muốn tính cạnh góc vuông thì lấy bình phương cạnh huyền **trừ** bình phương cạnh góc vuông kia.' },
         { lam: '$AC^2 = 13^2 - 5^2 = 169 - 25 = 144$', vi: 'Thay số.' },
         { lam: '$AC = 12$ (cm).', vi: '$12^2 = 144$.' } ] },
-      { de: 'Cho tam giác $ABC$ vuông tại $A$, $AB = 6$ cm, $AC = 8$ cm, đường cao $AH$. Tính $AH$, $BH$, $CH$.', buoc: [
+      { de: 'Cho tam giác $ABC$ vuông tại $A$, $AB = 6$ cm, $AC = 8$ cm, đường cao $AH$. Tính $AH$, $BH$, $CH$.', hinh: hViDu3, buoc: [
         { lam: '$BC = 10$ cm (ví dụ 1).', vi: 'Cần $BC$ trước.' },
         { lam: '$AH \\cdot BC = AB \\cdot AC$ nên $AH = \\frac{6 \\cdot 8}{10} = 4{,}8$ (cm).', vi: 'Hai cách tính diện tích tam giác $ABC$ cho cùng một kết quả.' },
         { lam: '$BH^2 = AB^2 - AH^2 = 36 - 23{,}04 = 12{,}96$, nên $BH = 3{,}6$ (cm).', vi: 'Tam giác $AHB$ vuông tại $H$, cạnh huyền là $AB$.' },
         { lam: '$CH = BC - BH = 10 - 3{,}6 = 6{,}4$ (cm).', vi: '$H$ nằm giữa $B$ và $C$.' } ] },
-      { de: 'Tam giác có ba cạnh $7$ cm, $24$ cm, $25$ cm có phải tam giác vuông không?', buoc: [
+      { de: 'Tam giác có ba cạnh $7$ cm, $24$ cm, $25$ cm có phải tam giác vuông không?', canh: ba(7, 25), buoc: [
         { lam: 'Cạnh lớn nhất: $25^2 = 625$.', vi: 'Nếu là tam giác vuông thì cạnh huyền phải là cạnh lớn nhất.' },
         { lam: 'Tổng bình phương hai cạnh kia: $7^2 + 24^2 = 49 + 576 = 625$.', vi: 'So sánh với $625$.' },
         { lam: 'Bằng nhau nên tam giác vuông (định lí Pythagore đảo), góc vuông đối diện cạnh $25$ cm.', vi: 'Định lí đảo cho phép kết luận tam giác vuông.' } ] },
-      { de: 'Bạn Lan vẽ hình chữ nhật có chiều rộng $1$ và chiều dài $3$, rồi đặt trên trục số đoạn $OM$ bằng đường chéo ($M$ bên phải $O$). Điểm $M$ biểu diễn số nào?', buoc: [
+      { de: 'Bạn Lan vẽ hình chữ nhật có chiều rộng $1$ và chiều dài $3$, rồi đặt trên trục số đoạn $OM$ bằng đường chéo ($M$ bên phải $O$). Điểm $M$ biểu diễn số nào?', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'hcn', rong: 1, cheo: Math.sqrt(10), nhanHuyen: '√10' } }, buoc: [
         { lam: 'Đường chéo $d$ là cạnh huyền của tam giác vuông có hai cạnh $1$ và $3$.', vi: 'Đường chéo chia hình chữ nhật thành hai tam giác vuông.' },
         { lam: '$d^2 = 1^2 + 3^2 = 10$, nên $d = \\sqrt{10} \\approx 3{,}16$.', vi: '$10$ không là bình phương số tự nhiên nào nên để dạng căn.' },
         { lam: 'Điểm $M$ biểu diễn số $\\sqrt{10}$.', vi: 'Độ dài $OM$ chính là toạ độ của $M$.' } ] }
@@ -164,7 +211,7 @@
           loiThuongGap: [{ gt: 'sqrt(136)', giaiThich: 'Em cộng $100 + 36$. $AC$ là cạnh góc vuông nên phải **trừ**: $100 - 36 = 64$.' }] } ] }
     ],
     baiTap: [
-      { id: '35.1', muc: 1, de: 'Cho tam giác $ABC$ vuông tại $A$. Khẳng định nào **đúng**?',
+      { id: '35.1', hinhGiai: hg(ba(3, 5, 'c')), muc: 1, de: 'Cho tam giác $ABC$ vuông tại $A$. Khẳng định nào **đúng**?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['$AB^2 + BC^2 = AC^2$', '$AC^2 + BC^2 = AB^2$', '$BC^2 - AC^2 = AB^2$', '$AB^2 - AC^2 = BC^2$'] },
         goiY: ['Cạnh huyền là cạnh đối diện góc vuông $A$, tức $BC$.', 'Định lí: $BC^2 = AB^2 + AC^2$. Chuyển vế xem phương án nào khớp.'],
         loiGiai: ['Tam giác vuông tại $A$ nên $BC^2 = AB^2 + AC^2$.', 'Chuyển $AC^2$ sang vế trái: $BC^2 - AC^2 = AB^2$. Đó là phương án thứ ba.'] },
@@ -180,7 +227,7 @@
         goiY: ['Tính cạnh góc vuông thì **trừ**: $AC^2 = BC^2 - AB^2$.', '$17^2 - 8^2 = 289 - 64$.'],
         loiGiai: ['$AC^2 = 17^2 - 8^2 = 289 - 64 = 225$', '$x = \\sqrt{225} = 15$'],
         loiThuongGap: [{ gt: 'sqrt(353)', giaiThich: 'Em cộng $289 + 64$. $AC$ là cạnh góc vuông nên phải **trừ**.' }] },
-      { id: '35.4', muc: 1, de: 'Bộ ba số đo nào dưới đây là độ dài ba cạnh của một tam giác vuông?',
+      { id: '35.4', khongHinh: 'Đề thử từng bộ số: em tự bình phương rồi so sánh, hình không giúp thêm.', muc: 1, de: 'Bộ ba số đo nào dưới đây là độ dài ba cạnh của một tam giác vuông?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['$4$ cm; $5$ cm; $6$ cm', '$9$ cm; $12$ cm; $15$ cm', '$2$ cm; $3$ cm; $5$ cm', '$5$ cm; $6$ cm; $7$ cm'] },
         goiY: ['Dùng định lí Pythagore đảo: bình phương cạnh lớn nhất có bằng tổng bình phương hai cạnh kia không?', 'Thử: $9^2 + 12^2 = 81 + 144 = ?$'],
         loiGiai: ['$4^2 + 5^2 = 41 \\ne 36$; $2^2 + 3^2 = 13 \\ne 25$; $5^2 + 6^2 = 61 \\ne 49$.', '$9^2 + 12^2 = 225 = 15^2$. Chỉ bộ $9;\\ 12;\\ 15$ là ba cạnh của tam giác vuông.'] },
@@ -196,7 +243,7 @@
         goiY: ['Trong tam giác cân, đường cao $AH$ cũng là đường trung tuyến: $BH = \\frac{BC}{2}$.', 'Tam giác $ABH$ vuông tại $H$: $AB^2 = AH^2 + BH^2$.'],
         loiGiai: ['$BH = \\frac{6}{2} = 3$.', '$AB^2 = AH^2 + BH^2 = 16 + 9 = 25$', '$x = 5$'],
         loiThuongGap: [{ gt: 'sqrt(52)', giaiThich: 'Em dùng cả cạnh $BC = 6$. Tam giác vuông là $ABH$, cạnh góc vuông $BH$ chỉ bằng **nửa** đáy: $3$.' }] },
-      { id: '35.7', muc: 2, de: 'Một hình chữ nhật có chiều rộng $9$ cm và đường chéo $15$ cm. Tính diện tích hình chữ nhật (cm²).',
+      { id: '35.7', hinhGiai: hg({ ten: 'tamGiacAn', tuyChon: { mau: 'hcn', rong: 9, cheo: 15 } }), muc: 2, de: 'Một hình chữ nhật có chiều rộng $9$ cm và đường chéo $15$ cm. Tính diện tích hình chữ nhật (cm²).',
         dapAn: { kieu: 'so', gt: 108 },
         goiY: ['Đường chéo, chiều rộng, chiều dài tạo thành tam giác vuông (đường chéo là cạnh huyền).', 'Chiều dài $= \\sqrt{15^2 - 9^2}$. Rồi diện tích = dài × rộng.'],
         loiGiai: ['Chiều dài: $\\sqrt{15^2 - 9^2} = \\sqrt{225 - 81} = \\sqrt{144} = 12$ (cm).', 'Diện tích $= 12 \\cdot 9 = 108$'],

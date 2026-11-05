@@ -289,3 +289,7 @@ math-field.mf:focus-within { border-color: var(--c); }
 .nhin-cach { margin: 20px 0 0; font-size: 1.15rem; font-weight: 700; text-wrap: balance; }
 .hinh-giai, .hinh-loi { max-width: 460px; margin: 10px 0; }
 @media (max-width: 899px) { .hai-ben, .nhin-ba { grid-template-columns: minmax(0, 1fr); } }
+.c-so { margin-top: 10px; font-size: 1rem; }
+.c-so p { margin: 0; }
+.c-ghi-chu { margin: 8px 0 0; font-size: .85rem; color: var(--nhat); font-style: italic; }
+.nhin-phan .q.done::after { display: none; }

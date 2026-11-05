@@ -24,6 +24,10 @@ const CAU_HINH = [
   { ten: 'caiCan', tuyChon: { trai: { x: 5, so: 10 }, phai: { x: 0, so: 50 } } },
   { ten: 'caiCan', tuyChon: { trai: { x: -2, so: 7 }, phai: { x: 0, so: 0 } } },
   { ten: 'caiCan', tuyChon: { trai: { x: 1, so: 6 }, phai: { x: 1, so: 5 } } },
+  { ten: 'caiCan', tuyChon: { trai: { x: -0.5, so: 3 }, phai: { x: 0, so: 0 } } },
+  { ten: 'caiCan', tuyChon: { trai: { x: 5, so: 10 }, phai: { x: 0, so: 50 }, anLucDau: true } },
+  { ten: 'baHinhVuong', tuyChon: { a: 6, c: 10, an: 'c', don: ' cm' } },
+  { ten: 'baHinhVuong', tuyChon: { a: 7, c: 25, don: ' cm' } },
   { ten: 'caiCan', tuyChon: { trai: { x: 3, so: 2 }, phai: { x: 1, so: 6 }, buoc: [{ trai: { x: 2, so: 2 }, phai: { x: 0, so: 6 } }, { trai: { x: 2, so: 0 }, phai: { x: 0, so: 4 } }, { trai: { x: 1, so: 0 }, phai: { x: 0, so: 2 } }] } }
 ];
 

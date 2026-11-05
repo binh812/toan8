@@ -3,18 +3,19 @@
   'use strict';
   var el = T.el, THOI_GIAN_HIEN = 1200;
 
-  // Câu Dùng và Suy ra lấy đề từ bài tập gốc; khối nhin có thể ghi đè từng trường
+  // Câu Dùng và Suy ra lấy đề từ bài tập gốc; khối nhin có thể ghi đè từng trường.
+  // Bỏ hình của lỗi thường gặp vì ở đây hình lớn bên cạnh đã phản ứng theo lỗi
   function cauHoi(bai, d, tien) {
     var goc = (bai.baiTap || []).filter(function (q) { return q.id === d.tuBai; })[0] || {};
-    return { id: tien + '-' + d.tuBai, de: d.de || goc.de, dapAn: d.dapAn || goc.dapAn, goiY: d.goiY || goc.goiY, loiGiai: d.loiGiai || goc.loiGiai, loiThuongGap: d.loiThuongGap || goc.loiThuongGap };
+    return { id: tien + '-' + d.tuBai, de: d.de || goc.de, dapAn: d.dapAn || goc.dapAn, goiY: d.goiY || goc.goiY, loiGiai: d.loiGiai || goc.loiGiai, loiThuongGap: (d.loiThuongGap || goc.loiThuongGap || []).map(function (l) { return { gt: l.gt, giaiThich: l.giaiThich }; }) };
   }
   function phan(nhan, tieuDe, lop) {
     return el('section', { class: 'nhin-phan ' + lop }, el('p', { class: 'nhin-nhan' }, nhan), el('h2', { html: T.mdInline(tieuDe) }));
   }
   // Số đầu tiên trong đáp án em gõ ("x = 4" → 4, "6,96" → 6.96); null nếu không có số
   function soTrong(v) {
-    var m = /-?\d+(?:[.,]\d+)?/.exec(String(v));
-    return m ? parseFloat(m[0].replace(',', '.')) : null;
+    var m = /^\s*(?:[a-zA-Z]\s*=\s*)?(-?\d+(?:[.,]\d+)?)\s*(?:k?m)?\s*$/.exec(String(v));
+    return m ? parseFloat(m[1].replace(',', '.')) : null;
   }
   function dat(tin, lop, noiDung) { tin.className = 'nhin-tin ' + lop; tin.innerHTML = T.md(noiDung).replace(/^<p>|<\/p>$/g, ''); }
   // Tìm phản ứng của hình cho một đáp án sai: theo danh sách lỗi đã biết, rồi theo số em gõ
@@ -44,7 +45,8 @@
     c.appendChild(s);
     T.mountWidget(hinh, 'canh', Object.assign({ buoc: n.buoc, choBuoc: chu }, n.canh));
     chu.appendChild(el('div', { class: 'nhin-ket', html: T.md(n.ketLuan) }));
-    if (n.loai === 'minhHoa') chu.appendChild(el('p', { class: 'nhin-luu-y', html: T.md('Hình cho thấy một trường hợp, chưa phải chứng minh. ' + (n.luuY || '')).replace(/^<p>|<\/p>$/g, '') }));
+    var luuY = (n.loai === 'minhHoa' ? 'Hình cho thấy một trường hợp, chưa phải chứng minh. ' : '') + (n.luuY || '');
+    if (luuY) chu.appendChild(el('p', { class: 'nhin-luu-y', html: T.md(luuY).replace(/^<p>|<\/p>$/g, '') }));
   }
 
   function veDung(c, bai, d) {
@@ -69,6 +71,7 @@
       if (u) {
         if (u.thamSo) w.datThamSo(u.thamSo);
         if (u.trangThai) w.datTrangThai(u.trangThai);
+        w.datT(u.t != null ? u.t : 1);
         dat(tin, 'sai', u.loi);
       } else dat(tin, 'sai', d.saiChu || 'Chưa đúng. Nhìn lại hình rồi thử lần nữa.');
     } });

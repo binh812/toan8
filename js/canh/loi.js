@@ -33,7 +33,8 @@
   function chu(cha, x, y, s, co, mau, them) {
     var at = { x: x, y: y, 'font-size': co, class: 'c-chu', style: mau ? 'fill:var(' + mau + ')' : null };
     for (var k in them || {}) at[k] = them[k];
-    return mk('text', at, cha, s);
+    // Chữ đang trong suốt thì để trống, kẻo trình đọc màn hình đọc lộ đáp án
+    return mk('text', at, cha, at.opacity === 0 ? '' : s);
   }
   return { dangKi: dangKi, lay: lay, kep: kep, muot: muot, noiSuy: noiSuy, chuNhat: chuNhat, fmt: fmt, mk: mk, diem: diem, chu: chu };
 });

@@ -92,9 +92,50 @@
   // Tự chạy: đi lần lượt từng bước giải, cân luôn thăng bằng, rồi quay về đầu
   canGiai.tuChay = [{ thanhTruot: 'buoc', den: 3, giay: 5 }, { cho: 2 }, { thanhTruot: 'buoc', den: 0, giay: 1 }];
 
+  // Cấu hình hình cho "Nhìn là hiểu": v(hệ số x, số) là một vế; hai vế luôn được kiểm cùng nghiệm khi vẽ
+  function v(x, so) { return { x: x, so: so }; }
+  function b2(tr, ph) { return { trai: tr, phai: ph }; }
+  function can(tr, ph, buoc, them) { return Object.assign({ ten: 'caiCan', tuyChon: { trai: tr, phai: ph, buoc: buoc } }, them); }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  var SAU_QUY_DONG = 'Hình bắt đầu từ lúc đã quy đồng và bỏ dấu ngoặc.';
+
   TOAN8.bai({
     id: 25, ten: 'Phương trình bậc nhất một ẩn', sgk: { tap: 2, trang: 27 },
 
+    nhin: {
+      tieuDe: 'Phương trình là một cái cân đang thăng bằng', loai: 'chungMinh',
+      luuY: 'Quả nặng là số dương, bóng bay kéo lên là số âm.',
+      canh: can(v(3, 2), v(1, 6), [b2(v(2, 2), v(0, 6)), b2(v(2, 0), v(0, 4)), b2(v(1, 0), v(0, 2))], { giay: 16, moTa: 'Cái cân với hai vế của phương trình, luôn thăng bằng sau mỗi bước.' }),
+      buoc: [
+        { t: 0, chu: 'Hai đĩa nặng bằng nhau: $3x + 2 = x + 6$. Mỗi khối cam là một $x$ chưa biết.' },
+        { t: 0.25, chu: 'Nhấc một $x$ khỏi **cả hai** đĩa: cân vẫn thăng bằng.' },
+        { t: 0.5, chu: 'Nhấc hai quả $1$ khỏi **cả hai** đĩa: vẫn thăng bằng.' },
+        { t: 0.75, chu: 'Chia đôi **cả hai** đĩa: một $x$ nặng bằng hai quả $1$.' }
+      ],
+      ketLuan: 'Làm gì ở vế này thì làm y như vậy ở vế kia, cân luôn thăng bằng, nghiệm không đổi: $x = 2$.',
+      dung: {
+        tieuDe: 'Thay số vào, xem cân có thăng bằng không', tuBai: '25.3',
+        canh: can(v(4, -12), v(0, 0), [], { moTa: 'Cái cân của phương trình 4x trừ 12 bằng 0.' }),
+        moiThu: 'Gõ một số: cân sẽ thay số đó vào $x$ và nghiêng theo kết quả.',
+        soBatKi: function (x) {
+          var so = function (n) { return String(Math.round(n * 100) / 100).replace('.', '{,}'); };
+          return { thamSo: { thu: x }, loi: 'Thay $x = ' + so(x) + '$: vế trái bằng $' + so(4 * x - 12) + '$, vế phải bằng $0$. Hai vế khác nhau nên cân lệch.' };
+        },
+        khiDung: { thu: 3 }, dungChu: 'Thay $x = 3$: $4 \\cdot 3 - 12 = 0$, cân thăng bằng.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng vẫn là cái cân đó',
+        baDe: [
+          { tuBai: '25.4', canh: can(v(-2, 7), v(0, 0), [b2(v(-2, 0), v(0, -7)), b2(v(2, 0), v(0, 7))]), tenNut: 'Chuyển dần sang hai đĩa',
+            dungChu: '$7 - 2x = 0$ nên $2x = 7$, tức $x = 3{,}5$.', saiChu: 'Bóng bay $2x$ đang kéo lên. Cân thăng bằng khi $2x$ bằng $7$.' },
+          { tuBai: '25.8', canh: can(v(1, 6), v(1, 5), [b2(v(0, 6), v(0, 5))]), tenNut: 'Nhấc x khỏi hai đĩa',
+            dungChu: 'Nhấc $x$ khỏi hai đĩa, còn $6$ và $5$: cân lệch với **mọi** $x$, nên phương trình vô nghiệm.', saiChu: 'Rút gọn vế trái được $x + 6$. Nhấc $x$ khỏi hai đĩa rồi xem cân.' },
+          { tuBai: '25.10', canh: can(v(5, 10), v(0, 50), [b2(v(5, 0), v(0, 40))], { tuyChon: { trai: v(5, 10), phai: v(0, 50), buoc: [b2(v(5, 0), v(0, 40))], anLucDau: true } }), tenNut: 'Đưa đề lên cân',
+            dungChu: 'Hai người cùng thêm $5$ tuổi: $(x + 5) + (4x + 5) = 50$, nên $5x + 10 = 50$ và $x = 8$.', saiChu: 'Sau $5$ năm **cả hai** đều thêm $5$ tuổi, nên đĩa trái có thêm $10$ chứ không phải $5$.' }
+        ],
+        cachNhan: 'Dù đề là phương trình hay lời văn: hai vế là hai đĩa cân, và cân phải thăng bằng.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Đĩa trái có **3 hộp** $\\ca{x}$ (mỗi hộp nặng $x$ kg) và **2 quả cân** $\\cb{1}$ kg. Đĩa phải có **1 hộp** $\\ca{x}$ và **8 quả cân** $\\cb{1}$ kg. Em kéo thanh trượt $x$ để thử các khối lượng khác nhau của mỗi hộp. Khi nào cân **thăng bằng**?',
       widget: 'geo',
@@ -131,24 +172,24 @@
     ],
 
     viDu: [
-      { de: 'Cho phương trình $3x - 4 = 6 - 2x$. Kiểm tra xem $x = 2$ và $x = -1$ có là nghiệm không.', buoc: [
-        { lam: 'Thay $x = 2$: vế trái $3\\cdot 2 - 4 = 2$; vế phải $6 - 2\\cdot 2 = 2$.', vi: 'Thay số vào **từng vế** rồi tính riêng.' },
-        { lam: 'Hai vế bằng nhau nên $x = 2$ **là** nghiệm.', vi: 'Đúng định nghĩa nghiệm: hai vế nhận cùng một giá trị.' },
-        { lam: 'Thay $x = -1$: vế trái $3\\cdot(-1) - 4 = -7$; vế phải $6 - 2\\cdot(-1) = 8$.', vi: 'Số âm nhớ đặt trong ngoặc: $-2\\cdot(-1) = +2$.' },
-        { lam: '$-7 \\ne 8$ nên $x = -1$ **không** là nghiệm.', vi: 'Chỉ cần hai vế khác nhau là kết luận được.' } ] },
-      { de: 'Giải phương trình $4x + 10 = 0$.', buoc: [
+      { de: 'Cho phương trình $3x - 4 = 6 - 2x$. Kiểm tra xem $x = 2$ và $x = -1$ có là nghiệm không.', canh: can(v(3, -4), v(-2, 6), []), buoc: [
+        { canh: { t: 0, thamSo: { thu: 2 } }, lam: 'Thay $x = 2$: vế trái $3\\cdot 2 - 4 = 2$; vế phải $6 - 2\\cdot 2 = 2$.', vi: 'Thay số vào **từng vế** rồi tính riêng.' },
+        { canh: { t: 0, thamSo: { thu: 2 } }, lam: 'Hai vế bằng nhau nên $x = 2$ **là** nghiệm.', vi: 'Đúng định nghĩa nghiệm: hai vế nhận cùng một giá trị.' },
+        { canh: { t: 0, thamSo: { thu: -1 } }, lam: 'Thay $x = -1$: vế trái $3\\cdot(-1) - 4 = -7$; vế phải $6 - 2\\cdot(-1) = 8$.', vi: 'Số âm nhớ đặt trong ngoặc: $-2\\cdot(-1) = +2$.' },
+        { canh: { t: 0, thamSo: { thu: -1 } }, lam: '$-7 \\ne 8$ nên $x = -1$ **không** là nghiệm.', vi: 'Chỉ cần hai vế khác nhau là kết luận được.' } ] },
+      { de: 'Giải phương trình $4x + 10 = 0$.', canh: can(v(4, 10), v(0, 0), [b2(v(4, 0), v(0, -10)), b2(v(1, 0), v(0, -2.5)), b2(v(1, 0), v(0, -2.5))]), buoc: [
         { lam: '$4x = -10$', vi: 'Chuyển $10$ sang vế phải và **đổi dấu** thành $-10$.' },
         { lam: '$x = \\frac{-10}{4} = -\\frac{5}{2}$', vi: 'Chia hai vế cho hệ số $4$, rồi rút gọn phân số.' },
         { lam: 'Vậy nghiệm là $x = -\\frac{5}{2}$ (tập nghiệm $S = \\{-\\frac{5}{2}\\}$).', vi: 'Thử lại: $4\\cdot(-\\frac{5}{2}) + 10 = -10 + 10 = 0$. Đúng!' } ] },
-      { de: 'Giải phương trình $3 - \\frac{1}{2}x = 0$.', buoc: [
+      { de: 'Giải phương trình $3 - \\frac{1}{2}x = 0$.', canh: can(v(-0.5, 3), v(0, 0), [b2(v(-0.5, 0), v(0, -3)), b2(v(1, 0), v(0, 6))]), buoc: [
         { lam: '$-\\frac{1}{2}x = -3$', vi: 'Chuyển $3$ sang vế phải thành $-3$.' },
         { lam: '$x = (-3) : \\left(-\\frac{1}{2}\\right) = 6$', vi: 'Chia hai vế cho hệ số $-\\frac{1}{2}$. Chia cho $-\\frac{1}{2}$ cũng là nhân với $-2$.' } ] },
-      { de: 'Giải phương trình $4x - (3 - 2x) = 2(x + 5)$.', buoc: [
+      { de: 'Giải phương trình $4x - (3 - 2x) = 2(x + 5)$.', canh: can(v(6, -3), v(2, 10), [b2(v(6, -3), v(2, 10)), b2(v(4, 0), v(0, 13)), b2(v(4, 0), v(0, 13)), b2(v(1, 0), v(0, 13 / 4))], { ghiChu: SAU_QUY_DONG }), buoc: [
         { lam: '$4x - 3 + 2x = 2x + 10$', vi: 'Bỏ ngoặc: trước $(3 - 2x)$ là dấu trừ nên đổi dấu cả hai hạng tử; nhân $2$ vào $(x + 5)$.' },
         { lam: '$4x + 2x - 2x = 10 + 3$', vi: 'Hạng tử chứa $x$ sang trái, số sang phải. $2x$ sang trái thành $-2x$; $-3$ sang phải thành $+3$.' },
         { lam: '$4x = 13$', vi: 'Thu gọn hai vế.' },
         { lam: '$x = \\frac{13}{4}$', vi: 'Chia hai vế cho $4$.' } ] },
-      { de: 'Giải phương trình $\\frac{2x - 1}{3} + x = 2 + \\frac{x + 1}{2}$.', buoc: [
+      { de: 'Giải phương trình $\\frac{2x - 1}{3} + x = 2 + \\frac{x + 1}{2}$.', canh: can(v(10, -2), v(3, 15), [b2(v(10, -2), v(3, 15)), b2(v(10, -2), v(3, 15)), b2(v(7, 0), v(0, 17)), b2(v(1, 0), v(0, 17 / 7)), b2(v(1, 0), v(0, 17 / 7))], { ghiChu: SAU_QUY_DONG }), buoc: [
         { lam: '$\\frac{2(2x - 1) + 6x}{6} = \\frac{12 + 3(x + 1)}{6}$', vi: 'Quy đồng hai vế với mẫu chung $6$ (BCNN của $3$ và $2$).' },
         { lam: '$2(2x - 1) + 6x = 12 + 3(x + 1)$', vi: 'Nhân hai vế với $6$ để khử mẫu.' },
         { lam: '$4x - 2 + 6x = 12 + 3x + 3$', vi: 'Bỏ dấu ngoặc.' },
@@ -173,17 +214,17 @@
     ],
 
     baiTap: [
-      { id: '25.1', muc: 1, de: 'Phương trình nào dưới đây là **phương trình bậc nhất một ẩn**?',
+      { id: '25.1', khongHinh: 'Câu hỏi nhận dạng dạng phương trình, không cần cân.', muc: 1, de: 'Phương trình nào dưới đây là **phương trình bậc nhất một ẩn**?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['$0x + 3 = 0$', '$x^2 - 4 = 0$', '$5 - 2x = 0$', '$\\frac{1}{x} + 1 = 0$'] },
         goiY: ['Phương trình bậc nhất có dạng $ax + b = 0$ với $a \\ne 0$.', 'Loại phương trình có $a = 0$, có $x^2$ hoặc có $x$ ở mẫu.'],
         loiGiai: ['$0x + 3 = 0$ có $a = 0$: không phải.', '$x^2 - 4 = 0$ có $x^2$: không phải.', '$\\frac{1}{x} + 1 = 0$ có $x$ ở mẫu: không phải.', '$5 - 2x = 0$ viết được thành $-2x + 5 = 0$ với $a = -2 \\ne 0$. Đáp án: $5 - 2x = 0$.'] },
 
-      { id: '25.2', muc: 1, de: '$x = -1$ có phải là nghiệm của phương trình $3x + 7 = 3 - x$ không?',
+      { id: '25.2', hinhGiai: hg(can(v(3, 7), v(-1, 3), [], { thamSo: { thu: -1 } })), muc: 1, de: '$x = -1$ có phải là nghiệm của phương trình $3x + 7 = 3 - x$ không?',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Thay $x = -1$ vào **từng vế** rồi tính.', 'Nếu hai vế bằng nhau thì $x = -1$ là nghiệm.'],
         loiGiai: ['Vế trái: $3\\cdot(-1) + 7 = 4$.', 'Vế phải: $3 - (-1) = 4$.', 'Hai vế bằng nhau nên $x = -1$ **là** nghiệm. Chọn **Đúng**.'] },
 
-      { id: '25.3', muc: 1, de: 'Giải phương trình $4x - 12 = 0$.',
+      { id: '25.3', hinhGiai: hg(can(v(4, -12), v(0, 0), [b2(v(4, 0), v(0, 12)), b2(v(1, 0), v(0, 3))])), muc: 1, de: 'Giải phương trình $4x - 12 = 0$.',
         dapAn: { kieu: 'nghiem', gt: [3] },
         goiY: ['Chuyển $-12$ sang vế phải (nhớ đổi dấu).', 'Được $4x = 12$, chia hai vế cho $4$.'],
         loiGiai: ['$4x = 12$', '$x = 3$'],
@@ -191,13 +232,13 @@
           { gt: [-3], giaiThich: 'Chuyển $-12$ sang vế phải thành $+12$, nên $4x = 12$, $x = 3$.' },
           { gt: [8], giaiThich: 'Từ $4x = 12$ phải **chia** cho $4$, không phải trừ đi $4$.' }] },
 
-      { id: '25.4', muc: 1, de: 'Giải phương trình $7 - 2x = 0$.',
+      { id: '25.4', hinhGiai: hg(can(v(-2, 7), v(0, 0), [b2(v(2, 0), v(0, 7)), b2(v(1, 0), v(0, 3.5))])), muc: 1, de: 'Giải phương trình $7 - 2x = 0$.',
         dapAn: { kieu: 'nghiem', gt: [3.5] },
         goiY: ['Chuyển $7$ sang vế phải: $-2x = -7$.', 'Chia hai vế cho $-2$ (âm chia âm được dương).'],
         loiGiai: ['$-2x = -7$', '$x = \\frac{-7}{-2} = \\frac{7}{2}$'],
         loiThuongGap: [{ gt: [-3.5], giaiThich: '$(-7) : (-2) = \\frac{7}{2}$ (âm chia âm ra **dương**). Em nhớ hệ số của $x$ là $-2$ chứ không phải $2$.' }] },
 
-      { id: '25.5', muc: 2, de: 'Giải phương trình $\\frac{1}{2} + \\frac{3}{4}x = 0$.',
+      { id: '25.5', hinhGiai: hg(can(v(0.75, 0.5), v(0, 0), [b2(v(0.75, 0), v(0, -0.5)), b2(v(1, 0), v(0, -2 / 3))])), muc: 2, de: 'Giải phương trình $\\frac{1}{2} + \\frac{3}{4}x = 0$.',
         dapAn: { kieu: 'nghiem', gt: [-2 / 3] },
         goiY: ['Chuyển $\\frac{1}{2}$ sang vế phải: $\\frac{3}{4}x = -\\frac{1}{2}$.', 'Chia cho $\\frac{3}{4}$ tức là nhân với $\\frac{4}{3}$.'],
         loiGiai: ['$\\frac{3}{4}x = -\\frac{1}{2}$', '$x = -\\frac{1}{2}\\cdot\\frac{4}{3} = -\\frac{2}{3}$'],
@@ -205,25 +246,25 @@
           { gt: [-3 / 8], giaiThich: 'Em đã **nhân** với $\\frac{3}{4}$. Muốn tìm $x$ phải **chia** cho $\\frac{3}{4}$, tức là nhân với $\\frac{4}{3}$.' },
           { gt: [2 / 3], giaiThich: 'Chuyển $\\frac{1}{2}$ sang vế phải phải đổi dấu thành $-\\frac{1}{2}$, nên nghiệm âm.' }] },
 
-      { id: '25.6', muc: 2, de: 'Giải phương trình $6x - (2x + 5) = 3(x - 1)$.',
+      { id: '25.6', hinhGiai: hg(can(v(4, -5), v(3, -3), [b2(v(1, 0), v(0, 2))], { ghiChu: SAU_QUY_DONG })), muc: 2, de: 'Giải phương trình $6x - (2x + 5) = 3(x - 1)$.',
         dapAn: { kieu: 'nghiem', gt: [2] },
         goiY: ['Bỏ ngoặc: trước $(2x + 5)$ là dấu trừ nên **đổi dấu cả hai** hạng tử.', '$6x - 2x - 5 = 3x - 3$. Chuyển $x$ sang trái, số sang phải.'],
         loiGiai: ['$6x - 2x - 5 = 3x - 3$', '$6x - 2x - 3x = -3 + 5$', '$x = 2$'],
         loiThuongGap: [{ gt: [-8], giaiThich: 'Bỏ ngoặc $-(2x + 5)$ phải được $-2x - 5$ (đổi dấu **cả** số $5$), em đã viết $-2x + 5$.' }] },
 
-      { id: '25.7', muc: 2, de: 'Giải phương trình $x + \\frac{x - 2}{3} = 4 - \\frac{x + 1}{2}$.',
+      { id: '25.7', hinhGiai: hg(can(v(8, -4), v(-3, 21), [b2(v(11, 0), v(0, 25)), b2(v(1, 0), v(0, 25 / 11))], { ghiChu: SAU_QUY_DONG })), muc: 2, de: 'Giải phương trình $x + \\frac{x - 2}{3} = 4 - \\frac{x + 1}{2}$.',
         dapAn: { kieu: 'nghiem', gt: [25 / 11] },
         goiY: ['Mẫu chung là $6$. Nhân **mọi** hạng tử của hai vế với $6$.', '$6x + 2(x - 2) = 24 - 3(x + 1)$. Bỏ ngoặc rồi chuyển vế.'],
         loiGiai: ['$6x + 2(x - 2) = 24 - 3(x + 1)$', '$6x + 2x - 4 = 24 - 3x - 3$', '$8x + 3x = 21 + 4$, tức là $11x = 25$', '$x = \\frac{25}{11}$'],
         loiThuongGap: [{ gt: [5 / 11], giaiThich: 'Khi khử mẫu, số $4$ (không có mẫu) cũng phải nhân với $6$ thành $24$.' }] },
 
-      { id: '25.8', muc: 2, de: 'Giải phương trình $2(x + 3) - x = x + 5$. (Nếu vô nghiệm, em gõ **vô nghiệm**; nếu mọi số đều là nghiệm, gõ **vô số nghiệm**.)',
+      { id: '25.8', hinhGiai: hg(can(v(1, 6), v(1, 5), [b2(v(0, 6), v(0, 5))])), muc: 2, de: 'Giải phương trình $2(x + 3) - x = x + 5$. (Nếu vô nghiệm, em gõ **vô nghiệm**; nếu mọi số đều là nghiệm, gõ **vô số nghiệm**.)',
         dapAn: { kieu: 'nghiem', gt: 'voNghiem' },
         goiY: ['Bỏ ngoặc rồi thu gọn vế trái: $2x + 6 - x$ thu gọn thành $x + 6$.', 'Chuyển vế, em được $0x = \\ldots$. Có số nào nhân với $0$ ra số khác $0$ không?'],
         loiGiai: ['$2x + 6 - x = x + 5$', '$x + 6 = x + 5$', '$x - x = 5 - 6$, tức là $0x = -1$', 'Không có số nào nhân với $0$ được $-1$. Vậy phương trình **vô nghiệm**.'],
         loiThuongGap: [{ gt: [-1], giaiThich: '$0x = -1$ không có nghĩa $x = -1$: thay $x = -1$ vào thì $0\\cdot(-1) = 0 \\ne -1$. Phương trình vô nghiệm.' }] },
 
-      { id: '25.9', muc: 2, de: 'Độ C và độ F liên hệ bởi công thức $C = \\frac{5}{9}(F - 32)$. Hỏi $25\\,^{\\circ}\\mathrm{C}$ ứng với bao nhiêu độ F?',
+      { id: '25.9', khongHinh: 'Bài thay số vào công thức, không cần cân.', muc: 2, de: 'Độ C và độ F liên hệ bởi công thức $C = \\frac{5}{9}(F - 32)$. Hỏi $25\\,^{\\circ}\\mathrm{C}$ ứng với bao nhiêu độ F?',
         dapAn: { kieu: 'so', gt: 77 },
         goiY: ['Thay $C = 25$: được phương trình ẩn $F$.', '$25 = \\frac{5}{9}(F - 32)$. Nhân hai vế với $\\frac{9}{5}$.'],
         loiGiai: ['$25 = \\frac{5}{9}(F - 32)$', '$F - 32 = 25\\cdot\\frac{9}{5} = 45$', '$F = 45 + 32 = 77$'],
@@ -231,19 +272,19 @@
           { gt: 45, giaiThich: '$45$ mới là $F - 32$. Còn phải cộng thêm $32$.' },
           { gt: 13, giaiThich: 'Từ $F - 32 = 45$, chuyển $-32$ sang vế phải thành $+32$: $F = 45 + 32$.' }] },
 
-      { id: '25.10', muc: 3, de: 'Hiện nay tuổi mẹ gấp $4$ lần tuổi Minh. Sau $5$ năm nữa, tổng số tuổi của hai mẹ con là $50$. Hỏi hiện nay Minh bao nhiêu tuổi?',
+      { id: '25.10', hinhGiai: hg(can(v(5, 10), v(0, 50), [b2(v(5, 0), v(0, 40)), b2(v(1, 0), v(0, 8))])), muc: 3, de: 'Hiện nay tuổi mẹ gấp $4$ lần tuổi Minh. Sau $5$ năm nữa, tổng số tuổi của hai mẹ con là $50$. Hỏi hiện nay Minh bao nhiêu tuổi?',
         dapAn: { kieu: 'so', gt: 8 },
         goiY: ['Gọi $x$ là tuổi Minh hiện nay thì tuổi mẹ là $4x$.', 'Sau $5$ năm, **cả hai** người đều thêm $5$ tuổi: $(x + 5) + (4x + 5) = 50$.'],
         loiGiai: ['Gọi $x$ (tuổi) là tuổi Minh hiện nay, $x > 0$. Tuổi mẹ là $4x$.', 'Sau $5$ năm: $(x + 5) + (4x + 5) = 50$', '$5x + 10 = 50$, nên $5x = 40$', 'Tuổi Minh hiện nay: $x = 8$'],
         loiThuongGap: [{ gt: 9, giaiThich: 'Sau $5$ năm **cả Minh lẫn mẹ** đều thêm $5$ tuổi, tổng tăng $10$ chứ không phải $5$.' }] },
 
-      { id: '25.11', muc: 3, de: 'Lan mua $4$ quyển vở và $1$ quyển truyện; riêng quyển truyện giá $45$ nghìn đồng. Hương mua $2$ quyển vở cùng loại và $1$ quyển sách; riêng quyển sách giá $63$ nghìn đồng. Tổng số tiền hai bạn trả bằng nhau. Mỗi quyển vở giá bao nhiêu nghìn đồng?',
+      { id: '25.11', hinhGiai: hg(can(v(4, 45), v(2, 63), [b2(v(2, 0), v(0, 18)), b2(v(1, 0), v(0, 9))])), muc: 3, de: 'Lan mua $4$ quyển vở và $1$ quyển truyện; riêng quyển truyện giá $45$ nghìn đồng. Hương mua $2$ quyển vở cùng loại và $1$ quyển sách; riêng quyển sách giá $63$ nghìn đồng. Tổng số tiền hai bạn trả bằng nhau. Mỗi quyển vở giá bao nhiêu nghìn đồng?',
         dapAn: { kieu: 'so', gt: 9 },
         goiY: ['Gọi $x$ (nghìn đồng) là giá một quyển vở. Lan trả $4x + 45$, Hương trả $2x + 63$.', 'Lập phương trình $4x + 45 = 2x + 63$ rồi giải.'],
         loiGiai: ['Gọi $x$ (nghìn đồng) là giá một quyển vở, $x > 0$.', '$4x + 45 = 2x + 63$', '$4x - 2x = 63 - 45$, tức là $2x = 18$', 'Giá một quyển vở: $x = 9$'],
         loiThuongGap: [{ gt: 18, giaiThich: '$18$ nghìn đồng là giá của **hai** quyển vở ($2x = 18$). Em còn phải chia cho $2$.' }] },
 
-      { id: '25.12', muc: 3, de: 'Bác Ba gửi tiết kiệm $200$ triệu đồng kì hạn $1$ năm. Cuối kì bác nhận cả vốn lẫn lãi $213$ triệu đồng. Lãi suất là bao nhiêu **phần trăm** một năm?',
+      { id: '25.12', khongHinh: 'Bài về lãi suất, tính bằng phần trăm trực tiếp.', muc: 3, de: 'Bác Ba gửi tiết kiệm $200$ triệu đồng kì hạn $1$ năm. Cuối kì bác nhận cả vốn lẫn lãi $213$ triệu đồng. Lãi suất là bao nhiêu **phần trăm** một năm?',
         dapAn: { kieu: 'so', gt: 6.5 },
         goiY: ['Gọi $x$ là lãi suất (số thập phân). Tiền lãi là $200x$.', 'Vốn + lãi: $200 + 200x = 213$. Giải ra $x$ rồi đổi sang phần trăm.'],
         loiGiai: ['$200 + 200x = 213$', '$200x = 13$, nên $x = 0{,}065$', 'Đổi sang phần trăm: lãi suất $= 6{,}5$ (%)'],

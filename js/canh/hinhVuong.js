@@ -85,16 +85,19 @@
     mk('line', { x1: trai, y1: 0, x2: phai, y2: 0, stroke: 'var(--muc)', 'stroke-width': 0.07 }, svg);
     mk('line', { x1: 0, y1: 0, x2: 0, y2: -tren, stroke: 'var(--muc)', 'stroke-width': 0.16 }, svg);
     mk('line', { x1: a, y1: 0, x2: 0, y2: -h, stroke: 'var(--tg)', 'stroke-width': 0.2, 'stroke-linecap': 'round' }, svg);
-    C.chu(svg, a / 2, a / 2, C.fmt(k.dienTich.a), 0.55, '--b');
-    C.chu(svg, (h + a) * 0.62, -(h + a) * 0.59, C.fmt(k.dienTich.c), 0.8, '--cc');
-    C.chu(svg, -h / 2, -h / 2, xong ? C.fmt(k.dienTich.h) : '?', xong ? 1 : 1.3, '--a');
-    C.chu(svg, a / 2, -0.45, C.fmt(a) + don, 0.45);
-    C.chu(svg, a * 0.95, -h * 0.52, C.fmt(c) + don, 0.45);
+    // o.an: ô chưa biết là cạnh góc vuông h (mặc định) hay cạnh huyền c; co là cỡ chữ theo độ lớn hình
+    var anC = o.an === 'c', co = (2 * h + a) / 30;
+    C.chu(svg, (h + a) * 0.62, -(h + a) * 0.59, anC && !xong ? '?' : C.fmt(k.dienTich.c), (anC && !xong ? 2.6 : 1.6) * co, '--cc');
+    C.chu(svg, -h / 2, -h / 2, xong || anC ? C.fmt(k.dienTich.h) : '?', (xong || anC ? 2 : 2.6) * co, '--a');
+    C.chu(svg, a / 2, a / 2, C.fmt(k.dienTich.a), 1.1 * co, '--b');
+    C.chu(svg, a / 2, -0.9 * co, C.fmt(a) + don, 0.9 * co);
+    if (!anC || xong) C.chu(svg, a * 0.5 + 1.9 * co, -h * 0.52, C.fmt(c) + don, 0.9 * co);
+    if (anC) C.chu(svg, -1.9 * co, -h / 2, C.fmt(h) + don, 0.9 * co);
     if (k.thu) {
       // Vẽ đúng độ cao em vừa gõ (quá cao thì dừng ở mép khung và ghi số)
       var v = Math.min(k.thu.h, tren - 0.4);
       mk('line', { x1: a, y1: 0, x2: 0, y2: -v, stroke: 'var(--sai)', 'stroke-width': 0.09, 'stroke-dasharray': '.25 .15' }, svg);
-      C.chu(svg, -0.15, -v + 0.05, 'h = ' + C.fmt(k.thu.h), 0.5, '--sai', { style: 'fill:var(--sai);text-anchor:end' });
+      C.chu(svg, -0.15, -v + 0.05, 'h = ' + C.fmt(k.thu.h), co, '--sai', { style: 'fill:var(--sai);text-anchor:end' });
     }
   };
 
@@ -114,7 +117,7 @@
       mk('rect', Object.assign({ width: w, height: h, 'stroke-width': 0.14 * u }, net), svg);
       mk('line', { x1: 0, y1: 0, x2: w, y2: h, stroke: 'var(--muc)', 'stroke-width': 0.14 * u }, svg);
       C.chu(svg, -u, h / 2, C.fmt(h), 0.95 * u);
-      C.chu(svg, w * 0.58, h * 0.4, C.fmt(k.huyen), 0.95 * u);
+      C.chu(svg, w * 0.58, h * 0.4, o.nhanHuyen || C.fmt(k.huyen), 0.95 * u);
       C.chu(svg, w / 2, h + 1.2 * u, chuDap(), 1.1 * u, '--a');
     } else if (o.mau === 'can') {
       var n = k.canhA, cao = k.canhB, v = Math.max(2 * n, cao) / 6;

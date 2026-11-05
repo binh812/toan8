@@ -8,7 +8,8 @@
   function tong(p, t) {
     var a = p.a, b = p.b, g = (a + b) * 0.1 * (1 - C.muot(t / 0.8));
     var m = [manh('a2', -g, -g, a, a, 1, '--a'), manh('ab1', a + g, -g, b, a, 1, '--cc'), manh('ab2', -g, a + g, a, b, 1, '--cc'), manh('b2', a + g, a + g, b, b, 1, '--b')];
-    if (p.trangThai === 'thieuHaiManh') m.forEach(function (x) { if (x.ten === 'ab1' || x.ten === 'ab2') x.an = true; });
+    if (p.trangThai === 'thieuHaiManh') { m[1].an = true; m[2].an = true; }
+    if (p.trangThai === 'thieuMotManh') m[2].an = true;
     return { a: a, b: b, manh: m, khung: { w: a + b, h: a + b } };
   }
   function hieu(p, t) {
@@ -30,7 +31,7 @@
   }
   C.dangKi('manhVuong', {
     thamSo: { a: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'Cạnh b', mau: '--b' } },
-    trangThai: { thieuHaiManh: true },
+    trangThai: { thieuHaiManh: true, thieuMotManh: true },
     tinh: function (p, t, o) {
       var dang = (o && o.dang) || 'tong';
       if (dang === 'tong') return tong(p, t);
@@ -53,7 +54,7 @@
   C.lay('manhVuong').ve = function (svg, k, p, t, o) {
     var dang = o.dang || 'tong', nh = o.nhan || {}, tenA = o.tenA || 'a', tenB = o.tenB || 'b', a = k.a, b = k.b;
     var ab = nh.ab || (tenA + tenB), a2 = nh.a2 || (tenA + '²'), b2 = nh.b2 || (tenB + '²');
-    var rong = k.khung.w, cao = k.khung.h, l = Math.max(rong, cao), lech = dang === 'tong' ? 0.1 * l : 0, d = 0.14 * l + lech, co = 0.06 * l;
+    var rong = k.khung.w, cao = k.khung.h, l = Math.max(rong, cao), lech = dang === 'tong' ? 0.1 * l : 0, d = (dang === 'hieuHaiBP' ? 0.22 : 0.14) * l + lech, co = 0.06 * l;
     svg.setAttribute('viewBox', [-d, -d, rong + 2 * d, cao + 2 * d].join(' '));
     var nhCanh = { 'font-style': 'italic' };
     if (dang === 'tong') {
@@ -79,7 +80,9 @@
       });
       var b2m = k.manh[3];
       veManh(svg, b2m, co * 0.8, '+' + b2, { opacity: b2m.hien });
-      C.chu(svg, r / 2, -d * 0.35, nh.hieu || (tenA + '−' + tenB), co, '--a', nhCanh);
+      // Chưa cắt thì cạnh là a; cắt dải đầu tiên rồi mới lộ phần a−b còn lại
+      C.chu(svg, a / 2, -d * 0.35, tenA, co, '--a', Object.assign({ opacity: 1 - k.manh[1].hien }, nhCanh));
+      C.chu(svg, r / 2, -d * 0.35, nh.hieu || (tenA + '−' + tenB), co, '--a', Object.assign({ opacity: k.manh[1].hien }, nhCanh));
       C.chu(svg, r + b / 2, -d * 0.35, tenB, co, '--b', Object.assign({ opacity: k.manh[1].hien }, nhCanh));
       C.chu(svg, r + b / 2, r / 2, '−' + ab, co * 0.8, '--sai', { opacity: k.manh[1].hien });
       C.chu(svg, r / 2, r + b / 2, '−' + ab, co * 0.8, '--sai', { opacity: k.manh[2].hien });
@@ -94,7 +97,7 @@
       k.manh.forEach(function (m) { veManh(svg, m, co, null); });
       C.chu(svg, a / 2, -d * 0.35, tenA, co, '--a', Object.assign({ opacity: 1 - ket }, nhCanh));
       C.chu(svg, (a + b) / 2, -d * 0.35, nh.tong || (tenA + '+' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
-      C.chu(svg, -d * 0.45, xa / 2, nh.hieu || (tenA + '−' + tenB), co, '--muc', nhCanh);
+      C.chu(svg, -d * 0.5, xa / 2, nh.hieu || (tenA + '−' + tenB), co, '--muc', nhCanh);
     }
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

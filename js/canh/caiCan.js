@@ -31,12 +31,14 @@
   }
   // Tách một vế thành các vật: x, quả 10, quả 1; số âm thành bóng bay
   function vatCua(v) {
-    var nang = [], bong = [], i, tach = function (so, ds) {
-      for (i = 0; i < Math.floor(so / 10); i++) ds.push('10');
-      for (i = 0; i < Math.round(so % 10); i++) ds.push('1');
+    var nang = [], bong = [], i, tach = function (so, ds, duoi) {
+      var chuc = duoi ? 0 : Math.floor(so / 10), don = Math.floor(so - chuc * 10), le = Math.round((so - chuc * 10 - don) * 100) / 100;
+      for (i = 0; i < chuc; i++) ds.push('10');
+      for (i = 0; i < don; i++) ds.push(duoi ? 'x' : '1');
+      if (le) ds.push(C.fmt(le) + (duoi ? 'x' : ''));
     };
-    for (i = 0; i < Math.abs(v.x); i++) (v.x > 0 ? nang : bong).push('x');
-    tach(Math.abs(v.so), v.so > 0 ? nang : bong);
+    tach(Math.abs(v.x), v.x > 0 ? nang : bong, true);
+    tach(Math.abs(v.so), v.so > 0 ? nang : bong, false);
     return { nang: nang, bong: bong };
   }
   function veDia(svg, cx, cy, v) {
@@ -45,20 +47,24 @@
     var tungHang = function (i) { return { x: cx - (MOI_HANG - 1) * O / 2 + (i % MOI_HANG) * O, h: Math.floor(i / MOI_HANG) }; };
     vat.nang.forEach(function (ten, i) {
       var q = tungHang(i), y = cy - O - q.h * O;
-      mk('rect', { x: q.x - O / 2 + 0.2, y: y + 0.2, width: O - 0.4, height: O - 0.4, rx: 0.5, fill: ten === 'x' ? 'var(--a)' : ten === '10' ? 'var(--muc)' : 'var(--tg)' }, svg);
-      C.chu(svg, q.x, y + O / 2, ten, 2.9, null, { style: 'fill:var(--mat)' });
+      mk('rect', { x: q.x - O / 2 + 0.2, y: y + 0.2, width: O - 0.4, height: O - 0.4, rx: 0.5, fill: /x/.test(ten) ? 'var(--a)' : ten === '10' ? 'var(--muc)' : 'var(--tg)' }, svg);
+      C.chu(svg, q.x, y + O / 2, ten, ten.length > 2 ? 1.7 : 2.9, null, { style: 'fill:var(--mat)' });
     });
     var dinhVat = cy - O * Math.ceil(vat.nang.length / MOI_HANG);
     vat.bong.forEach(function (ten, i) {
       var q = tungHang(i), y = dinhVat - 8 - q.h * O;
       mk('line', { x1: q.x, y1: y + O / 2 - 0.2, x2: q.x, y2: dinhVat, stroke: 'var(--nhat)', 'stroke-width': 0.2 }, svg);
       mk('circle', { cx: q.x, cy: y, r: O / 2 - 0.1, fill: 'var(--b)', 'fill-opacity': 0.85 }, svg);
-      C.chu(svg, q.x, y, ten === 'x' ? 'x' : ten, 2.2, null, { style: 'fill:var(--mat)' });
+      C.chu(svg, q.x, y, ten, ten.length > 2 ? 1.6 : 2.2, null, { style: 'fill:var(--mat)' });
     });
   }
-  C.lay('caiCan').ve = function (svg, k, p) {
-    var mk = C.mk, cao = 30, nua = 34, tam = 50;
-    svg.setAttribute('viewBox', '-3 -12 106 90');
+  C.lay('caiCan').ve = function (svg, k, p, t, o) {
+    var mk = C.mk, cao = 30, nua = 34, tam = 50, gia = o.anLucDau && t === 0;
+    // Có bóng bay ở bước nào thì mới chừa chỗ phía trên; cả cảnh dùng một khung để hình không nhảy giữa các bước
+    var coBong = [{ trai: o.trai, phai: o.phai }].concat(o.buoc || []).some(function (s) { return s.trai.x < 0 || s.trai.so < 0 || s.phai.x < 0 || s.phai.so < 0; });
+    svg.setAttribute('viewBox', coBong ? '-3 -12 106 90' : '-3 14 106 64');
+    // Đề lời văn: chưa bấm nút thì cân còn trống, để em tự lập phương trình trước
+    if (gia) k = { trai: { x: 0, so: 0 }, phai: { x: 0, so: 0 }, lech: 0, thu: null };
     // Lệch thì nghiêng ít nhất 3°, để lệch nhỏ vẫn nhìn ra; vế nặng hơn đi xuống
     var goc = Math.abs(k.lech) < 1e-9 ? 0 : (k.lech > 0 ? 1 : -1) * C.kep(Math.abs(k.lech) * 3, 3, 14);
     var r = goc * Math.PI / 180, dx = nua * Math.cos(r), dy = nua * Math.sin(r);
@@ -72,7 +78,7 @@
     veDia(svg, trai.x, trai.y + treo, k.trai);
     veDia(svg, phai.x, phai.y + treo, k.phai);
     var bang = Math.abs(k.lech) < 1e-9;
-    C.chu(svg, tam, 73, viet(k.trai) + (bang ? ' = ' : ' ≠ ') + viet(k.phai), 4.4, bang ? null : '--sai');
+    C.chu(svg, tam, 73, gia ? 'Hai đĩa là hai vế nào?' : viet(k.trai) + (bang ? ' = ' : ' ≠ ') + viet(k.phai), 4.4, bang ? null : '--sai');
     if (k.thu != null) {
       var x = k.thu, vt = k.trai.x * x + k.trai.so, vp = k.phai.x * x + k.phai.so;
       C.chu(svg, trai.x, trai.y + treo + 7, C.fmt(vt), 3.4, bang ? '--cc' : '--sai');

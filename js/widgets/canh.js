@@ -37,6 +37,8 @@
     khung.appendChild(svg);
     chua.appendChild(khung);
     var tua = null, cacBuoc = [], nhanSo = {}, inputSo = {}, dauVong = 0, dieuKhien = null;
+    var dongSo = cfg.dongSo ? khung.appendChild(el('div', { class: 'c-so' })) : null, dongCu = null;
+    if (cfg.ghiChu) khung.appendChild(el('p', { class: 'c-ghi-chu' }, cfg.ghiChu));
 
     function capNhat() {
       veLai(svg, canh, p, t, cfg.tuyChon);
@@ -45,6 +47,10 @@
       (cfg.buoc || []).forEach(function (b, i) { if (t >= b.t - 1e-9) dang = i; });
       cacBuoc.forEach(function (li, i) { li.classList.toggle('dang', i === dang); });
       Object.keys(nhanSo).forEach(function (k) { nhanSo[k].textContent = C.fmt(p[k]); inputSo[k].value = p[k]; });
+      if (dongSo) {
+        var moi = cfg.dongSo(p, C.fmt);
+        if (moi !== dongCu) { dongCu = moi; dongSo.innerHTML = T.md(moi); }
+      }
     }
 
     if (cfg.buoc && cfg.buoc.length) {
@@ -76,7 +82,7 @@
     if (cfg.tuChay !== false && !cfg.chiXem && T.tuChay) {
       dieuKhien = T.tuChay.dangKi(khung, {
         buoc: function (dt) {
-          dauVong = (dauVong + dt / VONG) % 1;
+          dauVong = (dauVong + dt / (cfg.giay || VONG)) % 1;
           t = tuVong(dauVong);
           capNhat();
         }
