@@ -30,6 +30,8 @@ Tiến độ lưu trong trình duyệt của máy đang dùng; nút "Lưu tiến
 Hình động theo từng chương: mô hình diện tích (hằng đẳng thức), hình kéo được (tứ giác, Thalès, đồng dạng), đồ thị có thanh trượt
 (hàm số bậc nhất), biểu đồ đổi dạng (thống kê), thí nghiệm tung đồng xu/gieo xúc xắc/vòng quay (xác suất), hình chóp 3D xoay và trải phẳng.
 
+Cách học "Nhìn là hiểu" đang thử trên 3 bài: bài 6 (hằng đẳng thức), bài 25 (phương trình), bài 35 (Pythagore). Tab đầu cho thấy bằng hình vì sao công thức đúng, giải một bài ngay trên hình (gõ sai thì hình chỉ ra sai ở đâu), rồi đến ba đề cùng một khuôn.
+
 ## Cho người phát triển
 - `npm install` rồi `npm run libs` – chép thư viện vào `lib/` (đã có sẵn trong repo).
 - `npm test` – kiểm thử parser, chấm đáp án, lưu tiến độ, kiểm tra nội dung.
@@ -39,9 +41,10 @@ Hình động theo từng chương: mô hình diện tích (hằng đẳng thứ
 - Luyện thêm: `content/luyen/luyenNN.js` – `TOAN8.luyen(id, [{ ten, muc, sinh(r, cc) }], { deCo })`, mỗi dạng trả về một câu hỏi theo hạt giống (`js/core/rng.js`); validator sinh thử 300 đề mỗi dạng. In mẫu đề để soát: `node tools/dump-luyen.js <id>`.
 - Bài nền lớp 6–7: `content/nen/*.js` – `TOAN8.nen({ id, ten, lop, tomTat, viDu, luyen })`; kiểm tra đầu chương: `kiemTra` trong `content/index.js`.
 - Tự chạy: `js/widgets/autoplay.js` dựng sẵn cho thanh trượt, điểm kéo, xác suất, hình chóp, biểu đồ; kịch bản riêng qua `config.tuChay`. Kiểm: `node tools/smoke-tuchay.js`.
+- Nhìn là hiểu: khối `nhin` trong `content/baiNN.js` (khuôn ở `docs/superpowers/specs/2026-11-04-toan8-nhin-la-hieu-design.md`); cảnh hình ở `js/canh/` gồm `tinh` (test trong `tests/canh.test.js`) và `ve`; kiểm bằng `node tools/smoke-canh.js`, `node tools/smoke-nhin.js`.
 - Hình động: `js/widgets/` – `dienTich`, `geo` (JSXGraph), `figure.js` (hình tĩnh cho đề), `doThi`, `hinhChop`, `bieuDo`, `xacSuat`; cấu hình ghi ở chú thích `cfg:` đầu mỗi hàm.
 
 ## Nguồn và giấy phép
 - Nội dung bài tập, ví dụ, lời giải là tự soạn theo dạng bài SGK; mỗi bài ghi trang SGK tương ứng.
   SGK gốc (bản PDF, chỉ dùng tham khảo trong gia đình) không nằm trong repo.
-- Thư viện (xem `lib/VERSIONS.txt`): KaTeX (MIT), JSXGraph (LGPL/MIT), MathLive (MIT), nerdamer (Apache-2.0 / xem `lib/nerdamer/LICENSE.md`).
+- Thư viện (xem `lib/VERSIONS.txt`): phông Be Vietnam Pro và Bricolage Grotesque (OFL, `lib/fonts`), KaTeX (MIT), JSXGraph (LGPL/MIT), MathLive (MIT), nerdamer (Apache-2.0 / xem `lib/nerdamer/LICENSE.md`).
