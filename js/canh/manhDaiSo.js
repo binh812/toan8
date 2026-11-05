@@ -6,10 +6,11 @@
   function hopLe(p) { return { a: p.a, b: Math.max(0.5, Math.min(p.b, p.a - 0.5)) }; }
 
   function tong(p, t) {
-    var a = p.a, b = p.b, g = (a + b) * 0.1 * (1 - C.muot(t / 0.8));
+    var a = p.a, b = p.b, g = (a + b) * 0.1 * (1 - C.muot((t - 0.1) / 0.7));
     var m = [manh('a2', -g, -g, a, a, 1, '--a'), manh('ab1', a + g, -g, b, a, 1, '--cc'), manh('ab2', -g, a + g, a, b, 1, '--cc'), manh('b2', a + g, a + g, b, b, 1, '--b')];
     if (p.trangThai === 'thieuHaiManh') { m[1].an = true; m[2].an = true; }
     if (p.trangThai === 'thieuMotManh') m[2].an = true;
+    if (p.trangThai === 'thieuManhB') m[3].an = true;
     return { a: a, b: b, manh: m, khung: { w: a + b, h: a + b } };
   }
   function hieu(p, t) {
@@ -31,7 +32,7 @@
   }
   C.dangKi('manhVuong', {
     thamSo: { a: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'Cạnh b', mau: '--b' } },
-    trangThai: { thieuHaiManh: true, thieuMotManh: true },
+    trangThai: { thieuHaiManh: true, thieuMotManh: true, thieuManhB: true },
     tinh: function (p, t, o) {
       var dang = (o && o.dang) || 'tong';
       if (dang === 'tong') return tong(p, t);
@@ -54,19 +55,20 @@
   C.lay('manhVuong').ve = function (svg, k, p, t, o) {
     var dang = o.dang || 'tong', nh = o.nhan || {}, tenA = o.tenA || 'a', tenB = o.tenB || 'b', a = k.a, b = k.b;
     var ab = nh.ab || (tenA + tenB), a2 = nh.a2 || (tenA + '²'), b2 = nh.b2 || (tenB + '²');
-    var rong = k.khung.w, cao = k.khung.h, l = Math.max(rong, cao), lech = dang === 'tong' ? 0.1 * l : 0, d = (dang === 'hieuHaiBP' ? 0.22 : 0.14) * l + lech, co = 0.06 * l;
+    var rong = k.khung.w, cao = k.khung.h, l = Math.max(rong, cao), lech = dang === 'tong' ? 0.1 * l : 0, d = (dang === 'hieuHaiBP' ? 0.22 : 0.14) * l + lech, co = 0.072 * l;
     svg.setAttribute('viewBox', [-d, -d, rong + 2 * d, cao + 2 * d].join(' '));
     var nhCanh = { 'font-style': 'italic' };
     if (dang === 'tong') {
       k.manh.forEach(function (m) {
-        var chu = m.ten === 'a2' ? a2 : m.ten === 'b2' ? b2 : ab;
+        // o.anAb: chưa làm thì hai mảnh giữa ghi dấu hỏi, để em tự tính
+        var chu = m.ten === 'a2' ? a2 : m.ten === 'b2' ? b2 : o.anAb && t < 1 && !m.an && !p.trangThai ? '?' : ab;
         if (!m.an) { veManh(svg, m, co, chu); return; }
         // Mảnh bị thiếu: chỉ còn viền đứt, để thấy ngay chỗ trống
         C.mk('polygon', { points: C.diem(m.dinh), fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '6 4' }, svg);
         var x = 0, y = 0; m.dinh.forEach(function (q) { x += q[0] / 4; y += q[1] / 4; });
         C.chu(svg, x, y, 'thiếu ' + chu, co * 0.85, '--sai');
       });
-      var g = lech * (1 - C.muot(t / 0.8));
+      var g = lech * (1 - C.muot((t - 0.1) / 0.7));
       C.chu(svg, a / 2, -g - d * 0.35, tenA, co, '--a', nhCanh);
       C.chu(svg, a + g + b / 2, -g - d * 0.35, tenB, co, '--b', nhCanh);
       C.chu(svg, -g - d * 0.35, a / 2, tenA, co, '--a', nhCanh);
@@ -96,8 +98,11 @@
       C.chu(svg, lo.x + lo.w / 2, lo.y + lo.h / 2, 'bỏ ' + b2, co * 0.8, '--sai', { opacity: lo.hien });
       k.manh.forEach(function (m) { veManh(svg, m, co, null); });
       C.chu(svg, a / 2, -d * 0.35, tenA, co, '--a', Object.assign({ opacity: 1 - ket }, nhCanh));
+      // Hai cạnh mới chỉ hiện khi đã ghép xong, kẻo lộ đáp án từ đầu
+      C.chu(svg, a / 2, xa / 2, a2 + ' − ' + b2, co * 0.85, '--a', { opacity: 1 - ket });
+      C.chu(svg, lo.x + lo.w + d * 0.3, lo.y + lo.h / 2, tenB, co, '--b', Object.assign({ opacity: lo.hien }, nhCanh));
       C.chu(svg, (a + b) / 2, -d * 0.35, nh.tong || (tenA + '+' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
-      C.chu(svg, -d * 0.5, xa / 2, nh.hieu || (tenA + '−' + tenB), co, '--muc', nhCanh);
+      C.chu(svg, -d * 0.5, xa / 2, nh.hieu || (tenA + '−' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
     }
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

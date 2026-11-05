@@ -43,6 +43,7 @@
     function capNhat() {
       veLai(svg, canh, p, t, cfg.tuyChon);
       if (tua) tua.value = Math.round(t * 100);
+      if (cfg.khiDoiT) cfg.khiDoiT(t);
       var dang = -1;
       (cfg.buoc || []).forEach(function (b, i) { if (t >= b.t - 1e-9) dang = i; });
       cacBuoc.forEach(function (li, i) { li.classList.toggle('dang', i === dang); });
@@ -57,7 +58,7 @@
       var ds = el('ol', { class: 'c-buoc' });
       cfg.buoc.forEach(function (b) {
         var li = el('li', { html: T.md(b.chu).replace(/^<p>|<\/p>$/g, '') });
-        li.addEventListener('click', function () { dung(); t = b.t; capNhat(); });
+        li.addEventListener('click', function () { dung(); dat(b.t); });
         ds.appendChild(li);
         cacBuoc.push(li);
       });
@@ -66,7 +67,7 @@
     if (!cfg.chiXem) {
       var dk = el('div', { class: 'c-dk' });
       tua = el('input', { type: 'range', min: 0, max: 100, value: 0, 'aria-label': 'Tua hình' });
-      tua.addEventListener('input', function () { t = tua.value / 100; capNhat(); });
+      tua.addEventListener('input', function () { dat(tua.value / 100); });
       dk.appendChild(el('label', { class: 'c-dong' }, el('span', null, 'Tua'), tua, el('span')));
       Object.keys(canh.thamSo || {}).forEach(function (k) {
         var s = canh.thamSo[k], inp = el('input', { type: 'range', min: s.min, max: s.max, step: s.step, value: p[k], 'aria-label': s.nhan || k });
@@ -89,9 +90,11 @@
       });
     }
     function dung() { if (dieuKhien) dieuKhien.dungLai(); }
+    // Đặt t và dời vị trí trong vòng tự chạy theo, để bấm Tự chạy lại không làm hình nhảy
+    function dat(v) { t = C.kep(v, 0, 1); dauVong = DUNG_DAU + CHAY * t; capNhat(); }
 
     return {
-      datT: function (v) { dung(); t = C.kep(v, 0, 1); dauVong = DUNG_DAU + CHAY * t; capNhat(); },
+      datT: function (v) { dung(); dat(v); },
       datThamSo: function (o) { dung(); Object.keys(o).forEach(function (k) { p[k] = o[k]; }); capNhat(); },
       datTrangThai: function (ten) { dung(); p.trangThai = ten; capNhat(); },
       layT: function () { return t; },

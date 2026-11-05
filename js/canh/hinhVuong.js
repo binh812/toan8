@@ -7,13 +7,13 @@
       var a = p.a, b = p.b, s = a + b;
       // Mỗi tam giác chỉ tịnh tiến; trượt lần lượt để mắt theo kịp và không đè lên nhau
       var goc = [
-        { p: [[0, 0], [a, 0], [0, b]], d: [0, a], tu: 0.6 },
-        { p: [[s, 0], [s, a], [a, 0]], d: [0, 0], tu: 0 },
-        { p: [[s, s], [b, s], [s, a]], d: [-b, 0], tu: 0.3 },
-        { p: [[0, s], [0, b], [b, s]], d: [a, -b], tu: 0 }
+        { p: [[0, 0], [a, 0], [0, b]], d: [0, a], tu: 0.7 },
+        { p: [[s, 0], [s, a], [a, 0]], d: [0, 0], tu: 0.1 },
+        { p: [[s, s], [b, s], [s, a]], d: [-b, 0], tu: 0.4 },
+        { p: [[0, s], [0, b], [b, s]], d: [a, -b], tu: 0.1 }
       ];
       var tamGiac = goc.map(function (g) {
-        var k = C.muot((t - g.tu) / 0.4);
+        var k = C.muot((t - g.tu) / 0.3);
         return g.p.map(function (q) { return [q[0] + g.d[0] * k, q[1] + g.d[1] * k]; });
       });
       return { a: a, b: b, s: s, tamGiac: tamGiac, oC: [[a, 0], [s, a], [b, s], [0, b]],
@@ -54,7 +54,7 @@
     var s = k.s, d = 0.1 * s, co = 0.062 * s, mk = C.mk, a = k.a, b = k.b;
     svg.setAttribute('viewBox', [-d, -d, s + 2 * d, s + 2 * d].join(' '));
     mk('rect', { width: s, height: s, fill: 'var(--mat)' }, svg);
-    var mC = 1 - C.muot(t / 0.15), mS = C.muot((t - 0.85) / 0.15);
+    var mC = 1 - C.muot((t - 0.1) / 0.1), mS = C.muot((t - 0.85) / 0.15);
     mk('polygon', { points: C.diem(k.oC), fill: 'var(--cc)', 'fill-opacity': 0.32, opacity: mC }, svg);
     [[k.oA, '--a'], [k.oB, '--b']].forEach(function (x) {
       mk('rect', { x: x[0].x, y: x[0].y, width: x[0].w, height: x[0].h, fill: 'var(' + x[1] + ')', 'fill-opacity': 0.32, opacity: mS }, svg);
@@ -65,18 +65,20 @@
     mk('rect', { width: s, height: s, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke' }, svg);
     var it = { 'font-style': 'italic' };
     C.chu(svg, s / 2, s / 2, 'c²', co * 1.5, '--cc', Object.assign({ opacity: mC }, it));
+    // Ghi c lên một cạnh của hình vuông giữa, lệch vào trong để không đè lên tam giác
+    C.chu(svg, (a + s) / 2 - co * 0.7, a / 2 + co * 0.7, 'c', co, '--cc', Object.assign({ opacity: mC }, it));
     C.chu(svg, a / 2, a / 2, 'a²', co * 1.3, '--a', Object.assign({ opacity: mS }, it));
     C.chu(svg, a + b / 2, a + b / 2, 'b²', co * 1.3, '--b', Object.assign({ opacity: mS }, it));
     C.chu(svg, a / 2, -d / 2, 'a', co, '--a', it);
     C.chu(svg, a + b / 2, -d / 2, 'b', co, '--b', it);
     // Cạnh trái đổi thứ tự b, a thành a, b khi tam giác đã trượt xong
-    var e = C.muot(t / 0.9);
+    var e = C.muot((t - 0.1) / 0.8);
     C.chu(svg, -d / 2, b / 2 + a * e, 'b', co, '--b', it);
     C.chu(svg, -d / 2, b + a / 2 - b * e, 'a', co, '--a', it);
   };
 
   C.lay('baHinhVuong').ve = function (svg, k, p, t, o) {
-    var mk = C.mk, a = k.a, h = k.h, c = k.c, don = o.don == null ? ' m' : o.don, tren = h + a + 0.8;
+    var mk = C.mk, a = k.a, h = k.h, c = k.c, don = o.don == null ? ' m' : o.don, tren = h + a + 0.8, donViDT = don.trim() + '²';
     svg.setAttribute('viewBox', [-h - 0.8, -tren, 2 * h + a + 1.6, tren + a + 0.8].join(' '));
     var trai = -h - 0.8, phai = h + a + 0.8, xong = t >= 1 || p.trangThai === 'giai';
     mk('rect', { x: 0, y: 0, width: a, height: a, fill: 'var(--b)', 'fill-opacity': 0.3 }, svg);
@@ -86,9 +88,14 @@
     mk('line', { x1: 0, y1: 0, x2: 0, y2: -tren, stroke: 'var(--muc)', 'stroke-width': 0.16 }, svg);
     mk('line', { x1: a, y1: 0, x2: 0, y2: -h, stroke: 'var(--tg)', 'stroke-width': 0.2, 'stroke-linecap': 'round' }, svg);
     // o.an: ô chưa biết là cạnh góc vuông h (mặc định) hay cạnh huyền c; co là cỡ chữ theo độ lớn hình
+    // o.an === 'biet': đề đã cho đủ ba cạnh, không có ô chưa biết
+    if (o.an === 'biet') xong = true;
     var anC = o.an === 'c', co = (2 * h + a) / 30;
     C.chu(svg, (h + a) * 0.62, -(h + a) * 0.59, anC && !xong ? '?' : C.fmt(k.dienTich.c), (anC && !xong ? 2.6 : 1.6) * co, '--cc');
-    C.chu(svg, -h / 2, -h / 2, xong || anC ? C.fmt(k.dienTich.h) : '?', (xong || anC ? 2 : 2.6) * co, '--a');
+    C.chu(svg, -h / 2, -h / 2, xong || anC ? C.fmt(k.dienTich.h) : '? ' + donViDT, (xong || anC ? 2 : 1.8) * co, '--a');
+    // Đặt tên độ cao ngay trên tường, để ô dấu hỏi không bị hiểu nhầm là độ cao
+    if (!anC && !xong) C.chu(svg, 0.9 * co, -h * 0.72, 'h', co, '--a', { 'font-style': 'italic' });
+    if (o.an === 'biet') C.chu(svg, -1.9 * co, -h / 2, C.fmt(h) + don, 0.9 * co);
     C.chu(svg, a / 2, a / 2, C.fmt(k.dienTich.a), 1.1 * co, '--b');
     C.chu(svg, a / 2, -0.9 * co, C.fmt(a) + don, 0.9 * co);
     if (!anC || xong) C.chu(svg, a * 0.5 + 1.9 * co, -h * 0.52, C.fmt(c) + don, 0.9 * co);
@@ -117,8 +124,8 @@
       mk('rect', Object.assign({ width: w, height: h, 'stroke-width': 0.14 * u }, net), svg);
       mk('line', { x1: 0, y1: 0, x2: w, y2: h, stroke: 'var(--muc)', 'stroke-width': 0.14 * u }, svg);
       C.chu(svg, -u, h / 2, C.fmt(h), 0.95 * u);
-      C.chu(svg, w * 0.58, h * 0.4, o.nhanHuyen || C.fmt(k.huyen), 0.95 * u);
-      C.chu(svg, w / 2, h + 1.2 * u, chuDap(), 1.1 * u, '--a');
+      C.chu(svg, w * 0.58, h * 0.4, o.an === 'huyen' && t < 1 ? '?' : o.nhanHuyen || C.fmt(k.huyen), 0.95 * u, o.an === 'huyen' ? '--a' : null);
+      C.chu(svg, w / 2, h + 1.2 * u, o.an === 'huyen' ? C.fmt(k.canhB) : chuDap(), 1.1 * u, o.an === 'huyen' ? null : '--a');
     } else if (o.mau === 'can') {
       var n = k.canhA, cao = k.canhB, v = Math.max(2 * n, cao) / 6;
       svg.setAttribute('viewBox', [-1.3 * v, -0.7 * v, 2 * n + 2.6 * v, cao + 2 * v].join(' '));

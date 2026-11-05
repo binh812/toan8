@@ -116,21 +116,26 @@
         dongSo: function (p, f) { var so = function (x) { return f(x).replace(',', '{,}'); };
           return 'Trước: phần trống $\\cc{c^2} = ' + so(p.a * p.a + p.b * p.b) + '$. Sau: $\\ca{a^2} + \\cb{b^2} = ' + so(p.a * p.a) + ' + ' + so(p.b * p.b) + ' = ' + so(p.a * p.a + p.b * p.b) + '$.'; } },
       buoc: [
-        { t: 0, chu: 'Trong khung là bốn tam giác vuông giống nhau. Phần còn trống là một hình vuông cạnh $\\cc{c}$.' },
-        { t: 0.5, chu: 'Trượt các tam giác đi. Không cắt, không đổi kích thước. Khung cũng giữ nguyên.' },
+        { t: 0, chu: 'Trong khung là bốn tam giác vuông giống nhau. Phần còn trống có bốn cạnh bằng $\\cc{c}$, và mỗi góc bằng $180^\\circ - 90^\\circ = 90^\\circ$ (hai góc nhọn của tam giác vuông cộng lại $90^\\circ$). Vậy đó là hình vuông.' },
+        { t: 0.1, chu: 'Trượt các tam giác đi. Không cắt, không đổi kích thước. Khung cũng giữ nguyên.' },
         { t: 1, chu: 'Phần trống giờ là hai hình vuông, cạnh $\\ca{a}$ và cạnh $\\cb{b}$.' }
       ],
       ketLuan: 'Khung và bốn tam giác không đổi nên phần trống không đổi: $$\\ca{a}^2 + \\cb{b}^2 = \\cc{c}^2$$',
       dung: {
         tieuDe: 'Cái thang này chạm tường ở độ cao nào?', tuBai: '35.11',
         canh: { ten: 'baHinhVuong', tuyChon: { a: 2.5, c: 6.5 }, moTa: 'Thang dài 6,5 mét dựa tường, chân thang cách tường 2,5 mét. Trên mỗi cạnh có một hình vuông, số bên trong là diện tích.' },
-        moiThu: 'Hình vuông lớn bằng tổng hai hình vuông nhỏ. Gõ bất kì số nào: nếu sai, hình sẽ vẽ đúng độ cao đó để em thấy vì sao.',
+        moiThu: 'Hình vuông lớn bằng tổng hai hình vuông nhỏ. Vậy ô dấu hỏi có diện tích bao nhiêu, và cạnh $h$ của nó dài bao nhiêu? Nếu gõ sai, hình sẽ vẽ đúng độ cao đó để em thấy vì sao.',
         soBatKi: function (v) {
-          if (v <= 0) return { loi: 'Độ cao phải lớn hơn $0$.' };
-          var so = function (x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); };
-          return { thamSo: { thu: v }, t: 0, loi: v >= 6.5
-            ? 'Độ cao $' + so(v) + '$ m thì cao hơn cả cái thang $6{,}5$ m. Có thể em đã cộng hai diện tích, trong khi hình vuông lớn đã là tổng rồi. Thử tính $42{,}25 - 6{,}25$.'
-            : 'Để chạm độ cao $' + so(v) + '$ m, thang chỉ cần dài $' + so(Math.sqrt(6.25 + v * v)) + '$ m, mà thang dài $6{,}5$ m. Thử tính $42{,}25 - 6{,}25$.' };
+          if (v <= 0) return { t: 0, loi: 'Độ cao phải lớn hơn $0$.' };
+          var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); };
+          var loi;
+          if (v === 36) loi = '$36$ đúng là diện tích ô dấu hỏi, nhưng đề hỏi **cạnh** $h$ của ô đó. Số nào bình phương lên bằng $36$?';
+          else if (v === 48.5) loi = 'Em đã cộng $42{,}25 + 6{,}25$, trong khi hình vuông lớn đã là tổng rồi. Phải lấy $42{,}25 - 6{,}25$.';
+          else if (v === 9) loi = 'Em đã cộng hai cạnh $6{,}5 + 2{,}5$. Định lí nói về **diện tích** các hình vuông, không cộng thẳng các cạnh.';
+          else if (v === 6.5) loi = 'Độ cao bằng đúng chiều dài thang thì thang phải dựng thẳng sát tường, mà chân thang còn cách tường $2{,}5$ m.';
+          else if (v > 6.5) loi = 'Độ cao $' + so(v) + '$ m cao hơn cả cái thang $6{,}5$ m, thang không với tới được.';
+          else loi = 'Để chạm độ cao $' + so(v) + '$ m, thang phải dài $' + so(Math.sqrt(6.25 + v * v)) + '$ m, mà thang dài $6{,}5$ m. Thử tính $42{,}25 - 6{,}25$.';
+          return { thamSo: { thu: v }, t: 0, loi: loi };
         },
         dungChu: '$42{,}25 - 6{,}25 = 36$, và $36$ là diện tích hình vuông cạnh $6$.'
       },
@@ -140,10 +145,13 @@
           { tuBai: '35.7', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'hcn', rong: 9, cheo: 15 }, moTa: 'Hình chữ nhật rộng 9, đường chéo 15.' }, tenNut: 'Tìm tam giác vuông',
             de: 'Một hình chữ nhật có chiều rộng $9$ cm và đường chéo $15$ cm. Chiều dài bằng bao nhiêu cm?', dapAn: { kieu: 'so', gt: 12 },
             goiY: ['Đường chéo chia hình chữ nhật thành hai tam giác vuông. Cạnh huyền là cạnh nào?'], loiGiai: ['Đường chéo $15$ là cạnh huyền, nên chiều dài bình phương bằng $15^2 - 9^2 = 144$.', 'Chiều dài bằng $12$ cm.'], loiThuongGap: [],
+            phanUng: [{ gt: 144, loi: '$144$ là **bình phương** của chiều dài. Chiều dài là số nào bình phương lên bằng $144$?' }],
             dungChu: '$15^2 - 9^2 = 225 - 81 = 144$, mà $144 = 12^2$.', saiChu: 'Trong tam giác tô màu, $15$ là cạnh huyền. Thử $15^2 - 9^2$.' },
           { tuBai: '35.6', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'can', cao: 4, day: 6 }, moTa: 'Tam giác cân có đường cao 4, đáy 6.' }, tenNut: 'Tìm tam giác vuông',
+            phanUng: [{ gt: 25, loi: '$25$ là **bình phương** của cạnh bên. Cạnh bên là số nào bình phương lên bằng $25$?' }],
             dungChu: '$3^2 + 4^2 = 9 + 16 = 25$, mà $25 = 5^2$.', saiChu: 'Đường cao chia đôi đáy, nên cạnh góc vuông là $3$ chứ không phải $6$.' },
           { tuBai: '35.10', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'taxi', d1: 5, d2: 8, d3: 1 }, moTa: 'Đường đi của taxi: 5 km, rẽ trái 8 km, rẽ phải 1 km.' }, tenNut: 'Tìm tam giác vuông',
+            phanUng: [{ gt: 100, loi: '$100$ là **bình phương** của khoảng cách. Khoảng cách là số nào bình phương lên bằng $100$?' }],
             dungChu: '$6^2 + 8^2 = 36 + 64 = 100$, mà $100 = 10^2$.', saiChu: 'Cạnh ngang của tam giác là $5 + 1 = 6$ km, cạnh dọc là $8$ km.' }
         ],
         cachNhan: 'Ba đề khác nhau, cùng một việc: tìm tam giác vuông, rồi xem cạnh nào là cạnh huyền.'
@@ -189,11 +197,11 @@
         { lam: '$AH \\cdot BC = AB \\cdot AC$ nên $AH = \\frac{6 \\cdot 8}{10} = 4{,}8$ (cm).', vi: 'Hai cách tính diện tích tam giác $ABC$ cho cùng một kết quả.' },
         { lam: '$BH^2 = AB^2 - AH^2 = 36 - 23{,}04 = 12{,}96$, nên $BH = 3{,}6$ (cm).', vi: 'Tam giác $AHB$ vuông tại $H$, cạnh huyền là $AB$.' },
         { lam: '$CH = BC - BH = 10 - 3{,}6 = 6{,}4$ (cm).', vi: '$H$ nằm giữa $B$ và $C$.' } ] },
-      { de: 'Tam giác có ba cạnh $7$ cm, $24$ cm, $25$ cm có phải tam giác vuông không?', canh: ba(7, 25), buoc: [
+      { de: 'Tam giác có ba cạnh $7$ cm, $24$ cm, $25$ cm có phải tam giác vuông không?', canh: { ten: 'baHinhVuong', tuyChon: { a: 7, c: 25, an: 'biet', don: ' cm' }, ghiChu: 'Hình vẽ sau khi đã kiểm: 49 + 576 = 625, nên tam giác vuông.' }, buoc: [
         { lam: 'Cạnh lớn nhất: $25^2 = 625$.', vi: 'Nếu là tam giác vuông thì cạnh huyền phải là cạnh lớn nhất.' },
         { lam: 'Tổng bình phương hai cạnh kia: $7^2 + 24^2 = 49 + 576 = 625$.', vi: 'So sánh với $625$.' },
         { lam: 'Bằng nhau nên tam giác vuông (định lí Pythagore đảo), góc vuông đối diện cạnh $25$ cm.', vi: 'Định lí đảo cho phép kết luận tam giác vuông.' } ] },
-      { de: 'Bạn Lan vẽ hình chữ nhật có chiều rộng $1$ và chiều dài $3$, rồi đặt trên trục số đoạn $OM$ bằng đường chéo ($M$ bên phải $O$). Điểm $M$ biểu diễn số nào?', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'hcn', rong: 1, cheo: Math.sqrt(10), nhanHuyen: '√10' } }, buoc: [
+      { de: 'Bạn Lan vẽ hình chữ nhật có chiều rộng $1$ và chiều dài $3$, rồi đặt trên trục số đoạn $OM$ bằng đường chéo ($M$ bên phải $O$). Điểm $M$ biểu diễn số nào?', canh: { ten: 'tamGiacAn', tuyChon: { mau: 'hcn', rong: 1, cheo: Math.sqrt(10), nhanHuyen: '√10', an: 'huyen' } }, buoc: [
         { lam: 'Đường chéo $d$ là cạnh huyền của tam giác vuông có hai cạnh $1$ và $3$.', vi: 'Đường chéo chia hình chữ nhật thành hai tam giác vuông.' },
         { lam: '$d^2 = 1^2 + 3^2 = 10$, nên $d = \\sqrt{10} \\approx 3{,}16$.', vi: '$10$ không là bình phương số tự nhiên nào nên để dạng căn.' },
         { lam: 'Điểm $M$ biểu diễn số $\\sqrt{10}$.', vi: 'Độ dài $OM$ chính là toạ độ của $M$.' } ] }
@@ -211,7 +219,7 @@
           loiThuongGap: [{ gt: 'sqrt(136)', giaiThich: 'Em cộng $100 + 36$. $AC$ là cạnh góc vuông nên phải **trừ**: $100 - 36 = 64$.' }] } ] }
     ],
     baiTap: [
-      { id: '35.1', hinhGiai: hg(ba(3, 5, 'c')), muc: 1, de: 'Cho tam giác $ABC$ vuông tại $A$. Khẳng định nào **đúng**?',
+      { id: '35.1', khongHinh: 'Câu nhận ra cạnh huyền theo tên đỉnh, hình ở phần Nhìn đã cho thấy.', muc: 1, de: 'Cho tam giác $ABC$ vuông tại $A$. Khẳng định nào **đúng**?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['$AB^2 + BC^2 = AC^2$', '$AC^2 + BC^2 = AB^2$', '$BC^2 - AC^2 = AB^2$', '$AB^2 - AC^2 = BC^2$'] },
         goiY: ['Cạnh huyền là cạnh đối diện góc vuông $A$, tức $BC$.', 'Định lí: $BC^2 = AB^2 + AC^2$. Chuyển vế xem phương án nào khớp.'],
         loiGiai: ['Tam giác vuông tại $A$ nên $BC^2 = AB^2 + AC^2$.', 'Chuyển $AC^2$ sang vế trái: $BC^2 - AC^2 = AB^2$. Đó là phương án thứ ba.'] },

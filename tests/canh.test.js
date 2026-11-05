@@ -109,6 +109,18 @@ test('caiCan: mỗi bước biến đổi giữ nguyên nghiệm', () => {
   assert.deepStrictEqual([...thay], [0, 1, 2, 3]);
   assert.throws(() => tinh('caiCan', {}, 1, { trai: { x: 3, so: 2 }, phai: { x: 1, so: 6 }, buoc: [{ trai: { x: 1, so: 0 }, phai: { x: 0, so: 3 } }] }), /nghiệm/);
 });
+test('caiCan: x âm thì khối x kéo lên, x dương thì đè xuống; đúng với cả hệ số âm', () => {
+  const o = { trai: { x: 4, so: 10 }, phai: { x: 0, so: 0 } };
+  assert.strictEqual(tinh('caiCan', {}, 0, o).xAm, true);
+  assert.strictEqual(tinh('caiCan', { thu: 3 }, 0, o).xAm, false);
+  assert.strictEqual(tinh('caiCan', { thu: -1 }, 0, DT).xAm, true);
+  assert.strictEqual(tinh('caiCan', {}, 0, DT).xAm, false);
+  assert.strictEqual(tinh('caiCan', {}, 0, { trai: { x: 1, so: 6 }, phai: { x: 1, so: 5 } }).xAm, false);
+});
+test('toHopHinhVuong: đứng yên ở đầu cảnh để câu đầu kịp nói về hình vuông c²', () => {
+  const dau = tinh('toHopHinhVuong', { a: 3, b: 4 }, 0), sau = tinh('toHopHinhVuong', { a: 3, b: 4 }, 0.09);
+  assert.deepStrictEqual(sau.tamGiac, dau.tamGiac);
+});
 test('dangKi trùng tên thì ném lỗi', () => {
   canh.dangKi('thuTrung', { tinh() {}, ve() {} });
   assert.throws(() => canh.dangKi('thuTrung', { tinh() {}, ve() {} }), /thuTrung/);

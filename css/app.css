@@ -326,3 +326,8 @@ math-field.mf:focus-within { border-color: var(--c); }
 .hero::before, .hero::after { display: none; }
 .hero { background: var(--paper); background-image: none; }
 .grid { align-items: start; }
+.c-khung .nut-tu-chay { position: static; display: block; margin: 10px 0 0 auto; }
+.hinh-nho .c-chu { display: none; }
+.nhin-ket.cho { opacity: .35; }
+.nhin-ket { transition: opacity .4s; }
+@media (prefers-reduced-motion: reduce) { .nhin-ket.cho { opacity: 1; } }

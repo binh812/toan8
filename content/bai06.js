@@ -22,7 +22,9 @@
   // Cấu hình hình cho "Nhìn là hiểu": x, y là số bất kì nên chỉ số cụ thể mới cần ghi "không theo tỉ lệ"
   var KHONG_TI_LE = 'Hình không theo tỉ lệ.';
   function mv(dang, tenA, tenB, a, b, nhan, ghiChu) {
-    return { ten: 'manhVuong', thamSo: { a: a, b: b }, tuyChon: { dang: dang, tenA: tenA, tenB: tenB, nhan: nhan }, ghiChu: ghiChu };
+    // Hình cắt bớt chỉ vẽ được khi cạnh lớn hơn phần cắt: nói rõ điều kiện đó
+    var chu = ghiChu || (dang === 'tong' ? null : 'Hình vẽ khi ' + tenA + ' lớn hơn ' + tenB + '.');
+    return { ten: 'manhVuong', thamSo: { a: a, b: b }, tuyChon: { dang: dang, tenA: tenA, tenB: tenB, nhan: nhan }, ghiChu: chu };
   }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
 
@@ -37,21 +39,22 @@
           return '$\\ca{' + so(p.a * p.a) + '} + \\cc{2 \\cdot ' + so(p.a * p.b) + '} + \\cb{' + so(p.b * p.b) + '} = ' + so((p.a + p.b) * (p.a + p.b)) + ' = (' + so(p.a) + ' + ' + so(p.b) + ')^2$'; } },
       buoc: [
         { t: 0, chu: 'Bốn mảnh: một hình vuông $\\ca{a^2}$, một hình vuông $\\cb{b^2}$ và **hai** mảnh chữ nhật $\\cc{ab}$.' },
-        { t: 0.4, chu: 'Đẩy các mảnh lại gần nhau. Không mảnh nào đổi kích thước.' },
+        { t: 0.1, chu: 'Đẩy các mảnh lại gần nhau. Không mảnh nào đổi kích thước.' },
         { t: 1, chu: 'Chúng ghép khít thành hình vuông cạnh $\\ca{a} + \\cb{b}$.' }
       ],
       ketLuan: 'Diện tích hình vuông lớn bằng tổng bốn mảnh: $$(\\ca{a} + \\cb{b})^2 = \\ca{a}^2 + \\cc{2ab} + \\cb{b}^2$$',
       dung: {
         tieuDe: 'Đừng quên hai mảnh ở giữa', tuBai: '6.1',
-        canh: mv('tong', 'x', '5', 5, 3, { a2: 'x²', ab: '5x', b2: '25' }),
+        canh: { ten: 'manhVuong', thamSo: { a: 5, b: 3 }, tuyChon: { dang: 'tong', tenA: 'x', tenB: '5', anAb: true, nhan: { a2: 'x²', ab: '5x', b2: '25' } } },
         phanUng: [
+          { gt: 'x^2+10x', trangThai: 'thieuManhB', loi: 'Còn trống góc dưới: em chưa tính mảnh $5 \\cdot 5 = 25$.' },
           { gt: 'x^2+25', trangThai: 'thieuHaiManh', loi: 'Hình vuông cạnh $x + 5$ còn trống hai chỗ. Em mới tính mảnh $x^2$ và mảnh $25$, còn thiếu **hai** mảnh $5x$.' },
           { gt: 'x^2+5x+25', trangThai: 'thieuMotManh', loi: 'Còn trống một chỗ: có **hai** mảnh $5x$, em mới tính một.' }
         ],
         dungChu: 'Đủ bốn mảnh: $x^2$, hai mảnh $5x$ và $25$.', saiChu: 'Đếm từng mảnh trên hình: một mảnh $x^2$, hai mảnh $5x$, một mảnh $25$.'
       },
       suyRa: {
-        tieuDe: 'Đề đổi, nhưng vẫn là những mảnh đó',
+        tieuDe: 'Cắt và ghép: vẫn là chuyện diện tích',
         baDe: [
           { tuBai: '6.8', canh: mv('hieuHaiBP', '50', '2', 5, 1, { a2: '50²', b2: '2²' }, KHONG_TI_LE), tenNut: 'Cắt và ghép lại',
             dungChu: '$52 \\cdot 48 = (50 + 2)(50 - 2) = 50^2 - 2^2 = 2496$.', saiChu: 'Hình chữ nhật $(50 + 2)(50 - 2)$ chính là hình vuông $50^2$ bỏ đi góc $2^2$.' },
@@ -60,7 +63,7 @@
           { tuBai: '6.7', canh: mv('hieuHaiBP', '2x', '3', 5, 2, { a2: '4x²', b2: '9' }), tenNut: 'Cắt và ghép lại',
             dungChu: '$4x^2 - 9 = (2x)^2 - 3^2 = (2x - 3)(2x + 3)$.', saiChu: '$4x^2$ là hình vuông cạnh $2x$, $9$ là hình vuông cạnh $3$. Sau khi ghép lại, hai cạnh là gì?' }
         ],
-        cachNhan: 'Thấy hai số cách đều một số tròn, hoặc một hiệu của hai bình phương: hãy nghĩ tới hình vuông bị khoét góc.'
+        cachNhan: 'Thấy hai số cách đều một số tròn, hoặc một hiệu của hai bình phương: nghĩ tới hình vuông bị khoét góc. Thấy một số gần số tròn được bình phương: nghĩ tới hình vuông bị cắt hai dải.'
       }
     },
     khamPha: {

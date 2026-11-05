@@ -164,7 +164,8 @@ function checkNhin(L, T) {
   if (!n.suyRa || !n.suyRa.cachNhan) errors.push(T + ' nhin.suyRa: thiếu cachNhan');
   ba.forEach((d, i) => {
     const tag = T + ' nhin.suyRa[' + i + ']';
-    checkCauNhin(tag, d, bt);
+    const cau = checkCauNhin(tag, d, bt);
+    (d.phanUng || []).forEach((u, k) => { if (cau.dapAn && C.checkAnswer(cau.dapAn, String(u.gt)).ok) errors.push(tag + ': phanUng[' + k + '] phanUng trùng đáp án'); });
     ['tenNut', 'dungChu', 'saiChu'].forEach(k => { if (!d[k]) errors.push(tag + ': thiếu ' + k); });
   });
   (L.viDu || []).forEach((v, i) => {

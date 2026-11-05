@@ -37,9 +37,13 @@ async function main() {
         await page.evaluate(i => document.querySelectorAll('.co-tu-chay')[i].scrollIntoView({ block: 'center' }), i);
         await sleep(500);
         const a = await page.evaluate((i, V) => eval(V)(document.querySelectorAll('.co-tu-chay')[i]), i, VAN);
-        await sleep(2500);
-        const b = await page.evaluate((i, V) => eval(V)(document.querySelectorAll('.co-tu-chay')[i]), i, VAN);
-        if (a === b) loi.push(where + ' – hình ' + (i + 1) + ': tự chạy không làm hình thay đổi');
+        // Lấy mẫu ở các thời điểm không đều: hình chạy tuần hoàn nên một mẫu có thể trùng đúng trạng thái cũ
+        let doi = false;
+        for (const ms of [900, 1300, 1700]) {
+          await sleep(ms);
+          if (a !== await page.evaluate((i, V) => eval(V)(document.querySelectorAll('.co-tu-chay')[i]), i, VAN)) { doi = true; break; }
+        }
+        if (!doi) loi.push(where + ' – hình ' + (i + 1) + ': tự chạy không làm hình thay đổi');
         const box = await page.evaluate(i => { const r = document.querySelectorAll('.co-tu-chay')[i].getBoundingClientRect(); return { x: r.left + 30, y: r.top + r.height / 2 }; }, i);
         const truoc = await page.evaluate(() => TOAN8.tuChay.soDangChay());
         await page.mouse.click(box.x, box.y);

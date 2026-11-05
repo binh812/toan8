@@ -97,14 +97,14 @@
   function b2(tr, ph) { return { trai: tr, phai: ph }; }
   function can(tr, ph, buoc, them) { return Object.assign({ ten: 'caiCan', tuyChon: { trai: tr, phai: ph, buoc: buoc } }, them); }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
-  var SAU_QUY_DONG = 'Hình bắt đầu từ lúc đã quy đồng và bỏ dấu ngoặc.';
+  var SAU_QUY_DONG = 'Hình bắt đầu từ lúc đã quy đồng và bỏ dấu ngoặc.', SAU_BO_NGOAC = 'Hình bắt đầu từ lúc đã bỏ dấu ngoặc và thu gọn.';
 
   TOAN8.bai({
     id: 25, ten: 'Phương trình bậc nhất một ẩn', sgk: { tap: 2, trang: 27 },
 
     nhin: {
-      tieuDe: 'Phương trình là một cái cân đang thăng bằng', loai: 'chungMinh',
-      luuY: 'Quả nặng là số dương, bóng bay kéo lên là số âm.',
+      tieuDe: 'Phương trình hỏi: $x$ bằng bao nhiêu thì cân thăng bằng?', loai: 'minhHoa',
+      luuY: 'Lập luận chung: nếu $A = B$ thì $A + C = B + C$, và trừ $C$ đi lại về như cũ, nên nghiệm không đổi. Quả nặng là số dương, bóng bay kéo lên là số âm; nếu $x$ âm thì khối $x$ cũng kéo lên.',
       canh: can(v(3, 2), v(1, 6), [b2(v(2, 2), v(0, 6)), b2(v(2, 0), v(0, 4)), b2(v(1, 0), v(0, 2))], { giay: 16, moTa: 'Cái cân với hai vế của phương trình, luôn thăng bằng sau mỗi bước.' }),
       buoc: [
         { t: 0, chu: 'Hai đĩa nặng bằng nhau: $3x + 2 = x + 6$. Mỗi khối cam là một $x$ chưa biết.' },
@@ -116,24 +116,26 @@
       dung: {
         tieuDe: 'Thay số vào, xem cân có thăng bằng không', tuBai: '25.3',
         canh: can(v(4, -12), v(0, 0), [], { moTa: 'Cái cân của phương trình 4x trừ 12 bằng 0.' }),
+        loiThuongGap: [],
         moiThu: 'Gõ một số: cân sẽ thay số đó vào $x$ và nghiêng theo kết quả.',
         soBatKi: function (x) {
-          var so = function (n) { return String(Math.round(n * 100) / 100).replace('.', '{,}'); };
-          return { thamSo: { thu: x }, loi: 'Thay $x = ' + so(x) + '$: vế trái bằng $' + so(4 * x - 12) + '$, vế phải bằng $0$. Hai vế khác nhau nên cân lệch.' };
+          var so = function (n) { return String(Math.round(n * 1000) / 1000).replace('.', '{,}'); };
+          return { thamSo: { thu: x }, loi: 'Thay $x = ' + so(x) + '$: vế trái bằng $' + so(4 * x - 12) + '$, vế phải bằng $0$. ' + (x > 3 ? 'Vế trái nặng hơn, thử $x$ nhỏ hơn.' : 'Vế trái nhẹ hơn, thử $x$ lớn hơn.') + ' Hoặc thả thêm $12$ quả vào mỗi đĩa cho hết bóng bay.' };
         },
         khiDung: { thu: 3 }, dungChu: 'Thay $x = 3$: $4 \\cdot 3 - 12 = 0$, cân thăng bằng.'
       },
       suyRa: {
         tieuDe: 'Đề đổi, nhưng vẫn là cái cân đó',
         baDe: [
-          { tuBai: '25.4', canh: can(v(-2, 7), v(0, 0), [b2(v(-2, 0), v(0, -7)), b2(v(2, 0), v(0, 7))]), tenNut: 'Chuyển dần sang hai đĩa',
+          { tuBai: '25.4', canh: can(v(-2, 7), v(0, 0), [], { tuyChon: { trai: v(-2, 7), phai: v(0, 0), anLucDau: true } }), tenNut: 'Đặt đề lên cân',
             dungChu: '$7 - 2x = 0$ nên $2x = 7$, tức $x = 3{,}5$.', saiChu: 'Bóng bay $2x$ đang kéo lên. Cân thăng bằng khi $2x$ bằng $7$.' },
-          { tuBai: '25.8', canh: can(v(1, 6), v(1, 5), [b2(v(0, 6), v(0, 5))]), tenNut: 'Nhấc x khỏi hai đĩa',
+          { tuBai: '25.8', canh: can(v(1, 6), v(1, 5), [], { tuyChon: { trai: v(1, 6), phai: v(1, 5), anLucDau: true } }), tenNut: 'Đặt đề lên cân',
             dungChu: 'Nhấc $x$ khỏi hai đĩa, còn $6$ và $5$: cân lệch với **mọi** $x$, nên phương trình vô nghiệm.', saiChu: 'Rút gọn vế trái được $x + 6$. Nhấc $x$ khỏi hai đĩa rồi xem cân.' },
-          { tuBai: '25.10', canh: can(v(5, 10), v(0, 50), [b2(v(5, 0), v(0, 40))], { tuyChon: { trai: v(5, 10), phai: v(0, 50), buoc: [b2(v(5, 0), v(0, 40))], anLucDau: true } }), tenNut: 'Đưa đề lên cân',
+          { tuBai: '25.10', canh: can(v(5, 10), v(0, 50), [], { tuyChon: { trai: v(5, 10), phai: v(0, 50), anLucDau: true } }), tenNut: 'Đặt đề lên cân',
+            phanUng: [{ gt: 50, loi: '$50$ là tổng số tuổi của hai mẹ con sau $5$ năm, đề hỏi tuổi Minh hiện nay. Đặt ẩn $x$ rồi lập phương trình.' }],
             dungChu: 'Hai người cùng thêm $5$ tuổi: $(x + 5) + (4x + 5) = 50$, nên $5x + 10 = 50$ và $x = 8$.', saiChu: 'Sau $5$ năm **cả hai** đều thêm $5$ tuổi, nên đĩa trái có thêm $10$ chứ không phải $5$.' }
         ],
-        cachNhan: 'Dù đề là phương trình hay lời văn: hai vế là hai đĩa cân, và cân phải thăng bằng.'
+        cachNhan: 'Dù đề là phương trình hay lời văn: hai vế là hai đĩa cân. Tìm $x$ để cân thăng bằng; không có $x$ nào như vậy thì vô nghiệm.'
       }
     },
     khamPha: {
@@ -184,12 +186,12 @@
       { de: 'Giải phương trình $3 - \\frac{1}{2}x = 0$.', canh: can(v(-0.5, 3), v(0, 0), [b2(v(-0.5, 0), v(0, -3)), b2(v(1, 0), v(0, 6))]), buoc: [
         { lam: '$-\\frac{1}{2}x = -3$', vi: 'Chuyển $3$ sang vế phải thành $-3$.' },
         { lam: '$x = (-3) : \\left(-\\frac{1}{2}\\right) = 6$', vi: 'Chia hai vế cho hệ số $-\\frac{1}{2}$. Chia cho $-\\frac{1}{2}$ cũng là nhân với $-2$.' } ] },
-      { de: 'Giải phương trình $4x - (3 - 2x) = 2(x + 5)$.', canh: can(v(6, -3), v(2, 10), [b2(v(6, -3), v(2, 10)), b2(v(4, 0), v(0, 13)), b2(v(4, 0), v(0, 13)), b2(v(1, 0), v(0, 13 / 4))], { ghiChu: SAU_QUY_DONG }), buoc: [
+      { de: 'Giải phương trình $4x - (3 - 2x) = 2(x + 5)$.', canh: can(v(6, -3), v(2, 10), [b2(v(6, -3), v(2, 10)), b2(v(4, 0), v(0, 13)), b2(v(4, 0), v(0, 13)), b2(v(1, 0), v(0, 13 / 4))], { ghiChu: SAU_BO_NGOAC }), buoc: [
         { lam: '$4x - 3 + 2x = 2x + 10$', vi: 'Bỏ ngoặc: trước $(3 - 2x)$ là dấu trừ nên đổi dấu cả hai hạng tử; nhân $2$ vào $(x + 5)$.' },
         { lam: '$4x + 2x - 2x = 10 + 3$', vi: 'Hạng tử chứa $x$ sang trái, số sang phải. $2x$ sang trái thành $-2x$; $-3$ sang phải thành $+3$.' },
         { lam: '$4x = 13$', vi: 'Thu gọn hai vế.' },
         { lam: '$x = \\frac{13}{4}$', vi: 'Chia hai vế cho $4$.' } ] },
-      { de: 'Giải phương trình $\\frac{2x - 1}{3} + x = 2 + \\frac{x + 1}{2}$.', canh: can(v(10, -2), v(3, 15), [b2(v(10, -2), v(3, 15)), b2(v(10, -2), v(3, 15)), b2(v(7, 0), v(0, 17)), b2(v(1, 0), v(0, 17 / 7)), b2(v(1, 0), v(0, 17 / 7))], { ghiChu: SAU_QUY_DONG }), buoc: [
+      { de: 'Giải phương trình $\\frac{2x - 1}{3} + x = 2 + \\frac{x + 1}{2}$.', canh: can(v(10, -2), v(3, 15), [b2(v(10, -2), v(3, 15)), b2(v(10, -2), v(3, 15)), b2(v(10, -2), v(3, 15)), b2(v(7, 0), v(0, 17)), b2(v(1, 0), v(0, 17 / 7))], { ghiChu: SAU_QUY_DONG }), buoc: [
         { lam: '$\\frac{2(2x - 1) + 6x}{6} = \\frac{12 + 3(x + 1)}{6}$', vi: 'Quy đồng hai vế với mẫu chung $6$ (BCNN của $3$ và $2$).' },
         { lam: '$2(2x - 1) + 6x = 12 + 3(x + 1)$', vi: 'Nhân hai vế với $6$ để khử mẫu.' },
         { lam: '$4x - 2 + 6x = 12 + 3x + 3$', vi: 'Bỏ dấu ngoặc.' },
@@ -246,7 +248,7 @@
           { gt: [-3 / 8], giaiThich: 'Em đã **nhân** với $\\frac{3}{4}$. Muốn tìm $x$ phải **chia** cho $\\frac{3}{4}$, tức là nhân với $\\frac{4}{3}$.' },
           { gt: [2 / 3], giaiThich: 'Chuyển $\\frac{1}{2}$ sang vế phải phải đổi dấu thành $-\\frac{1}{2}$, nên nghiệm âm.' }] },
 
-      { id: '25.6', hinhGiai: hg(can(v(4, -5), v(3, -3), [b2(v(1, 0), v(0, 2))], { ghiChu: SAU_QUY_DONG })), muc: 2, de: 'Giải phương trình $6x - (2x + 5) = 3(x - 1)$.',
+      { id: '25.6', hinhGiai: hg(can(v(4, -5), v(3, -3), [b2(v(1, 0), v(0, 2))], { ghiChu: SAU_BO_NGOAC })), muc: 2, de: 'Giải phương trình $6x - (2x + 5) = 3(x - 1)$.',
         dapAn: { kieu: 'nghiem', gt: [2] },
         goiY: ['Bỏ ngoặc: trước $(2x + 5)$ là dấu trừ nên **đổi dấu cả hai** hạng tử.', '$6x - 2x - 5 = 3x - 3$. Chuyển $x$ sang trái, số sang phải.'],
         loiGiai: ['$6x - 2x - 5 = 3x - 3$', '$6x - 2x - 3x = -3 + 5$', '$x = 2$'],
