@@ -220,13 +220,13 @@
         buoc: [
           { id: 'gt', chu: 'Tam giác $ABC$ có $MN \\parallel BC$, với $M$ nằm trên $AB$, $N$ nằm trên $AC$.', canh: { t: 0 } },
           { id: 'gocA', chu: 'Góc $A$ là góc chung của tam giác $AMN$ và tam giác $ABC$.', can: ['gt'], canh: { t: 0.25 } },
-          { id: 'gocM', chu: '$\\widehat{AMN} = \\widehat{ABC}$, vì là cặp góc đồng vị ($MN \\parallel BC$).', can: ['gt'], canh: { t: 0.25 } },
-          { id: 'gocN', chu: '$\\widehat{ANM} = \\widehat{ACB}$, vì là cặp góc đồng vị ($MN \\parallel BC$).', can: ['gt'], canh: { t: 0.25 } },
+          { id: 'dongVi', chu: '$\\widehat{AMN} = \\widehat{ABC}$ và $\\widehat{ANM} = \\widehat{ACB}$, vì là các cặp góc đồng vị ($MN \\parallel BC$).', can: ['gt'], canh: { t: 0.25 } },
           { id: 'th1', chu: 'Định lí Thalès với $MN \\parallel BC$: $\\frac{AM}{AB} = \\frac{AN}{AC}$.', can: ['gt'], canh: { t: 0.45 } },
-          { id: 'hbh', chu: 'Kẻ $NP \\parallel AB$ ($P$ trên $BC$). Tứ giác $MNPB$ có hai cặp cạnh đối song song nên là hình bình hành: $MN = BP$.', can: ['gt'], canh: { t: 0.75 } },
-          { id: 'th2', chu: 'Định lí Thalès với $NP \\parallel AB$: $\\frac{BP}{BC} = \\frac{AN}{AC}$.', can: ['hbh'], canh: { t: 0.95 } },
+          { id: 'ke', chu: 'Kẻ $NP \\parallel AB$, với $P$ nằm trên $BC$.', can: ['gt'], canh: { t: 0.6 } },
+          { id: 'hbh', chu: 'Tứ giác $MNPB$ có hai cặp cạnh đối song song nên là hình bình hành: $MN = BP$.', can: ['ke'], canh: { t: 0.75 } },
+          { id: 'th2', chu: 'Định lí Thalès với $NP \\parallel AB$: $\\frac{BP}{BC} = \\frac{AN}{AC}$.', can: ['ke'], canh: { t: 0.95 } },
           { id: 'ts', chu: 'Thay $BP = MN$: $\\frac{AM}{AB} = \\frac{AN}{AC} = \\frac{MN}{BC}$.', can: ['th1', 'hbh', 'th2'], canh: { t: 1 } },
-          { id: 'kl', chu: 'Ba cặp góc bằng nhau, ba cặp cạnh tỉ lệ, nên $\\triangle AMN \\backsim \\triangle ABC$.', can: ['gocA', 'gocM', 'gocN', 'ts'], canh: { t: 1 } }
+          { id: 'kl', chu: 'Ba cặp góc bằng nhau, ba cặp cạnh tỉ lệ, nên $\\triangle AMN \\backsim \\triangle ABC$.', can: ['gocA', 'dongVi', 'ts'], canh: { t: 1 } }
         ],
         ketLuan: 'Đường song song với một cạnh cắt ra một tam giác đồng dạng với tam giác đã cho: $\\triangle AMN \\backsim \\triangle ABC$.'
       } },

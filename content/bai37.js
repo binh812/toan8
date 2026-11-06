@@ -98,10 +98,10 @@
       luuY: 'Đếm ô nhỏ chỉ làm được khi $k$ là số nguyên. Với $k$ bất kì, mỗi ô vuông cạnh $1$ vẫn thành hình vuông cạnh $k$, diện tích $k \\cdot k$, nên hình ghép từ $n$ ô có diện tích $n \\cdot k^2$. Với tam giác cũng vậy: đáy và chiều cao cùng nhân $k$, nên diện tích $\\frac{1}{2} \\cdot \\text{đáy} \\cdot \\text{cao}$ nhân $k \\cdot k$.',
       canh: { ten: 'luoiO', moTa: 'Hình chữ L ghép từ 3 ô vuông cạnh 1, và hình phóng to k lần. Mỗi ô vuông cạnh k chia thành k nhân k ô nhỏ.',
         thuPha: true,
-        tuyChon: { chiTiet: true, nhan: { cu: '3 ô', moi: function (k, d) { return 3 * k * (d || k) + ' ô'; } } },
+        tuyChon: { chiTiet: true, nhan: { cu: '3 ô', moi: function (k, d) { return String(3 * k * (d || k)).replace('.', ',') + ' ô'; } } },
         dongSo: function (p) {
-          var d = Math.max(1, p.k + (p.them || 0));
-          if (d !== p.k) return 'Ngang nhân $' + p.k + '$, dọc nhân $' + d + '$: $3$ ô thành $3 \\cdot ' + p.k + ' \\cdot ' + d + ' = ' + 3 * p.k * d + '$ ô. Hình bị kéo dãn, không còn đồng dạng.';
+          var d = p.k + (p.them || 0) >= 1 ? p.k + (p.them || 0) : 0.5, s = function (x) { return String(x).replace('.', '{,}'); };
+          if (d !== p.k) return 'Ngang nhân $' + p.k + '$, dọc nhân $' + s(d) + '$: diện tích $3$ thành $3 \\cdot ' + p.k + ' \\cdot ' + s(d) + ' = ' + s(3 * p.k * d) + '$. Hình bị kéo dãn, không còn đồng dạng.';
           return '$k = ' + p.k + '$: $3$ ô thành $3 \\cdot ' + p.k + '^2 = ' + 3 * p.k * p.k + '$ ô. Diện tích gấp $' + p.k * p.k + '$ lần.';
         } },
       buoc: [
@@ -187,13 +187,13 @@
         buoc: [
           { id: 'gt', chu: 'Hình $\\mathcal{H}$ ghép từ $n$ ô vuông cạnh $1$, diện tích $n$. Hình $\\mathcal{H}\'$ đồng dạng với nó theo tỉ số $k$.', canh: { t: 0 } },
           { id: 'canh', chu: 'Mọi độ dài nhân $k$, nên mỗi ô biến thành một hình có bốn cạnh dài $k$.', can: ['gt'], canh: { t: 0.5 } },
-          { id: 'goc', chu: 'Phóng to hay thu nhỏ không làm đổi góc, nên bốn góc của hình ấy vẫn vuông.', can: ['gt'], canh: { t: 0.5 } },
+          { id: 'goc', chu: 'Hai hình đồng dạng có các góc tương ứng bằng nhau, nên bốn góc của hình ấy vẫn vuông.', can: ['gt'], canh: { t: 0.5 } },
           { id: 'hv', chu: 'Mỗi ô thành một hình vuông cạnh $k$, diện tích $k \\cdot k = k^2$.', can: ['canh', 'goc'], canh: { t: 0.6 } },
           { id: 'ghep', chu: 'Các ô cũ ghép khít, không chồng lên nhau, nên các ô mới cũng ghép khít thành $\\mathcal{H}\'$.', can: ['gt'], canh: { t: 0.5 } },
           { id: 'tong', chu: 'Diện tích $\\mathcal{H}\'$ bằng $n \\cdot k^2$.', can: ['hv', 'ghep'], canh: { t: 0.9 } },
           { id: 'kl', chu: 'Tỉ số diện tích: $\\frac{S\'}{S} = \\frac{n \\cdot k^2}{n} = k^2$.', can: ['tong'], canh: { t: 1 } }
         ],
-        ketLuan: 'Hai hình đồng dạng theo tỉ số $k$ thì diện tích gấp $k^2$ lần, không phải $k$ lần.'
+        ketLuan: 'Với hình ghép từ các ô vuông: hình đồng dạng với nó theo tỉ số $k$ có diện tích gấp $k^2$ lần, không phải $k$ lần.'
       } },
       { loai: 'chuY', noiDung: "**Hay nhầm 1 – đồng dạng ≠ đồng dạng phối cảnh.** Hai tam giác đều luôn đồng dạng, nhưng nếu một hình bị **xoay** thì các đường nối điểm tương ứng không đồng quy, nên chúng **không** phối cảnh.\n\n**Hay nhầm 2 – tỉ số ngược.** $k = \\frac{OA'}{OA}$: khoảng cách tới điểm của hình **mới** ở trên tử số." }
     ],

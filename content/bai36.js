@@ -240,7 +240,7 @@
     mucTieu: [
       'Nói được vì sao đường cao $AH$ chia tam giác vuông thành hai tam giác đồng dạng với tam giác lớn, bằng cách chỉ ra góc nhọn chung.',
       'Nhận ra hai tam giác vuông đồng dạng khi có một góc nhọn bằng nhau, hai cạnh góc vuông tỉ lệ, hoặc cạnh huyền và một cạnh góc vuông tỉ lệ.',
-      'Dùng $AH^2 = BH \\cdot CH$ và $AB^2 = BH \\cdot BC$ để tính đoạn chưa biết trong tam giác vuông có đường cao.',
+      'Chứng minh được $AH^2 = BH \\cdot CH$ từ hai tam giác vuông đồng dạng, rồi dùng nó để tính đoạn chưa biết trong tam giác vuông có đường cao.',
       'Đo chiều cao vật thật (cây, cột) nhờ hai tam giác vuông đồng dạng.'
     ],
     lyThuyet: [

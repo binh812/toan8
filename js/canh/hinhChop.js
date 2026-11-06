@@ -113,8 +113,9 @@
     var dA = Math.sqrt(l * l - a * a / 4), dB = Math.sqrt(l * l - b * b / 4);
     var P0 = [0, 0], P1 = [a, 0], S1 = [a / 2, dA];
     // Q: |P1Q| = l, |S1Q| = b, nằm bên phải S1; R: |P1R| = a, |QR| = l, nằm dưới Q
-    var Q = giaoTron(S1, b, P1, l).sort(function (u, v) { return v[0] - u[0]; })[0];
-    var Rr = giaoTron(P1, a, Q, l).sort(function (u, v) { return u[1] - v[1]; })[0];
+    // Mỗi tam giác mới nằm bên phải (chiều kim đồng hồ) cạnh bên chung đi ra từ P1, để các mặt không gập ngược đè lên nhau
+    var benPhai = function (U, ds) { return ds.filter(function (X) { return (U[0] - P1[0]) * (X[1] - P1[1]) - (U[1] - P1[1]) * (X[0] - P1[0]) < 0; })[0]; };
+    var Q = benPhai(S1, giaoTron(S1, b, P1, l)), Rr = benPhai(Q, giaoTron(P1, a, Q, l));
     var p = (2 * a + b) / 2, sxq = (2 * a * dA + b * dB) / 2;
     return { b: b, l: l, dA: dA, dB: dB, p: p, sxq: sxq, pd: p * dA,
       tamGiac: [[P0, P1, S1], [P1, Q, S1], [P1, Rr, Q]], doCao: [dA, dB, dA], day: [a, b, a] };
@@ -132,7 +133,7 @@
           var f = phaDayLech(k, lech);
           k.phaHinh = f;
           k.pha = { hong: true, b: f.b, dA: f.dA, dB: f.dB, p: f.p, sxq: f.sxq, pd: f.pd,
-            chu: 'Đáy $' + soVN(k.a) + '$; $' + soVN(k.a) + '$; $' + soVN(f.b) + '$, không đều. Mặt bên trên cạnh $' + soVN(f.b) + '$ có trung đoạn $' + bs(f.dB) + '$, hai mặt kia $' + bs(f.dA) + '$: không có một trung đoạn chung. $p \\cdot d ' + bs(f.pd) + '$ (lấy $d ' + bs(f.dA) + '$) nhưng $S_{xq} ' + bs(f.sxq) + '$. Ba tam giác cao khác nhau, xếp lại không thành hình chữ nhật.' };
+            chu: 'Đáy $' + soVN(k.a) + '$; $' + soVN(k.a) + '$; $' + soVN(f.b) + '$, không đều. Mặt bên trên cạnh $' + soVN(f.b) + '$ có trung đoạn $' + bs(f.dB) + '$, hai mặt kia $' + bs(f.dA) + '$: không có một trung đoạn chung. $p \\cdot d ' + bs(f.pd) + '$ (lấy $d ' + bs(f.dA) + '$) nhưng $S_{xq} ' + bs(f.sxq) + '$. Một tam giác cao khác hai tam giác kia, xếp lại không thành hình chữ nhật. (Lúc thử phá, hình chỉ vẽ ba mặt bên đã trải nên thanh Tua không có tác dụng; thanh $d$ chỉ dùng để đặt chiều cao hình chóp.)' };
         } else k.pha = { hong: false, chu: 'Đáy đều: ba mặt bên bằng nhau, cùng trung đoạn $d = ' + soVN(k.d) + '$, nên $S_{xq} = p \\cdot d = ' + soVN(k.p) + ' \\cdot ' + soVN(k.d) + ' = ' + soVN(k.p * k.d) + '$.' };
       }
       // Khung theo số đo, không theo t, để hình không nhảy khi chạy
@@ -246,7 +247,7 @@
       var Y = g.map(function (q) { return [q[0], -q[1]]; }), lech = i === 1;
       daGiac(svg, Y, { fill: lech ? HO_PHACH : 'var(--tg)', 'fill-opacity': lech ? 0.32 : 0.16, stroke: 'var(--muc)', 'stroke-width': 1.8, 'data-soi': lech ? 'matLech' : 'mat' });
       var c = tam(Y);
-      chuMau(svg, c[0], c[1] + co * 0.3, 'd ≈ ' + C.fmt(f.doCao[i]), co * 0.75, lech ? '--sai' : '--b');
+      chuMau(svg, c[0], c[1] + co * 0.3, 'd ≈ ' + C.fmt(f.doCao[i]), co * 0.75 * Math.min(1, f.day[i] / f.day[0]), lech ? '--sai' : '--b');
     });
   }
 
@@ -263,7 +264,7 @@
     return {
       mat: { tieuDe: 'Một mặt bên', chu: 'Tam giác cân đáy $a = ' + soVN(a) + '$, đường cao là trung đoạn $d = ' + soVN(d) + '$, diện tích $\\frac{a \\cdot d}{2} = ' + soVN(mat) + '$. Các mặt bên bằng nhau vì hình chóp đều có đáy đều và các cạnh bên bằng nhau ($' + bs(k.l) + '$).' },
       trungDoan: { tieuDe: 'Trung đoạn', chu: '$d = ' + soVN(d) + '$: đường cao của mặt bên, kẻ từ đỉnh. Mặt bên là tam giác cân nên nó vuông góc với cạnh đáy tại trung điểm.' },
-      day: { tieuDe: 'Mặt đáy', chu: 'Đa giác đều cạnh $a = ' + soVN(a) + '$. Nó không thuộc diện tích xung quanh, nên được bỏ ra trước khi xếp.' },
+      day: { tieuDe: 'Mặt đáy', chu: (k.n === 3 ? 'Tam giác đều' : 'Hình vuông') + ' cạnh $a = ' + soVN(a) + '$. Nó không thuộc diện tích xung quanh, nên được bỏ ra trước khi xếp.' },
       chuNhat: { tieuDe: 'Hình chữ nhật', chu: 'Dài $p = \\frac{' + k.n + ' \\cdot ' + soVN(a) + '}{2} = ' + soVN(k.p) + '$ (nửa chu vi đáy), cao $d = ' + soVN(d) + '$. Diện tích $p \\cdot d = ' + soVN(k.p * d) + '$, bằng tổng ' + k.n + ' mặt bên: $' + k.n + ' \\cdot ' + soVN(mat) + ' = ' + soVN(k.n * mat) + '$.' }
     };
   };

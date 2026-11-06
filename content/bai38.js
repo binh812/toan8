@@ -162,7 +162,7 @@
           { id: 'sxq', chu: 'Diện tích xung quanh là tổng diện tích ba mặt bên, nên trải ba mặt ra mặt bàn không làm đổi nó.', can: ['gt'], canh: { t: 0.4 } },
           { id: 'cat', chu: 'Cắt một mặt bên theo trung đoạn: được hai tam giác vuông, mỗi tam giác cao $d$.', can: ['gt'], canh: { t: 0.53 } },
           { id: 'xep', chu: 'Xếp các tam giác xen kẽ, một ngửa một úp: hai tam giác cạnh nhau áp khít theo một cạnh bên, vì các cạnh bên bằng nhau.', can: ['gt'], canh: { t: 0.75 } },
-          { id: 'hcn', chu: 'Mọi tam giác cao $d$, nên các đáy nằm trên một đường, các đỉnh nằm trên đường kia. Hai nửa ở hai đầu tạo góc vuông: được hình chữ nhật cao $d$.', can: ['cat', 'xep'], canh: { t: 0.9 } },
+          { id: 'hcn', chu: 'Mọi tam giác cao $d$, nên mỗi tam giác có cạnh đáy nằm trên một trong hai đường song song cách nhau $d$, đỉnh đối diện nằm trên đường còn lại. Hai nửa ở hai đầu tạo góc vuông: được hình chữ nhật cao $d$.', can: ['cat', 'xep'], canh: { t: 0.9 } },
           { id: 'dai', chu: 'Cạnh trên và cạnh dưới chia nhau đủ ba cạnh đáy, nên mỗi cạnh dài $\\frac{3a}{2} = p$, nửa chu vi đáy.', can: ['hcn'], canh: { t: 1 } },
           { id: 'kl', chu: 'Diện tích xung quanh bằng diện tích hình chữ nhật: $S_{xq} = p \\cdot d$.', can: ['sxq', 'dai'], canh: { t: 1 } }
         ],

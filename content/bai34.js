@@ -278,7 +278,7 @@
         canh: { ten: 'ggTrung' },
         buoc: [
           { id: 'gt', chu: "Hai tam giác có $\\widehat{B} = \\widehat{B'}$ và $\\widehat{C} = \\widehat{C'}$; chưa biết gì về các cạnh.", canh: { t: 0 } },
-          { id: 'dat', chu: "Trượt tam giác $ABC$ cho đỉnh $B$ trùng $B'$ và cạnh $BC$ nằm trên tia $B'C'$.", can: ['gt'], canh: { t: 0.5 } },
+          { id: 'dat', chu: "Trượt tam giác $ABC$ cho đỉnh $B$ trùng $B'$, cạnh $BC$ nằm trên tia $B'C'$, và đỉnh $A$ cùng phía với $A'$ so với đường thẳng $B'C'$.", can: ['gt'], canh: { t: 0.5 } },
           { id: 'tiaA', chu: "Vì $\\widehat{B} = \\widehat{B'}$, cạnh $BA$ nằm trên tia $B'A'$.", can: ['dat'], canh: { t: 0.5 } },
           { id: 'viTri', chu: "Góc $\\widehat{ACB}$ và góc $\\widehat{A'C'B'}$ giờ ở vị trí đồng vị: cùng có một cạnh trên đường thẳng $B'C'$, cùng nằm một phía.", can: ['dat'], canh: { t: 0.5 } },
           { id: 'ss', chu: "Cặp góc đồng vị ấy bằng nhau ($\\widehat{C} = \\widehat{C'}$), nên $AC \\parallel A'C'$.", can: ['tiaA', 'viTri'], canh: { t: 0.5 } },
