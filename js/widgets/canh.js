@@ -1,5 +1,5 @@
 // Widget cảnh: vẽ một cảnh trong js/canh/, có thanh tua, thanh đổi số, các bước sáng theo t, tự chạy lặp (T.tuChay) và chạm là dừng.
-// Thử phá: tham số có pha: true chỉ hiện khi cfg.thuPha; cảnh trả k.pha = { hong, chu } để báo công thức còn đúng hay hỏng.
+// Thử phá: tham số có pha: true chỉ hiện khi cfg.thuPha (tiêu đề nhóm lấy canh.tieuDePha nếu có); cảnh trả k.pha = { hong, chu } để báo công thức còn đúng hay hỏng.
 // Soi chi tiết: phần tử SVG có data-soi="khoá"; bấm vào thì hiện thẻ lấy từ canh.soi(k, p, o)[khoá], cfg.soi ghi đè.
 (function (T) {
   'use strict';
@@ -50,7 +50,8 @@
       kHienTai = veLai(svg, canh, p, t, cfg.tuyChon);
       if (oPha) {
         var ph = kHienTai && kHienTai.pha, moiPha = ph ? (ph.hong ? 'h' : 'd') + ph.chu : '';
-        if (moiPha !== phaCu) { phaCu = moiPha; oPha.className = 'c-pha' + (ph && ph.hong ? ' hong' : ''); oPha.innerHTML = ph ? T.md((ph.hong ? '✗ ' : '✓ ') + ph.chu) : ''; }
+        // chiHinh: hình không vẽ được nhưng công thức vẫn đúng (ví dụ số âm ở hằng đẳng thức), hiện vàng chứ không đỏ
+        if (moiPha !== phaCu) { phaCu = moiPha; oPha.className = 'c-pha' + (ph && ph.chiHinh ? ' chi-hinh' : ph && ph.hong ? ' hong' : ''); oPha.innerHTML = ph ? T.md((ph.chiHinh ? '⚠ ' : ph.hong ? '✗ ' : '✓ ') + ph.chu) : ''; }
       }
       if (soiDang) hienSoi(soiDang);
       if (tua) tua.value = Math.round(t * 100);
@@ -85,7 +86,7 @@
       Object.keys(canh.thamSo || {}).forEach(function (k) {
         var s = canh.thamSo[k];
         if (s.pha && !cfg.thuPha) return;
-        if (s.pha && !coPha) { coPha = true; dk.appendChild(el('div', { class: 'c-nhom-pha' }, 'Thử phá: kéo ra ngoài điều kiện của định lí')); }
+        if (s.pha && !coPha) { coPha = true; dk.appendChild(el('div', { class: 'c-nhom-pha' }, canh.tieuDePha || 'Thử phá: kéo ra ngoài điều kiện của định lí')); }
         var inp = el('input', { type: 'range', min: s.min, max: s.max, step: s.step, value: p[k], 'aria-label': s.nhan || k });
         inp.addEventListener('input', function () { p[k] = +inp.value; capNhat(); });
         inputSo[k] = inp;

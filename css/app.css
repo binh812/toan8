@@ -365,3 +365,4 @@ math-field.mf:focus-within { border-color: var(--c); }
 .ph-pct { margin-left: 10px; font-size: .85rem; color: var(--muted); }
 .ph-bai ul { margin: 6px 0 0; }
 .c-soi-ten { display: block; margin-bottom: 2px; }
+.c-pha.chi-hinh { background: var(--warn-bg); color: #8a5300; }
