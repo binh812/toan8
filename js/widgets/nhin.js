@@ -33,8 +33,10 @@
   // Chạy t từ 0 tới 1 cho hình hiện ra; ai cần giảm chuyển động thì hiện ngay
   function chayToi(w) {
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { w.datT(1); return; }
-    var dau = null;
+    // Mỗi lần bấm một lượt chạy mới; lượt cũ tự dừng, và em trả lời thì lượt đang chạy cũng dừng
+    var dau = null, luot = w.chay = {};
     (function buoc(n) {
+      if (w.chay !== luot) return;
       if (dau === null) dau = n;
       var k = Math.min(1, (n - dau) / THOI_GIAN_HIEN);
       w.datT(k);
@@ -42,9 +44,11 @@
     })(performance.now());
   }
   // Xử lý kết quả chấm, dùng chung cho Dùng và Suy ra
-  function khiCham(w, tin, d, kieu) {
+  // tSai: t của hình khi em sai mà không khớp lỗi nào. Phần Dùng giữ hình ở đầu (cuối cảnh thường là đáp số); thẻ Suy ra đã có nút chạy hình nên để cuối
+  function khiCham(w, tin, d, kieu, tSai) {
     return function (r, ct) {
-      // Mỗi lần thử bắt đầu lại từ hình gốc, để hình và lời nhắc không nói trái nhau
+      // Mỗi lần thử bắt đầu lại từ hình gốc, để hình và lời nhắc không nói trái nhau; dừng hình đang chạy dở từ nút
+      w.chay = null;
       w.datThamSo({ thu: undefined, trangThai: null });
       if (r.code === 'khongDoc') { w.datT(0); dat(tin, '', ''); return; }
       if (r.ok) {
@@ -63,7 +67,7 @@
         dat(tin, 'sai', u.loi);
         return;
       }
-      w.datT(d.saiT != null ? d.saiT : 1);
+      w.datT(d.saiT != null ? d.saiT : tSai);
       dat(tin, 'sai', d.saiChu || 'Chưa đúng. Nhìn lại hình rồi thử lần nữa.');
     };
   }
@@ -87,7 +91,7 @@
     var w = T.mountWidget(hinh, 'canh', Object.assign({ chiXem: true }, d.canh));
     var tin = el('p', { class: 'nhin-tin', role: 'status' }), q = cauHoi(bai, d, 'nhin');
     dat(tin, '', d.moiThu || 'Gõ thử đi. Nếu sai, hình sẽ cho thấy vì sao.');
-    T.mountQuestion(chu, q, { record: false, onResult: khiCham(w, tin, d, q.dapAn.kieu) });
+    T.mountQuestion(chu, q, { record: false, onResult: khiCham(w, tin, d, q.dapAn.kieu, 0) });
     chu.appendChild(tin);
   }
 
@@ -102,7 +106,7 @@
       var w = T.mountWidget(hinh, 'canh', Object.assign({ chiXem: true }, d.canh));
       the.appendChild(el('button', { class: 'btn ghost', type: 'button', onclick: function () { chayToi(w); } }, d.tenNut));
       var tin = el('p', { class: 'nhin-tin', role: 'status' }), q = cauHoi(bai, d, 'nhin');
-      T.mountQuestion(the, q, { record: false, onResult: khiCham(w, tin, d, q.dapAn.kieu) });
+      T.mountQuestion(the, q, { record: false, onResult: khiCham(w, tin, d, q.dapAn.kieu, 1) });
       the.appendChild(tin);
     });
     s.appendChild(el('p', { class: 'nhin-cach', html: T.mdInline(sr.cachNhan) }));

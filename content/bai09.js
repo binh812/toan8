@@ -55,7 +55,7 @@
             dungChu: '$37\\cdot 64 + 37\\cdot 36 = 37\\cdot (64 + 36) = 37\\cdot 100 = 3700$.', saiChu: 'Hai mảnh cùng cao $37$; ghép lại thành hình chữ nhật $37 \\times (64 + 36)$.' },
           { tuBai: '9.6', canh: an(B96), tenNut: 'Xếp bốn mảnh',
             dungChu: 'Bốn mảnh xếp thành hình vuông cạnh $3x + 1$: $9x^2 + 6x + 1 = (3x + 1)^2$.', saiChu: 'Mảnh $9x^2$ là hình vuông cạnh $3x$ (không phải $9x$), mảnh $1$ là hình vuông cạnh $1$; hai mảnh $3x$ lấp chỗ còn lại.' },
-          { tuBai: '9.5', canh: bp('x', '4', { a2: 'x²', b2: '16', tong: '?', hieu: '?' }, 'Hình vẽ khi x lớn hơn 4.'), tenNut: 'Cắt và ghép lại',
+          { tuBai: '9.5', canh: bp('x', '4', { a2: 'x²', b2: '16', tong: 'x + 4', hieu: 'x − 4', an: true }, 'Hình vẽ khi x lớn hơn 4.'), tenNut: 'Cắt và ghép lại',
             dungChu: '$x^2 - 16 = x^2 - 4^2 = (x - 4)(x + 4)$: hình chữ nhật cạnh $x + 4$ và $x - 4$.', saiChu: 'Hình vuông $x^2$ khoét góc $16 = 4^2$, cắt rồi ghép lại thành hình chữ nhật. Hai cạnh của nó là gì?' }
         ],
         cachNhan: 'Phân tích thành nhân tử là xếp các mảnh thành một hình chữ nhật. Các mảnh chung một cạnh: đặt nhân tử chung. Các mảnh ghép thành hình vuông, hay hình vuông khoét góc: dùng hằng đẳng thức.'

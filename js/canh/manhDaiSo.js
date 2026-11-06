@@ -55,6 +55,8 @@
   C.lay('manhVuong').ve = function (svg, k, p, t, o) {
     var dang = o.dang || 'tong', nh = o.nhan || {}, tenA = o.tenA || 'a', tenB = o.tenB || 'b', a = k.a, b = k.b;
     var ab = nh.ab || (tenA + tenB), a2 = nh.a2 || (tenA + '²'), b2 = nh.b2 || (tenB + '²');
+    // nhan.an: chưa giải thì hai cạnh của hình chữ nhật ghép lại ghi '?'
+    var anCanh = nh.an && p.trangThai !== 'giai';
     var rong = k.khung.w, cao = k.khung.h, l = Math.max(rong, cao), lech = dang === 'tong' ? 0.1 * l : 0, d = (dang === 'hieuHaiBP' ? 0.22 : 0.14) * l + lech, co = 0.072 * l;
     svg.setAttribute('viewBox', [-d, -d, rong + 2 * d, cao + 2 * d].join(' '));
     var nhCanh = { 'font-style': 'italic' };
@@ -101,8 +103,8 @@
       // Hai cạnh mới chỉ hiện khi đã ghép xong, kẻo lộ đáp án từ đầu
       C.chu(svg, a / 2, xa / 2, a2 + ' − ' + b2, co * 0.85, '--a', { opacity: 1 - ket });
       C.chu(svg, lo.x + lo.w + d * 0.3, lo.y + lo.h / 2, tenB, co, '--b', Object.assign({ opacity: lo.hien }, nhCanh));
-      C.chu(svg, (a + b) / 2, -d * 0.35, nh.tong || (tenA + '+' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
-      C.chu(svg, -d * 0.5, xa / 2, nh.hieu || (tenA + '−' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
+      C.chu(svg, (a + b) / 2, -d * 0.35, anCanh ? '?' : nh.tong || (tenA + '+' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
+      C.chu(svg, -d * 0.5, xa / 2, anCanh ? '?' : nh.hieu || (tenA + '−' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
     }
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

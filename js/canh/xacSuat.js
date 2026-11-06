@@ -237,7 +237,7 @@
       }
       // Số em gõ: một vạch trên thanh
       if (la(p.thu)) {
-        var xt = X0 + RONG * C.kep(p.thu, 0, 1.06);
+        var xt = X0 + RONG * C.kep(p.thu, 0, 1);
         mk('path', { d: 'M' + xt + ' ' + (by - 0.5) + 'l-1.6 -3h3.2z', fill: 'var(--sai)' }, svg);
         mk('line', { x1: xt, y1: by - 0.5, x2: xt, y2: by + bh + 0.5, stroke: 'var(--sai)', 'stroke-width': 0.6, 'stroke-dasharray': '1 0.6' }, svg);
         C.chu(svg, p.thu > 1 ? 50 : C.kep(xt, 22, 78), duoi + 5.5, (p.thu > 1 ? 'Em gõ ' + soViet(p.thu) + ': dài hơn cả thanh!' : 'Em gõ ' + soViet(p.thu)), 4.4, '--sai');
@@ -402,7 +402,7 @@
         mk('rect', { x: X0, y: y, width: k.L2, height: bh2, fill: 'var(--a)', 'fill-opacity': 0.12, stroke: 'var(--a)', 'stroke-width': 0.3 }, svg);
         if (k.sang2 > 0) mk('rect', { x: X0, y: y, width: k.sang2, height: bh2, fill: 'var(--cc)', 'fill-opacity': 0.8 }, svg);
         if (la(p.thu)) {
-          var xt = X0 + k.L2Day * C.kep(p.thu / k.m, 0, 1.06);
+          var xt = X0 + k.L2Day * C.kep(p.thu / k.m, 0, 1);
           mk('line', { x1: xt, y1: y - 1.5, x2: xt, y2: y + bh2 + 1.5, stroke: 'var(--sai)', 'stroke-width': 0.6, 'stroke-dasharray': '1 0.6' }, svg);
           C.chu(svg, p.thu > k.m ? 50 : C.kep(xt, 14, 86), y + bh2 + 4.5, 'Em gõ ' + soViet(p.thu) + (p.thu > k.m ? ': nhiều hơn cả ' + soLon(k.m) + '!' : ''), 4.2, '--sai');
           y += 6;
@@ -429,7 +429,7 @@
       C.chu(svg, C.kep(xp, 24, 76), by + bh + 3.8, 'Xác suất ' + (o.pNhan || soViet(o.p)), 4, '--tg');
     }
     if (la(p.thu) && !k.m) {
-      var xt = X0 + L * C.kep(p.thu, 0, 1.06);
+      var xt = X0 + L * C.kep(p.thu, 0, 1);
       mk('path', { d: 'M' + xt + ' ' + (by - 0.3) + 'l-1.6 -3h3.2z', fill: 'var(--sai)' }, svg);
       mk('line', { x1: xt, y1: by - 0.3, x2: xt, y2: by + bh + 0.5, stroke: 'var(--sai)', 'stroke-width': 0.6, 'stroke-dasharray': '1 0.6' }, svg);
       C.chu(svg, C.kep(xt, 14, 86), by - 4.6, p.thu > 1 ? 'Em gõ ' + soViet(p.thu) + ' > 1' : 'Em gõ ' + soViet(p.thu), 4, '--sai');

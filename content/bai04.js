@@ -38,8 +38,7 @@ TOAN8.bai(anKetQua({
         { gt: 'x^2+8', trangThai: 'thieuHai', t: 1, loi: 'Còn trống hai mảnh (viền đỏ): $x \\cdot 4$ và $2 \\cdot x$. Có $4$ mảnh nên phải có $4$ tích.' },
         { gt: 'x^2+4x+8', trangThai: 'thieuDuoi', t: 1, loi: 'Còn trống mảnh $2 \\cdot x$ ở góc dưới bên trái.' },
         { gt: 'x^2+2x+8', trangThai: 'thieuTren', t: 1, loi: 'Còn trống mảnh $x \\cdot 4$ ở góc trên bên phải.' },
-        { gt: '2x+6x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên bên trái là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$. Còn $2x$ là $x + x$.' },
-        { gt: '8x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên bên trái là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$, không phải $2x$.' }
+        { gt: '2x+6x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên bên trái là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$. Còn $2x$ là $x + x$.' }
       ],
       saiT: TRUOC_TONG,
       dungChu: 'Bốn mảnh $x^2$, $4x$, $2x$, $8$; gộp hai mảnh cùng màu: $x^2 + 6x + 8$.',

@@ -106,8 +106,13 @@
   // Vạch thưa đủ để số không chồng nhau (mỗi vạch cách nhau ít nhất 5 đơn vị hình)
   function vachThua(nhip, s, nho) { var b = Math.max(vach(nhip), nho || 0), i = BUOC_VACH.indexOf(b); while (b * s < 5 && i < BUOC_VACH.length - 1) b = BUOC_VACH[++i]; return b; }
   // Khung vừa mọi điểm cần thấy, luôn chứa gốc O
-  function tuKhung(o, diem) {
-    if (o.khung) return { x0: o.khung[0], x1: o.khung[1], y0: o.khung[2], y1: o.khung[3] };
+  // them: điểm em gõ; khung cố định vẫn nới ra để điểm đó không rơi ra ngoài hình
+  function tuKhung(o, diem, them) {
+    if (o.khung) {
+      var c = { x0: o.khung[0], x1: o.khung[1], y0: o.khung[2], y1: o.khung[3] };
+      if (them) { c.x0 = Math.min(c.x0, Math.floor(them[0] - 1)); c.x1 = Math.max(c.x1, Math.ceil(them[0] + 1)); c.y0 = Math.min(c.y0, Math.floor(them[1] - 1)); c.y1 = Math.max(c.y1, Math.ceil(them[1] + 1)); }
+      return c;
+    }
     var xs = [0], ys = [0];
     diem.forEach(function (q) { if (la(q[0]) && la(q[1])) { xs.push(q[0]); ys.push(q[1]); } });
     var nx = Math.min.apply(null, xs), lx = Math.max.apply(null, xs), ny = Math.min.apply(null, ys), ly = Math.max.apply(null, ys);
@@ -221,8 +226,9 @@
       // Điểm còn là dấu hỏi thì không được làm khung giãn ra, kẻo lộ đáp án
       var can = cap.filter(function (c, i) { return !diem[i].an; }).concat(cap.filter(function (c, i) { return diem[i].an; }).map(function (c) { return [c[0], 0]; }));
       if (nguoc) can.push(la(nguoc.x) && giai ? [nguoc.x, nguoc.y] : [0, nguoc.y]);
-      if (thu && la(thu.y) && Math.abs(thu.y) <= 60 && Math.abs(thu.x) <= 60) can.push([thu.x, thu.y]);
-      return { cap: cap, diem: diem, dang: dang, trung: trung, nguoc: nguoc, thu: thu, giai: giai, kh: tuKhung(o, can) };
+      var vua = thu && la(thu.y) && Math.abs(thu.y) <= 60 && Math.abs(thu.x) <= 60;
+      if (vua) can.push([thu.x, thu.y]);
+      return { cap: cap, diem: diem, dang: dang, trung: trung, nguoc: nguoc, thu: thu, giai: giai, kh: tuKhung(o, can, vua ? [thu.x, thu.y] : null) };
     }
   });
   C.lay('mayHamSo').ve = function (svg, k, p, t, o) {

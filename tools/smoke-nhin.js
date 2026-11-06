@@ -110,6 +110,22 @@ async function main() {
     r = await go('.nhin-suy-ra', '25', 1);
     can(/căn|cạnh/.test(r.tin) && !/chứ không phải 6/.test(r.tin), '25 là quên lấy căn: ' + JSON.stringify(r));
 
+    r = await go('.nhin-dung', '6,5-2,5');
+    can(!/36/.test(r.hinh), 'gõ biểu thức sai ở phần Dùng không được lộ diện tích 36: ' + JSON.stringify(r));
+
+    // Bài 22: thanh so sánh ghi đủ số em gõ
+    await moBai('#/bai/22/khamPha');
+    r = await go('.nhin-dung', '(-6x+9)/(-9)');
+    can(/2,333/.test(r.hinh), 'thanh "của em" phải ghi đủ 2,333: ' + JSON.stringify(r));
+    // Bài 9: làm đúng thì hai cạnh hiện ra
+    await moBai('#/bai/9/khamPha');
+    r = await go('.nhin-suy-ra', '(x-4)(x+4)', 2);
+    can(/dung/.test(r.lop) && !/\?/.test(r.hinh), 'bài 9.5 làm đúng rồi thì không còn dấu hỏi trên hình: ' + JSON.stringify(r));
+    // Bài 21: làm đúng thì hình về x = 100
+    await moBai('#/bai/21/khamPha');
+    r = await go('.nhin-suy-ra', '100', 1);
+    can(/dung/.test(r.lop) && !/190/.test(r.hinh), 'bài 21.12 làm đúng thì hình phải về x = 100: ' + JSON.stringify(r));
+
     // Bài 6: đúng giá trị nhưng chưa gọn thì không bảo đếm lại; lỗi thiếu 25
     await moBai('#/bai/6/khamPha');
     r = await go('.nhin-dung', 'x^2+5x+5x+25');
@@ -204,6 +220,8 @@ async function main() {
             const tin = goi.querySelector('.nhin-tin'), hinh = goi.querySelector('svg.c-svg').textContent;
             if (mong && !tin.classList.contains(mong)) ra.push(phan + '[' + i + '] gõ "' + gt + '" mong ' + mong + ', được "' + tin.textContent.slice(0, 80) + '"');
             if (/NaN|undefined|Infinity/.test(hinh + tin.textContent)) ra.push(phan + '[' + i + '] gõ "' + gt + '" sinh NaN/undefined');
+            const svg = goi.querySelector('svg.c-svg'), vb = svg.viewBox.baseVal, bb = svg.getBBox();
+            if (bb.x < vb.x - 0.5 || bb.y < vb.y - 0.5 || bb.x + bb.width > vb.x + vb.width + 0.5 || bb.y + bb.height > vb.y + vb.height + 0.5) ra.push(phan + '[' + i + '] gõ "' + gt + '" làm hình tràn khung');
           });
         });
         return ra;

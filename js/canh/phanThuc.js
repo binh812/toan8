@@ -233,7 +233,8 @@
   function chuGiua(svg, x, y, s, co, mau, op) { C.chu(svg, x, y, s, co, mau, op != null && op < 1 ? { opacity: op < 0.01 ? 0 : op } : null); }
   // Hai thanh so sánh: giá trị đúng và giá trị em gõ, cùng một thước (1 đơn vị = 1 hình)
   function veSoSanh(svg, thu, y) {
-    var lon = Math.max(1, Math.abs(thu.dung), Math.abs(thu.em)), s = 70 / lon, X0 = 26, CO = 5.2;
+    // Thanh dài nhất dừng ở 80 để còn chỗ ghi số (tới khoảng 98) trong khung rộng 100
+    var lon = Math.max(1, Math.abs(thu.dung), Math.abs(thu.em)), s = 54 / lon, X0 = 26, CO = 5.2;
     [['đúng', thu.dung, '--cc'], ['của em', thu.em, '--sai']].forEach(function (d, i) {
       var yy = y + i * 10;
       C.chu(svg, X0 - 2, yy + 3, d[0], CO, d[2], huong('end', d[2]));
@@ -264,7 +265,7 @@
       y += 8;
       // o.anM: chưa giải thì không ghi số ô của mỗi cột (đó là nhân tử chung em cần tìm)
       var soM = o.anM && !k.giai ? '?' : (String(o.tenM) === String(M) ? '' : o.tenM + ' = ') + M;
-      if (o.tenM && M > 1) { chuGiua(svg, 50, y, 'mỗi cột cắt thành ' + soM + ' ô', CO * 0.85, '--cc', o.chieu === 'gop' ? 1 - C.muot((t - 0.2) / 0.3) : C.muot((t - 0.3) / 0.3)); y += 7; }
+      if (o.tenM && M > 1) { chuGiua(svg, 50, y, 'mỗi cột cắt thành ' + soM + ' ô', CO * 0.85, '--cc', k.giai ? 1 : o.chieu === 'gop' ? 1 - C.muot((t - 0.2) / 0.3) : C.muot((t - 0.3) / 0.3)); y += 7; }
     } else if (k.dang === 'cong' || k.dang === 'tru') {
       var tru = k.dang === 'tru', A = k.A, B = k.B;
       veO(svg, A, '--mat', 1); veO(svg, B, '--mat', 1);

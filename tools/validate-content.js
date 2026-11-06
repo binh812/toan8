@@ -152,6 +152,8 @@ function checkNhin(L, T) {
   else {
     const q = checkCauNhin(T + ' nhin.dung', n.dung, bt);
     if (!n.dung.dungChu) errors.push(T + ' nhin.dung: thiếu dungChu');
+    const pu = n.dung.phanUng || [];
+    pu.forEach((u, i) => pu.slice(i + 1).forEach((v, j) => { try { if (q.dapAn && C.checkAnswer({ kieu: q.dapAn.kieu, gt: u.gt }, String(v.gt)).ok) errors.push(T + ' nhin.dung: phanUng[' + (i + j + 1) + '] tương đương phanUng[' + i + '], sẽ không bao giờ hiện'); } catch (e) {} }));
     (n.dung.phanUng || []).forEach((u, i) => {
       if (q.dapAn && C.checkAnswer(q.dapAn, String(u.gt)).ok) errors.push(T + ' nhin.dung: phanUng[' + i + '] phanUng trùng đáp án');
       if (!u.loi) errors.push(T + ' nhin.dung: phanUng[' + i + '] thiếu loi');

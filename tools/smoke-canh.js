@@ -58,7 +58,8 @@ async function main() {
       return ds.length;
     });
     for (let i = 0; i < CAU_HINH.length + soTuDong; i++) {
-      const kq = await page.evaluate((c, j) => {
+      let kq;
+      try { kq = await page.evaluate((c, j) => {
         if (!c) c = window.__gomCanh[j];
         const T = TOAN8, ra = [], hop = document.createElement('div');
         hop.style.cssText = 'position:fixed;left:0;top:0;width:640px;background:#fff;z-index:99';
@@ -75,7 +76,7 @@ async function main() {
         });
         w.datT(.5);
         return { ra, ten: c.ten, id: (hop.id = 'phong-' + Date.now()) };
-      }, CAU_HINH[i] || null, i - CAU_HINH.length);
+      }, CAU_HINH[i] || null, i - CAU_HINH.length); } catch (e) { loi.push('cấu hình #' + i + ' ném lỗi: ' + e.message.split('\n')[0]); continue; }
       kq.ra.forEach(s => loi.push(kq.ten + ' #' + i + ': ' + s));
       if (thuMuc) { const e = await page.$('#' + kq.id); await e.screenshot({ path: path.join(thuMuc, 'canh-' + i + '.png') }); }
       await page.evaluate(id => document.getElementById(id).remove(), kq.id);

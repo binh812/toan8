@@ -112,7 +112,7 @@
             saiChu: 'Phân tích mẫu thành tích. Một tích bằng $0$ khi một thừa số bằng $0$.' },
           { tuBai: '21.12', de: 'Chi phí để loại bỏ $x\\%$ chất ô nhiễm là $\\frac{2x}{100-x}$ (tỉ đồng). Phân thức này không xác định tại giá trị nào của $x$?',
             dapAn: { kieu: 'nghiem', gt: [100] }, goiY: ['Cho mẫu $100 - x = 0$.'], loiGiai: ['$100 - x = 0$ khi $x = 100$: phân thức không xác định.', 'Vậy không thể loại bỏ hết $100\\%$ chất ô nhiễm.'], loiThuongGap: [],
-            canh: dc({ tu: [0, 2], mau: [100, -1], tenTu: '2x', tenMau: '100 − x', xs: [80, 90, 95] }, { moTa: 'Tử 2x và mẫu 100 trừ x, vẽ tại x bằng 80, 90 rồi 95.' }), tenNut: 'Tăng dần x',
+            canh: dc({ tu: [0, 2], mau: [100, -1], tenTu: '2x', tenMau: '100 − x', xs: [80, 90, 95], xGiai: 100 }, { moTa: 'Tử 2x và mẫu 100 trừ x, vẽ tại x bằng 80, 90 rồi 95.' }), tenNut: 'Tăng dần x',
             phanUng: [{ gt: [0], loi: 'Tại $x = 0$ **tử** bằng $0$: chi phí $0$ đồng, vẫn tính được. Cần cho mẫu $100 - x = 0$.' }],
             dungChu: 'Mẫu $100 - x = 0$ khi $x = 100$. Càng gần $100\\%$, đoạn mẫu càng ngắn và chi phí càng lớn; tới $100\\%$ thì không tính được.',
             saiChu: 'Nhìn đoạn mẫu $100 - x$: nó ngắn dần khi $x$ tăng. Khi nào nó dài $0$?' },
