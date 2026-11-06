@@ -37,7 +37,7 @@
       buoc: [
         { t: 0, chu: 'Khối lập phương cạnh $\\ca{a} + \\cb{b}$. Mỗi cạnh chia thành một đoạn $\\ca{a}$ và một đoạn $\\cb{b}$.' },
         { t: 0.1, chu: 'Cắt theo các đường chia rồi tách ra: được $8$ khối hộp. Không khối nào đổi kích thước.' },
-        { t: 0.55, chu: 'Mỗi khối có ba cạnh, mỗi cạnh là $\\ca{a}$ hoặc $\\cb{b}$. Thể tích là tích ba cạnh, ví dụ $\\ca{a}\\cdot\\ca{a}\\cdot\\cb{b} = \\cc{a^2b}$.' },
+        { t: 0.55, chu: 'Mỗi khối có ba kích thước, mỗi kích thước là $\\ca{a}$ hoặc $\\cb{b}$. Thể tích là tích ba kích thước, ví dụ $\\ca{a}\\cdot\\ca{a}\\cdot\\cb{b} = \\cc{a^2b}$.' },
         { t: 0.8, chu: 'Nhấc tầng trên lên để thấy cả khối nấp phía sau. Đếm theo màu: $1$ khối $\\ca{a^3}$, $3$ khối $\\cc{a^2b}$, $3$ khối $\\cd{ab^2}$, $1$ khối $\\cb{b^3}$.' }
       ],
       ketLuan: 'Thể tích khối lớn bằng tổng tám khối: $$(\\ca{a} + \\cb{b})^3 = \\ca{a}^3 + 3\\cc{a^2b} + 3\\cd{ab^2} + \\cb{b}^3$$',
@@ -45,7 +45,7 @@
         tieuDe: 'Đếm đủ tám khối', tuBai: '7.1',
         canh: { ten: 'lapPhuong', thamSo: { a: 3, b: 2 }, t: 1, tuyChon: { dang: 'tong', tenA: 'x', tenB: '4', anGiua: true, nhan: X4 },
           moTa: 'Khối lập phương cạnh x cộng 4 đã tách thành tám khối; sáu khối ở giữa ghi dấu hỏi.' },
-        moiThu: 'Mỗi khối có ba cạnh là $x$ hoặc $4$. Khối dấu hỏi có thể tích bao nhiêu, và có mấy khối như vậy? Nếu gõ sai, hình sẽ chỉ ra khối em bỏ sót.',
+        moiThu: 'Mỗi khối có ba kích thước là $x$ hoặc $4$. Khối dấu hỏi có thể tích bao nhiêu, và có mấy khối như vậy? Nếu gõ sai, hình sẽ chỉ ra khối em bỏ sót.',
         phanUng: [
           { gt: 'x^3+64', trangThai: 'chiHaiDau', loi: 'Em mới tính khối $x^3$ và khối $64$. Còn $6$ khối ở giữa: ba khối $x\\cdot x\\cdot 4 = 4x^2$ và ba khối $x\\cdot 4\\cdot 4 = 16x$.' },
           { gt: 'x^3+4x^2+16x+64', trangThai: 'motMoiLoai', loi: 'Mỗi loại khối ở giữa có **ba** khối, em mới tính một. Ba khối $4x^2$ là $12x^2$, ba khối $16x$ là $48x$.' },
