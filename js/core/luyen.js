@@ -55,5 +55,8 @@
     return out;
   }
 
-  return { mucTiepTheo: mucTiepTheo, ketQuaCau: ketQuaCau, danhSachNguon: danhSachNguon, chonNguon: chonNguon, sinhCau: sinhCau };
+  // Hạt giống để chọn dạng phải khác hạt giống sinh câu; dùng chung thì lần bốc đầu trong sinh() luôn bị ràng theo dạng vừa chọn
+  function hatChon(seed) { return ((seed ^ 0x9E3779B9) >>> 0) || 1; }
+
+  return { hatChon: hatChon, mucTiepTheo: mucTiepTheo, ketQuaCau: ketQuaCau, danhSachNguon: danhSachNguon, chonNguon: chonNguon, sinhCau: sinhCau };
 });

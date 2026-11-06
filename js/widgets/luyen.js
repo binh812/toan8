@@ -14,7 +14,7 @@
   T.cauLuyen = function (baiId, muc, seed, tenTruoc) {
     var ng = T.nguonLuyen(baiId);
     if (!ng.length) return null;
-    var n = L.chonNguon(ng, muc, tenTruoc || null, T.taoRng(seed));
+    var n = L.chonNguon(ng, muc, tenTruoc || null, T.taoRng(L.hatChon(seed)));
     var q = L.sinhCau(n, seed, congCu(), baiId);
     q.nguon = n.ten;
     return q;

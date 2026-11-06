@@ -4,10 +4,10 @@
   var el = T.el, THOI_GIAN_HIEN = 1200, SO_QUA_LON = 1e6;
 
   // Câu Dùng và Suy ra lấy đề từ bài tập gốc; khối nhin có thể ghi đè từng trường.
-  // Bỏ hình của lỗi thường gặp vì ở đây hình lớn bên cạnh đã phản ứng theo lỗi
+  // Không lấy lỗi thường gặp của bài gốc: lời giải thích ở đó hay ghi luôn đáp số; ở đây hình và phanUng đã phản ứng theo lỗi
   function cauHoi(bai, d, tien) {
     var goc = (bai.baiTap || []).filter(function (q) { return q.id === d.tuBai; })[0] || {};
-    return { id: tien + '-' + d.tuBai, de: d.de || goc.de, dapAn: d.dapAn || goc.dapAn, goiY: d.goiY || goc.goiY, loiGiai: d.loiGiai || goc.loiGiai, loiThuongGap: (d.loiThuongGap || goc.loiThuongGap || []).map(function (l) { return { gt: l.gt, giaiThich: l.giaiThich }; }) };
+    return { id: tien + '-' + d.tuBai, de: d.de || goc.de, dapAn: d.dapAn || goc.dapAn, goiY: d.goiY || goc.goiY, loiGiai: d.loiGiai || goc.loiGiai, loiThuongGap: (d.loiThuongGap || []).map(function (l) { return { gt: l.gt, giaiThich: l.giaiThich }; }) };
   }
   function phan(nhan, tieuDe, lop) {
     return el('section', { class: 'nhin-phan ' + lop }, el('p', { class: 'nhin-nhan' }, nhan), el('h2', { html: T.mdInline(tieuDe) }));

@@ -50,3 +50,15 @@ test('chọn nguồn đúng mức, tránh lặp; sinh câu có hạt giống', (
   assert.strictEqual(q3.id, '6.L1');
   assert.strictEqual(q3.de, 'cố định');
 });
+
+test('chọn dạng và sinh câu dùng hai dãy ngẫu nhiên riêng: dạng nào cũng ra đủ các biến thể', () => {
+  const R = require('../js/core/rng.js'), cc = congCu(P);
+  const bienThe = ten => ({ ten, muc: 1, sinh: r => ({ de: ten + r.chon(['p', 'q']) }) });
+  const ng = [bienThe('A'), bienThe('B')], thay = { A: new Set(), B: new Set() };
+  for (let s = 1; s <= 200; s++) {
+    const n = L.chonNguon(ng, 1, null, R.taoRng(L.hatChon(s)));
+    thay[n.ten].add(L.sinhCau(n, s, cc, 6).de);
+  }
+  assert.strictEqual(thay.A.size, 2, 'dạng A chỉ ra ' + [...thay.A]);
+  assert.strictEqual(thay.B.size, 2, 'dạng B chỉ ra ' + [...thay.B]);
+});
