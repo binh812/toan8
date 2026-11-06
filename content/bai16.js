@@ -158,7 +158,7 @@
             phanUng: [{ gt: 520, loi: 'Em nhân đôi rồi. $PQ$ là đường trung bình, chỉ bằng **nửa** $BC$.' },
               { gt: 150, loi: 'Lấy trung bình cộng $120$ và $180$ không cho độ dài $PQ$. $P$, $Q$ là hai trung điểm: so $PQ$ với $BC$.' }],
             dungChu: '$P$, $Q$ là trung điểm của $AB$, $AC$, nên $PQ = \\frac{1}{2}BC = 130$ m. Không cần lội qua hồ!', saiChu: '$P$, $Q$ là hai trung điểm. Hai đoạn $PQ$ nối nhau dài bằng cạnh nào?' },
-          { tuBai: '16.5', canh: tb({ dang: 'ba', ten: ['A', 'B', 'C', 'M', 'N', 'P'], AB: 8, AC: 12, BC: 10, nhan: { AB: '8', AC: '12', BC: '10' }, giai: { MN: '5', NP: '4', MP: '6' } }), tenNut: 'Đặt các cạnh vào',
+          { tuBai: '16.5', canh: tb({ dang: 'ba', ten: ['A', 'B', 'C', 'M', 'N', 'P'], AB: 8, AC: 12, BC: 10, giai: { MN: '5', NP: '4', MP: '6' } }, { ghiChu: 'AB = 8, BC = 10, CA = 12.' }), tenNut: 'Đặt các cạnh vào',
             loiThuongGap: [],
             phanUng: [{ gt: 30, loi: '$30$ là chu vi tam giác $ABC$. Mỗi cạnh của $MNP$ chỉ bằng nửa một cạnh của $ABC$.' },
               { gt: 60, loi: 'Mỗi đường trung bình bằng **nửa** cạnh song song với nó, không phải gấp đôi.' }],
@@ -199,7 +199,7 @@
       { de: 'Cho tam giác $ABC$, $D$ và $E$ lần lượt là trung điểm của $AB$, $AC$, biết $DE = 4{,}5$ cm. Tính $BC$.', canh: tb({ ten: ['A', 'B', 'C', 'D', 'E'], AB: 7, AC: 8, BC: 9, nhan: { MN: '4,5', BC: '?' }, giai: { BC: '9' } }), buoc: [
         { canh: { t: 0.6 }, lam: '$DE$ là đường trung bình nên $DE = \\frac{1}{2}BC$', vi: 'Tính chất đường trung bình.' },
         { canh: { t: 1, trangThai: 'giai' }, lam: '$BC = 2 \\cdot DE = 2 \\cdot 4{,}5 = 9$ (cm)', vi: 'Cạnh thứ ba gấp đôi đường trung bình: hai đoạn $DE$ nối nhau vừa khít $BC$.' } ] },
-      { de: 'Tam giác $ABC$ có $AB = 6$ cm, $BC = 8$ cm, $CA = 10$ cm. Gọi $M$, $N$, $P$ là trung điểm của $AB$, $AC$, $BC$. Tính chu vi tam giác $MNP$.', canh: tb({ dang: 'ba', ten: ['A', 'B', 'C', 'M', 'N', 'P'], AB: 6, AC: 10, BC: 8, nhan: { AB: '6', AC: '10', BC: '8' }, giai: { MN: '4', NP: '3', MP: '5' } }), buoc: [
+      { de: 'Tam giác $ABC$ có $AB = 6$ cm, $BC = 8$ cm, $CA = 10$ cm. Gọi $M$, $N$, $P$ là trung điểm của $AB$, $AC$, $BC$. Tính chu vi tam giác $MNP$.', canh: tb({ dang: 'ba', ten: ['A', 'B', 'C', 'M', 'N', 'P'], AB: 6, AC: 10, BC: 8, giai: { MN: '4', NP: '3', MP: '5' } }, { ghiChu: 'AB = 6, BC = 8, CA = 10.' }), buoc: [
         { canh: { t: 1, trangThai: 'giai' }, lam: '$MN = \\frac{1}{2}BC = 4$; $NP = \\frac{1}{2}AB = 3$; $MP = \\frac{1}{2}AC = 5$', vi: 'Mỗi cạnh của $\\triangle MNP$ là một đường trung bình, bằng nửa cạnh **song song** với nó.' },
         { lam: 'Chu vi $\\triangle MNP = 4 + 3 + 5 = 12$ (cm)', vi: 'Bằng nửa chu vi $\\triangle ABC$ ($24 : 2 = 12$).' } ] }
     ],

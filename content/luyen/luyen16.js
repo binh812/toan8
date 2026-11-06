@@ -96,8 +96,8 @@
         return {
           de: 'Tam giác $ABC$ có $AB = ' + AB + '$ cm, $BC = ' + BC + '$ cm, $CA = ' + CA + '$ cm. $M$, $N$, $P$ lần lượt là trung điểm của $AB$, $AC$, $BC$. Tính chu vi tam giác $MNP$ (cm).',
           hinh: hinh, dapAn: { kieu: 'so', gt: P / 2 },
-          hinhGiai: hinhGiai(['A', 'B', 'C', 'M', 'N', 'P'], s, { dang: 'ba', nhan: { AB: String(AB), AC: String(CA), BC: String(BC) }, giai: { MN: chu(BC / 2), NP: chu(AB / 2), MP: chu(CA / 2) } },
-            'Mỗi đoạn màu đặt hai lần thì vừa khít cạnh song song với nó.'),
+          hinhGiai: hinhGiai(['A', 'B', 'C', 'M', 'N', 'P'], s, { dang: 'ba', giai: { MN: chu(BC / 2), NP: chu(AB / 2), MP: chu(CA / 2) } },
+            'AB = ' + AB + ', BC = ' + BC + ', CA = ' + CA + '. Mỗi đoạn màu đặt hai lần thì vừa khít cạnh song song với nó.'),
           goiY: ['Mỗi cạnh của $\\triangle MNP$ là một đường trung bình, bằng nửa cạnh **song song** với nó.', '$MN = \\frac{1}{2}BC$, $NP = \\frac{1}{2}AB$, $MP = \\frac{1}{2}AC$.'],
           loiGiai: ['$MN = \\frac{1}{2}BC = ' + so(BC / 2) + '$; $NP = \\frac{1}{2}AB = ' + so(AB / 2) + '$; $MP = \\frac{1}{2}AC = ' + so(CA / 2) + '$.',
             'Chu vi $\\triangle MNP = ' + so(BC / 2) + ' + ' + so(AB / 2) + ' + ' + so(CA / 2) + ' = ' + so(P / 2) + '$'],

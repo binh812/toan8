@@ -32,7 +32,7 @@
   function doanThu(p, tu, den, tran) {
     var v = p.thu;
     if (typeof v !== 'number' || !isFinite(v) || v <= 0 || !tu || !den) return null;
-    return { gt: v, tu: tu, cuoi: cong(tu, nhanSo(donVi(tru(den, tu)), Math.min(v, tran))) };
+    return { gt: v, tu: tu, cuoi: cong(tu, nhanSo(donVi(tru(den, tu)), Math.min(v, tran))), catBot: v > tran };
   }
 
   /* ---------- Tiện ích vẽ: gom mọi điểm và chữ để khung vừa khít; cỡ chữ theo bề rộng hình ---------- */
@@ -88,8 +88,9 @@
       // Tên điểm nằm trên cạnh PQ: lệch ra phía ngoài cạnh (xa điểm ref)
       tenCanh: function (X, P, Q, ref, s, op) { var n = phap(P, Q, X, ref); b.chu(X[0] + n[0] * 0.85 * co, X[1] + n[1] * 0.85 * co, s, null, op); },
       // Nhãn độ dài ở giữa đoạn, phía xa điểm ref; nhãn dài thì đẩy xa hơn khi đoạn gần thẳng đứng
-      nhanDoan: function (P, Q, ref, s, m, op) {
-        var M = lerp(P, Q, 0.5), n = phap(P, Q, M, ref), d = co * (0.78 + Math.abs(n[0]) * 0.3 * String(s).length);
+      // xa: đẩy thêm ra ngoài (tính theo cỡ chữ), để nhãn dài không đè lên tên hai đầu đoạn ngắn
+      nhanDoan: function (P, Q, ref, s, m, op, xa) {
+        var M = lerp(P, Q, 0.5), n = phap(P, Q, M, ref), d = co * (0.78 + (xa || 0) + Math.abs(n[0]) * 0.3 * String(s).length);
         b.chu(M[0] + n[0] * d, M[1] + n[1] * d, s, m, op);
       },
       nen: function (f) { nen.push(f); },
@@ -117,10 +118,15 @@
     if (!thu) return;
     var co = ve.co, u = donVi(tru(thu.cuoi, thu.tu));
     ve.net(thu.tu, thu.cuoi, '--sai', 0.12, { 'stroke-dasharray': 0.35 * co + ' ' + 0.22 * co });
-    ve.cham(thu.cuoi, '--sai', 0.2);
     var n = [-u[1], u[0]];
     if (n[1] > 0) n = [-n[0], -n[1]];
+    if (thu.catBot) {
+      // Quá dài so với khung: vẽ mũi tên ở đầu đoạn và nói rõ là hình đã cắt bớt
+      var x = thu.cuoi, l = 0.55 * co, w = 0.32 * co;
+      ve.da([cong(x, nhanSo(u, 0.2 * co)), cong(tru(x, nhanSo(u, l)), nhanSo(n, w)), tru(tru(x, nhanSo(u, l)), nhanSo(n, w))], '--sai', 1);
+    } else ve.cham(thu.cuoi, '--sai', 0.2);
     ve.chu(thu.cuoi[0] + n[0] * 1.0 * co, thu.cuoi[1] + n[1] * 1.0 * co, C.fmt(thu.gt), '--sai', 1, 0.9);
+    if (thu.catBot) ve.chu(thu.cuoi[0] + n[0] * 1.0 * co, thu.cuoi[1] + n[1] * 1.0 * co - 0.95 * co, '(hình cắt bớt)', '--sai', 1, 0.7);
   }
   function nhanCua(o, giai) { return Object.assign({}, o.nhan || {}, giai ? o.giai || {} : {}); }
 
@@ -160,7 +166,8 @@
   C.lay('thalesLuoi').ve = function (svg, g, p, t, o) {
     var ten = o.ten || ['A', 'B', 'C', 'M', 'N'], A = g.A, B = g.B, Cc = g.C, M = g.M, N = g.N, n = g.n, P = g.P, Q = g.Q, i;
     var G = trongTam(A, B, Cc), giuaBC = lerp(B, Cc, 0.5);
-    var ve = bang(svg, [A, B, Cc]), co = ve.co;
+    // Cỡ chữ tính theo cả hình, kể cả đoạn đỏ em gõ, để chữ không bé đi khi đoạn đỏ dài
+    var ve = bang(svg, [A, B, Cc].concat(g.thu ? [g.thu.cuoi] : [])), co = ve.co;
     var giai = p.trangThai === 'giai', cuoi = C.muot((t - 0.88) / 0.1), hienVach = o.anLucDau ? C.muot((t - 0.02) / 0.06) : 1;
     var w1 = 0.3 / Math.max(1, n - 1);
     ve.da([A, B, Cc], '--tg', 0.05);
@@ -201,12 +208,15 @@
     var nhan = nhanCua(o, giai), doan = { AM: [A, M], MB: [M, B], AN: [A, N], NC: [N, Cc], AB: [A, B], AC: [A, Cc], BC: [B, Cc], MN: [M, N] };
     var dem = { AM: g.m, MB: g.k, AN: g.m, NC: g.k };
     Object.keys(doan).forEach(function (r) {
-      var s = nhan[r], m = null, op = 1;
-      // Hình không có số của đề: cuối cùng ghi số phần của mỗi đoạn
-      if (s == null && !o.nhan && dem[r] && !(o.dao && (r === 'AN' || r === 'NC'))) { s = dem[r] + ' phần'; op = cuoi; m = r === 'AM' || r === 'AN' ? '--a' : '--b'; }
+      var s = nhan[r], m = null, op = 1, xa = 0;
+      // Hình không có số của đề: cuối cùng ghi số phần của mỗi đoạn; đoạn ngắn thì đẩy nhãn xa hơn, khỏi đè tên M, N
+      if (s == null && !o.nhan && dem[r] && !(o.dao && (r === 'AN' || r === 'NC'))) {
+        s = dem[r] + ' phần'; op = cuoi; m = r === 'AM' || r === 'AN' ? '--a' : '--b';
+        xa = dai(doan[r][0], doan[r][1]) < 4.5 * co ? 1.4 : 0;
+      }
       if (s == null) return;
       if (giai && o.giai && o.giai[r] != null) m = '--cc';
-      ve.nhanDoan(doan[r][0], doan[r][1], r === 'MN' ? giuaBC : G, s, m, op);
+      ve.nhanDoan(doan[r][0], doan[r][1], r === 'MN' ? giuaBC : G, s, m, op, xa);
     });
     if (o.dao) ve.chu(giuaBC[0], Math.max(B[1], Cc[1]) + 2.3 * co, ten[3] + ten[4] + (g.songSong ? ' ∥ ' : ' không song song với ') + ten[1] + ten[2],
       g.songSong ? '--cc' : '--sai', cuoi, 0.85);
@@ -252,7 +262,7 @@
         banSao.push({ s: s, j: j, doan: [d[2], d[3]].map(function (S) { var v = nhanSo(tru(S, d[0]), s); return [cong(d[0], v), cong(d[1], v)]; }) });
       });
       var diem = { A: A, B: B, C: Cc, M: M, N: N };
-      var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 1.4 * dai(B, Cc)) : null;
+      var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 2.2 * dai(B, Cc)) : null;
       return { A: A, B: B, C: Cc, M: M, N: N, P: P, M2: M2, manh: manh, goc: goc, banSao: banSao, thu: thu, dang: dang,
         MN: dai(M, N), BC: dai(B, Cc) };
     }
@@ -261,7 +271,7 @@
   C.lay('thalesTrungBinh').ve = function (svg, g, p, t, o) {
     var ten = o.ten || ['A', 'B', 'C', 'M', 'N'], A = g.A, B = g.B, Cc = g.C, M = g.M, N = g.N, P = g.P, M2 = g.M2;
     var G = trongTam(A, B, Cc), giuaBC = lerp(B, Cc, 0.5), giai = p.trangThai === 'giai';
-    var ve = bang(svg, g.dang === 'quay' ? [A, B, Cc, M2] : [A, B, Cc]), co = ve.co;
+    var ve = bang(svg, (g.dang === 'quay' ? [A, B, Cc, M2] : [A, B, Cc]).concat(g.thu ? [g.thu.cuoi] : [])), co = ve.co;
     var tenM2 = ten[5] || ten[3] + '′', cuoi = C.muot((t - 0.88) / 0.1);
     if (o.ho) {
       // Hồ nước chắn giữa M và N: hai điểm nằm đúng trên bờ hồ
@@ -308,9 +318,9 @@
       // Trong hình ba đường trung bình, nhãn của đường trung bình nằm trong tam giác góc, xa tam giác giữa
       var d = doan[r];
       var mauNhan = giai && o.giai && o.giai[r] != null ? '--cc' : null;
-      // Ba đường trung bình: giữa mỗi cạnh đã có tên trung điểm, nên ghi độ dài cạnh lệch về phía một đầu
-      if (g.dang === 'ba' && (r === 'AB' || r === 'AC' || r === 'BC')) ve.nhanDoan(d[0], lerp(d[0], d[1], 0.76), d[2], nhan[r], mauNhan);
-      else ve.nhanDoan(d[0], d[1], d[2], nhan[r], mauNhan);
+      // Ba đường trung bình: giữa mỗi cạnh đã có tên trung điểm, nên độ dài ba cạnh ghi ở ghiChu, không ghi trên hình
+      if (g.dang === 'ba' && (r === 'AB' || r === 'AC' || r === 'BC')) return;
+      ve.nhanDoan(d[0], d[1], d[2], nhan[r], mauNhan);
     });
     if (g.dang === 'quay' && !o.nhan && cuoi > 0) ve.chu(giuaBC[0], giuaBC[1] + 1.1 * co, ten[3] + tenM2 + ' = ' + ten[1] + ten[2], '--cc', cuoi, 0.9);
     ve.xong();
@@ -318,8 +328,9 @@
 
   /* ================= 4. Phân giác: hai tam giác chung đỉnh A, tính diện tích hai cách ================= */
   C.dangKi('thalesPhanGiac', {
-    thamSo: { ab: { min: 3, max: 9, step: 0.5, md: 5, nhan: 'Cạnh AB', mau: '--a' }, ac: { min: 3, max: 9, step: 0.5, md: 8, nhan: 'Cạnh AC', mau: '--b' },
-      gocA: { min: 40, max: 120, step: 5, md: 70, nhan: 'Góc A' } },
+    // Khoảng kéo vừa phải (hai cạnh chênh nhau không quá 2 lần, góc A 50°–100°) để tam giác không dẹt, các kí hiệu không dồn đống
+    thamSo: { ab: { min: 4, max: 8, step: 0.5, md: 5, nhan: 'Cạnh AB', mau: '--a' }, ac: { min: 4, max: 8, step: 0.5, md: 8, nhan: 'Cạnh AC', mau: '--b' },
+      gocA: { min: 50, max: 100, step: 5, md: 70, nhan: 'Góc A' } },
     trangThai: { giai: true },
     tinh: function (p, t, o) {
       var T = o.AB && o.AC && o.BC ? tgCanh(o.AB, o.AC, o.BC) : tgGoc(p.ab, p.ac, p.gocA), A = T.A, B = T.B, Cc = T.C;
@@ -327,7 +338,7 @@
       var D = giao(A, cong(donVi(tru(B, A)), donVi(tru(Cc, A))), B, tru(Cc, B));
       var H = chan(A, B, Cc), E = chan(D, A, B), F = chan(D, A, Cc);
       var diem = { A: A, B: B, C: Cc, D: D };
-      var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 1.3 * dai(B, Cc)) : null;
+      var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 2.2 * dai(B, Cc)) : null;
       return { A: A, B: B, C: Cc, D: D, H: H, E: E, F: F, thu: thu,
         AB: dai(A, B), AC: dai(A, Cc), DB: dai(D, B), DC: dai(D, Cc), AH: dai(A, H), DE: dai(D, E), DF: dai(D, F),
         S1: dienTich(A, B, D), S2: dienTich(A, Cc, D) };
@@ -337,13 +348,18 @@
   C.lay('thalesPhanGiac').ve = function (svg, g, p, t, o) {
     var ten = o.ten || ['A', 'B', 'C', 'D'], A = g.A, B = g.B, Cc = g.C, D = g.D, H = g.H, E = g.E, F = g.F;
     var G = trongTam(A, B, Cc), giai = p.trangThai === 'giai';
-    var ve = bang(svg, [A, B, Cc, H, E, F]), co = ve.co, net2 = { 'stroke-dasharray': 0.22 * co + ' ' + 0.15 * co };
+    var ve = bang(svg, [A, B, Cc, H, E, F].concat(g.thu ? [g.thu.cuoi] : [])), co = ve.co, net2 = { 'stroke-dasharray': 0.22 * co + ' ' + 0.15 * co };
     var cao = C.muot((t - 0.1) / 0.3), cach = C.muot((t - 0.45) / 0.3), cuoi = C.muot((t - 0.85) / 0.12);
     ve.da([A, B, D], '--a', 0.12 + 0.1 * cao);
     ve.da([A, Cc, D], '--b', 0.12 + 0.1 * cao);
     // Đường cao AH có thể rơi ra ngoài đoạn BC: kéo dài BC bằng nét đứt
-    function keoDai(X, P, Q, op) { if (op <= 0) return; var k = ((X[0] - P[0]) * (Q[0] - P[0]) + (X[1] - P[1]) * (Q[1] - P[1])) / (dai(P, Q) * dai(P, Q));
-      if (k < 0) ve.net(P, X, '--nhat', 0.05, Object.assign({ opacity: op }, net2)); if (k > 1) ve.net(Q, X, '--nhat', 0.05, Object.assign({ opacity: op }, net2)); }
+    // Chân đường vuông góc rơi ngoài đoạn PQ (góc tù): kéo dài PQ bằng nét đứt, vượt qua chân một chút cho dễ thấy
+    function ngoaiDoan(X, P, Q) { return ((X[0] - P[0]) * (Q[0] - P[0]) + (X[1] - P[1]) * (Q[1] - P[1])) / (dai(P, Q) * dai(P, Q)); }
+    function keoDai(X, P, Q, op) {
+      if (op <= 0) return;
+      var k = ngoaiDoan(X, P, Q), dau = k < 0 ? P : k > 1 ? Q : null;
+      if (dau && dai(dau, X) > 1e-9) ve.net(dau, cong(X, nhanSo(donVi(tru(X, dau)), 0.5 * co)), '--muc', 0.06, Object.assign({ opacity: 0.75 * op }, net2));
+    }
     keoDai(H, B, Cc, cao); keoDai(E, A, B, cach); keoDai(F, A, Cc, cach);
     ve.net(A, B, cuoi > 0 ? '--a' : '--muc', 0.08 + 0.08 * cuoi); ve.net(A, Cc, cuoi > 0 ? '--b' : '--muc', 0.08 + 0.08 * cuoi);
     ve.net(B, Cc);
@@ -359,7 +375,9 @@
     ve.ten(A, G, ten[0]); ve.ten(B, G, ten[1]); ve.ten(Cc, G, ten[2]);
     ve.tenCanh(D, B, Cc, G, ten[3]);
     // Tên H chỉ ghi khi hình không có số của đề, kẻo đè lên nhãn độ dài DB, DC
-    if (!o.nhan && cao > 0 && dai(H, D) > 0.9 * co) ve.tenCanh(H, B, Cc, G, 'H', cao);
+    // H ngoài đoạn BC hay sát một đỉnh thì không ghi tên, kẻo đè lên tên đỉnh
+    var kH = ngoaiDoan(H, B, Cc);
+    if (!o.nhan && cao > 0 && kH > 0 && kH < 1 && Math.min(dai(H, D), dai(H, B), dai(H, Cc)) > 1.1 * co) ve.tenCanh(H, B, Cc, G, 'H', cao);
     var nhan = nhanCua(o, giai), doan = { AB: [A, B], AC: [A, Cc], BC: [B, Cc], DB: [D, B], DC: [D, Cc] };
     Object.keys(doan).forEach(function (r) {
       if (nhan[r] == null) return;

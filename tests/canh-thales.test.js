@@ -69,6 +69,18 @@ test('thalesLuoi: đoạn em gõ dài đúng số em gõ, số hỏng thì khôn
   assert.ok(dai(tinh('thalesLuoi', { thu: 1e6 }, 1, o).thu.tu, tinh('thalesLuoi', { thu: 1e6 }, 1, o).thu.cuoi) < 40, 'số quá lớn thì dừng ở trần');
 });
 
+test('đoạn em gõ: lỗi hay gặp (gấp đôi BC) vẽ đủ dài, chỉ số quá lớn mới bị cắt và có đánh dấu cắt bớt', () => {
+  const tb = { AB: 9, AC: 10, BC: 12, thu: { tu: 'M', den: 'N' } };
+  const g24 = tinh('thalesTrungBinh', { thu: 24 }, 1, tb);
+  GAN(dai(g24.thu.tu, g24.thu.cuoi), 24); assert.strictEqual(g24.thu.catBot, false);
+  const gLon = tinh('thalesTrungBinh', { thu: 500 }, 1, tb);
+  assert.strictEqual(gLon.thu.catBot, true); assert.ok(dai(gLon.thu.tu, gLon.thu.cuoi) < 500);
+  const pg = { AB: 6, AC: 8, BC: 7, thu: { tu: 'D', den: 'C' } };
+  [2.25, 12, 14].forEach(v => { const g = tinh('thalesPhanGiac', { thu: v }, 1, pg); GAN(dai(g.thu.tu, g.thu.cuoi), v); assert.strictEqual(g.thu.catBot, false); });
+  const t15 = { AB: 9, AC: 12, gocA: 58, m: 2, k: 1, thu: { tu: 'N', den: 'C' } };
+  [12, 16].forEach(v => { const g = tinh('thalesLuoi', { thu: v }, 1, t15); GAN(dai(g.thu.tu, g.thu.cuoi), v); assert.strictEqual(g.thu.catBot, false); });
+});
+
 test('thalesDoan: số phần nhân đơn vị bằng độ dài', () => {
   [[6, 15, 3], [40, 200, 40], [17, 13, 1], [90, 300, 30]].forEach(([a, b, u]) => {
     const g = tinh('thalesDoan', {}, 1, { a, b, u });
