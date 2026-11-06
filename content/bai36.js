@@ -130,8 +130,99 @@
       ghiChu: 'Cửa sổ PQ cao 1 m, mắt M cách cửa sổ 1,5 m; mỗi tầng cao 3,6 m' });
   })();
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  function an(s, anChu) { return { s: s, an: true, anChu: anChu }; }
+  function vuongGoc(g, day, ten, nhanGoc, them) {
+    // Tam giác vuông tại đỉnh 0 (goc3 = [90, góc ở đỉnh 1, góc ở đỉnh 2]), cạnh huyền nằm ngang
+    var goc = [{ vuong: true, mau: '--muc', r: 0.6 }, { mau: '--a', nhan: nhanGoc[1] }, { mau: '--b', nhan: nhanGoc[2] }];
+    return Object.assign({ goc3: [90, g, 90 - g], day: day, ten: ten, goc: goc }, them || {});
+  }
+  function haiTG(h1, h2, them) {
+    h2.dat = Object.assign({ sau: 0 }, h2.dat || {});
+    return { ten: 'trungKhit', tuyChon: Object.assign({ hinh: [h1, h2], di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }] }, them || {}) };
+  }
+  // 36.10: mắt M cao 1,5 m cách cọc 1,5 m; cọc cao 2 m cách cây 15 m. Đường ngang qua mắt cắt cọc tại X, cắt cây tại Y
+  function hinhCoc(thu) {
+    // Chiều đứng vẽ dài gấp 2,5 cho dễ nhìn: kéo giãn một chiều vẫn giữ song song và tỉ số trên mỗi đường
+    var D = 2.5, M = [0, 1.5 * D], X = [1.5, 1.5 * D], Cc = [1.5, 2 * D], Y = [16.5, 1.5 * D], A = [16.5, 7 * D];
+    return { ten: 'trungKhit', thamSo: thu ? { thu: thu } : undefined, ghiChu: 'Hình không theo tỉ lệ: chiều đứng vẽ dài gấp 2,5 lần.', moTa: 'Người đo đứng cách cọc 1,5 mét, mắt cao 1,5 mét; cọc cao 2 mét cách cây 15 mét. Tam giác nhỏ ở cọc phóng từ mắt thành tam giác lớn ở cây.',
+      tuyChon: { hinh: [
+        { diem: [M, X, Cc], ten: ['M', null, 'C'], canh: [null, null, null], goc: [{ mau: '--a' }, { vuong: true, mau: '--muc', r: 0.5 }, null] },
+        { diem: [M, Y, A], ten: [null, 'Y', 'A'], lechTen: [null, [-0.9, 0], null], canh: [null, an('5,5', '?'), null], goc: [{ mau: '--a' }, { vuong: true, mau: '--muc', r: 0.5 }, null] }],
+        them: [{ k: 'doan', a: [-0.5, 0], b: [17.5, 0], mau: '--nhat', day: 2 }, { k: 'doan', a: [0, 0], b: M, mau: '--b', day: 4 },
+          { k: 'doan', a: [1.5, 0], b: X, mau: '--nhat', day: 4 }, { k: 'doan', a: [16.5, 0], b: Y, mau: '--cc', day: 5 },
+          { k: 'chu', p: [9, -0.9], s: '15 m' }, { k: 'chu', p: [0.75, -0.9], s: '1,5' }, { k: 'chu', p: [-1, 0.75 * D], s: '1,5' }],
+        di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }], loiCuoi: [{ s: 'h = AY + 1,5', hien: [0.9, 1] }], thu: { goc: [17.1, 0], huong: [0, 1], ten: 'h', tiLe: D } } };
+  }
+  // 36.8 (đổi câu hỏi): AH = 8, BH = 6, tính CH; tam giác HBA quay quanh H rồi phóng thành HAC
+  var hinh368 = { ten: 'duongCao', moTa: 'Tam giác ABC vuông tại A, đường cao AH. Tam giác HBA quay một góc vuông quanh H rồi phóng lên thì trùng tam giác HAC.',
+    tuyChon: { bh: 6, ch: 32 / 3, cheDo: 'haiNho', nhan: { BH: '6', AH: '8', CH: an('≈ 10,67', '?') }, loiCuoi: [{ s: 'HB : HA = HA : HC', hien: [0.88, 1] }] } };
+
   TOAN8.bai({
     id: 36, ten: 'Các trường hợp đồng dạng của hai tam giác vuông', sgk: { tap: 2, trang: 98 },
+    nhin: {
+      tieuDe: 'Đường cao cắt ra hai tam giác nhỏ, cả hai giống hệt tam giác lớn', loai: 'chungMinh',
+      luuY: 'Lập luận dùng được cho mọi cặp tam giác vuông có một góc nhọn bằng nhau: chồng hai góc ấy lên nhau, hai cạnh góc vuông song song, rồi dùng bài 33.',
+      canh: { ten: 'duongCao', moTa: 'Tam giác ABC vuông tại A, đường cao AH chia thành hai tam giác nhỏ HBA và HAC. Mỗi tam giác nhỏ lật qua tia phân giác của góc nhọn chung rồi phóng lên, trùng khít tam giác ABC.',
+        dongSo: function (p, f) {
+          var ah = Math.sqrt(p.bh * p.ch), so = function (x) { return f(x).replace(',', '{,}'); };
+          return '$BH \\cdot CH = ' + so(p.bh) + ' \\cdot ' + so(p.ch) + ' = ' + so(p.bh * p.ch) + '$, $AH ' + (Math.abs(ah * 100 - Math.round(ah * 100)) < 1e-9 ? '=' : '\\approx') + ' ' + so(ah) + '$, $AH^2 = BH \\cdot CH$';
+        } },
+      buoc: [
+        { t: 0, chu: 'Tam giác $ABC$ vuông tại $A$. Đường cao $AH$ chia nó thành hai tam giác vuông nhỏ: $\\ca{HBA}$ và $\\cb{HAC}$.' },
+        { t: 0.1, chu: 'Tam giác $\\ca{HBA}$ và tam giác $ABC$ cùng có góc vuông và chung góc nhọn $B$. Lật $\\ca{HBA}$ qua tia phân giác góc $B$: góc $B$ vẫn ở chỗ cũ, đỉnh góc vuông $H$ rơi lên cạnh $BA$.' },
+        { t: 0.3, chu: 'Hai cạnh góc vuông (của tam giác đã lật và của tam giác lớn) cùng vuông góc với $BA$ nên song song. Phóng từ $B$: tam giác nhỏ trùng khít tam giác $ABC$ (bài 33).' },
+        { t: 0.52, chu: 'Làm y như vậy với $\\cb{HAC}$, chung góc nhọn $C$: lật qua tia phân giác góc $C$ rồi phóng từ $C$.' },
+        { t: 0.92, chu: 'Cả ba tam giác vuông đồng dạng: $\\triangle HBA \\backsim \\triangle ABC$ và $\\triangle HAC \\backsim \\triangle ABC$.' }
+      ],
+      ketLuan: 'Hai tam giác vuông có một góc nhọn bằng nhau thì đồng dạng. Với đường cao $AH$: $$\\triangle HBA \\backsim \\triangle ABC \\backsim \\triangle HAC$$ nên $AB^2 = BH \\cdot BC$, $AC^2 = CH \\cdot BC$, $AH^2 = BH \\cdot CH$.',
+      dung: {
+        tieuDe: 'Đường cao dài bao nhiêu?', tuBai: '36.7',
+        de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $BH = 3{,}6$ cm, $CH = 6{,}4$ cm. Tính $AH$ (cm).',
+        dapAn: { kieu: 'so', gt: 4.8 },
+        goiY: ['Quay tam giác $HBA$ quanh $H$ một góc vuông: nó nằm trong tam giác $HAC$, hai tam giác đồng dạng.', 'Từ $\\triangle HBA \\backsim \\triangle HAC$: $\\frac{HB}{HA} = \\frac{HA}{HC}$, nên $AH^2 = BH \\cdot CH$.'],
+        loiGiai: ['$\\triangle HBA \\backsim \\triangle HAC$ nên $AH^2 = BH \\cdot CH = 3{,}6 \\cdot 6{,}4 = 23{,}04$.', '$AH = 4{,}8$'],
+        loiThuongGap: [{ gt: 23.04, giaiThich: '$23{,}04$ là $AH^2$. Lấy căn: $AH = 4{,}8$.' }],
+        canh: { ten: 'duongCao', moTa: 'Tam giác ABC vuông tại A, đường cao AH, BH bằng 3,6 và CH bằng 6,4. Tam giác HBA quay quanh H rồi phóng lên thì trùng tam giác HAC.',
+          tuyChon: { bh: 3.6, ch: 6.4, cheDo: 'haiNho', nhan: { BH: '3,6', CH: '6,4', AH: an('4,8', '?') }, loiCuoi: [{ s: 'HB : HA = HA : HC', hien: [0.88, 1] }] } },
+        moiThu: 'Quay tam giác cam $HBA$ quanh $H$ thì thấy gì? Gõ sai thì hình dựng đỉnh $A$ ở đúng độ cao em gõ và đo góc $A$: chỉ một độ cao làm góc $A$ vuông.',
+        phanUng: [
+          { gt: 23.04, thamSo: { thu: 23.04 }, t: 0, loi: '$23{,}04$ là $AH^2$: đỉnh $A$ cao quá, góc $A$ nhọn hẳn. Số nào bình phương lên bằng $23{,}04$?' },
+          { gt: 5, thamSo: { thu: 5 }, t: 0, loi: '$5$ là trung bình cộng của $3{,}6$ và $6{,}4$. Với $AH = 5$ thì góc $A$ chỉ khoảng $88^\\circ$, chưa vuông. Dùng $AH^2 = BH \\cdot CH$.' }
+        ],
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 0, loi: 'Độ dài phải lớn hơn $0$.' };
+          var g = Math.acos((v * v - 23.04) / Math.sqrt((12.96 + v * v) * (40.96 + v * v))) * 180 / Math.PI;
+          var so = String(Math.round(v * 1000) / 1000).replace('.', '{,}');
+          return { thamSo: { thu: v }, t: 0, loi: 'Với $AH = ' + so + '$, góc $A$ khoảng $' + Math.round(g) + '^\\circ$, ' + (g > 90 ? 'tù' : 'nhọn') + ', không vuông. Từ $\\triangle HBA \\backsim \\triangle HAC$: $AH^2 = BH \\cdot CH$.' };
+        },
+        dungChu: '$AH^2 = 3{,}6 \\cdot 6{,}4 = 23{,}04$, nên $AH = 4{,}8$. Khi đó góc $A$ vuông đúng.', saiChu: 'Quay tam giác $HBA$ quanh $H$: $HB$ nằm lên $HA$, $HA$ nằm lên $HC$. Vậy $\\frac{HB}{HA} = \\frac{HA}{HC}$.'
+      },
+      suyRa: {
+        tieuDe: 'Hai tam giác vuông chung một góc nhọn: một cái là bản phóng của cái kia',
+        baDe: [
+          { tuBai: '36.10', canh: hinhCoc(), tenNut: 'Tìm hai tam giác',
+            phanUng: [{ gt: 5.5, thamSo: { thu: 5.5 }, loi: '$5{,}5$ m mới là phần cây **trên** tầm mắt (đoạn $AY$). Cây đỏ cao $5{,}5$ m chưa tới ngọn: cộng thêm $1{,}5$ m từ đất lên tới mắt.' },
+              { gt: 22, thamSo: { thu: 22 }, loi: 'Em dùng cả chiều cao cọc $2$ m. Tam giác nhỏ có đỉnh $M$ ở mắt, nên cạnh đứng của nó chỉ là phần cọc trên tầm mắt: $2 - 1{,}5 = 0{,}5$ m.' }],
+            dungChu: '$\\frac{AY}{CX} = \\frac{MY}{MX} = \\frac{16{,}5}{1{,}5} = 11$, nên $AY = 5{,}5$ và $h = 5{,}5 + 1{,}5 = 7$ (m).', saiChu: 'Tam giác nhỏ $MXC$ phóng từ mắt $M$ thành tam giác $MYA$. Tỉ số là $\\frac{MY}{MX}$; nhớ cộng chiều cao mắt.' },
+          { tuBai: '36.6', tenNut: 'Chồng hai tam giác',
+            canh: haiTG({ diem: [[0, 0], [0, 6], [8, 0]], ten: ['A', 'B', 'C'], canh: ['6', '10', null], goc: [{ vuong: true, mau: '--muc', r: 0.6 }] },
+              { diem: [[0, 0], [0, 9], [12, 0]], ten: ['D', 'E', 'F'], canh: ['9', '15', an('12', 'x')], goc: [{ vuong: true, mau: '--muc', r: 0.6 }] }, { loiCuoi: [{ s: 'EF : BC = DE : AB = 1,5', hien: [0.9, 1] }] }),
+            phanUng: [{ gt: 'sqrt(306)', loi: 'Em cộng $15^2 + 9^2$. $EF$ là cạnh huyền nên $DF^2 = 15^2 - 9^2$.' }, { gt: 8, loi: '$8$ là cạnh $AC$ của tam giác nhỏ. Tam giác $DEF$ là bản phóng $1{,}5$ lần, nên $DF = 1{,}5 \\cdot 8$.' }],
+            dungChu: '$\\frac{EF}{BC} = \\frac{DE}{AB} = 1{,}5$ và $AC = 8$, nên $DF = 1{,}5 \\cdot 8 = 12$.', saiChu: 'Cạnh huyền và một cạnh góc vuông cùng tỉ số $1{,}5$: tam giác $DEF$ là tam giác $ABC$ phóng $1{,}5$ lần.' },
+          { tuBai: '36.8', canh: hinh368, tenNut: 'Quay và phóng',
+            de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $AH = 8$ cm, $BH = 6$ cm. Tính $CH$ (cm; viết phân số hoặc số thập phân làm tròn đến hàng phần trăm).',
+            dapAn: { kieu: 'so', gt: '32/3', saiSo: 0.006 },
+            goiY: ['Quay tam giác $HBA$ quanh $H$ một góc vuông: $HB$ nằm lên $HA$, $HA$ nằm lên $HC$.', 'Vậy $\\frac{HB}{HA} = \\frac{HA}{HC}$, nên $CH = \\frac{AH^2}{BH}$.'],
+            loiGiai: ['$\\triangle HBA \\backsim \\triangle HAC$ nên $\\frac{HB}{HA} = \\frac{HA}{HC}$.', '$CH = \\frac{8^2}{6} = \\frac{32}{3} \\approx 10{,}67$'],
+            loiThuongGap: [{ gt: 4.5, giaiThich: 'Em ghép lệch cặp cạnh (ra $\\frac{BH^2}{AH}$). $HB$ ứng với $HA$, còn $HA$ ứng với $HC$.' }],
+            phanUng: [{ gt: 4.5, loi: 'Em ghép lệch cặp cạnh: ra $\\frac{BH^2}{AH}$. Xem hình quay: $HB$ nằm lên $HA$, $HA$ nằm lên $HC$. Vậy $CH = \\frac{AH^2}{BH}$, và $CH$ phải dài hơn $AH = 8$.' }],
+            dungChu: '$\\frac{HB}{HA} = \\frac{HA}{HC}$, nên $CH = \\frac{64}{6} = \\frac{32}{3} \\approx 10{,}67$.', saiChu: 'Quay tam giác $HBA$ quanh $H$ rồi phóng lên: nó trùng tam giác $HAC$. Tỉ số $\\frac{HA}{HB}$.' }
+        ],
+        cachNhan: 'Thấy hai tam giác vuông chung (hoặc bằng nhau) một góc nhọn, hay có hai cặp cạnh tỉ lệ: chồng chúng lên nhau ở góc đó (lật, quay hoặc trượt), tam giác nhỏ là bản thu nhỏ của tam giác lớn.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Cột cờ $AC$ cao $12$ m, bạn Việt $A\'C\'$ cao $1{,}4$ m đứng cùng một sân, nên tia nắng chiếu tới hai người dưới **cùng một góc** (góc vàng).\n\nKéo thanh trượt **góc nắng** để đổi giờ trong ngày. Bóng dài ra, ngắn lại; còn tỉ số **cao : bóng** của cột và của Việt thì sao?',
       widget: 'geo',
@@ -161,23 +252,32 @@
       { loai: 'chuY', noiDung: "**Hay nhầm 1 – ghép sai đỉnh.** Hai tam giác vuông có $\\widehat{B} = \\widehat{F}$ ($ABC$ vuông tại $A$, $DEF$ vuông tại $D$) thì viết $\\triangle ABC \\backsim \\triangle DFE$: đỉnh góc vuông ghép với đỉnh góc vuông, góc bằng nhau ghép với nhau.\n\n**Hay nhầm 2 – diện tích.** Tỉ số đồng dạng $k = 2$ thì diện tích gấp $k^2 = 4$ lần, **không** phải $2$ lần." }
     ],
     viDu: [
-      { de: 'Bóng cột cờ trên sân dài $6$ m. Cùng lúc đó, bạn Việt cao $1{,}4$ m có bóng dài $0{,}7$ m. Tính chiều cao cột cờ.', buoc: [
+      { de: 'Bóng cột cờ trên sân dài $6$ m. Cùng lúc đó, bạn Việt cao $1{,}4$ m có bóng dài $0{,}7$ m. Tính chiều cao cột cờ.',
+        canh: Object.assign(haiTG({ diem: [[-1.75, 0], [0, 0], [0, 3.5]], ten: ["B'", "A'", "C'"], canh: ['0,7', '1,4', null], goc: ['--a', { vuong: true, mau: '--muc', r: 0.6 }, null] },
+          { diem: [[-6, 0], [0, 0], [0, 12]], ten: ['B', 'A', 'C'], canh: ['6', an('12', '?'), null], goc: ['--a', { vuong: true, mau: '--muc', r: 0.6 }, null] },
+          { di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }], chuBuoc: false, loiCuoi: [{ s: 'cao : bóng = 1,4 : 0,7 = 2', hien: [0.9, 1] }] }), { ghiChu: 'Hình không theo tỉ lệ: bạn Việt vẽ to hơn thật.' }), buoc: [
         { lam: 'Cột $AC$ và bóng $AB$ tạo thành $\\triangle ABC$ vuông tại $A$; Việt và bóng tạo thành $\\triangle A\'B\'C\'$ vuông tại $A\'$.', vi: 'Cột và người đều đứng thẳng, vuông góc với mặt đất.' },
         { lam: 'Tia nắng song song nên $\\widehat{B} = \\widehat{B\'}$, do đó $\\triangle ABC \\backsim \\triangle A\'B\'C\'$.', vi: 'Hai tam giác vuông có một cặp góc nhọn bằng nhau (Định lí 1).' },
         { lam: '$\\frac{AC}{A\'C\'} = \\frac{AB}{A\'B\'}$, tức $\\frac{AC}{1{,}4} = \\frac{6}{0{,}7}$.', vi: 'Chiều cao ứng với chiều cao, bóng ứng với bóng.' },
-        { lam: '$AC = \\frac{1{,}4 \\cdot 6}{0{,}7} = 12$ (m).', vi: 'Nhân chéo rồi chia.' } ] },
-      { de: 'Hai con dốc là hai tam giác vuông $AHB$ (vuông tại $H$) và $A\'H\'B\'$ (vuông tại $H\'$) có chiều dài $AB = 13$ m, $A\'B\' = 6{,}5$ m và độ cao $BH = 5$ m, $B\'H\' = 2{,}5$ m. Hai con dốc có dốc như nhau không?', buoc: [
+        { lam: '$AC = \\frac{1{,}4 \\cdot 6}{0{,}7} = 12$ (m).', vi: 'Nhân chéo rồi chia.', canh: { t: 1, trangThai: 'giai' } } ] },
+      { de: 'Hai con dốc là hai tam giác vuông $AHB$ (vuông tại $H$) và $A\'H\'B\'$ (vuông tại $H\'$) có chiều dài $AB = 13$ m, $A\'B\' = 6{,}5$ m và độ cao $BH = 5$ m, $B\'H\' = 2{,}5$ m. Hai con dốc có dốc như nhau không?',
+        canh: haiTG({ diem: [[0, 0], [6, 0], [6, 2.5]], ten: ["A'", "H'", "B'"], canh: [null, '2,5', '6,5'], goc: ['--a', { vuong: true, mau: '--muc', r: 0.6 }, null] },
+          { diem: [[0, 0], [12, 0], [12, 5]], ten: ['A', 'H', 'B'], canh: [null, '5', '13'], goc: ['--a', { vuong: true, mau: '--muc', r: 0.6 }, null] }), buoc: [
         { lam: '$\\frac{A\'B\'}{AB} = \\frac{6{,}5}{13} = \\frac{1}{2}$; $\\frac{B\'H\'}{BH} = \\frac{2{,}5}{5} = \\frac{1}{2}$.', vi: '$AB$, $A\'B\'$ là **cạnh huyền**; $BH$, $B\'H\'$ là cạnh góc vuông.' },
         { lam: 'Do đó $\\triangle A\'H\'B\' \\backsim \\triangle AHB$ (cạnh huyền – cạnh góc vuông).', vi: 'Trường hợp đồng dạng đặc biệt của tam giác vuông.' },
         { lam: 'Suy ra $\\widehat{H\'A\'B\'} = \\widehat{HAB}$: hai con dốc **dốc như nhau**.', vi: 'Độ dốc đo bằng góc ở chân dốc; hai tam giác đồng dạng nên hai góc này bằng nhau.' } ] },
-      { de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $BH = 9$ cm, $CH = 16$ cm. Tính $AH$, $AB$, $AC$.', buoc: [
+      { de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $BH = 9$ cm, $CH = 16$ cm. Tính $AH$, $AB$, $AC$.',
+        canh: { ten: 'duongCao', tuyChon: { bh: 9, ch: 16, cheDo: 'haiNho', nhan: { BH: '9', CH: '16', AH: an('12'), AB: an('15'), AC: an('20') } } }, buoc: [
         { lam: '$\\triangle HBA \\backsim \\triangle HAC$ (cùng vuông tại $H$, $\\widehat{HBA} = \\widehat{HAC}$ vì cùng phụ với $\\widehat{BAH}$).', vi: 'Hai góc cùng phụ với một góc thì bằng nhau.' },
         { lam: '$\\frac{HB}{HA} = \\frac{HA}{HC}$ nên $AH^2 = BH \\cdot CH = 9 \\cdot 16 = 144$, $AH = 12$ cm.', vi: 'Nhân chéo tỉ lệ thức.' },
-        { lam: '$BC = 25$; $AB^2 = BH \\cdot BC = 9 \\cdot 25 = 225$, $AB = 15$ cm; $AC^2 = CH \\cdot BC = 400$, $AC = 20$ cm.', vi: 'Dùng các hệ thức trong tam giác vuông có đường cao (hoặc Pythagore).' } ] },
-      { de: 'Người ở $A$ muốn đo khoảng cách tới $B$ bên kia sông. Chọn $M$ cùng bờ với $AM = 2$ m, $AM \\perp AB$, đo góc $AMB$. Vẽ trên giấy $\\triangle A\'M\'B\'$ vuông tại $A\'$ với $A\'M\' = 1$ cm, $\\widehat{A\'M\'B\'} = \\widehat{AMB}$, đo được $A\'B\' = 5$ cm. Tính $AB$.', buoc: [
+        { lam: '$BC = 25$; $AB^2 = BH \\cdot BC = 9 \\cdot 25 = 225$, $AB = 15$ cm; $AC^2 = CH \\cdot BC = 400$, $AC = 20$ cm.', vi: 'Dùng các hệ thức trong tam giác vuông có đường cao (hoặc Pythagore).', canh: { t: 1, trangThai: 'giai' } } ] },
+      { de: 'Người ở $A$ muốn đo khoảng cách tới $B$ bên kia sông. Chọn $M$ cùng bờ với $AM = 2$ m, $AM \\perp AB$, đo góc $AMB$. Vẽ trên giấy $\\triangle A\'M\'B\'$ vuông tại $A\'$ với $A\'M\' = 1$ cm, $\\widehat{A\'M\'B\'} = \\widehat{AMB}$, đo được $A\'B\' = 5$ cm. Tính $AB$.',
+        canh: Object.assign(haiTG({ diem: [[-3, 0], [0, 0], [0, 5]], ten: ["M'", "A'", "B'"], canh: ['1 cm', '5 cm', null], goc: ['--a', { vuong: true, mau: '--muc', r: 0.6 }, null] },
+          { diem: [[-6, 0], [0, 0], [0, 10]], ten: ['M', 'A', 'B'], canh: ['2 m', an('10 m', '?'), null], goc: ['--a', { vuong: true, mau: '--muc', r: 0.6 }, null] },
+          { di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }], chuBuoc: false }), { ghiChu: 'Hình không theo tỉ lệ: cạnh thật gấp 200 lần cạnh trên giấy.' }), buoc: [
         { lam: '$\\triangle A\'M\'B\' \\backsim \\triangle AMB$ (hai tam giác vuông có góc nhọn $M\' = M$).', vi: 'Định lí 1.' },
         { lam: 'Tỉ số: $\\frac{AM}{A\'M\'} = \\frac{200 \\text{ cm}}{1 \\text{ cm}} = 200$.', vi: 'Đổi cùng đơn vị: $2$ m $= 200$ cm.' },
-        { lam: '$AB = 200 \\cdot 5 = 1000$ cm $= 10$ m.', vi: 'Mọi cạnh thật gấp $200$ lần cạnh trên giấy.' } ] }
+        { lam: '$AB = 200 \\cdot 5 = 1000$ cm $= 10$ m.', vi: 'Mọi cạnh thật gấp $200$ lần cạnh trên giấy.', canh: { t: 1, trangThai: 'giai' } } ] }
     ],
     viDuMo: [
       { de: 'Một cây cọc cao $1{,}2$ m có bóng dài $0{,}8$ m. Cùng lúc đó bóng của một toà nhà dài $20$ m. Toà nhà cao bao nhiêu mét?', buoc: [
@@ -193,20 +293,20 @@
           loiThuongGap: [{ gt: 15, giaiThich: 'Em nhân với $k = 3$. Đáy gấp $3$ **và** chiều cao cũng gấp $3$, nên diện tích gấp $3 \\cdot 3 = 9$ lần.' }] } ] }
     ],
     baiTap: [
-      { id: '36.1', muc: 1, de: 'Điều kiện nào dưới đây **không** đủ để kết luận hai tam giác vuông đồng dạng?',
+      { id: '36.1', khongHinh: 'Câu lí thuyết về các trường hợp đồng dạng; phần Nhìn đã có hình.', muc: 1, de: 'Điều kiện nào dưới đây **không** đủ để kết luận hai tam giác vuông đồng dạng?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['Một góc nhọn của tam giác này bằng một góc nhọn của tam giác kia', 'Cạnh huyền và một cạnh góc vuông của tam giác này tỉ lệ với cạnh huyền và một cạnh góc vuông của tam giác kia', 'Một cạnh góc vuông của tam giác này bằng một cạnh góc vuông của tam giác kia', 'Hai cạnh góc vuông của tam giác này tỉ lệ với hai cạnh góc vuông của tam giác kia'] },
         goiY: ['Nhớ lại ba trường hợp đồng dạng của tam giác vuông.', 'Chỉ có một cặp cạnh bằng nhau thì hình dạng hai tam giác có thể rất khác.'],
         loiGiai: ['Phương án 1, 2, 4 là ba trường hợp đồng dạng của tam giác vuông.', 'Một cặp cạnh góc vuông bằng nhau thì **chưa đủ**: ví dụ tam giác vuông có hai cạnh $1;1$ và tam giác vuông có hai cạnh $1;5$.'] },
-      { id: '36.2', muc: 1, de: 'Tam giác $ABC$ vuông tại $A$ có $\\widehat{B} = 40^\\circ$; tam giác $DEF$ vuông tại $D$ có $\\widehat{F} = 50^\\circ$. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
+      { id: '36.2', hinhGiai: hg(haiTG(vuongGoc(40, 4, ['A', 'B', 'C'], [null, '40°', null]), vuongGoc(40, 5, ['D', 'E', 'F'], [null, null, '50°']), { di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }] })), muc: 1, de: 'Tam giác $ABC$ vuông tại $A$ có $\\widehat{B} = 40^\\circ$; tam giác $DEF$ vuông tại $D$ có $\\widehat{F} = 50^\\circ$. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Tính góc nhọn còn lại của tam giác $ABC$: $\\widehat{C} = 90^\\circ - 40^\\circ$.', 'So sánh $\\widehat{C}$ với $\\widehat{F}$.'],
-        loiGiai: ['$\\widehat{C} = 90^\\circ - 40^\\circ = 50^\\circ = \\widehat{F}$.', 'Hai tam giác vuông có một cặp góc nhọn bằng nhau nên đồng dạng ($\\triangle ABC \\backsim \\triangle DFE$). Khẳng định **đúng**.'] },
+        loiGiai: ['$\\widehat{C} = 90^\\circ - 40^\\circ = 50^\\circ = \\widehat{F}$.', 'Hai tam giác vuông có một cặp góc nhọn bằng nhau nên đồng dạng ($\\widehat{C} = \\widehat{F}$, $\\widehat{B} = \\widehat{E} = 40^\\circ$, nên $\\triangle ABC \\backsim \\triangle DEF$). Khẳng định **đúng**.'] },
       { id: '36.3', muc: 1, de: 'Trong hình, tam giác vuông $ABC$ có hai cạnh góc vuông $1$ và $1$; tam giác vuông $DEF$ có hai cạnh góc vuông $2$ và $4$. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
         hinh: h3,
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Định lí 2: hai cạnh góc vuông phải tỉ lệ.', 'So sánh $\\frac{2}{1}$ và $\\frac{4}{1}$.'],
         loiGiai: ['$\\frac{DE}{AB} = 2$ nhưng $\\frac{DF}{AC} = 4$ (đổi cặp cũng không bằng nhau).', 'Hai cạnh góc vuông không tỉ lệ nên **không** đồng dạng. Khẳng định **sai**. (Tam giác $ABC$ vuông cân, còn $DEF$ thì không.)'] },
-      { id: '36.4', muc: 1, de: 'Tam giác $ABC$ vuông tại $A$ có $\\widehat{B} = 35^\\circ$; tam giác $MNP$ vuông tại $M$ có $\\widehat{P} = 35^\\circ$. Kí hiệu nào **đúng**?',
+      { id: '36.4', hinhGiai: hg(haiTG(vuongGoc(35, 4, ['A', 'B', 'C'], [null, '35°', null]), vuongGoc(35, 5, ['M', 'P', 'N'], [null, '35°', null]))), muc: 1, de: 'Tam giác $ABC$ vuông tại $A$ có $\\widehat{B} = 35^\\circ$; tam giác $MNP$ vuông tại $M$ có $\\widehat{P} = 35^\\circ$. Kí hiệu nào **đúng**?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['$\\triangle ABC \\backsim \\triangle MNP$', '$\\triangle ABC \\backsim \\triangle MPN$', '$\\triangle ABC \\backsim \\triangle NMP$', '$\\triangle ABC \\backsim \\triangle PMN$'] },
         goiY: ['Đỉnh góc vuông ghép với đỉnh góc vuông: $A \\leftrightarrow M$.', 'Góc $35^\\circ$ ghép với góc $35^\\circ$: $B \\leftrightarrow P$.'],
         loiGiai: ['$A \\leftrightarrow M$ (góc vuông), $B \\leftrightarrow P$ (góc $35^\\circ$), nên $C \\leftrightarrow N$.', 'Vậy $\\triangle ABC \\backsim \\triangle MPN$.'] },
@@ -237,7 +337,7 @@
           { nhan: '$CH =$', kieu: 'so', gt: '32/3', saiSo: 0.006, loiThuongGap: [{ gt: 4.5, giaiThich: 'Em ghép sai cặp cạnh (ra $CH = \\frac{BH^2}{AH}$). Từ $\\triangle AHB \\backsim \\triangle CHA$: $\\frac{AH}{CH} = \\frac{HB}{HA}$, nên $CH = \\frac{AH^2}{BH}$.' }] }] },
         goiY: ['Tam giác $AHB$ vuông tại $H$: $BH^2 = AB^2 - AH^2$.', '$\\triangle AHB \\backsim \\triangle CHA$ (vuông tại $H$, $\\widehat{ABH} = \\widehat{CAH}$) nên $\\frac{AH}{CH} = \\frac{BH}{AH}$.'],
         loiGiai: ['$BH^2 = 10^2 - 8^2 = 36$ nên $BH = 6$.', '$\\triangle AHB \\backsim \\triangle CHA$ nên $\\frac{AH}{CH} = \\frac{HB}{HA}$, suy ra $CH = \\frac{AH^2}{BH} = \\frac{64}{6} = \\frac{32}{3}$.'] },
-      { id: '36.9', muc: 2, de: "Cho $\\triangle A'B'C' \\backsim \\triangle ABC$; đường cao $A'H' = 6$ cm, đường cao tương ứng $AH = 4$ cm. Diện tích $\\triangle ABC$ là $12$ cm². Tính diện tích $\\triangle A'B'C'$ (cm²).",
+      { id: '36.9', hinhGiai: hg({ ten: 'luoiO', tuyChon: { chuNhat: [2, 2], k: 1.5, nhan: { rong: '2', rongMoi: '3', cu: '4 ô', moi: '9 ô' } }, ghiChu: 'Hình vuông thay cho tam giác: đáy và chiều cao cùng nhân 1,5 nên diện tích nhân 1,5 · 1,5 = 2,25.' }), muc: 2, de: "Cho $\\triangle A'B'C' \\backsim \\triangle ABC$; đường cao $A'H' = 6$ cm, đường cao tương ứng $AH = 4$ cm. Diện tích $\\triangle ABC$ là $12$ cm². Tính diện tích $\\triangle A'B'C'$ (cm²).",
         dapAn: { kieu: 'so', gt: 27 },
         goiY: ["Tỉ số hai đường cao tương ứng bằng tỉ số đồng dạng: $k = \\frac{A'H'}{AH}$.", 'Tỉ số diện tích bằng $k^2$.'],
         loiGiai: ["$k = \\frac{6}{4} = 1{,}5$, nên $\\frac{S_{A'B'C'}}{S_{ABC}} = 1{,}5^2 = 2{,}25$.", "$S_{A'B'C'} = 2{,}25 \\cdot 12 = 27$"],

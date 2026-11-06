@@ -35,6 +35,21 @@
     return [4, 5, 6];
   }
 
+  // Hình giải: hai tam giác cùng hình dạng (cạnh tỉ lệ 4 : 5 : 6), bản sao tam giác đầu trượt rồi phóng lên trùng tam giác sau
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  var CANH_SO = { '0,1': 0, '1,2': 1, '0,2': 2 }, HINH = [4, 5, 6];
+  // Tam giác tên ten, cạnh nối đỉnh a, b (a < b) dài d; nhãn chỉ ghi trên cạnh đó
+  function tgTheoCanh(ten, a, b, d, nhanCanh, them) {
+    var i = CANH_SO[a + ',' + b], s = d / HINH[i], canh = [null, null, null];
+    canh[i] = nhanCanh;
+    return Object.assign({ dai: HINH.map(function (x) { return x * s; }), ten: ten, canh: canh }, them || {});
+  }
+  function haiTG(h1, h2, them) {
+    h2.dat = { sau: 0 };
+    return hg(Object.assign({ ten: 'trungKhit', tuyChon: Object.assign({ hinh: [h1, h2], di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }] }, them || {}) },
+      { ghiChu: 'Hai cạnh không có số chỉ vẽ để minh họa.' }));
+  }
+
   TOAN8.luyen(33, [
     { ten: 'Tỉ số đồng dạng', muc: 1, sinh: function (r, cc) {
       var cap = r.chon(CAP), T = cap[0], U = cap[1], k = r.chon(KS), t = r.so(1, 4);
@@ -46,6 +61,7 @@
       var tu = nguoc ? tenT : tenU, mau = nguoc ? tenU : tenT, vTu = nguoc ? dT : dU, vMau = nguoc ? dU : dT;
       return {
         de: 'Cho $\\triangle ' + U.join('') + ' \\backsim \\triangle ' + T.join('') + '$ có $' + tenU + ' = ' + dU + '$ cm và $' + tenT + ' = ' + dT + '$ cm. Tìm tỉ số đồng dạng của $\\triangle ' + truoc + '$ với $\\triangle ' + sau + '$ (viết dạng phân số tối giản hoặc số nguyên).',
+        hinhGiai: haiTG(tgTheoCanh(T, a, b, dT, nh(dT)), tgTheoCanh(U, a, b, dU, nh(dU))),
         dapAn: { kieu: 'so', gt: kq.ascii },
         goiY: ['Tỉ số đồng dạng của $\\triangle ' + truoc + '$ với $\\triangle ' + sau + '$ là tỉ số một cạnh của tam giác **đứng trước** với cạnh tương ứng của tam giác đứng sau.',
           'Em lấy $\\frac{' + tu + '}{' + mau + '}$ rồi rút gọn.'],
@@ -59,9 +75,15 @@
       var al = r.so(4, 9) * 5 + r.chon([0, 5]), be = r.so(4, 10) * 5;
       while (al + be > 150 || al === be) { al = r.so(4, 9) * 5; be = r.so(4, 10) * 5; }
       var i = r.so(0, 2), j = (i + r.so(1, 2)) % 3, l = 3 - i - j, kq = 180 - al - be;
+      var g3 = []; g3[i] = al; g3[j] = be; g3[l] = kq;
+      var gT = ['--a', '--b', '--cc'].slice(), gV = gT.slice();
+      gT[i] = { mau: gT[i], nhan: al + '°' }; gV[j] = { mau: gV[j], nhan: be + '°' }; gV[l] = { mau: gV[l], nhan: { s: kq + '°', an: true } };
+      var hinhG = haiTG({ goc3: g3, day: 3.4, ten: T, goc: gT }, { goc3: g3, day: 4.2, ten: V, goc: gV });
+      hinhG.config.ghiChu = 'Góc cùng màu là cặp góc tương ứng.';
       var ltg = al !== kq ? [{ gt: al, giaiThich: 'Góc $' + V[l] + '$ ứng với góc $' + T[l] + '$ (cùng vị trí thứ ' + (l + 1) + ' trong kí hiệu), không phải góc $' + T[i] + '$.' }] : [];
       return {
         de: 'Cho $\\triangle ' + T.join('') + ' \\backsim \\triangle ' + V.join('') + '$, biết $\\widehat{' + T[i] + '} = ' + al + '^\\circ$ và $\\widehat{' + V[j] + '} = ' + be + '^\\circ$. Tính $\\widehat{' + V[l] + '}$ (độ).',
+        hinhGiai: hinhG,
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Ghép cặp đỉnh theo vị trí chữ: $' + T[0] + ' \\leftrightarrow ' + V[0] + '$, $' + T[1] + ' \\leftrightarrow ' + V[1] + '$, $' + T[2] + ' \\leftrightarrow ' + V[2] + '$. Các góc tương ứng bằng nhau.',
           'Tìm hai góc của $\\triangle ' + V.join('') + '$ rồi dùng tổng ba góc bằng $180^\\circ$.'],
@@ -145,6 +167,7 @@
       var kq = P * k[0] / k[1], kt = cc.phanSo(k[0], k[1]).tex;
       return {
         de: 'Cho $\\triangle ' + U.join('') + ' \\backsim \\triangle ' + T.join('') + '$ có $' + U[0] + U[1] + ' = ' + cc.so(dU) + '$ cm, $' + T[0] + T[1] + ' = ' + cc.so(dT) + '$ cm. Chu vi tam giác $' + T.join('') + '$ bằng $' + P + '$ cm. Tính chu vi tam giác $' + U.join('') + '$ (cm).',
+        hinhGiai: haiTG(tgTheoCanh(T, 0, 1, dT, nh(dT)), tgTheoCanh(U, 0, 1, dU, nh(dU)), { loiCuoi: ['Chu vi ' + T.join('') + ' = ' + P] }),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Mỗi cạnh của $\\triangle ' + U.join('') + '$ bằng $k = \\frac{' + U[0] + U[1] + '}{' + T[0] + T[1] + '}$ lần cạnh tương ứng của $\\triangle ' + T.join('') + '$.',
           'Ba cạnh cùng nhân $k$ thì chu vi cũng nhân $k$.'],

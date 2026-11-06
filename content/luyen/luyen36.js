@@ -16,6 +16,12 @@
       goc: [[T[1], T[0], T[2], { mau: '#495057', r: s }], [U[1], U[0], U[2], { mau: '#495057', r: s }]], nhan: nhan });
   }
 
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  // Tam giác vuông tại đỉnh 0, góc ở đỉnh 1 là g độ
+  function vuongGoc(g, day, ten, nhan, them) {
+    return Object.assign({ goc3: [90, g, 90 - g], day: day, ten: ten, goc: [{ vuong: true, mau: '--muc', r: 0.6 }, { mau: '--a', nhan: nhan[1] }, { mau: '--b', nhan: nhan[2] }] }, them || {});
+  }
+
   TOAN8.luyen(36, [
     { ten: 'Đồng dạng nhờ một góc nhọn (đúng/sai)', muc: 1, sinh: function (r) {
       var b = r.so(5, 15) * 5 + r.chon([0, 0, 2]), cach = r.so(0, 2), f;
@@ -23,7 +29,11 @@
       f = cach === 0 ? b : cach === 1 ? 90 - b : r.chon([b + 10, b - 10, 90 - b + 5]);
       if (f === 45 && b !== 45) f = 50;
       var dung = f === b || f === 90 - b;
+      // Đỉnh của DEF xếp theo thứ tự ghép với A, B, C: nếu F bằng B thì B ↔ F, còn lại C ↔ F
+      var dich = f === b ? vuongGoc(f, 5, ['D', 'F', 'E'], [null, f + '°', null], { dat: { sau: 0 } }) : vuongGoc(90 - f, 5, ['D', 'E', 'F'], [null, null, f + '°'], { dat: { sau: 0 } });
       return {
+        hinhGiai: hg({ ten: 'trungKhit', ghiChu: 'Chồng góc vuông lên góc vuông rồi phóng: khít thì đồng dạng.',
+          tuyChon: { hinh: [vuongGoc(b, 4, ['A', 'B', 'C'], [null, b + '°', null]), dich], di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }] } }),
         de: 'Tam giác $ABC$ vuông tại $A$ có $\\widehat{B} = ' + b + '^\\circ$; tam giác $DEF$ vuông tại $D$ có $\\widehat{F} = ' + f + '^\\circ$. Khẳng định "hai tam giác này đồng dạng" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: dung },
         goiY: ['Hai tam giác vuông đồng dạng nếu có **một góc nhọn** bằng nhau.', 'Tính góc nhọn còn lại của mỗi tam giác: $\\widehat{C} = 90^\\circ - \\widehat{B}$, $\\widehat{E} = 90^\\circ - \\widehat{F}$.'],
@@ -92,6 +102,8 @@
       var k = r.chon([[3, 2], [2, 1], [3, 1], [1, 2], [2, 3], [5, 2], [4, 3]]), t = r.so(1, 3);
       var h1 = k[0] * t, h0 = k[1] * t, S = k[1] * k[1] * r.so(2, 9), kq = S * k[0] * k[0] / (k[1] * k[1]), kt = cc.phanSo(k[0], k[1]).tex;
       return {
+        hinhGiai: hg({ ten: 'luoiO', tuyChon: { chuNhat: [h0, h0], k: h1 / h0, nhan: { rong: String(h0), rongMoi: String(h1), cu: h0 * h0 + ' ô', moi: h1 * h1 + ' ô' } },
+          ghiChu: 'Hình vuông thay cho tam giác: đáy và chiều cao cùng nhân k nên diện tích nhân k · k.' }),
         de: "Cho $\\triangle A'B'C' \\backsim \\triangle ABC$; đường cao $A'H' = " + h1 + "$ cm, đường cao tương ứng $AH = " + h0 + "$ cm. Diện tích $\\triangle ABC$ là $" + S + "$ cm². Tính diện tích $\\triangle A'B'C'$ (cm²).",
         dapAn: { kieu: 'so', gt: kq },
         goiY: ["Tỉ số hai đường cao tương ứng bằng tỉ số đồng dạng $k = \\frac{A'H'}{AH}$. Cạnh đáy $B'C'$ cũng bằng $k \\cdot BC$.", 'Diện tích $= \\frac{1}{2}$ đáy $\\cdot$ cao: cả đáy và cao cùng nhân $k$ nên diện tích nhân $k^2$.'],

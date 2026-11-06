@@ -49,7 +49,41 @@
     }
   });
 
+  // Pythagore đảo: tam giác dựng đúng từ ba cạnh bất kì, mỗi cạnh có một hình vuông dựng ra phía ngoài.
+  // Không ghi sẵn kết luận: em tự so diện tích hình vuông lớn với tổng hai hình vuông nhỏ.
+  C.dangKi('vuongDao', {
+    tinh: function (p, t, o) {
+      var s = o.canh.slice().sort(function (x, y) { return x - y; }), a = s[0], b = s[1], c = s[2];
+      if (a + b <= c) throw new Error('vuongDao: ba cạnh không tạo thành tam giác');
+      var x = (b * b - a * a + c * c) / (2 * c), P = [[0, 0], [c, 0], [x, Math.sqrt(b * b - x * x)]];
+      // Cạnh c: P0P1, cạnh a: P1P2, cạnh b: P2P0
+      var vuong = [[0, 1, 2, c, '--cc'], [1, 2, 0, a, '--a'], [2, 0, 1, b, '--b']].map(function (e) {
+        var U = P[e[0]], V = P[e[1]], W = P[e[2]], dx = V[0] - U[0], dy = V[1] - U[1], l = Math.sqrt(dx * dx + dy * dy);
+        var n = [dy / l, -dx / l];
+        if (n[0] * (W[0] - U[0]) + n[1] * (W[1] - U[1]) > 0) n = [-n[0], -n[1]];
+        return { d: [U, V, [V[0] + n[0] * l, V[1] + n[1] * l], [U[0] + n[0] * l, U[1] + n[1] * l]], canh: e[3], dt: e[3] * e[3], mau: e[4] };
+      });
+      var u = [P[0][0] - P[2][0], P[0][1] - P[2][1]], v = [P[1][0] - P[2][0], P[1][1] - P[2][1]];
+      var gocLon = Math.acos((u[0] * v[0] + u[1] * v[1]) / (a * b)) * 180 / Math.PI;
+      return { dinh: P, vuong: vuong, gocLon: gocLon };
+    }
+  });
+
   /* ---------- Phần vẽ ---------- */
+  C.lay('vuongDao').ve = function (svg, k) {
+    var ds = [];
+    k.vuong.forEach(function (q) { ds = ds.concat(q.d); });
+    var x0 = Math.min.apply(null, ds.map(function (q) { return q[0]; })), x1 = Math.max.apply(null, ds.map(function (q) { return q[0]; }));
+    var y0 = Math.min.apply(null, ds.map(function (q) { return q[1]; })), y1 = Math.max.apply(null, ds.map(function (q) { return q[1]; }));
+    var L = Math.max(x1 - x0, y1 - y0), m = 0.06 * L, co = L / 16, Y = function (d) { return d.map(function (q) { return [q[0], -q[1]]; }); };
+    svg.setAttribute('viewBox', [x0 - m, -y1 - m, x1 - x0 + 2 * m, y1 - y0 + 2 * m].join(' '));
+    k.vuong.forEach(function (q) {
+      C.mk('polygon', { points: C.diem(Y(q.d)), fill: 'var(' + q.mau + ')', 'fill-opacity': 0.3, stroke: 'var(' + q.mau + ')', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke' }, svg);
+      var g = [0, 0]; q.d.forEach(function (p) { g[0] += p[0] / 4; g[1] += p[1] / 4; });
+      C.chu(svg, g[0], -g[1], C.fmt(q.dt), Math.min(co * 1.2, q.canh * 0.38), q.mau);
+    });
+    C.mk('polygon', { points: C.diem(Y(k.dinh)), fill: 'var(--mat)', stroke: 'var(--muc)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }, svg);
+  };
   C.lay('toHopHinhVuong').ve = function (svg, k, p, t) {
     var s = k.s, d = 0.1 * s, co = 0.062 * s, mk = C.mk, a = k.a, b = k.b;
     svg.setAttribute('viewBox', [-d, -d, s + 2 * d, s + 2 * d].join(' '));

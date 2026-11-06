@@ -156,8 +156,87 @@
       lechTen: { E: [16, 4] }, ghiChu: 'OB = 8, OD = 6' });
   })();
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  function an(s, anChu) { return { s: s, an: true, anChu: anChu }; }
+  var GOC3 = ['--a', '--b', '--cc'];
+  function haiTG(h1, h2, them) {
+    h2.dat = Object.assign({ sau: 0 }, h2.dat || {});
+    return { ten: 'trungKhit', tuyChon: Object.assign({ hinh: [h1, h2], di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }] }, them || {}) };
+  }
+  // Ba cạnh (bất kì thứ tự) → [d01, d12, d20] với cạnh lớn nhất làm đáy
+  function ba(x) { var s = x.slice().sort(function (p, q) { return p - q; }); return [s[0], s[2], s[1]]; }
+  function chu(x) { return String(x).replace('.', ','); }
+  // 34.7: AB = 9, AC = 12, BC = 13,5; M trên AB (AM = 8), N trên AC (AN = 6). Tam giác ANM lật qua phân giác góc A rồi phóng 1,5 lần
+  var H7 = tg(13.5, 12, 9);
+  var hinh347 = { ten: 'trungKhit', moTa: 'Tam giác ABC với M trên AB, N trên AC. Tam giác AMN nằm ngược: lật nó qua tia phân giác góc A rồi phóng lên thì trùng tam giác ABC.',
+    tuyChon: { hinh: [
+      { diem: [H7.A, H7.B, H7.C], ten: ['A', 'B', 'C'], canh: ['9', '13,5', '12'] },
+      { diem: [H7.A, lerp(H7.A, H7.C, 0.5), lerp(H7.A, H7.B, 8 / 9)], ten: [null, 'N', 'M'], lechTen: [null, [-1.5, -0.4], [1.3, 0.5]], mau: '--cc', to: '--cc',
+        canh: [{ s: '6', lech: -0.9 }, an('9', 'x'), { s: '8', lech: -0.9 }] }],
+      di: [{ tu: 1, toi: 0, neo: 0, mau: '--cc' }], loiCuoi: [{ s: 'AN : AB = AM : AC = 2 : 3', hien: [0.9, 1] }] } };
+  // 34.9: C nằm giữa A và D, AC = 4, CD = 5, góc ABC = góc ADB, AB = 6
+  var B9 = [6 * Math.cos(rad(38)), 6 * Math.sin(rad(38))];
+  var hinh349 = { ten: 'trungKhit', moTa: 'Tam giác ABC nằm trong tam giác ADB, chung góc A. Lật tam giác ABC qua tia phân giác góc A rồi phóng lên thì trùng tam giác ADB.',
+    tuyChon: { hinh: [
+      { diem: [[0, 0], [9, 0], B9], ten: ['A', 'D', 'B'], canh: [null, null, an('6', 'x')], goc: [null, '--a', null] },
+      { diem: [[0, 0], B9, [4, 0]], ten: [null, null, 'C'], canh: [null, null, { s: '4', lech: -0.9 }], goc: [null, '--a', null], mau: '--cc', to: '--cc' }],
+      them: [{ k: 'chu', p: [6.5, -0.75], s: '5' }],
+      di: [{ tu: 1, toi: [[0, 0], [9, 0], B9], neo: 0, mau: '--cc' }], loiCuoi: [{ s: 'AB : AD = AC : AB', hien: [0.9, 1] }] } };
+  // 34.8: hình thang, AB = 3, AD = 4, BD = 6; tam giác ABD phóng 2 lần thành tam giác BDC
+  var X8 = 11 / 6, Y8 = Math.sqrt(16 - X8 * X8);
+  var hinh348 = { ten: 'trungKhit', moTa: 'Hình thang ABCD có đường chéo BD. Tam giác ABD quay, trượt rồi phóng lên thì trùng tam giác BDC.',
+    tuyChon: { hinh: [
+      { diem: [[X8, Y8], [X8 + 3, Y8], [0, 0]], ten: ['A', 'B', 'D'], canh: ['3', '6', '4'], goc: ['--a', '--b', null] },
+      { diem: [[X8 + 3, Y8], [0, 0], [12, 0]], ten: [null, null, 'C'], canh: [null, an('12', 'y'), an('8', 'x')], goc: ['--a', '--b', null] }],
+      di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }] } };
+  // 34.11: tam giác trên giấy (A'B' = 4 cm) và tam giác thật (AB = 20 m), cùng góc 80° ở A, 70° ở B
+  var hinh3411 = { ten: 'trungKhit', moTa: 'Tam giác vẽ trên giấy và tam giác thật có cùng hai góc 80 độ và 70 độ.', ghiChu: 'Hình không theo tỉ lệ: tam giác thật lớn gấp 500 lần.',
+    tuyChon: { chuBuoc: false, hinh: [
+      { goc3: [30, 80, 70], day: 5, ten: ["C'", "A'", "B'"], canh: ['6,5 cm', '4 cm', null], goc: [null, { mau: '--a', nhan: '80°' }, { mau: '--b', nhan: '70°' }] },
+      { goc3: [30, 80, 70], day: 10, ten: ['C', 'A', 'B'], canh: [an('32,5 m', '?'), '20 m', null], goc: [null, { mau: '--a', nhan: '80°' }, { mau: '--b', nhan: '70°' }], dat: { sau: 0 } }],
+      di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }], loiCuoi: [{ s: 'Mọi cạnh thật gấp 2000 : 4 = 500 lần', hien: [0.9, 1] }] } };
+
   TOAN8.bai({
     id: 34, ten: 'Ba trường hợp đồng dạng của hai tam giác', sgk: { tap: 2, trang: 83 },
+    nhin: {
+      tieuDe: 'Hai góc bằng nhau là đủ: phóng tam giác nhỏ lên, nó trùng khít', loai: 'chungMinh',
+      luuY: 'Trường hợp c.c.c và c.g.c (SGK) chứng minh theo cùng ý: đặt trong tam giác lớn một tam giác bằng tam giác nhỏ, có cạnh song song với cạnh đối diện, rồi dùng bài 33.',
+      canh: { ten: 'ggTrung', moTa: 'Tam giác ABC nhỏ và tam giác A phẩy B phẩy C phẩy lớn có góc B bằng góc B phẩy, góc C bằng góc C phẩy. Tam giác nhỏ trượt tới B phẩy rồi phóng lên, trùng khít tam giác lớn.',
+        dongSo: function (p, f) { return "$\\cb{\\widehat{B} = \\widehat{B'} = " + p.gB + "^\\circ}$, $\\cc{\\widehat{C} = \\widehat{C'} = " + Math.min(p.gC, 150 - p.gB) + "^\\circ}$, $\\frac{B'C'}{BC} = " + f(p.k).replace(',', '{,}') + '$'; } },
+      buoc: [
+        { t: 0, chu: "Hai tam giác có $\\cb{\\widehat{B}} = \\cb{\\widehat{B'}}$ và $\\cc{\\widehat{C}} = \\cc{\\widehat{C'}}$. Ta chưa biết gì về các cạnh." },
+        { t: 0.1, chu: "Trượt tam giác $ABC$ cho đỉnh $B$ tới $B'$, cạnh $BC$ nằm trên $B'C'$. Vì $\\widehat{B} = \\widehat{B'}$ nên cạnh $BA$ nằm trên tia $B'A'$." },
+        { t: 0.5, chu: "Phóng tam giác từ $B'$ lên $k = \\frac{B'C'}{BC}$ lần. Phóng từ một đỉnh thì cạnh mới song song cạnh cũ (bài 33): các góc giữ nguyên, mọi cạnh nhân $k$." },
+        { t: 0.9, chu: "$C$ tới đúng $C'$. Từ $B'$ và $C'$, hai tia với đúng hai góc ấy chỉ gặp nhau tại một điểm, đó là $A'$. Tam giác phóng trùng khít $A'B'C'$." }
+      ],
+      ketLuan: "Hai cặp góc bằng nhau thì hai tam giác đồng dạng (g.g): $$\\widehat{B} = \\widehat{B'},\\ \\widehat{C} = \\widehat{C'} \\Rightarrow \\triangle A'B'C' \\backsim \\triangle ABC$$",
+      dung: {
+        tieuDe: 'Tam giác nằm ngược: lật lại rồi phóng', tuBai: '34.7', canh: hinh347,
+        moiThu: 'Tam giác $AMN$ nằm "ngược" trong tam giác $ABC$: $M$ trên $AB$ nhưng $AM = 8$ dài hơn $AN = 6$. Lật nó qua tia phân giác góc $A$ thì $AM$ nằm trên cạnh nào? Gõ thử đi.',
+        phanUng: [{ gt: 12, t: 1, loi: 'Em ghép $AM = 8$ với $AB = 9$. Xem hình: chưa lật thì $MN$ không song song $BC$. Lật tam giác $AMN$ qua phân giác góc $A$: $AN = 6$ nằm trên $AB = 9$, $AM = 8$ nằm trên $AC = 12$, cùng tỉ số $\\frac{2}{3}$.' }],
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 0, loi: 'Độ dài phải lớn hơn $0$.' };
+          var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); };
+          return { t: 1, loi: 'Lật xong, tam giác nhỏ phóng $\\frac{3}{2}$ lần thì trùng tam giác $ABC$, nên $MN \\cdot \\frac{3}{2}$ phải bằng $BC = 13{,}5$. Với $MN = ' + so(v) + '$ thì được $' + so(v * 1.5) + '$.' };
+        },
+        dungChu: '$\\frac{AN}{AB} = \\frac{AM}{AC} = \\frac{2}{3}$ và góc $A$ chung, nên $MN = \\frac{2}{3} \\cdot 13{,}5 = 9$.', saiChu: 'Lật tam giác $AMN$ qua tia phân giác góc $A$ rồi phóng lên: cạnh $MN$ thành cạnh $BC$.'
+      },
+      suyRa: {
+        tieuDe: 'Tìm hai góc bằng nhau, chồng hai tam giác lên nhau',
+        baDe: [
+          { tuBai: '34.9', canh: hinh349, tenNut: 'Lật và phóng',
+            phanUng: [{ gt: 'sqrt(20)', loi: 'Em dùng $CD = 5$. Sau khi lật, $AC$ nằm trên $AB$ còn $AB$ nằm trên **cả đoạn** $AD = 4 + 5 = 9$.' }, { gt: 36, loi: '$36$ là $AB^2$. $AB$ là số nào bình phương lên bằng $36$?' }],
+            dungChu: '$\\frac{AB}{AD} = \\frac{AC}{AB}$, nên $AB^2 = 4 \\cdot 9 = 36$ và $AB = 6$.', saiChu: 'Hai tam giác chung góc $A$ và có $\\widehat{ABC} = \\widehat{ADB}$. Lật tam giác nhỏ qua phân giác góc $A$: $AC$ nằm lên $AB$, $AB$ nằm lên $AD$.' },
+          { tuBai: '34.8', canh: hinh348, tenNut: 'Chồng hai tam giác',
+            dungChu: 'Tam giác $ABD$ phóng $2$ lần thành tam giác $BDC$: $x = 2 \\cdot 4 = 8$, $y = 2 \\cdot 6 = 12$.', saiChu: 'Ghép cạnh theo cặp đỉnh có góc bằng nhau: $AB \\leftrightarrow BD$, $AD \\leftrightarrow BC$, $BD \\leftrightarrow DC$. Tỉ số là $\\frac{BD}{AB} = 2$.' },
+          { tuBai: '34.11', canh: hinh3411, tenNut: 'Chồng hai tam giác',
+            phanUng: [{ gt: 3250, loi: '$3250$ là số xăng-ti-mét. Đề hỏi theo mét.' }, { gt: 26, loi: 'Em lấy $6{,}5 \\cdot 4$. Tỉ số phải là cạnh thật chia cạnh trên giấy, cùng đơn vị: $\\frac{2000 \\text{ cm}}{4 \\text{ cm}} = 500$.' }],
+            dungChu: '$\\frac{AB}{A\'B\'} = \\frac{2000}{4} = 500$, nên $AC = 500 \\cdot 6{,}5 = 3250$ cm $= 32{,}5$ m.', saiChu: 'Hai tam giác có hai cặp góc bằng nhau nên tam giác thật là bản phóng của tam giác trên giấy. Đổi $20$ m ra cm trước khi chia.' }
+        ],
+        cachNhan: 'Thấy hai tam giác có hai cặp góc bằng nhau (góc chung, góc so le, góc đo được…): lật hoặc trượt cho hai góc bằng nhau chồng lên nhau, một tam giác là bản phóng của tam giác kia. Cạnh tương ứng là cạnh nằm cùng chỗ sau khi chồng.'
+      }
+    },
     khamPha: {
       nhiemVu: "Tam giác $ABC$ cố định. Cạnh $B'C'$ của tam giác tím dài gấp $k$ lần $BC$ (chỉnh bằng thanh trượt). Em hãy **kéo đỉnh $A'$** (điểm cam) tới vị trí làm cho ba tỉ số cạnh bằng nhau – khi đó tam giác chuyển sang **màu xanh lá**.\n\nRồi nhìn xuống các dòng số đo góc: em thấy gì?",
       widget: 'geo',
@@ -189,22 +268,33 @@
       { loai: 'chuY', noiDung: "**Nhận xét.** Nếu $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $k$ thì tỉ số hai **đường trung tuyến** tương ứng, hai **đường phân giác** tương ứng cũng bằng $k$; tỉ số **chu vi** cũng bằng $k$." }
     ],
     viDu: [
-      { de: 'Cho $\\triangle ABC$ có $AB = 4$ cm, $BC = 6$ cm, $CA = 5$ cm và $\\triangle DEF$ có $DE = 8$ cm, $EF = 12$ cm, $FD = 10$ cm. Hai tam giác có đồng dạng không?', buoc: [
+      { de: 'Cho $\\triangle ABC$ có $AB = 4$ cm, $BC = 6$ cm, $CA = 5$ cm và $\\triangle DEF$ có $DE = 8$ cm, $EF = 12$ cm, $FD = 10$ cm. Hai tam giác có đồng dạng không?',
+        canh: haiTG({ dai: [4, 6, 5], ten: ['A', 'B', 'C'], canh: ['4', '6', '5'] }, { dai: [8, 12, 10], ten: ['D', 'E', 'F'], canh: ['8', '12', '10'] }, { loiCuoi: [{ s: 'DE : AB = EF : BC = FD : CA = 2', hien: [0.9, 1] }] }), buoc: [
         { lam: '$\\frac{DE}{AB} = \\frac{8}{4} = 2$; $\\frac{EF}{BC} = \\frac{12}{6} = 2$; $\\frac{FD}{CA} = \\frac{10}{5} = 2$.', vi: 'Ghép cạnh nhỏ với cạnh nhỏ, cạnh lớn với cạnh lớn rồi tính ba tỉ số.' },
         { lam: 'Ba tỉ số bằng nhau nên $\\triangle DEF \\backsim \\triangle ABC$ (c.c.c), tỉ số đồng dạng $2$.', vi: 'Trường hợp cạnh – cạnh – cạnh. Cặp đỉnh: $D$–$A$, $E$–$B$, $F$–$C$ (đúng theo cặp cạnh đã ghép).' } ] },
-      { de: 'Cho tam giác $ABC$ có $AB = 12$ cm, $AC = 15$ cm. Trên tia $AB$, $AC$ lần lượt lấy $M$, $N$ sao cho $AM = 10$ cm, $AN = 8$ cm. Chứng minh $\\triangle ABC \\backsim \\triangle ANM$.', buoc: [
+      { de: 'Cho tam giác $ABC$ có $AB = 12$ cm, $AC = 15$ cm. Trên tia $AB$, $AC$ lần lượt lấy $M$, $N$ sao cho $AM = 10$ cm, $AN = 8$ cm. Chứng minh $\\triangle ABC \\backsim \\triangle ANM$.',
+        canh: { ten: 'trungKhit', tuyChon: { hinh: [
+          { diem: [[0, 0], [12, 0], [15 * Math.cos(rad(65)), 15 * Math.sin(rad(65))]], ten: ['A', 'B', 'C'], canh: ['12', null, '15'] },
+          { diem: [[0, 0], [8 * Math.cos(rad(65)), 8 * Math.sin(rad(65))], [10, 0]], ten: [null, 'N', 'M'], canh: [{ s: '8', lech: -0.9 }, null, { s: '10', lech: -0.9 }], mau: '--cc', to: '--cc' }],
+          di: [{ tu: 1, toi: 0, neo: 0, mau: '--cc' }], loiCuoi: [{ s: 'AN : AB = AM : AC = 2 : 3', hien: [0.9, 1] }] } }, buoc: [
         { lam: '$\\frac{AN}{AB} = \\frac{8}{12} = \\frac{2}{3}$; $\\frac{AM}{AC} = \\frac{10}{15} = \\frac{2}{3}$.', vi: 'Theo kí hiệu $\\triangle ABC \\backsim \\triangle ANM$: $B \\leftrightarrow N$, $C \\leftrightarrow M$, nên $AB$ ghép với $AN$, $AC$ ghép với $AM$.' },
         { lam: '$\\widehat{BAC} = \\widehat{NAM}$ (góc chung).', vi: 'Góc $A$ là góc tạo bởi hai cặp cạnh vừa xét, đúng điều kiện "xen giữa".' },
         { lam: 'Vậy $\\triangle ABC \\backsim \\triangle ANM$ (c.g.c).', vi: 'Hai cạnh tỉ lệ và góc xen giữa bằng nhau.' } ] },
-      { de: 'Cho $\\triangle ABC$ có $\\widehat{A} = 60^\\circ$, $\\widehat{B} = 50^\\circ$ và $\\triangle DEF$ có $\\widehat{D} = 60^\\circ$, $\\widehat{F} = 70^\\circ$. Hai tam giác có đồng dạng không? Viết đúng kí hiệu.', buoc: [
+      { de: 'Cho $\\triangle ABC$ có $\\widehat{A} = 60^\\circ$, $\\widehat{B} = 50^\\circ$ và $\\triangle DEF$ có $\\widehat{D} = 60^\\circ$, $\\widehat{F} = 70^\\circ$. Hai tam giác có đồng dạng không? Viết đúng kí hiệu.',
+        canh: haiTG({ goc3: [60, 50, 70], day: 3.4, ten: ['A', 'B', 'C'], goc: [{ mau: '--a', nhan: '60°' }, { mau: '--b', nhan: '50°' }, '--cc'] },
+          { goc3: [60, 50, 70], day: 4.2, ten: ['D', 'E', 'F'], goc: [{ mau: '--a', nhan: '60°' }, '--b', { mau: '--cc', nhan: '70°' }] }), buoc: [
         { lam: '$\\widehat{C} = 180^\\circ - 60^\\circ - 50^\\circ = 70^\\circ$.', vi: 'Tính góc còn lại để so sánh dễ hơn.' },
         { lam: '$\\widehat{A} = \\widehat{D} = 60^\\circ$, $\\widehat{C} = \\widehat{F} = 70^\\circ$.', vi: 'Có hai cặp góc bằng nhau.' },
         { lam: 'Vậy $\\triangle ABC \\backsim \\triangle DEF$ (g.g).', vi: '$A \\leftrightarrow D$, $C \\leftrightarrow F$ nên $B \\leftrightarrow E$: viết theo thứ tự $ABC$ – $DEF$.' } ] },
-      { de: 'Cho hình thang $ABCD$ ($AB \\parallel CD$) có $\\widehat{DAB} = \\widehat{DBC}$, $AB = 2$ cm, $AD = 3$ cm, $BD = 4$ cm. Tính $BC$ và $DC$.', buoc: [
+      { de: 'Cho hình thang $ABCD$ ($AB \\parallel CD$) có $\\widehat{DAB} = \\widehat{DBC}$, $AB = 2$ cm, $AD = 3$ cm, $BD = 4$ cm. Tính $BC$ và $DC$.',
+        canh: { ten: 'trungKhit', tuyChon: { hinh: [
+          { diem: [[0.75, Math.sqrt(8.4375)], [2.75, Math.sqrt(8.4375)], [0, 0]], ten: ['A', 'B', 'D'], canh: ['2', '4', '3'], goc: ['--a', '--b', null] },
+          { diem: [[2.75, Math.sqrt(8.4375)], [0, 0], [8, 0]], ten: [null, null, 'C'], canh: [null, an('8'), an('6')], goc: ['--a', '--b', null] }],
+          di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }] } }, buoc: [
         { lam: '$\\widehat{ABD} = \\widehat{BDC}$ (so le trong, vì $AB \\parallel CD$).', vi: 'Tìm thêm một cặp góc bằng nhau nhờ hai đường song song.' },
         { lam: 'Kết hợp $\\widehat{DAB} = \\widehat{DBC}$ suy ra $\\triangle ABD \\backsim \\triangle BDC$ (g.g).', vi: '$A \\leftrightarrow B$ (góc bằng nhau đề cho), $B \\leftrightarrow D$ (so le trong), nên $D \\leftrightarrow C$.' },
         { lam: '$\\frac{AB}{BD} = \\frac{AD}{BC} = \\frac{BD}{DC}$, tức $\\frac{2}{4} = \\frac{3}{BC} = \\frac{4}{DC}$.', vi: 'Ghép cạnh theo vị trí chữ: $AB$–$BD$, $AD$–$BC$, $BD$–$DC$.' },
-        { lam: '$BC = 6$ cm, $DC = 8$ cm.', vi: 'Tỉ số là $\\frac{1}{2}$ nên mỗi cạnh của $\\triangle BDC$ gấp đôi cạnh tương ứng của $\\triangle ABD$.' } ] }
+        { lam: '$BC = 6$ cm, $DC = 8$ cm.', vi: 'Tỉ số là $\\frac{1}{2}$ nên mỗi cạnh của $\\triangle BDC$ gấp đôi cạnh tương ứng của $\\triangle ABD$.', canh: { t: 1, trangThai: 'giai' } } ] }
     ],
     viDuMo: [
       { de: 'Cho $\\triangle ABC$ có $AB = 3$, $BC = 4$, $CA = 5$ và $\\triangle MNP$ có $MN = 6$, $NP = 8$, $PM = 10$. Tìm tỉ số đồng dạng của $\\triangle ABC$ với $\\triangle MNP$.', buoc: [
@@ -220,15 +310,15 @@
           loiThuongGap: [{ gt: '10/3', giaiThich: 'Em lật ngược tỉ số. $DE = 6 > AB = 4$ nên $\\triangle DEF$ lớn hơn, $EF$ phải lớn hơn $BC = 5$.' }] } ] }
     ],
     baiTap: [
-      { id: '34.1', muc: 1, de: 'Giả thiết nào dưới đây **không** đủ để kết luận hai tam giác đồng dạng?',
+      { id: '34.1', khongHinh: 'Câu lí thuyết về ba trường hợp; phần Nhìn đã có hình.', muc: 1, de: 'Giả thiết nào dưới đây **không** đủ để kết luận hai tam giác đồng dạng?',
         dapAn: { kieu: 'chon', gt: 3, luaChon: ['Ba cạnh của tam giác này tỉ lệ với ba cạnh của tam giác kia', 'Hai cạnh tỉ lệ với hai cạnh của tam giác kia và góc tạo bởi các cặp cạnh đó bằng nhau', 'Hai góc của tam giác này bằng hai góc của tam giác kia', 'Hai cạnh của tam giác này bằng hai cạnh của tam giác kia'] },
         goiY: ['Nhớ lại ba trường hợp: c.c.c, c.g.c, g.g.', 'Hai cạnh bằng nhau mà không biết gì về góc xen giữa thì hình dạng có thể khác hẳn.'],
         loiGiai: ['Ba phương án đầu đúng là ba trường hợp đồng dạng c.c.c, c.g.c, g.g.', 'Chỉ biết hai cạnh bằng nhau (không biết góc xen giữa hay cạnh thứ ba) thì **chưa** kết luận được.'] },
-      { id: '34.2', muc: 1, de: 'Tam giác thứ nhất có ba cạnh $2$ cm, $3$ cm, $4$ cm. Tam giác thứ hai có ba cạnh $6$ cm, $4$ cm, $8$ cm. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
+      { id: '34.2', hinhGiai: hg(haiTG({ dai: ba([2, 3, 4]), canh: ['2', '4', '3'] }, { dai: ba([6, 4, 8]), canh: ['4', '8', '6'] })), muc: 1, de: 'Tam giác thứ nhất có ba cạnh $2$ cm, $3$ cm, $4$ cm. Tam giác thứ hai có ba cạnh $6$ cm, $4$ cm, $8$ cm. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Xếp ba cạnh mỗi tam giác từ nhỏ đến lớn: $2; 3; 4$ và $4; 6; 8$.', 'Tính $\\frac{4}{2}$, $\\frac{6}{3}$, $\\frac{8}{4}$.'],
         loiGiai: ['$\\frac{4}{2} = \\frac{6}{3} = \\frac{8}{4} = 2$.', 'Ba cạnh tỉ lệ nên hai tam giác đồng dạng (c.c.c). Khẳng định **đúng**.'] },
-      { id: '34.3', muc: 1, de: 'Tam giác thứ nhất có ba cạnh $3$, $4$, $6$. Tam giác thứ hai có ba cạnh $6$, $8$, $10$. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
+      { id: '34.3', hinhGiai: hg(Object.assign(haiTG({ dai: ba([3, 4, 6]), canh: ['3', '6', '4'] }, { dai: ba([6, 8, 10]), canh: ['6', '10', '8'] }), { ghiChu: 'Phóng theo cạnh lớn nhất: xem đỉnh còn lại có khít không.' })), muc: 1, de: 'Tam giác thứ nhất có ba cạnh $3$, $4$, $6$. Tam giác thứ hai có ba cạnh $6$, $8$, $10$. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Ghép cạnh nhỏ với nhỏ, lớn với lớn rồi tính ba tỉ số.', 'So sánh $\\frac{6}{3}$, $\\frac{8}{4}$ và $\\frac{10}{6}$.'],
         loiGiai: ['$\\frac{6}{3} = 2$, $\\frac{8}{4} = 2$ nhưng $\\frac{10}{6} \\approx 1{,}67$.', 'Ba tỉ số không bằng nhau nên hai tam giác **không** đồng dạng. Khẳng định **sai**.'] },
@@ -237,14 +327,14 @@
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['$\\triangle ABC \\backsim \\triangle MNP$', '$\\triangle ABC \\backsim \\triangle NPM$', '$\\triangle ABC \\backsim \\triangle PNM$', '$\\triangle ABC \\backsim \\triangle NMP$'] },
         goiY: ['Tính góc còn lại của mỗi tam giác: $\\widehat{C}$ và $\\widehat{P}$.', 'Ghép các đỉnh có góc bằng nhau: góc $60^\\circ$ với góc $60^\\circ$, …'],
         loiGiai: ['$\\widehat{C} = 70^\\circ$, $\\widehat{P} = 50^\\circ$.', '$\\widehat{A} = \\widehat{N} = 60^\\circ$, $\\widehat{B} = \\widehat{P} = 50^\\circ$, $\\widehat{C} = \\widehat{M} = 70^\\circ$.', 'Vậy $\\triangle ABC \\backsim \\triangle NPM$ (g.g).'] },
-      { id: '34.5', muc: 2, de: 'Một tam giác có ba cạnh $3$ cm, $5$ cm, $7$ cm. Một tam giác đồng dạng với nó có chu vi $45$ cm. Tính ba cạnh của tam giác thứ hai (từ nhỏ đến lớn).',
+      { id: '34.5', hinhGiai: hg(haiTG({ dai: ba([3, 5, 7]), canh: ['3', '7', '5'] }, { dai: ba([9, 15, 21]), canh: [an('9'), an('21'), an('15')] }, { loiCuoi: ['Chu vi: 15 cm → 45 cm'] })), muc: 2, de: 'Một tam giác có ba cạnh $3$ cm, $5$ cm, $7$ cm. Một tam giác đồng dạng với nó có chu vi $45$ cm. Tính ba cạnh của tam giác thứ hai (từ nhỏ đến lớn).',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Cạnh nhỏ nhất =', kieu: 'so', gt: 9 },
           { nhan: 'Cạnh vừa =', kieu: 'so', gt: 15 },
           { nhan: 'Cạnh lớn nhất =', kieu: 'so', gt: 21 }] },
         goiY: ['Tỉ số chu vi của hai tam giác đồng dạng bằng tỉ số đồng dạng.', 'Chu vi tam giác thứ nhất là $3 + 5 + 7 = 15$, nên $k = \\frac{45}{15} = 3$.'],
         loiGiai: ['Chu vi tam giác thứ nhất: $3 + 5 + 7 = 15$ (cm). Tỉ số đồng dạng $k = \\frac{45}{15} = 3$.', 'Ba cạnh tam giác thứ hai: $3 \\cdot 3 = 9$; $5 \\cdot 3 = 15$; $7 \\cdot 3 = 21$ (cm).'] },
-      { id: '34.6', muc: 2, de: 'Tam giác $ABC$ có chu vi $20$ cm, $AB = 5$ cm, $BC = 7$ cm. Tam giác $DEF$ có chu vi $30$ cm, $DE = 7{,}5$ cm, $FD = 12$ cm. Biết $\\triangle DEF \\backsim \\triangle ABC$, tìm tỉ số đồng dạng (phân số) và kiểm tra lại bằng ba cạnh.',
+      { id: '34.6', hinhGiai: hg(haiTG({ dai: [5, 7, 8], ten: ['A', 'B', 'C'], canh: ['5', '7', an('8')] }, { dai: [7.5, 10.5, 12], ten: ['D', 'E', 'F'], canh: ['7,5', an('10,5'), '12'] })), muc: 2, de: 'Tam giác $ABC$ có chu vi $20$ cm, $AB = 5$ cm, $BC = 7$ cm. Tam giác $DEF$ có chu vi $30$ cm, $DE = 7{,}5$ cm, $FD = 12$ cm. Biết $\\triangle DEF \\backsim \\triangle ABC$, tìm tỉ số đồng dạng (phân số) và kiểm tra lại bằng ba cạnh.',
         dapAn: { kieu: 'so', gt: '3/2' },
         goiY: ['Tính cạnh còn lại: $CA = 20 - 5 - 7$, $EF = 30 - 7{,}5 - 12$.', 'Tính $\\frac{DE}{AB}$, $\\frac{EF}{BC}$, $\\frac{FD}{CA}$.'],
         loiGiai: ['$CA = 20 - 5 - 7 = 8$; $EF = 30 - 7{,}5 - 12 = 10{,}5$.', '$\\frac{DE}{AB} = \\frac{7{,}5}{5} = 1{,}5$; $\\frac{EF}{BC} = \\frac{10{,}5}{7} = 1{,}5$; $\\frac{FD}{CA} = \\frac{12}{8} = 1{,}5$.', 'Tỉ số đồng dạng $k = \\frac{3}{2}$'],
@@ -274,7 +364,7 @@
         goiY: ['Gọi $H$ là chân đường vuông góc hạ từ $I$ xuống mặt đất. $IH$ song song với hai cột.', 'Trong $\\triangle RPQ$: $\\frac{h}{4} = \\frac{RH}{PR}$; trong $\\triangle PRS$: $\\frac{h}{6} = \\frac{PH}{PR}$. Cộng hai đẳng thức lại.'],
         loiGiai: ['$IH \\parallel PQ$ nên $\\triangle RHI \\backsim \\triangle RPQ$: $\\frac{h}{4} = \\frac{RH}{PR}$.', '$IH \\parallel RS$ nên $\\triangle PHI \\backsim \\triangle PRS$: $\\frac{h}{6} = \\frac{PH}{PR}$.', 'Cộng lại: $\\frac{h}{4} + \\frac{h}{6} = \\frac{RH + PH}{PR} = 1$, nên $\\frac{5h}{12} = 1$.', '$h = \\frac{12}{5} = 2{,}4$'],
         loiThuongGap: [{ gt: 5, giaiThich: '$5$ m là trung bình cộng hai cột, không phải độ cao điểm cắt. Điểm cắt luôn **thấp hơn** cột ngắn.' }] },
-      { id: '34.11', muc: 3, de: 'Để đo khoảng cách $AC$ từ bạn Tròn (điểm $A$) tới cột cờ $C$ bên kia sông, anh Pi chọn điểm $B$ cùng bờ với $AB = 20$ m, đo được $\\widehat{ABC} = 70^\\circ$, $\\widehat{BAC} = 80^\\circ$. Anh vẽ trên giấy $\\triangle A\'B\'C\'$ có $A\'B\' = 4$ cm, $\\widehat{A\'B\'C\'} = 70^\\circ$, $\\widehat{B\'A\'C\'} = 80^\\circ$ và đo được $A\'C\' = 6{,}5$ cm. Tính $AC$ (m).',
+      { id: '34.11', hinhGiai: hg(hinh3411), muc: 3, de: 'Để đo khoảng cách $AC$ từ bạn Tròn (điểm $A$) tới cột cờ $C$ bên kia sông, anh Pi chọn điểm $B$ cùng bờ với $AB = 20$ m, đo được $\\widehat{ABC} = 70^\\circ$, $\\widehat{BAC} = 80^\\circ$. Anh vẽ trên giấy $\\triangle A\'B\'C\'$ có $A\'B\' = 4$ cm, $\\widehat{A\'B\'C\'} = 70^\\circ$, $\\widehat{B\'A\'C\'} = 80^\\circ$ và đo được $A\'C\' = 6{,}5$ cm. Tính $AC$ (m).',
         dapAn: { kieu: 'so', gt: 32.5 },
         goiY: ['Hai tam giác có hai cặp góc bằng nhau nên $\\triangle A\'B\'C\' \\backsim \\triangle ABC$ (g.g).', 'Đổi cùng đơn vị: $AB = 20$ m $= 2000$ cm. Tỉ số $\\frac{AB}{A\'B\'} = \\frac{2000}{4} = 500$.'],
         loiGiai: ['$\\triangle A\'B\'C\' \\backsim \\triangle ABC$ (g.g), nên $\\frac{AC}{A\'C\'} = \\frac{AB}{A\'B\'} = \\frac{2000}{4} = 500$.', '$AC = 500 \\cdot 6{,}5 = 3250$ (cm).', '$AC = 32{,}5$ (m)'],

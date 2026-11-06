@@ -87,6 +87,10 @@
       var hien = r.xaoTron(x), tong = c3[0] * c3[0] + c3[1] * c3[1];
       return {
         de: 'Một tam giác có ba cạnh dài $' + hien.map(cc.so).join('$ cm, $') + '$ cm. Khẳng định "tam giác này là tam giác vuông" đúng hay sai?',
+        // Hình vẽ đúng tam giác có ba cạnh đó, hình vuông trên mỗi cạnh ghi diện tích; không ghi sẵn kết luận
+        hinhGiai: { widget: 'canh', config: { ten: 'vuongDao', tuyChon: { canh: x }, chiXem: true, t: 1,
+          moTa: 'Tam giác có ba cạnh như đề, trên mỗi cạnh dựng một hình vuông; số trong hình vuông là diện tích.',
+          ghiChu: 'Số trong mỗi hình vuông là diện tích. So hình vuông lớn nhất với tổng hai hình kia.' } },
         dapAn: { kieu: 'dungSai', gt: dung },
         goiY: ['Dùng định lí Pythagore đảo: so sánh bình phương cạnh **lớn nhất** với tổng bình phương hai cạnh còn lại.', 'Cạnh lớn nhất là $' + cc.so(c3[2]) + '$.'],
         loiGiai: ['$' + cc.so(c3[2]) + '^2 = ' + cc.so(c3[2] * c3[2]) + '$; $' + cc.so(c3[0]) + '^2 + ' + cc.so(c3[1]) + '^2 = ' + cc.so(c3[0] * c3[0]) + ' + ' + cc.so(c3[1] * c3[1]) + ' = ' + cc.so(tong) + '$.',

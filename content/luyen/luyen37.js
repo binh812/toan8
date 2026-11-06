@@ -11,6 +11,9 @@
   }
   function nh(x) { return String(Math.round(x * 1e6) / 1e6).replace('.', ','); }
 
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  function luoi(chuNhat, k, nhan, loiCuoi) { return hg({ ten: 'luoiO', tuyChon: { chuNhat: chuNhat, k: k, nhan: nhan, loiCuoi: loiCuoi } }); }
+
   TOAN8.luyen(37, [
     { ten: 'Hình đồng dạng phối cảnh', muc: 1, sinh: function (r, cc) {
       var k = r.chon([2, 3, 4, 0.5, 1.5, 2.5]), oa = k === 0.5 || k === 1.5 || k === 2.5 ? 2 * r.so(1, 4) : r.so(1, 5);
@@ -21,10 +24,17 @@
       var hinh = geo({ diem: D, ve: [[[0, 0], [1.15 * lon * ux, 1.15 * lon * uy], { mau: '#e8590c', net: 2, day: 1.5 }]],
         canh: [['O', P, { mau: XANH, day: 3 }]], nhan: [['O', P, nh(oa) + ' cm', false, 1.4]],
         lechTen: (function () { var o = {}; o[P] = [-6, 16]; o[P + "'"] = [-6, 16]; return o; })() });
+      // Hình giải: đoạn OP phóng từ O theo tỉ số k thành OP'
+      var cuoi = [oa1 * ux, oa1 * uy], hinhG = hg({ ten: 'trungKhit', tuyChon: {
+        hinh: [{ diem: [[0, 0], D[P]], kin: false, ten: ['O', P], canh: [hoiK ? nh(oa) : nh(oa) + ' cm'], mau: '--b', day: 3 }],
+        di: [{ tu: 0, tam: [0, 0], k: oa1 / oa, mau: '--a' }], chuBuoc: !hoiK,
+        them: [{ k: 'chu', p: [cuoi[0] + 0.12 * lon, cuoi[1] - 0.05 * lon], s: P + "'", nghieng: true, mau: '--a', hien: [0.9, 1] }],
+        loiCuoi: [{ s: 'O' + P + "' = " + (hoiK ? nh(oa1) + ' cm' : '?'), hien: [0.9, 1] }] } });
       if (hoiK) {
         var kq = cc.phanSo(Math.round(oa1 * 2), oa * 2);
         return {
           de: "Điểm $" + P + "'$ là ảnh của điểm $" + P + "$ qua phép đồng dạng phối cảnh tâm $O$ ($" + P + "'$ nằm trên tia $O" + P + "$). Biết $O" + P + " = " + oa + "$ cm, $O" + P + "' = " + cc.so(oa1) + "$ cm. Tìm tỉ số đồng dạng $k$ (viết dạng phân số tối giản hoặc số).",
+          hinhGiai: hinhG,
           dapAn: { kieu: 'so', gt: kq.ascii },
           goiY: ["Tỉ số đồng dạng phối cảnh là $k = \\frac{O" + P + "'}{O" + P + "}$.", 'Chia rồi rút gọn. $k > 1$ là phóng to, $k < 1$ là thu nhỏ.'],
           loiGiai: ["$k = \\frac{O" + P + "'}{O" + P + "} = \\frac{" + cc.so(oa1) + '}{' + oa + '}' + (Number.isInteger(oa1) && cc.ucln(oa1, oa) === 1 && oa > 1 ? '' : ' = ' + kq.tex) + '$'],
@@ -33,14 +43,14 @@
       }
       return {
         de: "Hình $\\mathcal{H}'$ là hình " + (k > 1 ? 'phóng to' : 'thu nhỏ') + " của hình $\\mathcal{H}$ với tâm phối cảnh $O$, tỉ số $k = " + cc.so(k) + "$. Điểm $" + P + "$ thuộc $\\mathcal{H}$ có $O" + P + " = " + oa + "$ cm. Tính $O" + P + "'$ (cm), với $" + P + "'$ là điểm tương ứng.",
-        hinh: hinh,
+        hinh: hinh, hinhGiai: hinhG,
         dapAn: { kieu: 'so', gt: oa1 },
         goiY: ["$" + P + "'$ nằm trên tia $O" + P + "$ và $O" + P + "' = k \\cdot O" + P + "$.", 'Nhân $' + oa + '$ với $' + cc.so(k) + '$.'],
         loiGiai: ["$O" + P + "' = k \\cdot O" + P + " = " + cc.so(k) + ' \\cdot ' + oa + ' = ' + cc.so(oa1) + '$'],
         loiThuongGap: [{ gt: oa / k, giaiThich: "Em chia cho $k$. Theo định nghĩa $O" + P + "' = k \\cdot O" + P + "$." }]
       };
     } },
-    { ten: 'Chọn hình chữ nhật đồng dạng', muc: 1, sinh: function (r) {
+    { ten: 'Chọn hình chữ nhật đồng dạng', muc: 1, khongHinh: 'Câu chọn phương án: vẽ hình đúng là lộ đáp án.', sinh: function (r) {
       var a, b;
       do { a = r.so(2, 6); b = r.so(3, 9); } while (b <= a);
       var k = r.chon([2, 3, 1.5]);
@@ -69,6 +79,7 @@
       var vat = r.chon(['Một bức ảnh', 'Một tấm thiệp', 'Một tấm áp phích']), kt = cc.phanSo(W, w).tex;
       var sai = l + (W - w);
       return {
+        hinhGiai: luoi([w, l], W / w, { rong: String(w), cao: String(l), rongMoi: String(W), caoMoi: { s: nh(L), an: true } }),
         de: vat + ' hình chữ nhật $' + w + '$ cm $\\times$ $' + l + '$ cm được ' + (W > w ? 'phóng to' : 'thu nhỏ') + ' (giữ nguyên hình dạng) sao cho cạnh ngắn dài $' + W + '$ cm. Cạnh dài mới là bao nhiêu cm?',
         dapAn: { kieu: 'so', gt: L },
         goiY: ['Giữ nguyên hình dạng nghĩa là hai hình đồng dạng: hai chiều cùng nhân với một tỉ số $k$.', '$k = \\frac{' + W + '}{' + w + '}$; cạnh dài mới $= k \\cdot ' + l + '$.'],
@@ -79,9 +90,12 @@
     { ten: 'Chu vi và diện tích hình đồng dạng', muc: 2, sinh: function (r, cc) {
       var k = r.chon([[2, 1], [3, 1], [3, 2], [1, 2], [2, 3], [5, 2], [1, 3]]), kt = cc.phanSo(k[0], k[1]).tex, kv = k[0] / k[1];
       var hinh = r.chon(['hai ngũ giác', 'hai hình thang', 'hai mảnh vườn', 'hai lá cờ', 'hai hình lục giác']);
+      // Hình giải: hình vuông cạnh k[1] phóng thành hình vuông cạnh k[0], đếm ô
+      var vuong = function (dong) { var h = luoi([k[1], k[1]], kv, { rong: String(k[1]), rongMoi: String(k[0]) }, [dong]); h.config.ghiChu = 'Ví dụ với hình vuông: mọi cạnh nhân k.'; return h; };
       if (r.dau() > 0) {
         var S = k[1] * k[1] * r.so(2, 12), kq = S * kv * kv;
         return {
+          hinhGiai: vuong('Diện tích: ' + k[1] * k[1] + ' ô → ' + k[0] * k[0] + ' ô'),
           de: 'Hình $\\mathcal{H}\'$ đồng dạng với hình $\\mathcal{H}$ theo tỉ số $k = ' + kt + '$ (' + hinh + '). Diện tích hình $\\mathcal{H}$ là $' + S + '$ cm². Tính diện tích hình $\\mathcal{H}\'$ (cm²).',
           dapAn: { kieu: 'so', gt: kq },
           goiY: ['Hai hình đồng dạng tỉ số $k$ thì mọi độ dài nhân $k$, còn **diện tích** nhân $k^2$.', 'Tính $k^2 = \\left(' + kt + '\\right)^2$ rồi nhân với $' + S + '$.'],
@@ -91,6 +105,7 @@
       }
       var P = k[1] * r.so(4, 20), kq2 = P * kv;
       return {
+        hinhGiai: vuong('Chu vi: ' + 4 * k[1] + ' → ' + 4 * k[0] + ' (chỉ nhân k)'),
         de: 'Hình $\\mathcal{H}\'$ đồng dạng với hình $\\mathcal{H}$ theo tỉ số $k = ' + kt + '$ (' + hinh + '). Chu vi hình $\\mathcal{H}$ là $' + P + '$ cm. Tính chu vi hình $\\mathcal{H}\'$ (cm).',
         dapAn: { kieu: 'so', gt: kq2 },
         goiY: ['Chu vi là một **độ dài** (tổng các cạnh).', 'Mọi cạnh nhân $k$ nên chu vi cũng nhân $k$.'],

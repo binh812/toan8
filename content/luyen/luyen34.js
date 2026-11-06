@@ -12,6 +12,14 @@
     }
     return [4, 5, 6];
   }
+  // Hình giải: bản sao tam giác thứ nhất trượt rồi phóng lên, so với tam giác thứ hai (khít thì đồng dạng)
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  // Ba cạnh xếp tăng dần, cạnh lớn nhất làm đáy: [d01, d12, d20]
+  function day(x) { var s = tang(x); return [s[0], s[2], s[1]]; }
+  function haiTG(h1, h2, them) {
+    h2.dat = { sau: 0 };
+    return hg({ ten: 'trungKhit', tuyChon: Object.assign({ hinh: [h1, h2], di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }] }, them || {}) });
+  }
   function lietKe(m, cc) { return m.map(function (v) { return cc.so(v); }).join('$ cm, $'); }
 
   TOAN8.luyen(34, [
@@ -32,6 +40,7 @@
       var kq = cc.phanSo(b[0], a[0]).tex;
       return {
         de: 'Tam giác thứ nhất có ba cạnh $' + lietKe(t1, cc) + '$ cm. Tam giác thứ hai có ba cạnh $' + lietKe(t2, cc) + '$ cm. Khẳng định "hai tam giác đồng dạng" đúng hay sai?',
+        hinhGiai: haiTG({ dai: day(a), canh: day(a).map(nh) }, { dai: day(b), canh: day(b).map(nh) }),
         dapAn: { kieu: 'dungSai', gt: bang },
         goiY: ['Xếp ba cạnh mỗi tam giác từ nhỏ đến lớn rồi ghép cặp: nhỏ với nhỏ, vừa với vừa, lớn với lớn.', 'Tính ba tỉ số. Ba tỉ số bằng nhau thì hai tam giác đồng dạng (c.c.c).'],
         loiGiai: ['Xếp tăng dần: $' + a.join(', ') + '$ và $' + b.join(', ') + '$.',
@@ -52,7 +61,16 @@
       var perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]].map(function (p) { return p.map(function (i) { return U[i]; }).join(''); })
         .filter(function (s) { return s !== dung; });
       var luaChon = r.xaoTron([dung].concat(r.xaoTron(perms).slice(0, 3)));
+      // Tam giác thứ hai vẽ theo đúng thứ tự góc của tam giác ABC, ghi các góc đề cho
+      var mauG = ['--a', '--b', '--cc'], gocU = [0, 1, 2].map(function (m) {
+        var i = U.indexOf(dinhCo[m]);
+        return i === lo ? mauG[m] : { mau: mauG[m], nhan: g[m] + '°' };
+      });
+      var hinhG = haiTG({ goc3: g, day: 3.4, ten: ['A', 'B', 'C'], goc: [{ mau: mauG[0], nhan: g[0] + '°' }, { mau: mauG[1], nhan: g[1] + '°' }, mauG[2]] },
+        { goc3: g, day: 4, ten: dinhCo, goc: gocU, dat: {} });
+      hinhG.config.ghiChu = 'Góc cùng màu bằng nhau.';
       return {
+        hinhGiai: hinhG,
         de: 'Tam giác $ABC$ có $\\widehat{A} = ' + g[0] + '^\\circ$, $\\widehat{B} = ' + g[1] + '^\\circ$. Tam giác $' + U.join('') + '$ có $' + bo.join('$, $') + '$. Kí hiệu đồng dạng nào **đúng**?',
         dapAn: { kieu: 'chon', gt: luaChon.indexOf(dung), luaChon: luaChon.map(function (s) { return '$\\triangle ABC \\backsim \\triangle ' + s + '$'; }) },
         goiY: ['Tính góc còn lại của mỗi tam giác (tổng ba góc bằng $180^\\circ$).', 'Ghép đỉnh có góc bằng nhau rồi viết đúng thứ tự: đỉnh ứng với $A$ đứng đầu, ứng với $B$ đứng thứ hai.'],
@@ -64,6 +82,8 @@
       var x = baCanh(r, 2, 9), k = r.chon([2, 3, 4, 5, 1.5, 2.5]), s = x[0] + x[1] + x[2];
       var P = s * k, kq = tang(x).map(function (v) { return v * k; });
       return {
+        hinhGiai: haiTG({ dai: day(x), canh: day(x).map(nh) }, { dai: day(x).map(function (v) { return v * k; }), canh: [{ s: '?' }, { s: '?' }, { s: '?' }] },
+          { loiCuoi: ['Chu vi: ' + s + ' cm → ' + nh(P) + ' cm'] }),
         de: 'Một tam giác có ba cạnh $' + lietKe(x, cc) + '$ cm. Một tam giác đồng dạng với nó có chu vi $' + cc.so(P) + '$ cm. Tính ba cạnh của tam giác thứ hai (từ nhỏ đến lớn, cm).',
         dapAn: { kieu: 'nhieuO', o: kq.map(function (v, i) {
           return { nhan: ['Cạnh nhỏ nhất:', 'Cạnh thứ hai:', 'Cạnh lớn nhất:'][i], kieu: 'so', gt: v,
