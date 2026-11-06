@@ -165,8 +165,10 @@
       tieuDe: 'Đường cao cắt ra hai tam giác nhỏ, cả hai giống hệt tam giác lớn', loai: 'chungMinh',
       luuY: 'Lập luận dùng được cho mọi cặp tam giác vuông có một góc nhọn bằng nhau: chồng hai góc ấy lên nhau, hai cạnh góc vuông song song, rồi dùng bài 33.',
       canh: { ten: 'duongCao', moTa: 'Tam giác ABC vuông tại A, đường cao AH chia thành hai tam giác nhỏ HBA và HAC. Mỗi tam giác nhỏ lật qua tia phân giác của góc nhọn chung rồi phóng lên, trùng khít tam giác ABC.',
+        thuPha: true, tuyChon: { chiTiet: true },
         dongSo: function (p, f) {
           var ah = Math.sqrt(p.bh * p.ch), so = function (x) { return f(x).replace(',', '{,}'); };
+          if (p.gocA != null && p.gocA !== 90) return 'Góc $A = ' + p.gocA + '^\\circ$, không vuông: $BH \\cdot CH = ' + so(p.bh * p.ch) + '$, còn $AH^2$ ghi dưới hình.';
           return '$BH \\cdot CH = ' + so(p.bh) + ' \\cdot ' + so(p.ch) + ' = ' + so(p.bh * p.ch) + '$, $AH ' + (Math.abs(ah * 100 - Math.round(ah * 100)) < 1e-9 ? '=' : '\\approx') + ' ' + so(ah) + '$, $AH^2 = BH \\cdot CH$';
         } },
       buoc: [
@@ -235,6 +237,12 @@
         loiGiai: ['Cao : bóng của Việt $= \\frac{1{,}4}{0{,}7} = 2$; cột cũng vậy nên $\\frac{12}{AB} = 2$.', '$AB = 12 : 2 = 6$'],
         loiThuongGap: [{ gt: 24, giaiThich: 'Em nhân thay vì chia. Bóng ngắn hơn chiều cao (tỉ số cao : bóng là $2$) nên bóng cột là $12 : 2$.' }] }
     },
+    mucTieu: [
+      'Nói được vì sao đường cao $AH$ chia tam giác vuông thành hai tam giác đồng dạng với tam giác lớn, bằng cách chỉ ra góc nhọn chung.',
+      'Nhận ra hai tam giác vuông đồng dạng khi có một góc nhọn bằng nhau, hai cạnh góc vuông tỉ lệ, hoặc cạnh huyền và một cạnh góc vuông tỉ lệ.',
+      'Dùng $AH^2 = BH \\cdot CH$ và $AB^2 = BH \\cdot BC$ để tính đoạn chưa biết trong tam giác vuông có đường cao.',
+      'Đo chiều cao vật thật (cây, cột) nhờ hai tam giác vuông đồng dạng.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: '1. Áp dụng trường hợp g.g và c.g.c vào tam giác vuông',
         noiDung: "Cho $\\triangle ABC$ vuông tại $A$ và $\\triangle A'B'C'$ vuông tại $A'$.\n\n**Định lí 1.** Nếu một **góc nhọn** của tam giác vuông này bằng một góc nhọn của tam giác vuông kia thì hai tam giác vuông đó đồng dạng: $\\widehat{B'} = \\widehat{B} \\Rightarrow \\triangle A'B'C' \\backsim \\triangle ABC$.\n\n**Định lí 2.** Nếu **hai cạnh góc vuông** của tam giác vuông này tỉ lệ với hai cạnh góc vuông của tam giác vuông kia thì hai tam giác vuông đó đồng dạng: $\\frac{A'B'}{AB} = \\frac{A'C'}{AC} \\Rightarrow \\triangle A'B'C' \\backsim \\triangle ABC$." },
@@ -249,6 +257,21 @@
           { thanhTruot: "B'C':BC", den: 1.2, giay: 1.5 }, { thanhTruot: "A'B':AB", den: 1.5, giay: 1.5 }] },
         chuThich: "Tam giác tím luôn vuông tại $A'$; cạnh $A'C'$ được tính bằng Pythagore. Khi $\\frac{B'C'}{BC} = \\frac{A'B'}{AB}$ thì $\\frac{A'C'}{AC}$ cũng bằng đúng số đó." },
       { loai: 'chuY', noiDung: "**Tam giác vuông có đường cao.** $\\triangle ABC$ vuông tại $A$, đường cao $AH$: ba tam giác $\\triangle HBA$, $\\triangle ABC$, $\\triangle HAC$ đôi một đồng dạng (chung góc nhọn). Từ đó: $$AB^2 = BH \\cdot BC;\\quad AC^2 = CH \\cdot BC;\\quad AH^2 = BH \\cdot CH.$$" },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $AH^2 = BH \\cdot CH$?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        canh: { ten: 'duongCao' },
+        buoc: [
+          { id: 'gt', chu: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$ ($H$ nằm trên $BC$).', canh: { t: 0 } },
+          { id: 'g1', chu: 'Tam giác $HBA$ vuông tại $H$, tam giác $ABC$ vuông tại $A$, và hai tam giác chung góc nhọn $B$.', can: ['gt'], canh: { t: 0.1 } },
+          { id: 'g2', chu: 'Tam giác $HAC$ vuông tại $H$, tam giác $ABC$ vuông tại $A$, và hai tam giác chung góc nhọn $C$.', can: ['gt'], canh: { t: 0.52 } },
+          { id: 's1', chu: 'Hai tam giác vuông có chung góc nhọn $B$ nên đồng dạng: $\\triangle HBA \\backsim \\triangle ABC$.', can: ['g1'], canh: { t: 0.47 } },
+          { id: 's2', chu: 'Hai tam giác vuông có chung góc nhọn $C$ nên đồng dạng: $\\triangle HAC \\backsim \\triangle ABC$.', can: ['g2'], canh: { t: 0.94 } },
+          { id: 's3', chu: 'Hai tam giác cùng đồng dạng với $ABC$ thì đồng dạng với nhau: $\\triangle HBA \\backsim \\triangle HAC$.', can: ['s1', 's2'], canh: { t: 1 } },
+          { id: 'ts', chu: 'Lấy hai cặp cạnh tương ứng: $\\frac{HB}{HA} = \\frac{HA}{HC}$.', can: ['s3'], canh: { t: 1 } },
+          { id: 'kl', chu: 'Nhân chéo: $AH^2 = BH \\cdot CH$.', can: ['ts'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Ba tam giác $HBA$, $ABC$, $HAC$ đồng dạng với nhau, nên $AH^2 = BH \\cdot CH$.'
+      } },
       { loai: 'chuY', noiDung: "**Nhận xét.** Nếu $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $k$ thì tỉ số hai **đường cao** tương ứng bằng $k$, còn tỉ số **diện tích** bằng $k^2$: $$\\frac{A'H'}{AH} = k,\\qquad \\frac{S_{A'B'C'}}{S_{ABC}} = k^2.$$" },
       { loai: 'chuY', noiDung: "**Hay nhầm 1 – ghép sai đỉnh.** Hai tam giác vuông có $\\widehat{B} = \\widehat{F}$ ($ABC$ vuông tại $A$, $DEF$ vuông tại $D$) thì viết $\\triangle ABC \\backsim \\triangle DFE$: đỉnh góc vuông ghép với đỉnh góc vuông, góc bằng nhau ghép với nhau.\n\n**Hay nhầm 2 – diện tích.** Tỉ số đồng dạng $k = 2$ thì diện tích gấp $k^2 = 4$ lần, **không** phải $2$ lần." }
     ],

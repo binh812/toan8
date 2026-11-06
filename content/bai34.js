@@ -203,7 +203,12 @@
       tieuDe: 'Hai góc bằng nhau là đủ: phóng tam giác nhỏ lên, nó trùng khít', loai: 'chungMinh',
       luuY: 'Trường hợp c.c.c và c.g.c (SGK) chứng minh theo cùng ý: đặt trong tam giác lớn một tam giác bằng tam giác nhỏ, có cạnh song song với cạnh đối diện, rồi dùng bài 33.',
       canh: { ten: 'ggTrung', moTa: 'Tam giác ABC nhỏ và tam giác A phẩy B phẩy C phẩy lớn có góc B bằng góc B phẩy, góc C bằng góc C phẩy. Tam giác nhỏ trượt tới B phẩy rồi phóng lên, trùng khít tam giác lớn.',
-        dongSo: function (p, f) { return "$\\cb{\\widehat{B} = \\widehat{B'} = " + p.gB + "^\\circ}$, $\\cc{\\widehat{C} = \\widehat{C'} = " + Math.min(p.gC, 150 - p.gB) + "^\\circ}$, $\\frac{B'C'}{BC} = " + f(p.k).replace(',', '{,}') + '$'; } },
+        thuPha: true, tuyChon: { chiTiet: true },
+        dongSo: function (p, f) {
+          var gC = Math.min(p.gC, 150 - p.gB);
+          if (p.lechC) return "$\\cb{\\widehat{B} = \\widehat{B'} = " + p.gB + "^\\circ}$, $\\widehat{C} = " + gC + "^\\circ$ nhưng $\\widehat{C'} = " + Math.max(10, Math.min(gC + p.lechC, 170 - p.gB)) + "^\\circ$";
+          return "$\\cb{\\widehat{B} = \\widehat{B'} = " + p.gB + "^\\circ}$, $\\cc{\\widehat{C} = \\widehat{C'} = " + gC + "^\\circ}$, $\\frac{B'C'}{BC} = " + f(p.k).replace(',', '{,}') + '$';
+        } },
       buoc: [
         { t: 0, chu: "Hai tam giác có $\\cb{\\widehat{B}} = \\cb{\\widehat{B'}}$ và $\\cc{\\widehat{C}} = \\cc{\\widehat{C'}}$. Ta chưa biết gì về các cạnh." },
         { t: 0.1, chu: "Trượt tam giác $ABC$ cho đỉnh $B$ tới $B'$, cạnh $BC$ nằm trên $B'C'$. Vì $\\widehat{B} = \\widehat{B'}$ nên cạnh $BA$ nằm trên tia $B'A'$." },
@@ -250,6 +255,12 @@
         goiY: ['Khi tam giác chuyển màu xanh lá, so số đo góc $B$ với $B\'$, góc $C$ với $C\'$.'],
         loiGiai: ['Chỉ cần **ba cạnh tỉ lệ** là các góc tương ứng tự bằng nhau, hai tam giác đồng dạng. Đó là **trường hợp cạnh – cạnh – cạnh**. Không cần đo góc nữa!'] }
     },
+    mucTieu: [
+      'Nói được vì sao hai cặp góc bằng nhau là đủ để hai tam giác đồng dạng, bằng cách trượt tam giác nhỏ tới đỉnh có góc bằng nhau.',
+      'Nhận ra ba trường hợp c.c.c, c.g.c, g.g và chọn đúng trường hợp cho từng đề.',
+      'Ghép đúng cặp cạnh tương ứng theo các cặp góc bằng nhau, rồi tính cạnh chưa biết.',
+      'Tìm hai góc bằng nhau nấp trong hình (góc chung, góc đo được) để chứng minh hai tam giác đồng dạng.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: '1. Trường hợp cạnh – cạnh – cạnh (c.c.c)',
         noiDung: "Nếu **ba cạnh** của tam giác này tỉ lệ với ba cạnh của tam giác kia thì hai tam giác đó đồng dạng với nhau.\n\n**GT:** $\\frac{A'B'}{AB} = \\frac{A'C'}{AC} = \\frac{B'C'}{BC}$. **KL:** $\\triangle A'B'C' \\backsim \\triangle ABC$." },
@@ -262,6 +273,20 @@
         chuThich: "Góc $A'$ luôn bằng góc $A$. Hai thanh trượt là hai tỉ số $\\frac{A'B'}{AB}$ và $\\frac{A'C'}{AC}$. Khi chúng **bằng nhau**, tỉ số $\\frac{B'C'}{BC}$ cũng bằng đúng số đó và tam giác chuyển màu xanh lá." },
       { loai: 'dinhLi', tieuDe: '3. Trường hợp góc – góc (g.g)',
         noiDung: "Nếu **hai góc** của tam giác này lần lượt bằng hai góc của tam giác kia thì hai tam giác đó đồng dạng.\n\n**GT:** $\\widehat{A'} = \\widehat{A}$, $\\widehat{B'} = \\widehat{B}$. **KL:** $\\triangle A'B'C' \\backsim \\triangle ABC$." },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao hai cặp góc bằng nhau là đủ?', config: {
+        de: "Hai tam giác $ABC$ và $A'B'C'$ có $\\widehat{B} = \\widehat{B'}$, $\\widehat{C} = \\widehat{C'}$. Xếp các bước theo đúng thứ tự lập luận; bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.",
+        canh: { ten: 'ggTrung' },
+        buoc: [
+          { id: 'gt', chu: "Hai tam giác có $\\widehat{B} = \\widehat{B'}$ và $\\widehat{C} = \\widehat{C'}$; chưa biết gì về các cạnh.", canh: { t: 0 } },
+          { id: 'dat', chu: "Trượt tam giác $ABC$ cho đỉnh $B$ trùng $B'$ và cạnh $BC$ nằm trên tia $B'C'$.", can: ['gt'], canh: { t: 0.5 } },
+          { id: 'tiaA', chu: "Vì $\\widehat{B} = \\widehat{B'}$, cạnh $BA$ nằm trên tia $B'A'$.", can: ['dat'], canh: { t: 0.5 } },
+          { id: 'viTri', chu: "Góc $\\widehat{ACB}$ và góc $\\widehat{A'C'B'}$ giờ ở vị trí đồng vị: cùng có một cạnh trên đường thẳng $B'C'$, cùng nằm một phía.", can: ['dat'], canh: { t: 0.5 } },
+          { id: 'ss', chu: "Cặp góc đồng vị ấy bằng nhau ($\\widehat{C} = \\widehat{C'}$), nên $AC \\parallel A'C'$.", can: ['tiaA', 'viTri'], canh: { t: 0.5 } },
+          { id: 'b33', chu: "Trong tam giác $A'B'C'$, đoạn $AC$ nối hai điểm trên hai cạnh và song song với cạnh $A'C'$. Theo bài 33, $\\triangle ABC \\backsim \\triangle A'B'C'$.", can: ['ss'], canh: { t: 0.9 } },
+          { id: 'kl', chu: "Đổi chiều kí hiệu: $\\triangle A'B'C' \\backsim \\triangle ABC$.", can: ['b33'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Hai cặp góc bằng nhau thì hai tam giác đồng dạng (trường hợp g.g). Căn cứ chính là góc đồng vị và định lí ở bài 33.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 10.8, 16, -2], wide: true, build: ggBuild,
         tuChay: [{ thanhTruot: "B'C'", den: 3, giay: 2.5 }, { cho: 1.2 }, { thanhTruot: "B'C'", den: 9, giay: 3 }, { cho: 1.2 }, { thanhTruot: "B'C'", den: 7, giay: 1.5 }] },
         chuThich: "Tam giác tím có góc $B'$, $C'$ chép đúng góc $B$, $C$ (cùng màu). Kéo thanh trượt đổi độ dài $B'C'$, hoặc kéo $A$, $B$, $C$: ba tỉ số cạnh luôn bằng nhau." },

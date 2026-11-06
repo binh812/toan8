@@ -133,8 +133,11 @@
     nhin: {
       tieuDe: 'Kẻ một đường song song, được một tam giác đồng dạng', loai: 'chungMinh',
       luuY: 'Lập luận dùng định lí Thalès (bài 15) và tính chất hình bình hành, nên đúng với mọi vị trí của $MN$.',
-      canh: { ten: 'songSong', moTa: 'Tam giác ABC, đoạn MN song song với BC cắt ra tam giác nhỏ AMN. Đoạn MN trượt theo hướng AB và nằm khít lên đoạn BP của cạnh BC.',
-        dongSo: function (p, f) { return '$\\frac{AM}{AB} = \\frac{AN}{AC} = \\frac{MN}{BC} = ' + f(p.k).replace(',', '{,}') + '$'; } },
+      canh: { ten: 'songSong', thuPha: true, tuyChon: { chiTiet: true }, moTa: 'Tam giác ABC, đoạn MN song song với BC cắt ra tam giác nhỏ AMN. Đoạn MN trượt theo hướng AB và nằm khít lên đoạn BP của cạnh BC.',
+        dongSo: function (p, f) {
+          if (p.lech) return '$MN$ lệch $' + p.lech + '^\\circ$, không còn song song với $BC$: xem ba tỉ số dưới hình.';
+          return '$\\frac{AM}{AB} = \\frac{AN}{AC} = \\frac{MN}{BC} = ' + f(p.k).replace(',', '{,}') + '$';
+        } },
       buoc: [
         { t: 0, chu: 'Trong tam giác $ABC$, đoạn $\\cc{MN}$ song song với $BC$. Nó cắt ra tam giác nhỏ $AMN$.' },
         { t: 0.1, chu: 'Ba cặp góc bằng nhau: góc $A$ chung; $\\ca{\\widehat{AMN}} = \\ca{\\widehat{ABC}}$ và $\\cb{\\widehat{ANM}} = \\cb{\\widehat{ACB}}$ vì là cặp góc đồng vị ($MN \\parallel BC$).' },
@@ -193,6 +196,12 @@
         loiGiai: ['Ba tỉ số luôn bằng nhau và bằng đúng $k$; còn các góc cùng màu thì **không đổi**.', 'Hai tam giác như vậy gọi là **đồng dạng**. Với $k = 2$: $\\frac{A\'B\'}{AB} = 2$']
       }
     },
+    mucTieu: [
+      'Nói được vì sao $MN \\parallel BC$ thì $\\triangle AMN \\backsim \\triangle ABC$, bằng cách chỉ ra trên hình ba cặp góc bằng nhau và ba tỉ số bằng nhau.',
+      'Viết kí hiệu $\\triangle A\'B\'C\' \\backsim \\triangle ABC$ đúng thứ tự cặp đỉnh, rồi đọc ra các cặp góc và cặp cạnh tương ứng.',
+      'Tính tỉ số đồng dạng và một cạnh chưa biết, so đoạn ngắn với **cả** đoạn dài tính từ đỉnh chung.',
+      'Nhận ra hai tam giác đồng dạng khi có một đoạn thẳng song song với một cạnh, kể cả kiểu chữ X.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hai tam giác đồng dạng',
         noiDung: "Tam giác $A'B'C'$ gọi là **đồng dạng** với tam giác $ABC$ nếu:\n\n$$\\frac{A'B'}{AB} = \\frac{B'C'}{BC} = \\frac{A'C'}{AC};\\qquad \\widehat{A'} = \\widehat{A},\\ \\widehat{B'} = \\widehat{B},\\ \\widehat{C'} = \\widehat{C}.$$\n\nKí hiệu: $\\triangle A'B'C' \\backsim \\triangle ABC$ (viết **theo thứ tự cặp đỉnh tương ứng**).\n\nTỉ số $k = \\frac{A'B'}{AB} = \\frac{B'C'}{BC} = \\frac{A'C'}{AC}$ gọi là **tỉ số đồng dạng** của $\\triangle A'B'C'$ với $\\triangle ABC$." },
@@ -205,6 +214,22 @@
         noiDung: "• Nếu $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $k$ thì $\\triangle ABC \\backsim \\triangle A'B'C'$ theo tỉ số $\\frac{1}{k}$. Ta nói hai tam giác **đồng dạng với nhau**.\n\n• Hai tam giác bằng nhau thì đồng dạng với nhau theo tỉ số $k = 1$. Mọi tam giác đồng dạng với chính nó.\n\n• Nếu $\\triangle A''B''C'' \\backsim \\triangle A'B'C'$ theo tỉ số $k$ và $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $m$ thì $\\triangle A''B''C'' \\backsim \\triangle ABC$ theo tỉ số $k \\cdot m$." },
       { loai: 'dinhLi', tieuDe: 'Định lí (đường thẳng song song với một cạnh)',
         noiDung: 'Nếu một đường thẳng cắt hai cạnh của một tam giác và **song song** với cạnh còn lại thì nó tạo thành một tam giác mới đồng dạng với tam giác đã cho.\n\n**GT:** $\\triangle ABC$, $MN \\parallel BC$ ($M \\in AB$, $N \\in AC$).\n\n**KL:** $\\triangle AMN \\backsim \\triangle ABC$.\n\n**Chú ý.** Định lí vẫn đúng nếu đường thẳng cắt **phần kéo dài** của hai cạnh tam giác.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $MN \\parallel BC$ thì $\\triangle AMN \\backsim \\triangle ABC$?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        canh: { ten: 'songSong' },
+        buoc: [
+          { id: 'gt', chu: 'Tam giác $ABC$ có $MN \\parallel BC$, với $M$ nằm trên $AB$, $N$ nằm trên $AC$.', canh: { t: 0 } },
+          { id: 'gocA', chu: 'Góc $A$ là góc chung của tam giác $AMN$ và tam giác $ABC$.', can: ['gt'], canh: { t: 0.25 } },
+          { id: 'gocM', chu: '$\\widehat{AMN} = \\widehat{ABC}$, vì là cặp góc đồng vị ($MN \\parallel BC$).', can: ['gt'], canh: { t: 0.25 } },
+          { id: 'gocN', chu: '$\\widehat{ANM} = \\widehat{ACB}$, vì là cặp góc đồng vị ($MN \\parallel BC$).', can: ['gt'], canh: { t: 0.25 } },
+          { id: 'th1', chu: 'Định lí Thalès với $MN \\parallel BC$: $\\frac{AM}{AB} = \\frac{AN}{AC}$.', can: ['gt'], canh: { t: 0.45 } },
+          { id: 'hbh', chu: 'Kẻ $NP \\parallel AB$ ($P$ trên $BC$). Tứ giác $MNPB$ có hai cặp cạnh đối song song nên là hình bình hành: $MN = BP$.', can: ['gt'], canh: { t: 0.75 } },
+          { id: 'th2', chu: 'Định lí Thalès với $NP \\parallel AB$: $\\frac{BP}{BC} = \\frac{AN}{AC}$.', can: ['hbh'], canh: { t: 0.95 } },
+          { id: 'ts', chu: 'Thay $BP = MN$: $\\frac{AM}{AB} = \\frac{AN}{AC} = \\frac{MN}{BC}$.', can: ['th1', 'hbh', 'th2'], canh: { t: 1 } },
+          { id: 'kl', chu: 'Ba cặp góc bằng nhau, ba cặp cạnh tỉ lệ, nên $\\triangle AMN \\backsim \\triangle ABC$.', can: ['gocA', 'gocM', 'gocN', 'ts'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Đường song song với một cạnh cắt ra một tam giác đồng dạng với tam giác đã cho: $\\triangle AMN \\backsim \\triangle ABC$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8.6, 10, -0.8], build: dinhLiBuild,
         tuChay: [{ diem: 'M', den: [2.5, 5], giay: 2.5 }, { cho: 1.2 }, { diem: 'M', den: [0.6, 1.2], giay: 3 }, { cho: 1.2 }, { diem: 'M', den: [1.6, 3.2], giay: 2 }] },
         chuThich: 'Kéo $M$ (đoạn tím $MN$ luôn song song với $BC$). Ba tỉ số $\\frac{AM}{AB}$, $\\frac{AN}{AC}$, $\\frac{MN}{BC}$ luôn bằng nhau, góc $A$ chung, $\\widehat{AMN} = \\widehat{ABC}$ (đồng vị): $\\triangle AMN \\backsim \\triangle ABC$.' },

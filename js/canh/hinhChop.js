@@ -98,11 +98,43 @@
       // Hình chữ nhật cuối, toạ độ màn hình (nhìn thẳng từ trên: y màn hình = −y)
       chuNhat: [[-W / 2, -d / 2], [W / 2, -d / 2], [W / 2, d / 2], [-W / 2, d / 2]] };
   }
+  function soVN(x) { return C.fmt(x).replace(',', '{,}'); }
+  function bs(x) { return (Math.abs(x * 100 - Math.round(x * 100)) < 1e-6 ? '= ' : '\\approx ') + soVN(x); }
+  // Hai giao điểm của đường tròn tâm X bán kính rx và đường tròn tâm Y bán kính ry
+  function giaoTron(X, rx, Y, ry) {
+    var dx = Y[0] - X[0], dy = Y[1] - X[1], l = Math.hypot(dx, dy), x = (rx * rx - ry * ry + l * l) / (2 * l), h = Math.sqrt(Math.max(0, rx * rx - x * x));
+    var M = [X[0] + dx * x / l, X[1] + dy * x / l];
+    return [[M[0] + dy * h / l, M[1] - dx * h / l], [M[0] - dy * h / l, M[1] + dx * h / l]];
+  }
+  // Thử phá bài 38: đáy là tam giác cân a, a, b (b = a + lệch), đỉnh nằm trên tâm đường tròn ngoại tiếp đáy, cùng chiều cao h,
+  // nên ba cạnh bên vẫn bằng nhau. Ba mặt bên xếp xen kẽ, áp theo cạnh bên: một ngửa (đáy a), một úp (đáy b), một ngửa (đáy a).
+  function phaDayLech(g, lech) {
+    var a = g.a, b = a + lech, dt = b / 4 * Math.sqrt(4 * a * a - b * b), R = a * a * b / (4 * dt), l = Math.sqrt(R * R + g.h * g.h);
+    var dA = Math.sqrt(l * l - a * a / 4), dB = Math.sqrt(l * l - b * b / 4);
+    var P0 = [0, 0], P1 = [a, 0], S1 = [a / 2, dA];
+    // Q: |P1Q| = l, |S1Q| = b, nằm bên phải S1; R: |P1R| = a, |QR| = l, nằm dưới Q
+    var Q = giaoTron(S1, b, P1, l).sort(function (u, v) { return v[0] - u[0]; })[0];
+    var Rr = giaoTron(P1, a, Q, l).sort(function (u, v) { return u[1] - v[1]; })[0];
+    var p = (2 * a + b) / 2, sxq = (2 * a * dA + b * dB) / 2;
+    return { b: b, l: l, dA: dA, dB: dB, p: p, sxq: sxq, pd: p * dA,
+      tamGiac: [[P0, P1, S1], [P1, Q, S1], [P1, Rr, Q]], doCao: [dA, dB, dA], day: [a, b, a] };
+  }
   C.dangKi('traiChop', {
-    thamSo: { a: { min: 2, max: 6, step: 1, md: 4, nhan: 'Cạnh đáy a', mau: '--cc' }, d: { min: 4, max: 9, step: 1, md: 6, nhan: 'Trung đoạn d', mau: '--b' } },
+    thamSo: { a: { min: 2, max: 6, step: 1, md: 4, nhan: 'Cạnh đáy a', mau: '--cc' }, d: { min: 4, max: 9, step: 1, md: 6, nhan: 'Trung đoạn d', mau: '--b' },
+      lech: { min: -1.5, max: 1.5, step: 0.5, md: 0, nhan: 'Cạnh đáy lệch', pha: true } },
     trangThai: { soiSAM: true, soiSOM: true, caChuVi: true, motMat: true },
     tinh: function (p, t, o) {
       var k = traiTai(p, t, o), b = bao(k.chuNhat);
+      // Thử phá chỉ cho đáy tam giác (bài 38)
+      if (k.n === 3) {
+        var lech = typeof p.lech === 'number' ? p.lech : 0;
+        if (Math.abs(lech) > 1e-9) {
+          var f = phaDayLech(k, lech);
+          k.phaHinh = f;
+          k.pha = { hong: true, b: f.b, dA: f.dA, dB: f.dB, p: f.p, sxq: f.sxq, pd: f.pd,
+            chu: 'Đáy $' + soVN(k.a) + '$; $' + soVN(k.a) + '$; $' + soVN(f.b) + '$, không đều. Mặt bên trên cạnh $' + soVN(f.b) + '$ có trung đoạn $' + bs(f.dB) + '$, hai mặt kia $' + bs(f.dA) + '$: không có một trung đoạn chung. $p \\cdot d ' + bs(f.pd) + '$ (lấy $d ' + bs(f.dA) + '$) nhưng $S_{xq} ' + bs(f.sxq) + '$. Ba tam giác cao khác nhau, xếp lại không thành hình chữ nhật.' };
+        } else k.pha = { hong: false, chu: 'Đáy đều: ba mặt bên bằng nhau, cùng trung đoạn $d = ' + soVN(k.d) + '$, nên $S_{xq} = p \\cdot d = ' + soVN(k.p) + ' \\cdot ' + soVN(k.d) + ' = ' + soVN(k.p * k.d) + '$.' };
+      }
       // Khung theo số đo, không theo t, để hình không nhảy khi chạy
       for (var i = 0; i <= 20; i++) {
         var q = traiTai(p, i / 20, o);
@@ -202,22 +234,57 @@
   }
   function ten(o, k, md) { var t = o.ten || {}; return t[k] != null ? t[k] : md; }
 
+  // Thử phá: ba mặt bên của hình chóp đáy không đều, áp theo cạnh bên; nét đứt đỏ là hai đường mà hình chữ nhật cần
+  function vePhaDay(svg, k) {
+    var f = k.phaHinh, ds = [];
+    f.tamGiac.forEach(function (g) { ds = ds.concat(g); });
+    var b = bao(ds.map(function (q) { return [q[0], -q[1]]; })), kh = datKhung(svg, b, 0.4), co = kh.co;
+    var dA = f.dA, x1 = b.x1 + co;
+    duong(svg, [-co, 0], [x1, 0], '--sai', 1.8, { 'stroke-dasharray': '6 4' });
+    duong(svg, [-co, -dA], [x1, -dA], '--sai', 1.8, { 'stroke-dasharray': '6 4' });
+    f.tamGiac.forEach(function (g, i) {
+      var Y = g.map(function (q) { return [q[0], -q[1]]; }), lech = i === 1;
+      daGiac(svg, Y, { fill: lech ? HO_PHACH : 'var(--tg)', 'fill-opacity': lech ? 0.32 : 0.16, stroke: 'var(--muc)', 'stroke-width': 1.8, 'data-soi': lech ? 'matLech' : 'mat' });
+      var c = tam(Y);
+      chuMau(svg, c[0], c[1] + co * 0.3, 'd ≈ ' + C.fmt(f.doCao[i]), co * 0.75, lech ? '--sai' : '--b');
+    });
+  }
+
+  C.lay('traiChop').soi = function (k, p, o) {
+    if (!o.chiTiet) return {};
+    var a = k.a, d = k.d, mat = a * d / 2;
+    if (k.phaHinh) {
+      var f = k.phaHinh;
+      return {
+        mat: { tieuDe: 'Mặt bên đáy $' + soVN(a) + '$', chu: 'Cạnh bên $' + bs(f.l) + '$, trung đoạn $' + bs(f.dA) + '$, diện tích $' + bs(a * f.dA / 2) + '$.' },
+        matLech: { tieuDe: 'Mặt bên đáy $' + soVN(f.b) + '$', chu: 'Cùng cạnh bên $' + bs(f.l) + '$ nhưng đáy dài khác, nên trung đoạn $' + bs(f.dB) + '$ khác hai mặt kia. Diện tích $' + bs(f.b * f.dB / 2) + '$.' }
+      };
+    }
+    return {
+      mat: { tieuDe: 'Một mặt bên', chu: 'Tam giác cân đáy $a = ' + soVN(a) + '$, đường cao là trung đoạn $d = ' + soVN(d) + '$, diện tích $\\frac{a \\cdot d}{2} = ' + soVN(mat) + '$. Các mặt bên bằng nhau vì hình chóp đều có đáy đều và các cạnh bên bằng nhau ($' + bs(k.l) + '$).' },
+      trungDoan: { tieuDe: 'Trung đoạn', chu: '$d = ' + soVN(d) + '$: đường cao của mặt bên, kẻ từ đỉnh. Mặt bên là tam giác cân nên nó vuông góc với cạnh đáy tại trung điểm.' },
+      day: { tieuDe: 'Mặt đáy', chu: 'Đa giác đều cạnh $a = ' + soVN(a) + '$. Nó không thuộc diện tích xung quanh, nên được bỏ ra trước khi xếp.' },
+      chuNhat: { tieuDe: 'Hình chữ nhật', chu: 'Dài $p = \\frac{' + k.n + ' \\cdot ' + soVN(a) + '}{2} = ' + soVN(k.p) + '$ (nửa chu vi đáy), cao $d = ' + soVN(d) + '$. Diện tích $p \\cdot d = ' + soVN(k.p * d) + '$, bằng tổng ' + k.n + ' mặt bên: $' + k.n + ' \\cdot ' + soVN(mat) + ' = ' + soVN(k.n * mat) + '$.' }
+    };
+  };
+
   C.lay('traiChop').ve = function (svg, k, p, t, o) {
+    if (k.phaHinh) { vePhaDay(svg, k); return; }
     var giai = p.trangThai === 'giai', tt = p.trangThai;
     // o.soi: tô tam giác vuông cố định (hình lời giải), vẫn giữ khi em đã giải xong
     if ((!tt || tt === 'giai') && o.soi) tt = 'soi' + o.soi;
     var kh = datKhung(svg, k.khung, 2.4), co = kh.co;
     var tA = ten(o, 'a', 'a'), tD = o.anD && !giai ? '?' : ten(o, 'd', 'd'), tL = ten(o, 'l', ''), tH = ten(o, 'h', 'h'), tP = ten(o, 'p', 'p');
     var traiDuoi = k.s < 0.02;
-    if (k.dayMo > 0.01) daGiac(svg, k.day, { fill: 'var(--cc)', 'fill-opacity': 0.12, stroke: 'var(--muc)', 'stroke-width': 1.3, 'stroke-dasharray': traiDuoi ? '5 4' : null, opacity: k.dayMo });
+    if (k.dayMo > 0.01) daGiac(svg, k.day, { fill: 'var(--cc)', 'fill-opacity': 0.12, stroke: 'var(--muc)', 'stroke-width': 1.3, 'stroke-dasharray': traiDuoi ? '5 4' : null, opacity: k.dayMo, 'data-soi': 'day' });
     var sx = k.manh.slice().sort(function (m1, m2) { return m2.sau - m1.sau; });
     var mo = function (m) { return tt === 'motMat' && k.cuoi > 0.5 && m.mat !== 1 ? 0.3 : 1; };
     sx.forEach(function (m) {
       var la0 = m.mat === 0, g = C.mk('g', { opacity: mo(m) }, svg);
       daGiac(g, m.dinh, { fill: la0 ? HO_PHACH : 'var(--tg)', 'fill-opacity': (la0 ? 0.32 : 0.16) * (traiDuoi ? 0.7 : 1),
-        stroke: 'var(--muc)', 'stroke-width': m.an ? 1.2 : 1.8, 'stroke-dasharray': m.an ? '5 4' : null });
+        stroke: 'var(--muc)', 'stroke-width': m.an ? 1.2 : 1.8, 'stroke-dasharray': m.an ? '5 4' : null, 'data-soi': 'mat' });
       // Trung đoạn trên mỗi mặt: lúc còn là hình chóp chỉ vẽ ở mặt trước có ghi tên
-      if (!traiDuoi || la0) duong(g, m.trungDoan[0], m.trungDoan[1], '--b', la0 ? 3 : 2, { 'stroke-dasharray': la0 ? null : '6 4' });
+      if (!traiDuoi || la0) duong(g, m.trungDoan[0], m.trungDoan[1], '--b', la0 ? 3 : 2, { 'stroke-dasharray': la0 ? null : '6 4', 'data-soi': 'trungDoan' });
     });
     // Đường cắt: nửa trái và nửa phải của mặt 0 tách nhau theo trung đoạn
     var L = k.manh[0], P = k.manh[1];
@@ -257,7 +324,8 @@
     // Hình chữ nhật cuối: dài p, cao d
     if (k.cuoi > 0.01) {
       var gc = C.mk('g', { opacity: k.cuoi }, svg), cn = k.chuNhat;
-      daGiac(gc, cn, { fill: 'none', stroke: 'var(--muc)', 'stroke-width': 3 });
+      // Nền trong suốt chỉ khi đã thành hình chữ nhật, để bấm vào cả hình mà soi
+      daGiac(gc, cn, { fill: k.cuoi > 0.5 ? 'transparent' : 'none', stroke: 'var(--muc)', 'stroke-width': 3, 'data-soi': 'chuNhat' });
       if (tt !== 'soiSAM') nhanDoan(gc, cn[1], cn[2], [0, 0], tD, co, '--b');
       chuMau(gc, 0, cn[2][1] + co * 0.95, tP, co, '--cc', { 'font-style': 'italic' });
       var dong = giai && o.ketQua ? o.ketQua : o.dong || 'Sxq = ' + tP + ' · ' + tD;
@@ -271,15 +339,30 @@
     }
   };
 
+  C.lay('doNuoc').soi = function (k, p, o) {
+    if (!o.chiTiet) return {};
+    var day = k.n === 4 ? '$S = a^2 = ' + soVN(k.S) + '$' : '$S ' + bs(k.S) + '$', V = k.S * k.h, tenL = o.tenLang || 'lăng trụ';
+    return {
+      lang: { tieuDe: 'Cốc ' + tenL, chu: 'Đáy ' + day + ', cao $h = ' + soVN(k.h) + '$. Thể tích $S \\cdot h ' + bs(V) + '$.' },
+      chop: { tieuDe: 'Cốc hình chóp', chu: 'Cùng đáy, cùng chiều cao với cốc ' + tenL + '. Đổ ba lần mới đầy cốc kia, nên thể tích $\\frac{1}{3} S \\cdot h ' + bs(V / 3) + '$.' },
+      nuoc: { tieuDe: 'Nước đã đổ sang', chu: 'Đã đổ ' + k.nuoc.xong + ' lần đầy, nước cao $' + bs(k.zLang) + '$, thể tích $' + bs(k.vLang) + '$. Mỗi lần đổ, mực nước lên thêm $\\frac{h}{3} ' + bs(k.h / 3) + '$.' },
+      h: { tieuDe: 'Chiều cao', chu: '$h = ' + soVN(k.h) + '$: đo thẳng đứng từ đỉnh tới tâm đáy, không đo theo mặt bên (đó là trung đoạn, dài hơn).' }
+    };
+  };
+
   C.lay('doNuoc').ve = function (svg, k, p, t, o) {
     var giai = p.trangThai === 'giai', tt = p.trangThai, b = k.khung;
     var kh = datKhung(svg, { x0: b.x0, y0: b.y0 - (b.x1 - b.x0) * 0.08, x1: b.x1, y1: b.y1 }, o.ghiDay ? 3.2 : 2.6), co = kh.co;
     var L = k.lang, Cc = k.coc, n = k.n, xy = function (q) { return [q[0], q[1]]; };
     var tA = ten(o, 'a', 'a'), tH = o.anH && !giai ? '?' : ten(o, 'h', 'h');
+    // Vùng bấm để soi (trong suốt, nằm dưới cùng): cả cốc lăng trụ, cả cốc hình chóp
+    var vung = function (ds, khoa) { var bb = bao(ds.map(xy)); C.mk('rect', { x: bb.x0, y: bb.y0, width: bb.x1 - bb.x0, height: bb.y1 - bb.y0, fill: 'transparent', 'data-soi': khoa }, svg); };
+    vung(L.day.concat(L.tren), 'lang');
+    vung(Cc.mieng.concat([Cc.dinh]), 'chop');
     // Nước trong lăng trụ: các mặt đứng phía trước và mặt nước
     if (k.zLang > 1e-6) {
       for (var i = 0; i < n; i++) if (k.truocLang[i]) daGiac(svg, [L.day[i], L.day[(i + 1) % n], L.nuocTren[(i + 1) % n], L.nuocTren[i]].map(xy), { fill: 'var(--b)', 'fill-opacity': 0.28, stroke: 'none' });
-      daGiac(svg, L.nuocTren.map(xy), { fill: 'var(--b)', 'fill-opacity': 0.4, stroke: 'var(--b)', 'stroke-width': 1.2 });
+      daGiac(svg, L.nuocTren.map(xy), { fill: 'var(--b)', 'fill-opacity': 0.4, stroke: 'var(--b)', 'stroke-width': 1.2, 'data-soi': 'nuoc' });
     }
     // Vỏ lăng trụ: mép trên luôn thấy; cạnh khuất vẽ đứt
     var sai = tt === 'quen13' && k.cuoi > 0.5;
@@ -326,7 +409,7 @@
     }
     var trai = L.day.reduce(function (s, q, i) { return q[0] < L.day[s][0] ? i : s; }, 0);
     nhanDoan(svg, xy(L.day[trai]), xy(L.tren[trai]), tLang, tH, co * 0.9, TIM);
-    duong(svg, xy(Cc.dinh), xy(k.tamMieng), TIM, 2, { 'stroke-dasharray': '6 4' });
+    duong(svg, xy(Cc.dinh), xy(k.tamMieng), TIM, 2, { 'stroke-dasharray': '6 4', 'data-soi': 'h' });
     var phaiCoc = Cc.mieng.reduce(function (s, q) { return Math.max(s, q[0]); }, -Infinity), traiCoc = Cc.mieng.reduce(function (s, q) { return Math.min(s, q[0]); }, Infinity);
     var gm = k.giuaMieng[iT], dBenTrai = gm[0] < k.tamMieng[0], yGiua = (Cc.dinh[1] + k.tamMieng[1]) / 2;
     var hBenTrai = tt === 'trungDoan' && !dBenTrai;

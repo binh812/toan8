@@ -110,14 +110,14 @@
   }
   function veHinh(net, d, h, p, t, co, mo, mauVien, moTen) {
     var kin = h.kin !== false && d.length > 2, g = trongTam(d), op = mo * doMo(t, h);
-    if (h.to && d.length > 2) net.push({ k: 'da', d: d, to: h.to, mo: h.mo != null ? h.mo : 0.18, op: op * doMo(t, h.toHien) });
-    net.push({ k: kin ? 'da' : 'duong', d: d, vien: mauVien || h.mau || '--muc', net: h.net, day: h.day, op: op });
+    if (h.to && d.length > 2) net.push({ k: 'da', d: d, to: h.to, mo: h.mo != null ? h.mo : 0.18, op: op * doMo(t, h.toHien), soi: h.soi });
+    net.push({ k: kin ? 'da' : 'duong', d: d, vien: mauVien || h.mau || '--muc', net: h.net, day: h.day, op: op, soi: h.soi });
     var ngoai = [], dt2 = d.length > 2 ? Math.abs(dtCoDau(d)) * 2 : 0;
     (h.goc || []).forEach(function (x, i) {
       if (!x || d.length < 3) return;
       var o = typeof x === 'object' ? x : { mau: x === 'v' ? '--muc' : x, vuong: x === 'v' };
       var P = d[(i + d.length - 1) % d.length], Q = d[(i + 1) % d.length];
-      net.push({ k: 'goc', o: d[i], a: P, b: Q, mau: o.mau || '--muc', vuong: o.vuong, r: co * (o.r || 1.1), op: op * doMo(t, o) });
+      net.push({ k: 'goc', o: d[i], a: P, b: Q, mau: o.mau || '--muc', vuong: o.vuong, r: co * (o.r || 1.1), op: op * doMo(t, o), soi: o.soi });
       var nh = nhanChu(o.nhan, p, t);
       if (!nh) return;
       var ph = donVi(cong(donVi(tru(P, d[i])), donVi(tru(Q, d[i])))), xa = co * (o.xa || 2.3);
@@ -172,7 +172,7 @@
       if (!dangDi && !x.m.hienTruoc) return;
       if (x.m.tia) x.S.forEach(function (q, j) { net.push({ k: 'doan', a: x.m.tam, b: kc(x.m.tam, x.T[j]) > kc(x.m.tam, q) ? x.T[j] : q, mau: '--nhat', net: true, day: 1.2, op: 1 }); });
       // Tên đỉnh của bản sao mờ dần khi tới nơi, để không chồng lên tên đỉnh của hình đích
-      veHinh(net, x.diem, { goc: (h.goc || []).map(function (g) { return g && typeof g === 'object' ? Object.assign({}, g, { nhan: null }) : g; }), ten: dangDi ? h.ten : null, to: x.m.mau || '--a', mo: 0.28, kin: h.kin, day: h.day }, p, t, co, dangDi ? 1 : 0.5, x.m.mau || '--a', cuoi);
+      veHinh(net, x.diem, { goc: (h.goc || []).map(function (g) { return g && typeof g === 'object' ? Object.assign({}, g, { nhan: null }) : g; }), ten: dangDi ? h.ten : null, to: x.m.mau || '--a', mo: 0.28, kin: h.kin, day: h.day, soi: x.m.soi || h.soi }, p, t, co, dangDi ? 1 : 0.5, x.m.mau || '--a', cuoi);
     });
     // Dòng chữ dưới hình: tên bước đang làm, rồi các dòng kết quả
     var dangLam = di.filter(function (x) { return x.dang; })[0];
@@ -198,20 +198,33 @@
     var T = tamGiacABC(o), A = T.A, B = T.B, Cc = T.C, n = o.nhan || {}, ch = o.cheDo || 'chungMinh';
     var k = o.am != null ? o.am / (o.ab || 5) : C.kep(p.k, 0.05, 0.95), M = phong(B, A, k), N = phong(Cc, A, k);
     if (ch === 'dem') return demTamGiac(p, t, o, T);
+    // Thử phá (chỉ ở chế độ chứng minh): MN quay lệch khỏi phương BC quanh M, N trượt theo trên đường AC
+    var lech = ch === 'chungMinh' && typeof p.lech === 'number' ? p.lech : 0, hong = Math.abs(lech) > EPS, N0 = N, u = k;
+    if (hong) {
+      var dh = quay(tru(Cc, B), [0, 0], lech * RAD);
+      u = tichVo(tru(M, A), dh) / tichVo(tru(Cc, A), dh);
+      N = cong(A, nhan(tru(Cc, A), u));
+    }
     var canhAB = n.AB != null ? [n.AB] : [n.AM, n.MB], canhAC = n.AC != null ? [n.AC] : [n.AN, n.NC];
+    var mauM = hong ? '--sai' : '--a', mauN = hong ? '--sai' : '--b';
     var hinh = [
-      { diem: [A, B, Cc], ten: ['A', 'B', 'C'], goc: ch === 'chungMinh' ? [{ mau: '--nhat', hien: [0.1, 0.25] }, { mau: '--a', hien: [0.1, 0.25] }, { mau: '--b', hien: [0.1, 0.25] }] : null, canh: [canhAB.length === 1 ? canhAB[0] : null, n.BC, canhAC.length === 1 ? canhAC[0] : null] },
-      { diem: [A, M, N], ten: [null, 'M', 'N'], lechTen: [null, [0.75, -0.7], [-0.75, -0.7]], to: '--cc', mo: 0.16, mau: '--cc', day: 1.6, goc: ch === 'chungMinh' ? [null, { mau: '--a', hien: [0.1, 0.25] }, { mau: '--b', hien: [0.1, 0.25] }] : null },
-      { diem: [M, N], kin: false, mau: '--cc', day: 3.5, canh: [lay(n, 'MN')] }
+      { diem: [A, B, Cc], ten: ['A', 'B', 'C'], goc: ch === 'chungMinh' ? [{ mau: '--nhat', hien: [0.1, 0.25], soi: 'gocA' }, { mau: '--a', hien: [0.1, 0.25], soi: 'gocM' }, { mau: '--b', hien: [0.1, 0.25], soi: 'gocN' }] : null, canh: [canhAB.length === 1 ? canhAB[0] : null, n.BC, canhAC.length === 1 ? canhAC[0] : null] },
+      { diem: [A, M, N], ten: [null, 'M', 'N'], lechTen: [null, [0.75, -0.7], [-0.75, -0.7]], to: '--cc', mo: 0.16, mau: '--cc', day: 1.6, soi: ch === 'chungMinh' ? 'AMN' : null, goc: ch === 'chungMinh' ? [null, { mau: mauM, hien: [0.1, 0.25], soi: 'gocM' }, { mau: mauN, hien: [0.1, 0.25], soi: 'gocN' }] : null },
+      { diem: [M, N], kin: false, mau: hong ? '--sai' : '--cc', day: 3.5, canh: [lay(n, 'MN')], soi: ch === 'chungMinh' ? 'MN' : null }
     ];
     var them = [];
     if (canhAB.length === 2) { them.push(chuCanh(A, M, A, B, Cc, canhAB[0])); them.push(chuCanh(M, B, A, B, Cc, canhAB[1])); }
     if (canhAC.length === 2) { them.push(chuCanh(A, N, A, B, Cc, canhAC[0])); them.push(chuCanh(N, Cc, A, B, Cc, canhAC[1])); }
     them = them.filter(Boolean);
-    var kq = { hinh: hinh, them: them, loiCuoi: o.loiCuoi, di: [] };
-    if (ch === 'chungMinh') {
+    var kq = { hinh: hinh, them: them, loiCuoi: o.loiCuoi, di: [], chiTiet: { k: k, u: u, A: A, B: B, C: Cc, M: M, N: N, lech: lech, hong: hong } };
+    if (hong) {
+      // Đoạn song song thật (nét đứt) để so: MN lệch không còn trùng nó, ba tỉ số lệch nhau
+      them.push({ k: 'doan', a: M, b: N0, mau: '--nhat', net: true, day: 1.6 });
+      kq.loiCuoi = [{ s: 'AM : AB = ' + C.fmt(k), hien: [-1, -0.5] }, { s: 'AN : AC ≈ ' + C.fmt(u) + ';  MN : BC ≈ ' + C.fmt(kc(M, N) / kc(B, Cc)), mau: '--sai', hien: [-1, -0.5] }];
+      kq.chuBuoc = false;
+    } else if (ch === 'chungMinh') {
       var P = phong(Cc, B, k);
-      them.push({ k: 'da', d: [M, N, P, B], to: '--cc', mo: 0.12, hien: [0.55, 0.65] });
+      them.push({ k: 'da', d: [M, N, P, B], to: '--cc', mo: 0.12, hien: [0.55, 0.65], soi: 'MNPB' });
       them.push({ k: 'doan', a: N, b: P, mau: '--nhat', net: true, day: 1.6, hien: [0.55, 0.62] });
       them.push({ k: 'chu', p: cong(P, [0, -0.07 * kc(B, Cc)]), s: 'P', mau: '--cc', hien: [0.55, 0.62], nghieng: true });
       kq.di = [{ tu: 2, toi: [B, P], neo: 0, mau: '--cc', khung: [0.62, 0.86] }];
@@ -245,41 +258,118 @@
     });
     return { hinh: hinh, loiCuoi: o.loiCuoi };
   }
+  function soDo(x) { return C.fmt(x).replace(',', '{,}'); }
+  // Số đo kèm dấu: "= 3" nếu đúng tới hai chữ số thập phân, "≈ 3,46" nếu đã làm tròn
+  function bs(x) { return (Math.abs(x * 100 - Math.round(x * 100)) < 1e-6 ? '= ' : '\\approx ') + soDo(x); }
+  function phaSongSong(ct) {
+    var gM = goc(ct.A, ct.M, ct.N), gB = goc(ct.A, ct.B, ct.C), mn = kc(ct.M, ct.N) / kc(ct.B, ct.C);
+    if (!ct.hong) return { hong: false, chu: '$MN \\parallel BC$: $\\widehat{AMN} = \\widehat{ABC}$ và $\\frac{AM}{AB} = \\frac{AN}{AC} = \\frac{MN}{BC} = ' + soDo(ct.k) + '$.' };
+    return { hong: true, lech: ct.lech, gocM: gM, gocB: gB, tiAN: ct.u, tiMN: mn,
+      chu: '$MN$ lệch $' + Math.abs(ct.lech) + '^\\circ$ khỏi phương $BC$: $\\widehat{AMN} ' + bs(gM) + '^\\circ$ còn $\\widehat{ABC} ' + bs(gB) + '^\\circ$, không còn là cặp góc đồng vị bằng nhau. Ba tỉ số lệch nhau: $\\frac{AM}{AB} = ' + soDo(ct.k) + '$, $\\frac{AN}{AC} ' + bs(ct.u) + '$, $\\frac{MN}{BC} ' + bs(mn) + '$. Tam giác $AMN$ không còn là tam giác $ABC$ thu nhỏ.' };
+  }
   C.dangKi('songSong', {
-    thamSo: { k: { min: 0.2, max: 0.8, step: 0.05, md: 0.6, nhan: 'AM : AB', mau: '--cc' } },
-    tinh: function (p, t, o) { return lo(songSong(p, t, o || {}), p, t); }
+    thamSo: { k: { min: 0.2, max: 0.8, step: 0.05, md: 0.6, nhan: 'AM : AB', mau: '--cc' },
+      // Chỉ quay MN lên phía A, để N luôn nằm trên đoạn AC
+      lech: { min: 0, max: 20, step: 5, md: 0, nhan: 'MN lệch (độ)', pha: true } },
+    tinh: function (p, t, o) {
+      var mo = songSong(p, t, o || {}), kq = lo(mo, p, t);
+      if (mo.chiTiet) { kq.chiTiet = mo.chiTiet; if (!(o && o.cheDo) || o.cheDo === 'chungMinh') kq.pha = phaSongSong(mo.chiTiet); }
+      return kq;
+    }
   });
+  // Soi chi tiết: chỉ bật khi nội dung xin (tuyChon.chiTiet), để hình trong đề không lộ số đo cần tìm
+  C.lay('songSong').soi = function (k, p, o) {
+    var ct = k.chiTiet;
+    if (!o.chiTiet || !ct) return {};
+    var A = ct.A, B = ct.B, Cc = ct.C, M = ct.M, N = ct.N, bc = kc(B, Cc), mn = kc(M, N);
+    var gA = goc(B, A, Cc), gB = goc(A, B, Cc), gC = goc(A, Cc, B), gM = goc(A, M, N), gN = goc(A, N, M);
+    var bang = {
+      gocA: { tieuDe: 'Góc $A$', chu: '$\\widehat{A} ' + bs(gA) + '^\\circ$. Đây là góc chung của tam giác $AMN$ và tam giác $ABC$.' },
+      gocM: { tieuDe: 'Góc $AMN$ và góc $ABC$', chu: ct.hong
+        ? '$\\widehat{AMN} ' + bs(gM) + '^\\circ$ còn $\\widehat{ABC} ' + bs(gB) + '^\\circ$: không bằng nhau, vì $MN$ không song song với $BC$.'
+        : '$\\widehat{AMN} = \\widehat{ABC} ' + bs(gB) + '^\\circ$: cặp góc đồng vị, vì $MN \\parallel BC$.' },
+      gocN: { tieuDe: 'Góc $ANM$ và góc $ACB$', chu: ct.hong
+        ? '$\\widehat{ANM} ' + bs(gN) + '^\\circ$ còn $\\widehat{ACB} ' + bs(gC) + '^\\circ$: không bằng nhau.'
+        : '$\\widehat{ANM} = \\widehat{ACB} ' + bs(gC) + '^\\circ$: cặp góc đồng vị, vì $MN \\parallel BC$.' },
+      AMN: { tieuDe: 'Tam giác $AMN$', chu: '$AM ' + bs(kc(A, M)) + '$, $AN ' + bs(kc(A, N)) + '$, $MN ' + bs(mn) + '$. ' + (ct.hong
+        ? 'Các cạnh không cùng nhân một số với cạnh của $ABC$, nên nó không phải tam giác $ABC$ thu nhỏ.'
+        : 'Mỗi cạnh bằng cạnh tương ứng của $ABC$ nhân $' + soDo(ct.k) + '$ (định lí Thalès và hình bình hành $MNPB$).') },
+      MN: { tieuDe: 'Đoạn $MN$', chu: '$MN ' + bs(mn) + '$, $BC ' + bs(bc) + '$, $\\frac{MN}{BC} ' + bs(mn / bc) + '$. ' + (ct.hong
+        ? 'Đoạn này không song song với $BC$ (nét đứt mới là đoạn song song).'
+        : 'Kẻ $NP \\parallel AB$ thì $MNPB$ là hình bình hành, nên $MN = BP$.') }
+    };
+    if (!ct.hong) bang.MNPB = { tieuDe: 'Hình bình hành $MNPB$', chu: '$MN \\parallel BP$ (vì $MN \\parallel BC$) và $NP \\parallel MB$ (kẻ như thế), nên $MNPB$ là hình bình hành: $MN = BP = ' + soDo(mn) + '$.' };
+    return bang;
+  };
 
   // Hai góc bằng nhau: trượt tam giác nhỏ tới đỉnh B', phóng lên thì trùng khít tam giác lớn
   C.dangKi('ggTrung', {
     thamSo: {
       gB: { min: 30, max: 75, step: 5, md: 50, nhan: 'Góc B', mau: '--b' },
       gC: { min: 30, max: 75, step: 5, md: 65, nhan: 'Góc C', mau: '--cc' },
-      k: { min: 1.2, max: 2.4, step: 0.1, md: 1.8, nhan: 'Tỉ số k', mau: '--a' }
+      k: { min: 1.2, max: 2.4, step: 0.1, md: 1.8, nhan: 'Tỉ số k', mau: '--a' },
+      lechC: { min: -20, max: 20, step: 5, md: 0, nhan: "C' lệch (độ)", pha: true }
     },
     tinh: function (p, t) {
-      var gB = p.gB, gC = Math.min(p.gC, 150 - gB), k = p.k, A0 = { mau: '--nhat', hien: [0.9, 1] };
-      return lo({
+      var gB = p.gB, gC = Math.min(p.gC, 150 - gB), k = p.k, lech = typeof p.lechC === 'number' ? p.lechC : 0, hong = Math.abs(lech) > EPS;
+      // Thử phá: góc C' của tam giác lớn khác góc C (giữ tam giác lớn có góc A' từ 10° trở lên)
+      var gC1 = hong ? C.kep(gC + lech, 10, 170 - gB) : gC;
+      var A0 = { mau: '--nhat', hien: [0.9, 1], soi: 'gocA' }, gocB = { mau: '--b', soi: 'gocB' };
+      var S0 = tuGoc([0, gB, gC], 3), T0 = tuGoc([0, gB, gC1], 3 * k), tiA = kc(T0[0], T0[1]) / kc(S0[0], S0[1]);
+      var kq = lo({
         hinh: [
-          { goc3: [0, gB, gC], day: 3, ten: ['A', 'B', 'C'], goc: [A0, '--b', '--cc'] },
-          { goc3: [0, gB, gC], day: 3 * k, dat: { sau: 0 }, ten: ["A'", "B'", "C'"], goc: [A0, '--b', '--cc'] }
+          { goc3: [0, gB, gC], day: 3, ten: ['A', 'B', 'C'], goc: [A0, gocB, { mau: '--cc', soi: 'gocC' }], soi: 'nho' },
+          { goc3: [0, gB, gC1], day: 3 * k, dat: { sau: 0 }, ten: ["A'", "B'", "C'"], goc: [A0, gocB, { mau: hong ? '--sai' : '--cc', soi: 'gocC' }], soi: 'lon' }
         ],
         di: [{ tu: 0, toi: 1, neo: 1, mau: '--a', khung: [0.1, 0.9] }],
-        loiCuoi: [{ s: 'Mọi cạnh nhân k = ' + C.fmt(k), hien: [0.9, 1] }]
+        loiCuoi: [hong ? { s: "B'C' : BC = " + C.fmt(k) + ";  B'A' : BA ≈ " + C.fmt(tiA), mau: '--sai', hien: [0.9, 1] } : { s: 'Mọi cạnh nhân k = ' + C.fmt(k), hien: [0.9, 1] }]
       }, p, t);
+      var S = kq.ds[0], T = kq.ds[1];
+      kq.chiTiet = { gB: gB, gC: gC, gC1: gC1, k: k, tiA: tiA, tiCA: kc(T[2], T[0]) / kc(S[2], S[0]), hong: hong };
+      if (hong) {
+        // Phóng xong, đỉnh A của bản sao không tới A': nối hai điểm bằng đoạn đỏ
+        var x = kq.di[0], cuoi = viTri(x.S, x.kh, 1).diem[0];
+        kq.net.push({ k: 'doan', a: cuoi, b: T[0], mau: '--sai', net: true, day: 2.5, op: hienRa(t, [0.85, 0.95]) });
+        kq.pha = { hong: true, gocC: gC, gocC1: gC1, tiBC: k, tiBA: tiA,
+          chu: "Góc $C' = " + gC1 + "^\\circ$ khác góc $C = " + gC + "^\\circ$: sau khi trượt, $AC$ không song song với $A'C'$ nữa. $\\frac{B'C'}{BC} = " + soDo(k) + "$ nhưng $\\frac{B'A'}{BA} \\approx " + soDo(tiA) + "$, hai tỉ số khác nhau. Phóng tam giác nhỏ lên, đỉnh $A$ không tới $A'$ (đoạn đỏ): hai tam giác không đồng dạng." };
+      } else {
+        kq.pha = { hong: false, chu: "$\\widehat{B} = \\widehat{B'}$, $\\widehat{C} = \\widehat{C'}$: mọi cạnh của tam giác lớn bằng cạnh tương ứng nhân $k = " + soDo(k) + '$.' };
+      }
+      return kq;
     }
   });
+  C.lay('ggTrung').soi = function (k, p, o) {
+    var ct = k.chiTiet;
+    if (!o.chiTiet || !ct) return {};
+    var S = k.ds[0], T = k.ds[1], gA = 180 - ct.gB - ct.gC, gA1 = 180 - ct.gB - ct.gC1;
+    return {
+      gocB: { tieuDe: "Góc $B$ và góc $B'$", chu: "$\\widehat{B} = \\widehat{B'} = " + ct.gB + "^\\circ$ (giả thiết). Nhờ vậy, khi đặt $B$ lên $B'$ và $BC$ lên tia $B'C'$ thì tia $BA$ nằm trên tia $B'A'$." },
+      gocC: { tieuDe: "Góc $C$ và góc $C'$", chu: ct.hong
+        ? "$\\widehat{C} = " + ct.gC + "^\\circ$ còn $\\widehat{C'} = " + ct.gC1 + "^\\circ$: khác nhau, nên sau khi trượt $AC$ không song song với $A'C'$."
+        : "$\\widehat{C} = \\widehat{C'} = " + ct.gC + "^\\circ$ (giả thiết). Sau khi trượt, đây là cặp góc đồng vị, nên $AC \\parallel A'C'$." },
+      gocA: { tieuDe: "Góc $A$ và góc $A'$", chu: ct.hong
+        ? "$\\widehat{A} = 180^\\circ - " + ct.gB + "^\\circ - " + ct.gC + "^\\circ = " + gA + "^\\circ$, còn $\\widehat{A'} = " + gA1 + "^\\circ$."
+        : "$\\widehat{A} = \\widehat{A'} = 180^\\circ - " + ct.gB + "^\\circ - " + ct.gC + "^\\circ = " + gA + "^\\circ$, vì tổng ba góc của tam giác bằng $180^\\circ$." },
+      nho: { tieuDe: 'Tam giác $ABC$', chu: '$BC = ' + soDo(kc(S[1], S[2])) + '$, $BA ' + bs(kc(S[0], S[1])) + '$, $CA ' + bs(kc(S[2], S[0])) + '$.' },
+      lon: { tieuDe: "Tam giác $A'B'C'$", chu: "$B'C' = " + soDo(kc(T[1], T[2])) + "$, $B'A' \\approx " + soDo(kc(T[0], T[1])) + "$, $C'A' \\approx " + soDo(kc(T[2], T[0])) + '$. ' + (ct.hong
+        ? "Tỉ số với cạnh tương ứng của $ABC$: $" + soDo(ct.k) + '$; $' + bs(ct.tiA) + '$; $' + bs(ct.tiCA) + '$, không bằng nhau.'
+        : 'Mỗi cạnh bằng cạnh tương ứng của $ABC$ nhân $k = ' + soDo(ct.k) + '$.') }
+    };
+  };
 
   // Tam giác vuông có đường cao AH: hai tam giác nhỏ và tam giác lớn đồng dạng
   function duongCao(p, t, o) {
     var bh = o.bh != null ? o.bh : p.bh, ch = o.ch != null ? o.ch : p.ch, ah = Math.sqrt(bh * ch), n = o.nhan || {};
+    // Thử phá (chỉ khi số đo lấy từ thanh trượt): góc A khác 90°, tìm độ cao đỉnh A cho đúng góc đó
+    var gA = o.bh == null && typeof p.gocA === 'number' ? p.gocA : 90, hong = Math.abs(gA - 90) > EPS;
+    if (hong) ah = doCaoChoGoc(bh, ch, gA);
     var B = [0, 0], H = [bh, 0], Cc = [bh + ch, 0], A = [bh, ah];
     var hinh = [
-      { diem: [A, B, Cc], ten: ['A', 'B', 'C'], goc: [{ vuong: true, mau: '--muc', r: 0.6 }, o.cheDo === 'haiNho' ? null : '--a', o.cheDo === 'haiNho' ? null : '--b'], canh: [n.AB, null, n.AC] },
-      { diem: [H, B, A], to: '--a', mo: 0.1, mau: '--nhat', day: 1, goc: [{ vuong: true, mau: '--nhat', r: 0.5 }] },
-      { diem: [H, A, Cc], to: '--b', mo: 0.1, mau: '--nhat', day: 1 }
+      { diem: [A, B, Cc], ten: ['A', 'B', 'C'], soi: 'ABC', goc: [hong ? { mau: '--sai', r: 0.8, soi: 'gocA' } : { vuong: true, mau: '--muc', r: 0.6, soi: 'gocA' }, o.cheDo === 'haiNho' ? null : '--a', o.cheDo === 'haiNho' ? null : '--b'], canh: [n.AB, null, n.AC] },
+      { diem: [H, B, A], to: '--a', mo: 0.1, mau: '--nhat', day: 1, goc: [{ vuong: true, mau: '--nhat', r: 0.5 }], soi: 'HBA' },
+      { diem: [H, A, Cc], to: '--b', mo: 0.1, mau: '--nhat', day: 1, soi: 'HAC' }
     ];
-    var them = [{ k: 'doan', a: A, b: H, mau: '--muc', day: 1.8, net: true },
+    var them = [{ k: 'doan', a: A, b: H, mau: '--muc', day: 1.8, net: true, soi: 'AH' },
       { k: 'chu', p: cong(H, [0, -0.09 * (bh + ch)]), s: 'H', nghieng: true }];
     if (n.BH != null) them.push({ k: 'chu', p: [bh / 2, -0.07 * (bh + ch)], s: n.BH });
     if (n.CH != null) them.push({ k: 'chu', p: [bh + ch / 2, -0.07 * (bh + ch)], s: n.CH });
@@ -294,12 +384,46 @@
       cuoi.push({ s: 'AH = ' + C.fmt(p.thu) + ' thì góc A ≈ ' + Math.round(goc(B, [bh, p.thu], Cc)) + '°', mau: '--sai', hien: [-1, -0.5] });
       return { hinh: hinh, them: them, di: di, loiCuoi: cuoi };
     }
-    return { hinh: hinh, them: them, di: di, loiCuoi: o.loiCuoi };
+    return { hinh: hinh, them: them, di: di, loiCuoi: hong ? [{ s: 'AH² ≈ ' + C.fmt(ah * ah) + ';  BH · CH = ' + C.fmt(bh * ch), mau: '--sai', hien: [-1, -0.5] }] : o.loiCuoi,
+      chiTiet: { bh: bh, ch: ch, ah: ah, gocA: gA, hong: hong, A: A, B: B, C: Cc, H: H } };
+  }
+  // Góc BAC nhìn đoạn BC từ đỉnh A cao x trên H: atan(bh/x) + atan(ch/x), giảm dần theo x. Chia đôi để tìm x.
+  function doCaoChoGoc(bh, ch, g) {
+    var lo0 = 1e-6, hi = 1e3, r = g * RAD;
+    for (var i = 0; i < 80; i++) { var m = (lo0 + hi) / 2; if (Math.atan(bh / m) + Math.atan(ch / m) > r) lo0 = m; else hi = m; }
+    return (lo0 + hi) / 2;
   }
   C.dangKi('duongCao', {
-    thamSo: { bh: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'BH', mau: '--a' }, ch: { min: 1, max: 8, step: 0.5, md: 4.5, nhan: 'CH', mau: '--b' } },
-    tinh: function (p, t, o) { return lo(duongCao(p, t, o || {}), p, t); }
+    thamSo: { bh: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'BH', mau: '--a' }, ch: { min: 1, max: 8, step: 0.5, md: 4.5, nhan: 'CH', mau: '--b' },
+      gocA: { min: 60, max: 120, step: 5, md: 90, nhan: 'Góc A (độ)', pha: true } },
+    tinh: function (p, t, o) {
+      o = o || {};
+      var mo = duongCao(p, t, o), kq = lo(mo, p, t), ct = mo.chiTiet;
+      if (!ct) return kq;
+      kq.chiTiet = ct;
+      if (o.bh != null) return kq;
+      if (ct.hong) {
+        // Phóng xong, đỉnh góc vuông H của bản sao HBA không tới A: nối bằng đoạn đỏ
+        var x = kq.di[0], cuoi = viTri(x.S, x.kh, 1).diem[0];
+        kq.net.push({ k: 'doan', a: cuoi, b: ct.A, mau: '--sai', net: true, day: 2.5, op: hienRa(t, [x.w[1] - 0.06, x.w[1]]) });
+        kq.pha = { hong: true, gocA: ct.gocA, ah2: ct.ah * ct.ah, tich: ct.bh * ct.ch,
+          chu: 'Góc $A = ' + ct.gocA + '^\\circ$: $AH^2 ' + bs(ct.ah * ct.ah) + '$ nhưng $BH \\cdot CH = ' + soDo(ct.bh * ct.ch) + '$. Tam giác $ABC$ không còn góc vuông, nên tam giác vuông $HBA$ không đồng dạng với nó: lật và phóng lên, đỉnh $H$ không tới $A$ (đoạn đỏ).' };
+      } else kq.pha = { hong: false, chu: 'Góc $A$ vuông: $AH^2 = BH \\cdot CH = ' + soDo(ct.bh * ct.ch) + '$.' };
+      return kq;
+    }
   });
+  C.lay('duongCao').soi = function (k, p, o) {
+    var ct = k.chiTiet;
+    if (!o.chiTiet || !ct) return {};
+    var A = ct.A, B = ct.B, Cc = ct.C, bc = ct.bh + ct.ch, gB = goc(A, B, Cc), gC = goc(A, Cc, B), ab = kc(A, B), ac = kc(A, Cc);
+    return {
+      gocA: { tieuDe: 'Góc $A$', chu: ct.hong ? '$\\widehat{A} = ' + ct.gocA + '^\\circ$, không vuông. Các hệ thức của tam giác vuông không còn đúng.' : '$\\widehat{A} = 90^\\circ$. Ba tam giác $ABC$, $HBA$, $HAC$ đều vuông (tại $A$, $H$, $H$).' },
+      AH: { tieuDe: 'Đường cao $AH$', chu: '$AH ' + bs(ct.ah) + '$, $AH^2 ' + bs(ct.ah * ct.ah) + '$, $BH \\cdot CH = ' + soDo(ct.bh) + ' \\cdot ' + soDo(ct.ch) + ' = ' + soDo(ct.bh * ct.ch) + '$. ' + (ct.hong ? 'Hai số khác nhau.' : 'Bằng nhau, vì $\\triangle HBA \\backsim \\triangle HAC$ cho $\\frac{HB}{HA} = \\frac{HA}{HC}$.') },
+      HBA: { tieuDe: 'Tam giác $HBA$', chu: 'Vuông tại $H$, có góc $B ' + bs(gB) + '^\\circ$ chung với tam giác $ABC$. ' + (ct.hong ? 'Nhưng $ABC$ không vuông, nên hai tam giác không có đủ hai cặp góc bằng nhau.' : 'Hai tam giác vuông có chung một góc nhọn nên đồng dạng: $\\triangle HBA \\backsim \\triangle ABC$.') },
+      HAC: { tieuDe: 'Tam giác $HAC$', chu: 'Vuông tại $H$, có góc $C ' + bs(gC) + '^\\circ$ chung với tam giác $ABC$. ' + (ct.hong ? 'Nhưng $ABC$ không vuông, nên hai tam giác không đồng dạng.' : 'Vậy $\\triangle HAC \\backsim \\triangle ABC$.') },
+      ABC: { tieuDe: 'Tam giác $ABC$', chu: '$BC = BH + CH = ' + soDo(bc) + '$, $AB ' + bs(ab) + '$, $AC ' + bs(ac) + '$. ' + (ct.hong ? '' : '$AB^2 = BH \\cdot BC = ' + soDo(ct.bh * bc) + '$, $AC^2 = CH \\cdot BC = ' + soDo(ct.ch * bc) + '$.') }
+    };
+  };
 
   // Mô tả tự do: hình cố định + bản sao di chuyển, dùng cho đề có số liệu riêng
   C.dangKi('trungKhit', {
@@ -321,28 +445,48 @@
   // Lưới ô vuông: cạnh gấp k thì mỗi ô vuông cạnh 1 thành ô vuông cạnh k, diện tích k·k. Hình ghép từ n ô thì diện tích gấp k².
   function luoiO(p, t, o) {
     var k = o.k != null ? o.k : p.k, cell = [];
+    // Thử phá (chỉ khi k lấy từ thanh trượt): chiều dọc nhân kd = k + thêm, khác chiều ngang
+    var kd = o.k == null && typeof p.them === 'number' ? Math.max(1, k + p.them) : k, hong = !gan(kd, k);
     if (o.chuNhat) { for (var i = 0; i < o.chuNhat[0]; i++) for (var j = 0; j < o.chuNhat[1]; j++) cell.push([i, j]); }
     else cell = (o.o || [[0, 0], [1, 0], [0, 1]]).map(function (q) { return q.slice(); });
     var wc = 0, hc = 0;
     cell.forEach(function (q) { wc = Math.max(wc, q[0] + 1); hc = Math.max(hc, q[1] + 1); });
-    var co = Math.max(wc * (1 + k) / 10.2, hc * k / 11, hc / 6) * (o.co || 1), gap = Math.max(2.6 * co, 0.3 * wc), x0 = wc + gap;
-    var s = 1 + (k - 1) * C.muot((t - 0.1) / 0.4);
+    var co = Math.max(wc * (1 + k) / 10.2, hc * Math.max(k, kd) / 11, hc / 6) * (o.co || 1), gap = Math.max(2.6 * co, 0.3 * wc), x0 = wc + gap;
+    var tien = C.muot((t - 0.1) / 0.4), s = 1 + (k - 1) * tien, sd = 1 + (kd - 1) * tien;
     var cu = cell.map(function (q) { return C.chuNhat({ x: q[0], y: q[1], w: 1, h: 1 }); });
-    var moi = cell.map(function (q) { return C.chuNhat({ x: x0 + q[0] * s, y: q[1] * s, w: s, h: s }); });
+    var moi = cell.map(function (q) { return C.chuNhat({ x: x0 + q[0] * s, y: q[1] * sd, w: s, h: sd }); });
+    // Hình đồng dạng thật (hai chiều cùng nhân k), để so khi thử phá
+    var dungK = hong ? cell.map(function (q) { return C.chuNhat({ x: x0 + q[0] * s, y: q[1] * s, w: s, h: s }); }) : null;
     // Ô đơn vị của hình mới: đếm được khi k nguyên, hoặc hình chữ nhật có hai cạnh mới là số nguyên
-    var nguyen = gan(k, Math.round(k)), oMoi = [];
-    if (nguyen) cell.forEach(function (q) { for (var a = 0; a < k; a++) for (var b = 0; b < k; b++) oMoi.push([q[0] * k + a, q[1] * k + b]); });
+    var nguyen = gan(k, Math.round(k)) && gan(kd, Math.round(kd)), oMoi = [];
+    if (nguyen) cell.forEach(function (q) { for (var a = 0; a < k; a++) for (var b = 0; b < kd; b++) oMoi.push([q[0] * k + a, q[1] * kd + b]); });
     else if (o.chuNhat && gan(wc * k, Math.round(wc * k)) && gan(hc * k, Math.round(hc * k))) {
       for (var a2 = 0; a2 < Math.round(wc * k); a2++) for (var b2 = 0; b2 < Math.round(hc * k); b2++) oMoi.push([a2, b2]);
     }
     var demDuoc = oMoi.length > 0 && oMoi.length <= 400;
-    return { k: k, s: s, x0: x0, co: co, wc: wc, hc: hc, cu: cu, moi: moi, oMoi: demDuoc ? oMoi : [], dtCu: cell.length, dtMoi: cell.length * k * k,
-      W: x0 + wc * Math.max(1, k), H: Math.max(hc, hc * k), hienLuoi: demDuoc ? C.muot((t - 0.5) / 0.35) : 0, chuNhat: !!o.chuNhat, nguyen: nguyen };
+    return { k: k, kd: kd, hong: hong, s: s, x0: x0, co: co, wc: wc, hc: hc, cu: cu, moi: moi, dungK: dungK, oMoi: demDuoc ? oMoi : [], dtCu: cell.length, dtMoi: cell.length * k * kd,
+      W: x0 + wc * Math.max(1, k), H: Math.max(hc, hc * Math.max(k, kd)), hienLuoi: demDuoc ? C.muot((t - 0.5) / 0.35) : 0, chuNhat: !!o.chuNhat, nguyen: nguyen,
+      pha: o.k == null ? (hong
+        ? { hong: true, k: k, kd: kd, gap: k * kd,
+          chu: 'Ngang nhân $' + soDo(k) + '$, dọc nhân $' + soDo(kd) + '$: mỗi ô thành hình chữ nhật $' + soDo(k) + ' \\times ' + soDo(kd) + '$, diện tích gấp $' + soDo(k) + ' \\cdot ' + soDo(kd) + ' = ' + soDo(k * kd) + '$ lần, không phải $k^2 = ' + soDo(k * k) + '$ lần. Hình bị kéo dãn một chiều nên không đồng dạng với hình cũ (nét đứt đỏ là hình đồng dạng thật).' }
+        : { hong: false, chu: 'Hai chiều cùng nhân $k = ' + soDo(k) + '$: diện tích gấp $k^2 = ' + soDo(k * k) + '$ lần.' }) : undefined };
   }
   C.dangKi('luoiO', {
-    thamSo: { k: { min: 1, max: 4, step: 1, md: 2, nhan: 'Tỉ số k', mau: '--a' } },
+    thamSo: { k: { min: 1, max: 4, step: 1, md: 2, nhan: 'Tỉ số k', mau: '--a' },
+      them: { min: -1, max: 2, step: 1, md: 0, nhan: 'Dọc nhân thêm', pha: true } },
     tinh: function (p, t, o) { return luoiO(p, t, o || {}); }
   });
+  C.lay('luoiO').soi = function (k, p, o) {
+    if (!o.chiTiet) return {};
+    var n = k.dtCu;
+    return {
+      cu: { tieuDe: 'Hình cũ', chu: '$' + n + '$ ô vuông cạnh $1$, diện tích $' + n + '$.' },
+      moi: { tieuDe: 'Hình mới', chu: k.hong
+        ? 'Mỗi ô cũ thành hình chữ nhật $' + soDo(k.k) + ' \\times ' + soDo(k.kd) + '$, không phải hình vuông. Diện tích $' + n + ' \\cdot ' + soDo(k.k * k.kd) + ' = ' + soDo(k.dtMoi) + '$.'
+        : 'Mọi cạnh nhân $k = ' + soDo(k.k) + '$, nên mỗi ô cũ thành hình vuông cạnh $' + soDo(k.k) + '$, diện tích $' + soDo(k.k) + ' \\cdot ' + soDo(k.k) + ' = ' + soDo(k.k * k.k) + '$. Cả hình: $' + n + ' \\cdot ' + soDo(k.k * k.k) + ' = ' + soDo(k.dtMoi) + '$.' },
+      oNho: { tieuDe: 'Ô nhỏ cạnh $1$', chu: 'Hình mới chia được thành $' + soDo(k.dtMoi) + '$ ô vuông cạnh $1$, đúng bằng diện tích của nó. So với $' + n + '$ ô của hình cũ: gấp $' + soDo(k.dtMoi / n) + '$ lần.' }
+    };
+  };
 
   /* ---------- Phần vẽ ---------- */
   function veNet(svg, kq) {
@@ -350,7 +494,7 @@
     svg.setAttribute('viewBox', [kh[0], -(kh[1] + kh[3]), kh[2], kh[3]].join(' '));
     kq.net.forEach(function (n) {
       if (!n.op) return;
-      var mau = 'var(' + (n.vien || n.mau || '--muc') + ')', mo = { opacity: n.op };
+      var mau = 'var(' + (n.vien || n.mau || '--muc') + ')', mo = { opacity: n.op, 'data-soi': n.soi };
       if (n.k === 'da' || n.k === 'duong') {
         mk(n.k === 'da' ? 'polygon' : 'polyline', Object.assign({ points: C.diem(n.d.map(Y)), fill: n.to ? 'var(' + n.to + ')' : 'none', 'fill-opacity': n.to ? n.mo : null,
           stroke: n.to && !n.vien ? 'none' : mau, 'stroke-width': n.day || 2.2, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round', 'stroke-dasharray': n.net ? '6 4' : null }, mo), svg);
@@ -358,18 +502,20 @@
         var a = Y(n.a), b = Y(n.b);
         mk('line', Object.assign({ x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: mau, 'stroke-width': n.day || 2, 'vector-effect': 'non-scaling-stroke', 'stroke-linecap': 'round', 'stroke-dasharray': n.net ? '6 4' : null }, mo), svg);
       } else if (n.k === 'goc') veGoc(svg, n, Y, mau);
-      else if (n.k === 'chu') C.chu(svg, n.p[0], -n.p[1], n.s, n.co, n.mau, Object.assign({ 'font-style': n.nghieng ? 'italic' : null }, mo));
+      else if (n.k === 'chu') C.chu(svg, n.p[0], -n.p[1], n.s, n.co, n.mau, Object.assign({ 'font-style': n.nghieng ? 'italic' : null }, { opacity: n.op }));
     });
   }
   function veGoc(svg, n, Y, mau) {
     var o = Y(n.o), u = donVi(tru(Y(n.a), o)), v = donVi(tru(Y(n.b), o)), r = n.r;
     if (n.vuong) {
       var s = r * 0.55, p1 = cong(o, nhan(u, s)), p2 = cong(p1, nhan(v, s)), p3 = cong(o, nhan(v, s));
-      C.mk('polyline', { points: C.diem([p1, p2, p3]), fill: 'none', stroke: mau, 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke', opacity: n.op }, svg);
+      // Ô vuông nhỏ có nền trong suốt để bấm soi được
+      if (n.soi) C.mk('polygon', { points: C.diem([o, p1, p2, p3]), fill: 'transparent', stroke: 'none', 'data-soi': n.soi }, svg);
+      C.mk('polyline', { points: C.diem([p1, p2, p3]), fill: 'none', stroke: mau, 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke', opacity: n.op, 'data-soi': n.soi }, svg);
       return;
     }
     var a = cong(o, nhan(u, r)), b = cong(o, nhan(v, r)), quet = tichVo(u, v) > 0 ? 1 : 0;
-    C.mk('path', { d: 'M' + o.join(' ') + 'L' + a.join(' ') + 'A' + r + ' ' + r + ' 0 0 ' + quet + ' ' + b.join(' ') + 'Z', fill: mau, 'fill-opacity': 0.3, stroke: mau, 'stroke-width': 1.2, 'vector-effect': 'non-scaling-stroke', opacity: n.op }, svg);
+    C.mk('path', { d: 'M' + o.join(' ') + 'L' + a.join(' ') + 'A' + r + ' ' + r + ' 0 0 ' + quet + ' ' + b.join(' ') + 'Z', fill: mau, 'fill-opacity': 0.3, stroke: mau, 'stroke-width': 1.2, 'vector-effect': 'non-scaling-stroke', opacity: n.op, 'data-soi': n.soi }, svg);
   }
   ['songSong', 'ggTrung', 'duongCao', 'trungKhit'].forEach(function (ten) { C.lay(ten).ve = function (svg, kq) { veNet(svg, kq); }; });
 
@@ -381,11 +527,11 @@
     var them = Math.max(0, (rongChu - k.W - 3.8 * co) / 2);
     svg.setAttribute('viewBox', [-1.9 * co - them, -tren, k.W + 3.8 * co + 2 * them, tren + 1.6 * co + dong.length * 1.3 * co].join(' '));
     var Y = function (d) { return d.map(function (q) { return [q[0], -q[1]]; }); };
-    k.cu.forEach(function (d) { mk('polygon', Object.assign({ points: C.diem(Y(d)), fill: 'var(--b)', 'fill-opacity': 0.25 }, net), svg); });
+    k.cu.forEach(function (d) { mk('polygon', Object.assign({ points: C.diem(Y(d)), fill: 'var(--b)', 'fill-opacity': 0.25, 'data-soi': 'cu' }, net), svg); });
     k.moi.forEach(function (d, i) {
       // k nguyên: các ô cũ sau khi phóng tô xen kẽ hai màu, để thấy mỗi ô cũ thành k·k ô mới.
       // k không nguyên: ô cũ phóng ra không trùng lưới ô 1, nên chỉ tô, không kẻ viền từng ô (kẻo đếm nhầm)
-      mk('polygon', Object.assign({ points: C.diem(Y(d)), fill: k.nguyen && i % 2 ? 'var(--cc)' : 'var(--a)', 'fill-opacity': 0.22 }, k.nguyen ? net : { stroke: 'none' }), svg);
+      mk('polygon', Object.assign({ points: C.diem(Y(d)), fill: k.nguyen && i % 2 ? 'var(--cc)' : 'var(--a)', 'fill-opacity': 0.22, 'data-soi': 'moi' }, k.nguyen ? net : { stroke: 'none' }), svg);
     });
     if (!k.nguyen) {
       var vien = k.moi.reduce(function (a, d) { return a.concat(d); }, []), bx = bien(vien);
@@ -394,7 +540,12 @@
     }
     if (k.hienLuoi > 0) {
       var g = mk('g', { opacity: k.hienLuoi }, svg);
-      k.oMoi.forEach(function (q) { mk('rect', { x: k.x0 + q[0], y: -q[1] - 1, width: 1, height: 1, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 0.6, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '3 2' }, g); });
+      k.oMoi.forEach(function (q) { mk('rect', { x: k.x0 + q[0], y: -q[1] - 1, width: 1, height: 1, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 0.6, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '3 2', 'data-soi': 'oNho' }, g); });
+    }
+    if (k.dungK) {
+      // Thử phá: hình đồng dạng thật (hai chiều cùng nhân k), nét đứt đỏ, để thấy hình kéo dãn lệch khỏi nó
+      var gd = mk('g', { opacity: C.muot((t - 0.3) / 0.2) }, svg);
+      k.dungK.forEach(function (d) { mk('polygon', { points: C.diem(Y(d)), fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '6 4' }, gd); });
     }
     if (typeof p.thu === 'number' && isFinite(p.thu) && p.thu > 0 && k.oMoi.length) {
       // Tô đúng số ô em vừa gõ: thấy ngay chúng phủ được bao nhiêu phần hình mới
@@ -404,14 +555,14 @@
     }
     // Nhãn có thể là chữ, { s, an, anChu } (giấu tới khi em làm đúng) hoặc hàm của k (ở phần Nhìn, k đổi theo thanh trượt)
     var hien = function (x) {
-      if (typeof x === 'function') return x(k.k);
+      if (typeof x === 'function') return x(k.k, k.kd);
       return x && typeof x === 'object' ? (x.an && p.trangThai !== 'giai' ? (x.anChu || '?') : x.s) : x;
     };
     var dat = function (x, y, s, mau, op) { if (s != null) C.chu(svg, x, y, hien(s), co, mau, { opacity: op == null ? 1 : op }); };
     var moi = C.muot((t - 0.45) / 0.1);
     dat(k.wc / 2, 0.8 * co, n.rong, '--b'); dat(-0.9 * co, -k.hc / 2, n.cao, '--b');
-    dat(k.x0 + k.wc * k.k / 2, 0.8 * co, n.rongMoi, '--a', moi); dat(k.x0 - 0.9 * co, -k.hc * k.k / 2, n.caoMoi, '--a', moi);
-    dat(k.wc / 2, -k.hc - 0.8 * co, n.cu, '--b'); dat(k.x0 + k.wc * k.k / 2, -k.hc * k.k - 0.8 * co, n.moi, '--a', C.muot((t - 0.85) / 0.15));
+    dat(k.x0 + k.wc * k.k / 2, 0.8 * co, n.rongMoi, '--a', moi); dat(k.x0 - 0.9 * co, -k.hc * k.kd / 2, n.caoMoi, '--a', moi);
+    dat(k.wc / 2, -k.hc - 0.8 * co, n.cu, '--b'); dat(k.x0 + k.wc * k.k / 2, -k.hc * Math.max(k.k, k.kd) - 0.8 * co, n.moi, '--a', C.muot((t - 0.85) / 0.15));
     dong.forEach(function (x, i) {
       var d = typeof x === 'object' ? x : { s: x }, w = d.hien || [0.88, 1];
       dat(k.W / 2, 2.1 * co + 1.3 * co * i, d, d.mau, C.muot((t - w[0]) / (w[1] - w[0])));

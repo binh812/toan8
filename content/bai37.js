@@ -97,8 +97,13 @@
       tieuDe: 'Cạnh gấp k lần, diện tích gấp k · k lần', loai: 'chungMinh',
       luuY: 'Đếm ô nhỏ chỉ làm được khi $k$ là số nguyên. Với $k$ bất kì, mỗi ô vuông cạnh $1$ vẫn thành hình vuông cạnh $k$, diện tích $k \\cdot k$, nên hình ghép từ $n$ ô có diện tích $n \\cdot k^2$. Với tam giác cũng vậy: đáy và chiều cao cùng nhân $k$, nên diện tích $\\frac{1}{2} \\cdot \\text{đáy} \\cdot \\text{cao}$ nhân $k \\cdot k$.',
       canh: { ten: 'luoiO', moTa: 'Hình chữ L ghép từ 3 ô vuông cạnh 1, và hình phóng to k lần. Mỗi ô vuông cạnh k chia thành k nhân k ô nhỏ.',
-        tuyChon: { nhan: { cu: '3 ô', moi: function (k) { return 3 * k * k + ' ô'; } } },
-        dongSo: function (p) { return '$k = ' + p.k + '$: $3$ ô thành $3 \\cdot ' + p.k + '^2 = ' + 3 * p.k * p.k + '$ ô. Diện tích gấp $' + p.k * p.k + '$ lần.'; } },
+        thuPha: true,
+        tuyChon: { chiTiet: true, nhan: { cu: '3 ô', moi: function (k, d) { return 3 * k * (d || k) + ' ô'; } } },
+        dongSo: function (p) {
+          var d = Math.max(1, p.k + (p.them || 0));
+          if (d !== p.k) return 'Ngang nhân $' + p.k + '$, dọc nhân $' + d + '$: $3$ ô thành $3 \\cdot ' + p.k + ' \\cdot ' + d + ' = ' + 3 * p.k * d + '$ ô. Hình bị kéo dãn, không còn đồng dạng.';
+          return '$k = ' + p.k + '$: $3$ ô thành $3 \\cdot ' + p.k + '^2 = ' + 3 * p.k * p.k + '$ ô. Diện tích gấp $' + p.k * p.k + '$ lần.';
+        } },
       buoc: [
         { t: 0, chu: 'Hình xanh ghép từ $3$ ô vuông cạnh $1$.' },
         { t: 0.1, chu: 'Phóng to $k$ lần: mọi cạnh nhân $k$, nên mỗi ô vuông cạnh $1$ thành ô vuông cạnh $k$.' },
@@ -159,6 +164,12 @@
         loiGiai: ['Hình tím là ngôi nhà **thu nhỏ** (khi $k < 1$) hoặc **phóng to** (khi $k > 1$), hình dạng giữ nguyên.', "Mọi tỉ số đều bằng $k$: $\\frac{A'B'}{AB} = 0{,}5$"],
         loiThuongGap: [{ gt: 2, giaiThich: '$2$ là tỉ số $\\frac{AB}{A\'B\'}$. Hình tím nhỏ hơn nên $\\frac{A\'B\'}{AB} < 1$.' }] }
     },
+    mucTieu: [
+      'Nói được vì sao phóng to $k$ lần thì diện tích gấp $k^2$ lần, bằng cách đếm ô vuông trên hình.',
+      'Nhận ra hai hình đồng dạng phối cảnh, chỉ ra tâm $O$ và tỉ số $k = \\frac{OA\'}{OA}$.',
+      'Nhận ra cặp hình luôn đồng dạng (hai hình vuông, hai tam giác đều…) và cặp hình chưa chắc đồng dạng (hai hình chữ nhật…).',
+      'Tính độ dài, chu vi (nhân $k$) và diện tích (nhân $k^2$) của hình đồng dạng, kể cả khi đổi đơn vị.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình đồng dạng phối cảnh',
         noiDung: "Cho điểm $O$ và số $k > 0$. Lấy mỗi điểm $A$ của hình $\\mathcal{H}$, đặt điểm $A'$ trên tia $OA$ sao cho $OA' = k \\cdot OA$. Các điểm $A'$ tạo thành hình $\\mathcal{H}'$.\n\nHình $\\mathcal{H}'$ gọi là **đồng dạng phối cảnh** với hình $\\mathcal{H}$; điểm $O$ là **tâm phối cảnh**, $k = \\frac{OA'}{OA}$ là **tỉ số đồng dạng**.\n\n• $k > 1$: $\\mathcal{H}'$ là hình **phóng to** của $\\mathcal{H}$. • $k < 1$: $\\mathcal{H}'$ là hình **thu nhỏ** của $\\mathcal{H}$.\n\nĐường thẳng nối hai điểm tương ứng **bất kì** ($AA'$, $MM'$, …) đều đi qua tâm $O$." },
@@ -170,6 +181,20 @@
         noiDung: "Hình $\\mathcal{H}'$ gọi là **đồng dạng** với hình $\\mathcal{H}$ nếu nó **bằng** $\\mathcal{H}$ hoặc bằng **một hình phóng to hay thu nhỏ** của $\\mathcal{H}$.\n\nNói gọn: hai hình đồng dạng có **hình dạng giống nhau**, chỉ có thể khác về kích thước và vị trí (bị dời chỗ, xoay, lật)." },
       { loai: 'chuY', noiDung: '**Những cặp hình luôn đồng dạng:** hai hình vuông bất kì; hai hình tròn bất kì; hai tam giác đều bất kì; hai lục giác đều bất kì.\n\n**Không chắc đồng dạng:** hai hình chữ nhật (phải có tỉ lệ dài : rộng bằng nhau), hai hình thoi, hai tam giác cân…\n\nVí dụ: hình chữ nhật $2 \\times 3$ và $4 \\times 6$ đồng dạng ($\\frac{4}{2} = \\frac{6}{3}$); còn $3 \\times 4$ và $4 \\times 5$ thì không.' },
       { loai: 'chuY', noiDung: '**Chu vi và diện tích.** Hai hình đồng dạng theo tỉ số $k$ thì:\n\n• mọi độ dài (cạnh, chu vi, đường chéo…) tỉ lệ $k$;\n\n• **diện tích** tỉ lệ $k^2$.\n\nPhóng to bức ảnh lên $2$ lần (mỗi chiều) thì diện tích gấp $4$ lần.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao diện tích gấp $k^2$ lần?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        canh: { ten: 'luoiO' },
+        buoc: [
+          { id: 'gt', chu: 'Hình $\\mathcal{H}$ ghép từ $n$ ô vuông cạnh $1$, diện tích $n$. Hình $\\mathcal{H}\'$ đồng dạng với nó theo tỉ số $k$.', canh: { t: 0 } },
+          { id: 'canh', chu: 'Mọi độ dài nhân $k$, nên mỗi ô biến thành một hình có bốn cạnh dài $k$.', can: ['gt'], canh: { t: 0.5 } },
+          { id: 'goc', chu: 'Phóng to hay thu nhỏ không làm đổi góc, nên bốn góc của hình ấy vẫn vuông.', can: ['gt'], canh: { t: 0.5 } },
+          { id: 'hv', chu: 'Mỗi ô thành một hình vuông cạnh $k$, diện tích $k \\cdot k = k^2$.', can: ['canh', 'goc'], canh: { t: 0.6 } },
+          { id: 'ghep', chu: 'Các ô cũ ghép khít, không chồng lên nhau, nên các ô mới cũng ghép khít thành $\\mathcal{H}\'$.', can: ['gt'], canh: { t: 0.5 } },
+          { id: 'tong', chu: 'Diện tích $\\mathcal{H}\'$ bằng $n \\cdot k^2$.', can: ['hv', 'ghep'], canh: { t: 0.9 } },
+          { id: 'kl', chu: 'Tỉ số diện tích: $\\frac{S\'}{S} = \\frac{n \\cdot k^2}{n} = k^2$.', can: ['tong'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Hai hình đồng dạng theo tỉ số $k$ thì diện tích gấp $k^2$ lần, không phải $k$ lần.'
+      } },
       { loai: 'chuY', noiDung: "**Hay nhầm 1 – đồng dạng ≠ đồng dạng phối cảnh.** Hai tam giác đều luôn đồng dạng, nhưng nếu một hình bị **xoay** thì các đường nối điểm tương ứng không đồng quy, nên chúng **không** phối cảnh.\n\n**Hay nhầm 2 – tỉ số ngược.** $k = \\frac{OA'}{OA}$: khoảng cách tới điểm của hình **mới** ở trên tử số." }
     ],
     viDu: [

@@ -71,7 +71,7 @@
     nhin: {
       tieuDe: 'Ba cốc hình chóp mới đầy một cốc hình hộp', loai: 'minhHoa',
       luuY: 'Đây là thí nghiệm. Đổ nước thật chỉ cho thấy gần đúng; SGK **công nhận** công thức $V = \\frac{1}{3} S \\cdot h$, không chứng minh (chứng minh cần kiến thức các lớp trên). Mực nước trong hình được tính theo chính công thức đó. Còn diện tích xung quanh $S_{xq} = p \\cdot d$ thì chứng minh được bằng cách trải phẳng (bài 38, và Ví dụ 1, 2 ở đây).',
-      canh: { ten: 'doNuoc', tuyChon: { n: 4, tenLang: 'hình hộp' },
+      canh: { ten: 'doNuoc', tuyChon: { n: 4, tenLang: 'hình hộp', chiTiet: true },
         moTa: 'Bên phải là cốc hình chóp tứ giác đều úp ngược, đầy nước. Bên trái là cốc hình hộp cùng đáy, cùng chiều cao. Đổ nước từ cốc hình chóp sang ba lần thì cốc hình hộp đầy.',
         dongSo: function (p) { return 'Hình hộp: $\\cc{a}^2 \\cdot \\cd{h} = ' + so(p.a * p.a * p.h) + '$. Hình chóp: $\\frac{1}{3} \\cdot ' + so(p.a * p.a * p.h) + (Math.abs(p.a * p.a * p.h / 3 - Math.round(p.a * p.a * p.h / 3 * 100) / 100) < 1e-9 ? ' = ' : ' \\approx ') + so(p.a * p.a * p.h / 3) + '$'; } },
       buoc: [
@@ -138,6 +138,12 @@
         loiGiai: ['$O$ là tâm hình vuông nên $OH$ bằng **nửa cạnh đáy**: $OH = 4$.', 'Tam giác $SOH$ vuông tại $O$: $d^2 = SO^2 + OH^2 = 3^2 + 4^2 = 25$.', '$d = 5$']
       }
     },
+    mucTieu: [
+      'Chỉ ra trên hình đường cao, trung đoạn, cạnh bên của hình chóp tứ giác đều, và liên hệ chúng bằng định lí Pythagore.',
+      'Tính diện tích xung quanh $S_{xq} = p \\cdot d$ với nửa chu vi đáy $p = 2a$.',
+      'Kể lại thí nghiệm đổ nước: ba cốc hình chóp mới đầy một cốc hình hộp cùng đáy, cùng chiều cao.',
+      'Tính thể tích $V = \\frac{1}{3} a^2 \\cdot h$, dùng đúng chiều cao chứ không dùng trung đoạn.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình chóp tứ giác đều',
         noiDung: 'Hình chóp $S.ABCD$ có **mặt đáy $ABCD$ là hình vuông**, các **mặt bên là những tam giác cân bằng nhau**, có chung đỉnh $S$. Ta gọi $S.ABCD$ là **hình chóp tứ giác đều**.\n\n- Đỉnh: $S$.\n- Cạnh bên: $SA$, $SB$, $\\ca{SC}$, $SD$.\n- Mặt bên: $SAB$, $SBC$, $SCD$, $SDA$. Mặt đáy: $ABCD$.\n- **Đường cao** $\\cd{SO}$: nối đỉnh $S$ với **giao điểm $O$ của hai đường chéo** đáy.\n- **Trung đoạn** $\\cb{SH}$: đường cao của một mặt bên, kẻ từ $S$ ($H$ là trung điểm cạnh đáy).' },

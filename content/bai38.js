@@ -72,9 +72,12 @@
     nhin: {
       tieuDe: 'Trải ba mặt bên ra, xếp thành một hình chữ nhật', loai: 'chungMinh',
       luuY: 'Cách xếp này đúng với mọi hình chóp đều: hình chóp tứ giác đều cũng ra hình chữ nhật dài $p = 2a$ (bài 39). Thể tích thì khác: SGK cho thấy bằng thí nghiệm đổ nước (xem Ví dụ 3) và **công nhận** công thức $V = \\frac{1}{3} S \\cdot h$, không chứng minh.',
-      canh: { ten: 'traiChop', tuyChon: { n: 3 },
+      canh: { ten: 'traiChop', tuyChon: { n: 3, chiTiet: true }, thuPha: true,
         moTa: 'Hình chóp tam giác đều mở ba mặt bên ra mặt bàn. Một mặt được cắt đôi theo trung đoạn, rồi các tam giác xếp xen kẽ thành hình chữ nhật dài bằng nửa chu vi đáy, cao bằng trung đoạn.',
-        dongSo: function (p) { return '$\\cc{p} = \\frac{3 \\cdot ' + so(p.a) + '}{2} = ' + so(1.5 * p.a) + '$, $\\;S_{xq} = ' + so(1.5 * p.a) + ' \\cdot ' + so(p.d) + ' = ' + so(1.5 * p.a * p.d) + '$'; } },
+        dongSo: function (p) {
+          if (p.lech) return 'Đáy $' + so(p.a) + '$; $' + so(p.a) + '$; $' + so(p.a + p.lech) + '$ không đều: ba mặt bên không còn cùng trung đoạn.';
+          return '$\\cc{p} = \\frac{3 \\cdot ' + so(p.a) + '}{2} = ' + so(1.5 * p.a) + '$, $\\;S_{xq} = ' + so(1.5 * p.a) + ' \\cdot ' + so(p.d) + ' = ' + so(1.5 * p.a * p.d) + '$';
+        } },
       buoc: [
         { t: 0, chu: 'Hình chóp tam giác đều, cạnh đáy $\\cc{a}$. Ba mặt bên là ba tam giác cân bằng nhau. Đường cao của một mặt bên, kẻ từ đỉnh, là **trung đoạn** $\\cb{d}$: nó vuông góc với cạnh đáy tại trung điểm.' },
         { t: 0.1, chu: 'Mở ba mặt bên ra cho nằm trên mặt bàn. Không mặt nào đổi hình dạng, nên diện tích xung quanh bằng tổng diện tích ba tam giác này.' },
@@ -130,6 +133,12 @@
         loiGiai: ['Ba mặt bên là **ba tam giác cân bằng nhau**, chung đỉnh $S$. Đáy của mỗi tam giác là một cạnh của tam giác đều ở đáy. Vì vậy diện tích các mặt bên tính rất gọn: $S_{xq} = p \\cdot d$.']
       }
     },
+    mucTieu: [
+      'Nói được vì sao $S_{xq} = p \\cdot d$, bằng cách trải ba mặt bên ra và xếp thành hình chữ nhật.',
+      'Chỉ ra trên hình cạnh bên, trung đoạn và đường cao của hình chóp tam giác đều, và nói mỗi đoạn đi tới đâu.',
+      'Tính trung đoạn từ cạnh bên bằng định lí Pythagore trong nửa mặt bên.',
+      'Tính diện tích xung quanh và thể tích $V = \\frac{1}{3} S \\cdot h$ của hình chóp tam giác đều.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình chóp tam giác đều',
         noiDung: 'Hình chóp tam giác đều có **mặt đáy là một tam giác đều**, các **mặt bên là các tam giác cân bằng nhau** chung một đỉnh. Đỉnh chung này gọi là **đỉnh** của hình chóp.\n\nVới hình chóp tam giác đều $S.ABC$:\n\n- Đỉnh: $S$.\n- Cạnh bên: $\\ca{SA}$, $SB$, $SC$ (nối đỉnh $S$ với một đỉnh của đáy).\n- Mặt bên: $SAB$, $SBC$, $SCA$. Mặt đáy: $ABC$.\n- Cạnh đáy: $AB$, $BC$, $CA$.' },
@@ -145,6 +154,20 @@
         chuThich: 'Kéo **Trải phẳng** lên 1: ba mặt bên là ba tam giác cân, mỗi tam giác có đáy $a$ và chiều cao $d$ (trung đoạn). Tổng diện tích:\n\n$$3 \\cdot \\frac{a \\cdot d}{2} = \\frac{3a}{2} \\cdot d = p \\cdot d,$$ trong đó $\\frac{3a}{2}$ chính là **nửa chu vi** đáy.' },
       { loai: 'dinhLi', tieuDe: 'Diện tích xung quanh',
         noiDung: 'Diện tích xung quanh (tổng diện tích các mặt bên) của hình chóp tam giác đều bằng tích của **nửa chu vi đáy** với **trung đoạn**:\n\n$$S_{xq} = p \\cdot \\cb{d},$$\n\ntrong đó $p$ là **nửa** chu vi đáy, $\\cb{d}$ là trung đoạn.\n\n**Diện tích toàn phần** = diện tích xung quanh + diện tích đáy.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $S_{xq} = p \\cdot d$?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        canh: { ten: 'traiChop', tuyChon: { n: 3 } },
+        buoc: [
+          { id: 'gt', chu: 'Hình chóp tam giác đều: ba mặt bên là ba tam giác cân bằng nhau, đáy $a$, đường cao kẻ từ đỉnh là trung đoạn $d$.', canh: { t: 0 } },
+          { id: 'sxq', chu: 'Diện tích xung quanh là tổng diện tích ba mặt bên, nên trải ba mặt ra mặt bàn không làm đổi nó.', can: ['gt'], canh: { t: 0.4 } },
+          { id: 'cat', chu: 'Cắt một mặt bên theo trung đoạn: được hai tam giác vuông, mỗi tam giác cao $d$.', can: ['gt'], canh: { t: 0.53 } },
+          { id: 'xep', chu: 'Xếp các tam giác xen kẽ, một ngửa một úp: hai tam giác cạnh nhau áp khít theo một cạnh bên, vì các cạnh bên bằng nhau.', can: ['gt'], canh: { t: 0.75 } },
+          { id: 'hcn', chu: 'Mọi tam giác cao $d$, nên các đáy nằm trên một đường, các đỉnh nằm trên đường kia. Hai nửa ở hai đầu tạo góc vuông: được hình chữ nhật cao $d$.', can: ['cat', 'xep'], canh: { t: 0.9 } },
+          { id: 'dai', chu: 'Cạnh trên và cạnh dưới chia nhau đủ ba cạnh đáy, nên mỗi cạnh dài $\\frac{3a}{2} = p$, nửa chu vi đáy.', can: ['hcn'], canh: { t: 1 } },
+          { id: 'kl', chu: 'Diện tích xung quanh bằng diện tích hình chữ nhật: $S_{xq} = p \\cdot d$.', can: ['sxq', 'dai'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Ba mặt bên xếp thành hình chữ nhật dài $p$, cao $d$, nên $S_{xq} = p \\cdot d$.'
+      } },
       { loai: 'dinhLi', tieuDe: 'Thể tích',
         noiDung: 'Thể tích hình chóp tam giác đều bằng $\\frac{1}{3}$ tích của diện tích đáy với chiều cao:\n\n$$V = \\frac{1}{3} S \\cdot \\cd{h},$$\n\ntrong đó $S$ là diện tích đáy, $\\cd{h}$ là chiều cao (độ dài đường cao).\n\n**Vì sao có $\\frac{1}{3}$?** (thí nghiệm; SGK công nhận công thức này, không chứng minh) Lấy cái cốc hình chóp múc đầy nước đổ vào cốc hình lăng trụ đứng cùng đáy, cùng chiều cao: phải đổ **3 lần** mới đầy. Vậy thể tích hình chóp $= \\frac{1}{3}$ thể tích lăng trụ $= \\frac{1}{3} S \\cdot h$.' },
       { loai: 'chuY', tieuDe: 'Tính diện tích đáy (tam giác đều cạnh a)',

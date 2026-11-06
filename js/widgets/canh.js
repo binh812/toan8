@@ -119,7 +119,8 @@
     }
     svg.addEventListener('click', function (e) {
       var n = e.target.closest ? e.target.closest('[data-soi]') : null;
-      if (n) hienSoi(n.getAttribute('data-soi'));
+      // Hình trong đề (chiXem: Dùng, Suy ra, lời giải) không soi, kẻo thẻ soi đọc ra đáp số
+      if (n && !cfg.chiXem) hienSoi(n.getAttribute('data-soi'));
     });
     // Đặt t và dời vị trí trong vòng tự chạy theo, để bấm Tự chạy lại không làm hình nhảy
     function dat(v) { t = C.kep(v, 0, 1); dauVong = DUNG_DAU + CHAY * t; capNhat(); }
