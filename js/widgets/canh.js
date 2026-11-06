@@ -43,7 +43,9 @@
     var tua = null, cacBuoc = [], nhanSo = {}, inputSo = {}, dauVong = 0, dieuKhien = null;
     var dongSo = cfg.dongSo ? khung.appendChild(el('div', { class: 'c-so' })) : null, dongCu = null;
     var oPha = cfg.thuPha ? khung.appendChild(el('div', { class: 'c-pha', role: 'status' })) : null, phaCu = null;
-    var oSoi = khung.appendChild(el('div', { class: 'c-soi', hidden: true, role: 'status' })), soiDang = null, kHienTai = null;
+    var oSoi = khung.appendChild(el('div', { class: 'c-soi', hidden: true, role: 'status' })), soiDang = null, kHienTai = null, soiCu = null;
+    // Danh sách nút soi dưới hình: cách mở thẻ cho người dùng bàn phím và trình đọc màn hình
+    var dsSoi = canh.soi && !cfg.chiXem ? khung.insertBefore(el('div', { class: 'c-soi-ds', 'aria-label': 'Soi chi tiết' }), oSoi) : null, khoaCu = null;
     if (cfg.ghiChu) khung.appendChild(el('p', { class: 'c-ghi-chu' }, cfg.ghiChu));
 
     function capNhat() {
@@ -54,6 +56,7 @@
         if (moiPha !== phaCu) { phaCu = moiPha; oPha.className = 'c-pha' + (ph && ph.chiHinh ? ' chi-hinh' : ph && ph.hong ? ' hong' : ''); oPha.innerHTML = ph ? T.md((ph.chiHinh ? '⚠ ' : ph.hong ? '✗ ' : '✓ ') + ph.chu) : ''; }
       }
       if (soiDang) hienSoi(soiDang);
+      if (dsSoi) veDsSoi();
       if (tua) tua.value = Math.round(t * 100);
       if (cfg.khiDoiT) cfg.khiDoiT(t);
       var dang = -1;
@@ -109,15 +112,31 @@
     function dung() { if (dieuKhien) dieuKhien.dungLai(); }
     // Thẻ soi: tên, số đo hiện tại và vì sao; số đo lấy theo hình đang hiện nên tự đổi khi kéo thanh
     function hienSoi(khoa) {
-      var bang = {}, goc = canh.soi ? canh.soi(kHienTai, p, cfg.tuyChon || {}) || {} : {};
-      Object.keys(goc).forEach(function (x) { bang[x] = goc[x]; });
-      Object.keys(cfg.soi || {}).forEach(function (x) { bang[x] = cfg.soi[x]; });
-      var m = bang[khoa];
+      var m = bangSoi()[khoa];
       if (!m) { oSoi.hidden = true; soiDang = null; return; }
       soiDang = khoa;
       oSoi.hidden = false;
-      oSoi.innerHTML = '<b class="c-soi-ten">' + T.mdInline(m.tieuDe || khoa) + '</b>' + T.md(m.chu || '').replace(/^<p>|<\/p>$/g, '');
-      oSoi.appendChild(el('button', { class: 'c-soi-dong', type: 'button', 'aria-label': 'Đóng', onclick: function () { oSoi.hidden = true; soiDang = null; } }, '✕'));
+      // Chỉ viết lại khi nội dung đổi: tự chạy gọi hàm này mỗi khung hình
+      var moi = '<b class="c-soi-ten">' + T.mdInline(m.tieuDe || khoa) + '</b>' + T.md(m.chu || '').replace(/^<p>|<\/p>$/g, '');
+      if (moi === soiCu) return;
+      soiCu = moi;
+      oSoi.innerHTML = moi;
+      oSoi.appendChild(el('button', { class: 'c-soi-dong', type: 'button', 'aria-label': 'Đóng', onclick: function () { oSoi.hidden = true; soiDang = null; soiCu = null; } }, '✕'));
+    }
+    function bangSoi() {
+      var bang = {}, goc = canh.soi ? canh.soi(kHienTai, p, cfg.tuyChon || {}) || {} : {};
+      Object.keys(goc).forEach(function (x) { bang[x] = goc[x]; });
+      Object.keys(cfg.soi || {}).forEach(function (x) { bang[x] = cfg.soi[x]; });
+      return bang;
+    }
+    function veDsSoi() {
+      var bang = bangSoi(), khoa = Object.keys(bang);
+      if (khoa.join('|') === khoaCu) return;
+      khoaCu = khoa.join('|');
+      while (dsSoi.firstChild) dsSoi.removeChild(dsSoi.firstChild);
+      if (!khoa.length) return;
+      dsSoi.appendChild(el('span', { class: 'c-soi-nhan' }, 'Soi:'));
+      khoa.forEach(function (x) { dsSoi.appendChild(el('button', { class: 'c-soi-nut', type: 'button', html: T.mdInline(bang[x].tieuDe || x), onclick: function () { dung(); hienSoi(x); } })); });
     }
     svg.addEventListener('click', function (e) {
       var n = e.target.closest ? e.target.closest('[data-soi]') : null;

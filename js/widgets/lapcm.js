@@ -11,7 +11,7 @@
     if (cfg.de) hop.appendChild(el('div', { class: 'lcm-de', html: T.md(cfg.de) }));
     var hinhO = cfg.canh ? hop.appendChild(el('div', { class: 'lcm-hinh' })) : null;
     var bai = hop.appendChild(el('ol', { class: 'lcm-bai' }));
-    var tin = hop.appendChild(el('p', { class: 'lcm-tin', role: 'status' }, 'Chọn bước tiếp theo trong danh sách dưới đây.'));
+    var tin = hop.appendChild(el('p', { class: 'lcm-tin', role: 'status', tabindex: '-1' }, 'Chọn bước tiếp theo trong danh sách dưới đây.'));
     var chon = hop.appendChild(el('div', { class: 'lcm-chon' }));
     var nut = hop.appendChild(el('div', { class: 'lcm-nut' }));
     if (hinhO) hinh = T.mountWidget(hinhO, 'canh', Object.assign({ chiXem: true }, cfg.canh));
@@ -48,7 +48,10 @@
       }
       them(id);
       datTin('', 'Đúng chỗ. Chọn bước tiếp theo.');
-      veLai();
+      // Chỉ gỡ thẻ vừa lắp và chuyển tiêu điểm sang thẻ bên cạnh, để người dùng bàn phím không phải Tab lại từ đầu
+      var the = chon.querySelector('[data-id="' + id + '"]'), ke = the && (the.nextElementSibling || the.previousElementSibling);
+      if (the) the.remove();
+      if (daCo.length === cfg.buoc.length) { veLai(); tin.focus(); } else if (ke) ke.focus();
     }
     nut.appendChild(el('button', { class: 'btn ghost', type: 'button', onclick: function () {
       var ke = L.buocKeTiep(cfg, daCo);

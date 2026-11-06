@@ -144,6 +144,15 @@ async function main() {
       return { an: o.hidden, chu: o.textContent };
     });
     can(soi && !soi.an && /vuông/.test(soi.chu), 'bài 35 soi: bấm hình vuông giữa phải hiện thẻ: ' + JSON.stringify(soi));
+    const soiPhim = await page.evaluate(() => {
+      const k = document.querySelector('.nhin-nhin .c-khung'), ds = [...k.querySelectorAll('.c-soi-ds button')];
+      if (!ds.length) return { so: 0 };
+      const o = k.querySelector('.c-soi'); o.hidden = true;
+      ds[0].click();
+      const truoc = o.innerHTML;
+      return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r({ so: ds.length, mo: !o.hidden, giu: o.innerHTML === truoc }))));
+    });
+    can(soiPhim.so >= 3 && soiPhim.mo && soiPhim.giu, 'soi bằng nút: phải có danh sách nút soi, bấm mở được thẻ và thẻ không bị viết lại khi nội dung không đổi: ' + JSON.stringify(soiPhim));
     can(await page.evaluate(() => document.querySelectorAll('.muc-tieu li').length >= 2), 'bài 35 phải có mục tiêu');
     await moBai('#/bai/35/lyThuyet');
     const lcm = await page.evaluate(() => {
@@ -155,6 +164,16 @@ async function main() {
       [...h.querySelectorAll('.lcm-nut button')].find(b => b.textContent === 'Lắp mẫu').click();
       return { sai, cuoi: h.querySelector('.lcm-tin').className, so: h.querySelectorAll('.lcm-bai li').length, con: h.querySelectorAll('.lcm-the').length };
     });
+    // Bàn phím: chọn đúng một bước thì tiêu điểm vẫn ở trong khối, không rơi về đầu trang
+    const phim = await page.evaluate(() => {
+      const h = document.querySelector('.lcm');
+      [...h.querySelectorAll('.lcm-nut button')].find(b => b.textContent === 'Làm lại').click();
+      const L = TOAN8.lapCMLoi, cm = TOAN8.lessons[35].lyThuyet.find(k => k.loai === 'lapCM').config;
+      const id = L.buocKeTiep(cm, [])[0], nut = h.querySelector('[data-id="' + id + '"]');
+      nut.focus(); nut.click();
+      return { trong: h.contains(document.activeElement) && document.activeElement !== document.body, ten: document.activeElement.className };
+    });
+    can(phim.trong, 'lắp chứng minh: chọn đúng xong tiêu điểm phải còn trong khối: ' + JSON.stringify(phim));
     can(lcm && /sai/.test(lcm.sai) && /dung/.test(lcm.cuoi) && lcm.con === 0, 'bài 35 lắp chứng minh: chọn kết luận trước phải bị chặn, lắp mẫu phải xong: ' + JSON.stringify(lcm));
 
     // Bài 6: đúng giá trị nhưng chưa gọn thì không bảo đếm lại; lỗi thiếu 25

@@ -366,3 +366,7 @@ math-field.mf:focus-within { border-color: var(--c); }
 .ph-bai ul { margin: 6px 0 0; }
 .c-soi-ten { display: block; margin-bottom: 2px; }
 .c-pha.chi-hinh { background: var(--warn-bg); color: #8a5300; }
+.c-soi-ds { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-size: .85rem; }
+.c-soi-nhan { color: var(--muted); }
+.c-soi-nut { padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: inherit; cursor: pointer; }
+.c-soi-nut:hover, .c-soi-nut:focus-visible { border-color: var(--b); }

@@ -458,7 +458,7 @@
           var y = d.x2 * x * x + d.a * x + d.b;
           if (y >= kh.y0 && y <= kh.y1) diemCong.push(M.P(x, y)); else if (diemCong.length) break;
         }
-        if (diemCong.length > 1) mk('polyline', { points: C.diem(diemCong), fill: 'none', stroke: 'var(' + mau + ')', 'stroke-width': 0.7, opacity: d.hien, 'data-soi': 'duong' + di }, svg);
+        if (diemCong.length > 1) mk('polyline', { points: C.diem(diemCong), fill: 'none', stroke: 'var(' + mau + ')', 'stroke-width': 0.7, opacity: d.hien, 'data-soi': d.hien > 0 ? 'duong' + di : null }, svg);
       } else net(d.a, d.b, mau, d.hien, d.net, null, 'duong' + di);
       if (d.nhan && d.hien > 0) {
         // Nhãn đặt ở gần cuối đoạn nhìn thấy (hoặc ở hoành độ nhanX), về phía không có đường: đường đi lên thì phía trên bên trái,
