@@ -1,0 +1,23 @@
+# Mỗi lần đẩy mã: chạy test, kiểm nội dung và mở thử mọi trang. Lỗi thì không nên đưa lên web.
+name: Kiểm tra
+on:
+  push:
+  pull_request:
+jobs:
+  kiem-tra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: node tools/validate-content.js --du-luyen
+      - run: node tools/smoke-canh.js
+      - run: node tools/smoke-nhin.js
+      - run: node tools/smoke-all.js

@@ -1,0 +1,18 @@
+# Đẩy một thẻ dạng v1.2.3 thì đăng bản tải về (zip) lên Releases: giải nén rồi mở index.html, không cần mạng.
+name: Bản tải về
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  dong-goi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Đóng gói (bỏ tài liệu, công cụ, kiểm thử)
+        run: git archive --format=zip --prefix=toan8/ -o toan8-${GITHUB_REF_NAME}.zip HEAD ':!docs' ':!tools' ':!tests' ':!.github'
+      - name: Đăng lên Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" "toan8-${GITHUB_REF_NAME}.zip" --title "Toán 8 ${GITHUB_REF_NAME}" --notes "Giải nén rồi mở toan8/index.html bằng trình duyệt. Không cần mạng."

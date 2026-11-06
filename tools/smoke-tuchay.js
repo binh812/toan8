@@ -11,9 +11,9 @@ const VAN = `(k => [...k.querySelectorAll('input[type=range]')].map(i => i.value
 
 async function main() {
   const ids = process.argv.slice(2).map(Number).filter(Boolean);
-  const exe = BROWSERS.find(p => fs.existsSync(p));
+  const exe = require('./trinh-duyet.js').timTrinhDuyet();
   if (!exe) throw new Error('Không tìm thấy Chrome/Edge');
-  const browser = await puppeteer.launch({ executablePath: exe, headless: true, protocolTimeout: 120000 });
+  const browser = await puppeteer.launch({ executablePath: exe, headless: true, args: require('./trinh-duyet.js').thamSoChay(), protocolTimeout: 120000 });
   const loi = [];
   let khung = 0;
   try {

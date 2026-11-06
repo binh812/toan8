@@ -33,9 +33,9 @@ const CAU_HINH = [
 
 async function main() {
   const si = process.argv.indexOf('--shot'), thuMuc = si > 0 ? process.argv[si + 1] : null;
-  const exe = BROWSERS.find(p => fs.existsSync(p));
+  const exe = require('./trinh-duyet.js').timTrinhDuyet();
   if (!exe) throw new Error('Không tìm thấy Chrome/Edge');
-  const browser = await puppeteer.launch({ executablePath: exe, headless: true });
+  const browser = await puppeteer.launch({ executablePath: exe, headless: true, args: require('./trinh-duyet.js').thamSoChay() });
   const loi = [];
   try {
     const page = await browser.newPage();

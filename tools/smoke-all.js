@@ -14,9 +14,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function main() {
   const qi = process.argv.indexOf('--query');
   const q = qi > 0 ? '?' + process.argv[qi + 1] : '';
-  const exe = BROWSERS.find(p => fs.existsSync(p));
+  const exe = require('./trinh-duyet.js').timTrinhDuyet();
   if (!exe) throw new Error('Không tìm thấy Chrome/Edge');
-  const browser = await puppeteer.launch({ executablePath: exe, headless: true, protocolTimeout: 60000 });
+  const browser = await puppeteer.launch({ executablePath: exe, headless: true, args: require('./trinh-duyet.js').thamSoChay(), protocolTimeout: 60000 });
   const issues = [];
   try {
     const page = await browser.newPage();
