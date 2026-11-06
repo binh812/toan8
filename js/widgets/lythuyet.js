@@ -5,6 +5,12 @@
 
   T.tabs.lyThuyet = function (c, bai) {
     (bai.lyThuyet || []).forEach(function (k) {
+      if (k.loai === 'lapCM') {
+        var hop = el('div', { class: 'the lap-cm' }, el('h3', { html: T.mdInline(k.tieuDe || 'Lắp chứng minh') }));
+        c.appendChild(hop);
+        T.mountWidget(hop, 'lapCM', k.config);
+        return;
+      }
       if (k.loai === 'hinh') {
         var box = el('div', { class: 'the hinh' });
         c.appendChild(box);

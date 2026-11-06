@@ -55,6 +55,26 @@
       st && st.mastered ? el('span', { class: 'badge' }, '✓ Thành thạo') : null);
   }
 
+  // Trang cho phụ huynh: mục tiêu từng bài và tiến độ, để biết cần hỏi con điều gì
+  function phuHuynh(app) {
+    app.appendChild(el('a', { href: '#/', class: 'back' }, '← Mục lục'));
+    app.appendChild(el('h1', null, 'Dành cho phụ huynh'));
+    app.appendChild(el('p', null, 'Mỗi bài có vài việc con cần làm được. Cách kiểm nhanh: nhờ con chỉ vào hình mà giải thích vì sao công thức đúng, rồi tự làm một bài trong tab Luyện thêm mà không xem lời giải.'));
+    T.mucLuc.forEach(function (c) {
+      var ds = el('div', { class: 'ph-ds' });
+      c.bai.forEach(function (b) {
+        var L = T.lessons[b.id];
+        if (!L) return;
+        var st = T.store.lessonStatus(L), pct = st && st.total ? Math.round(100 * st.done / st.total) : 0;
+        ds.appendChild(el('div', { class: 'ph-bai', style: '--c:' + c.mau },
+          el('a', { href: '#/bai/' + b.id + '/khamPha' }, 'Bài ' + b.id + '. ' + b.ten),
+          el('span', { class: 'ph-pct' }, 'Đã làm đúng ' + pct + '% bài tập'),
+          L.mucTieu ? el('ul', null, L.mucTieu.map(function (m) { return el('li', { html: T.mdInline(m) }); })) : null));
+      });
+      app.appendChild(el('section', { class: 'chuong', style: '--c:' + c.mau }, el('h2', null, el('span', { class: 'chip' }, 'Chương ' + c.so), ' ' + c.ten), ds));
+    });
+  }
+
   function home(app) {
     var due = T.store.dueToday(5, function (id) { return !!T.findExercise(id); }).length;
     app.appendChild(el('section', { class: 'hero' },
@@ -62,7 +82,8 @@
       el('p', null, 'Mỗi bài bắt đầu từ một hình để em tự thấy vì sao đúng, rồi mới đến lý thuyết, ví dụ và bài tập. Cứ làm thử – sai cũng không sao, máy sẽ chỉ cho em chỗ sai.'),
       el('div', { class: 'hero-nut' },
         due ? el('a', { class: 'btn primary', href: '#/on-tap' }, 'Có ' + due + ' câu cần ôn hôm nay →') : null,
-        el('a', { class: 'btn', href: '#/on-tap-cuoi-nam' }, 'Ôn tập cuối năm'))));
+        el('a', { class: 'btn', href: '#/on-tap-cuoi-nam' }, 'Ôn tập cuối năm'),
+        el('a', { class: 'btn ghost', href: '#/phu-huynh' }, 'Dành cho phụ huynh'))));
     T.mucLuc.forEach(function (c) {
       var grid = el('div', { class: 'grid' });
       c.bai.forEach(function (b) { grid.appendChild(lessonCard(c, b)); });
@@ -118,7 +139,8 @@
       el('a', { href: '#/', class: 'back' }, '← Mục lục'),
       el('div', { class: 'crumb' }, 'Chương ' + info.chuong.so + '. ' + info.chuong.ten),
       el('h1', null, 'Bài ' + id + '. ' + L.ten),
-      el('span', { class: 'sgk' }, '📖 SGK Tập ' + L.sgk.tap + ', trang ' + L.sgk.trang)));
+      el('span', { class: 'sgk' }, '📖 SGK Tập ' + L.sgk.tap + ', trang ' + L.sgk.trang),
+      L.mucTieu ? el('details', { class: 'muc-tieu' }, el('summary', null, '🎯 Sau bài này em làm được'), el('ul', null, L.mucTieu.map(function (m) { return el('li', { html: T.mdInline(m) }); }))) : null));
     app.appendChild(bar);
     var body = el('div', { class: 'tab-body tab-' + tab });
     app.appendChild(body);
@@ -144,6 +166,7 @@
       else if (h[0] === 'nen' && T.trangNen) T.trangNen(app, h[1]);
       else if (h[0] === 'kiem-tra' && T.kiemTraChuong) T.kiemTraChuong(app, Number(h[1]));
       else if (h[0] === 'phieu' && T.phieu) T.phieu(app, h[1], h[2] ? Number(h[2]) : 0);
+      else if (h[0] === 'phu-huynh') phuHuynh(app);
       else home(app);
     } catch (e) {
       console.error(e);

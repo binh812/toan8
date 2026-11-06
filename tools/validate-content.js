@@ -12,6 +12,7 @@ const RNG = require('../js/core/rng.js');
 const LL = require('../js/core/luyen.js');
 const CC = RNG.congCu(P);
 const SO_HAT = 300;
+const LCM = require('../js/core/lapcm.js');
 const CANH = require('../js/canh/loi.js');
 fs.readdirSync(path.join(__dirname, '..', 'js', 'canh')).filter(f => f.endsWith('.js') && f !== 'loi.js').forEach(f => require('../js/canh/' + f));
 
@@ -226,6 +227,25 @@ function checkLesson(L, file) {
     checkLastLine(tag, q);
   });
   if (L.nhin) checkNhin(L, T);
+  if (L.mucTieu !== undefined && !(Array.isArray(L.mucTieu) && L.mucTieu.length >= 2 && L.mucTieu.every(m => typeof m === 'string' && m.length > 5))) errors.push(T + ': mucTieu cần là mảng ≥ 2 câu');
+  (L.lyThuyet || []).forEach((k, i) => {
+    if (k.loai !== 'lapCM') return;
+    LCM.kiemDuLieu(k.config).forEach(s => errors.push(T + ' lyThuyet[' + i + '] lapCM: ' + s));
+    if (k.config && k.config.canh) checkCanh(T + ' lyThuyet[' + i + '] lapCM', k.config.canh);
+  });
+  // Thử phá: cảnh phải trả k.pha khi có tham số pha, ở cả hai đầu khoảng
+  if (L.nhin && L.nhin.canh && L.nhin.canh.thuPha) {
+    try {
+      const cn = CANH.lay(L.nhin.canh.ten), ts = cn.thamSo || {}, phaK = Object.keys(ts).filter(k => ts[k].pha);
+      if (!phaK.length) errors.push(T + ' nhin: thuPha nhưng cảnh không có tham số pha');
+      phaK.forEach(k => [ts[k].min, ts[k].md, ts[k].max].forEach(v => {
+        const p = {}; Object.keys(ts).forEach(x => { p[x] = ts[x].md; }); Object.assign(p, L.nhin.canh.thamSo || {}); p[k] = v;
+        const kq = cn.tinh(p, 1, L.nhin.canh.tuyChon || {});
+        if (!kq || !kq.pha || typeof kq.pha.chu !== 'string') errors.push(T + ' nhin: thử phá ' + k + ' = ' + v + ' không trả k.pha');
+        else if (v === ts[k].md && kq.pha.hong) errors.push(T + ' nhin: giá trị mặc định của ' + k + ' đã làm công thức hỏng');
+      }));
+    } catch (e) { errors.push(T + ' nhin: thử phá lỗi: ' + e.message); }
+  }
   need(Array.isArray(L.timLoi) && L.timLoi.length >= 1, 'timLoi cần ≥ 1');
   (L.timLoi || []).forEach((t, i) => {
     need(Array.isArray(t.loiGiaiSai) && t.dongSai >= 0 && t.dongSai < t.loiGiaiSai.length, 'timLoi[' + i + '] dongSai ngoài khoảng');

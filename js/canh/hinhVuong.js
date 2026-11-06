@@ -2,9 +2,15 @@
 (function (C) {
   'use strict';
   C.dangKi('toHopHinhVuong', {
-    thamSo: { a: { min: 1, max: 6, step: 0.5, md: 3, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh b', mau: '--b' } },
+    thamSo: { a: { min: 1, max: 6, step: 0.5, md: 3, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh b', mau: '--b' },
+      goc: { min: 60, max: 120, step: 5, md: 90, nhan: 'Góc giữa a, b', pha: true } },
     tinh: function (p, t) {
-      var a = p.a, b = p.b, s = a + b;
+      var a = p.a, b = p.b, s = a + b, goc = p.goc == null ? 90 : p.goc;
+      // Thử phá: góc giữa hai cạnh a, b khác 90° thì c² tính theo định lí côsin (lớp trên), không còn bằng a² + b²
+      var c2 = a * a + b * b - 2 * a * b * Math.cos(goc * Math.PI / 180), hong = Math.abs(goc - 90) > 1e-9;
+      var pha = { hong: hong, goc: goc, c2: c2, chu: hong
+        ? 'Góc ' + C.fmt(goc) + '°: $a^2 + b^2 = ' + C.fmt(a * a + b * b).replace(',', '{,}') + '$ nhưng $c^2 \\approx ' + C.fmt(c2).replace(',', '{,}') + '$. Tam giác không vuông thì bốn góc không lấp vừa góc khung, nên không ghép được.'
+        : 'Góc vuông: $a^2 + b^2 = c^2 = ' + C.fmt(c2).replace(',', '{,}') + '$.' };
       // Mỗi tam giác chỉ tịnh tiến; trượt lần lượt để mắt theo kịp và không đè lên nhau
       var goc = [
         { p: [[0, 0], [a, 0], [0, b]], d: [0, a], tu: 0.7 },
@@ -17,7 +23,7 @@
         return g.p.map(function (q) { return [q[0] + g.d[0] * k, q[1] + g.d[1] * k]; });
       });
       return { a: a, b: b, s: s, tamGiac: tamGiac, oC: [[a, 0], [s, a], [b, s], [0, b]],
-        oA: { x: 0, y: 0, w: a, h: a }, oB: { x: a, y: a, w: b, h: b }, phanTrong: s * s - 2 * a * b };
+        oA: { x: 0, y: 0, w: a, h: a }, oB: { x: a, y: a, w: b, h: b }, phanTrong: s * s - 2 * a * b, pha: pha };
     }
   });
 
@@ -84,18 +90,32 @@
     });
     C.mk('polygon', { points: C.diem(Y(k.dinh)), fill: 'var(--mat)', stroke: 'var(--muc)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }, svg);
   };
+  C.lay('toHopHinhVuong').soi = function (k, p) {
+    var so = function (x) { return C.fmt(x).replace(',', '{,}'); }, a = k.a, b = k.b;
+    return {
+      oC: { tieuDe: 'Hình vuông ở giữa', chu: 'Cạnh $c$ là cạnh huyền của mỗi tam giác. Diện tích $c^2 = ' + so(a * a + b * b) + '$. Là hình vuông vì bốn cạnh bằng $c$ và mỗi góc bằng $180^\\circ - 90^\\circ = 90^\\circ$.' },
+      oA: { tieuDe: 'Hình vuông cạnh $a$', chu: 'Diện tích $a^2 = ' + so(a * a) + '$. Xuất hiện khi hai tam giác ghép thành hình chữ nhật $a \\times b$.' },
+      oB: { tieuDe: 'Hình vuông cạnh $b$', chu: 'Diện tích $b^2 = ' + so(b * b) + '$.' },
+      tg: { tieuDe: 'Tam giác vuông', chu: 'Cạnh góc vuông $a = ' + so(a) + '$, $b = ' + so(b) + '$, diện tích $\\frac{ab}{2} = ' + so(a * b / 2) + '$. Bốn tam giác giống hệt nhau, chỉ trượt chứ không đổi.' }
+    };
+  };
   C.lay('toHopHinhVuong').ve = function (svg, k, p, t) {
     var s = k.s, d = 0.1 * s, co = 0.062 * s, mk = C.mk, a = k.a, b = k.b;
     svg.setAttribute('viewBox', [-d, -d, s + 2 * d, s + 2 * d].join(' '));
     mk('rect', { width: s, height: s, fill: 'var(--mat)' }, svg);
     var mC = 1 - C.muot((t - 0.1) / 0.1), mS = C.muot((t - 0.85) / 0.15);
-    mk('polygon', { points: C.diem(k.oC), fill: 'var(--cc)', 'fill-opacity': 0.32, opacity: mC }, svg);
+    mk('polygon', { points: C.diem(k.oC), fill: 'var(--cc)', 'fill-opacity': 0.32, opacity: mC, 'data-soi': 'oC' }, svg);
     [[k.oA, '--a'], [k.oB, '--b']].forEach(function (x) {
-      mk('rect', { x: x[0].x, y: x[0].y, width: x[0].w, height: x[0].h, fill: 'var(' + x[1] + ')', 'fill-opacity': 0.32, opacity: mS }, svg);
+      mk('rect', { x: x[0].x, y: x[0].y, width: x[0].w, height: x[0].h, fill: 'var(' + x[1] + ')', 'fill-opacity': 0.32, opacity: mS, 'data-soi': x[1] === '--a' ? 'oA' : 'oB' }, svg);
     });
     k.tamGiac.forEach(function (g) {
-      mk('polygon', { points: C.diem(g), fill: 'var(--tg)', stroke: 'var(--mat)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }, svg);
+      mk('polygon', { points: C.diem(g), fill: 'var(--tg)', stroke: 'var(--mat)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round', 'data-soi': 'tg' }, svg);
     });
+    // Thử phá: vẽ tam giác có góc đúng như em kéo ở góc khung, thấy ngay nó không lấp vừa góc vuông
+    if (k.pha && k.pha.hong) {
+      var r = k.pha.goc * Math.PI / 180;
+      mk('polygon', { points: C.diem([[0, 0], [a, 0], [b * Math.cos(r), b * Math.sin(r)]]), fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '6 4' }, svg);
+    }
     mk('rect', { width: s, height: s, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke' }, svg);
     var it = { 'font-style': 'italic' };
     C.chu(svg, s / 2, s / 2, 'c²', co * 1.5, '--cc', Object.assign({ opacity: mC }, it));

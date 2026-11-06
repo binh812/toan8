@@ -126,6 +126,37 @@ async function main() {
     r = await go('.nhin-suy-ra', '100', 1);
     can(/dung/.test(r.lop) && !/190/.test(r.hinh), 'bài 21.12 làm đúng thì hình phải về x = 100: ' + JSON.stringify(r));
 
+    // Bài 35: thử phá, soi chi tiết, lắp chứng minh, mục tiêu
+    await moBai('#/bai/35/khamPha');
+    const pha = await page.evaluate(() => {
+      const k = document.querySelector('.nhin-nhin .c-khung'), o = [...k.querySelectorAll('input[type=range]')].find(i => /Góc/.test(i.getAttribute('aria-label') || ''));
+      if (!o) return { thieu: true };
+      const truoc = k.querySelector('.c-pha').className;
+      o.value = 120; o.dispatchEvent(new Event('input', { bubbles: true }));
+      return { truoc, sau: k.querySelector('.c-pha').className, chu: k.querySelector('.c-pha').textContent };
+    });
+    can(!pha.thieu && !/hong/.test(pha.truoc) && /hong/.test(pha.sau), 'bài 35 thử phá: kéo góc khỏi 90° phải báo hỏng: ' + JSON.stringify(pha));
+    const soi = await page.evaluate(() => {
+      const k = document.querySelector('.nhin-nhin .c-khung'), n = k.querySelector('svg [data-soi="oC"]');
+      if (!n) return null;
+      n.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const o = k.querySelector('.c-soi');
+      return { an: o.hidden, chu: o.textContent };
+    });
+    can(soi && !soi.an && /vuông/.test(soi.chu), 'bài 35 soi: bấm hình vuông giữa phải hiện thẻ: ' + JSON.stringify(soi));
+    can(await page.evaluate(() => document.querySelectorAll('.muc-tieu li').length >= 2), 'bài 35 phải có mục tiêu');
+    await moBai('#/bai/35/lyThuyet');
+    const lcm = await page.evaluate(() => {
+      const h = document.querySelector('.lcm');
+      if (!h) return null;
+      const cac = [...h.querySelectorAll('.lcm-the')], kl = cac.find(b => /Vậy/.test(b.textContent));
+      kl.click();
+      const sai = h.querySelector('.lcm-tin').className;
+      [...h.querySelectorAll('.lcm-nut button')].find(b => b.textContent === 'Lắp mẫu').click();
+      return { sai, cuoi: h.querySelector('.lcm-tin').className, so: h.querySelectorAll('.lcm-bai li').length, con: h.querySelectorAll('.lcm-the').length };
+    });
+    can(lcm && /sai/.test(lcm.sai) && /dung/.test(lcm.cuoi) && lcm.con === 0, 'bài 35 lắp chứng minh: chọn kết luận trước phải bị chặn, lắp mẫu phải xong: ' + JSON.stringify(lcm));
+
     // Bài 6: đúng giá trị nhưng chưa gọn thì không bảo đếm lại; lỗi thiếu 25
     await moBai('#/bai/6/khamPha');
     r = await go('.nhin-dung', 'x^2+5x+5x+25');

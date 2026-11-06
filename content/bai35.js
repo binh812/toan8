@@ -112,7 +112,7 @@
     id: 35, ten: 'Định lí Pythagore và ứng dụng', sgk: { tap: 2, trang: 93 },
     nhin: {
       tieuDe: 'Xếp lại bốn tam giác, phần trống không đổi', loai: 'chungMinh',
-      canh: { ten: 'toHopHinhVuong', moTa: 'Khung vuông cạnh a cộng b chứa bốn tam giác vuông. Phần trống là hình vuông c bình phương; sau khi trượt, phần trống là hai hình vuông a bình phương và b bình phương.',
+      canh: { ten: 'toHopHinhVuong', thuPha: true, moTa: 'Khung vuông cạnh a cộng b chứa bốn tam giác vuông. Phần trống là hình vuông c bình phương; sau khi trượt, phần trống là hai hình vuông a bình phương và b bình phương.',
         dongSo: function (p, f) { var so = function (x) { return f(x).replace(',', '{,}'); };
           return 'Trước: phần trống $\\cc{c^2} = ' + so(p.a * p.a + p.b * p.b) + '$. Sau: $\\ca{a^2} + \\cb{b^2} = ' + so(p.a * p.a) + ' + ' + so(p.b * p.b) + ' = ' + so(p.a * p.a + p.b * p.b) + '$.'; } },
       buoc: [
@@ -168,9 +168,30 @@
         loiGiai: ['Hình vuông cam: $4^2 = 16$; hình vuông xanh: $3^2 = 9$.', 'Hình vuông tím luôn bằng tổng hai hình kia. Diện tích hình vuông tím $= 16 + 9 = 25$'],
         loiThuongGap: [{ gt: 7, giaiThich: '$7 = 4 + 3$ là tổng hai cạnh. Đề hỏi **diện tích** hình vuông trên $BC$, tức $BC^2$.' }, { gt: 5, giaiThich: '$5$ là độ dài $BC$. Diện tích hình vuông cạnh $5$ là $5^2 = 25$.' }] }
     },
+    mucTieu: [
+      'Nói được vì sao $a^2 + b^2 = c^2$ bằng cách trượt bốn tam giác trong khung vuông.',
+      'Biết cạnh nào là cạnh huyền và tính một cạnh khi biết hai cạnh kia.',
+      'Nhận ra tam giác vuông nấp trong hình chữ nhật, tam giác cân, đường đi để dùng định lí.',
+      'Dùng định lí đảo để kiểm một tam giác có vuông hay không.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: 'Định lí Pythagore',
         noiDung: 'Trong một tam giác vuông, **bình phương của cạnh huyền** bằng **tổng các bình phương của hai cạnh góc vuông**.\n\n$\\triangle ABC$ vuông tại $A$ thì $$\\cd{BC}^2 = \\ca{AB}^2 + \\cb{AC}^2.$$\n\n(Bình phương của một đoạn thẳng là bình phương độ dài của đoạn thẳng đó.)' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $a^2 + b^2 = c^2$?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        canh: { ten: 'toHopHinhVuong' },
+        buoc: [
+          { id: 'gt', chu: 'Có bốn tam giác vuông giống nhau, cạnh góc vuông $a$, $b$, cạnh huyền $c$.', canh: { t: 0 } },
+          { id: 'khung', chu: 'Xếp chúng vào khung vuông cạnh $a + b$.', can: ['gt'], canh: { t: 0 } },
+          { id: 'canh', chu: 'Phần trống ở giữa có bốn cạnh, mỗi cạnh là một cạnh huyền $c$.', can: ['khung'], canh: { t: 0 } },
+          { id: 'goc', chu: 'Mỗi góc của phần trống bằng $180^\\circ - 90^\\circ = 90^\\circ$, vì hai góc nhọn của tam giác vuông cộng lại $90^\\circ$.', can: ['khung'], canh: { t: 0 } },
+          { id: 'hv', chu: 'Vậy phần trống là hình vuông, diện tích $c^2$.', can: ['canh', 'goc'], canh: { t: 0 } },
+          { id: 'truot', chu: 'Trượt bốn tam giác: khung và tam giác không đổi nên diện tích phần trống không đổi.', can: ['khung'], canh: { t: 0.7 } },
+          { id: 'sau', chu: 'Lúc sau phần trống là hai hình vuông, diện tích $a^2 + b^2$.', can: ['truot'], canh: { t: 1 } },
+          { id: 'kl', chu: 'Vậy $a^2 + b^2 = c^2$.', can: ['hv', 'sau'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Phần trống trước và sau bằng nhau nên $a^2 + b^2 = c^2$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-7, 12.8, 13, -6.6], build: khamPhaBuild },
         chuThich: 'Diện tích hình vuông tím luôn bằng tổng diện tích hình vuông cam và xanh: $\\cd{BC^2} = \\ca{AB^2} + \\cb{AC^2}$.' },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 10.6, 19, -2.2], wide: true, build: bonTamGiacBuild,

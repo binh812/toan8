@@ -126,3 +126,18 @@ test('dangKi trùng tên thì ném lỗi', () => {
   assert.throws(() => canh.dangKi('thuTrung', { tinh() {}, ve() {} }), /thuTrung/);
   assert.throws(() => canh.lay('khongCo'), /khongCo/);
 });
+
+test('toHopHinhVuong thử phá: góc 90° thì công thức đúng, lệch khỏi 90° thì hỏng và c² theo định lí côsin', () => {
+  const ok = tinh('toHopHinhVuong', { a: 3, b: 4, goc: 90 }, 1);
+  assert.strictEqual(ok.pha.hong, false);
+  const lech = tinh('toHopHinhVuong', { a: 3, b: 4, goc: 120 }, 1);
+  assert.strictEqual(lech.pha.hong, true);
+  GAN(lech.pha.c2, 9 + 16 - 2 * 3 * 4 * Math.cos(2 * Math.PI / 3));
+  assert.match(lech.pha.chu, /37/);
+});
+test('toHopHinhVuong soi: có thẻ cho hình vuông giữa, hai hình vuông và tam giác, số đo theo a, b', () => {
+  const C = require('../js/canh/loi.js'), k = tinh('toHopHinhVuong', { a: 3, b: 4, goc: 90 }, 0);
+  const s = C.lay('toHopHinhVuong').soi(k, { a: 3, b: 4 }, {});
+  ['oC', 'oA', 'oB', 'tg'].forEach(x => assert.ok(s[x] && s[x].tieuDe && s[x].chu, x));
+  assert.match(s.oC.chu, /25/);
+});
