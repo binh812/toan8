@@ -20,7 +20,7 @@ TOAN8.bai(anKetQua({
   nhin: {
     tieuDe: 'Biết diện tích và một cạnh, tìm cạnh kia', loai: 'chungMinh',
     luuY: 'Hình chứng minh khi $x$ dương (kéo thanh để đổi $x$): mỗi mảnh là hình chữ nhật có một cạnh $2x$, nên cạnh kia bằng diện tích chia $2x$. Với số bất kì, kiểm lại bằng phép nhân: $2x(3x + 2) = 6x^2 + 4x$. Tổng quát, $(A + B) : C = A : C + B : C$ vì $C \\cdot (A : C + B : C) = A + B$.',
-    canh: Object.assign(chia('6x^2+4x', '2x'), { moTa: 'Hình chữ nhật có một cạnh 2x, gồm hai mảnh diện tích 6x bình phương và 4x. Cạnh trên của mỗi mảnh lần lượt hiện ra.',
+    canh: Object.assign(chia('6x^2+4x', '2x'), { ten: 'hcnNhanXPha', thuPha: true, moTa:'Hình chữ nhật có một cạnh 2x, gồm hai mảnh diện tích 6x bình phương và 4x. Cạnh trên của mỗi mảnh lần lượt hiện ra.',
       // Dòng số không biết t nên không ghi cạnh trên (kẻo lộ kết quả từ đầu); chỉ cho số để em tự chia thử
       dongSo: function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: mảnh trái có diện tích $6x^2 = ' + so(6 * x * x) + '$, cạnh trái $2x = ' + so(2 * x) + '$. Cạnh trên dài bao nhiêu?'; } }),
     buoc: [
@@ -81,6 +81,12 @@ TOAN8.bai(anKetQua({
         'Cạnh còn lại: $(6x^2 + 4x) : 2x = 3x + 2$']
     }
   },
+  mucTieu: [
+    'Nhận ra khi nào đơn thức $A$ chia hết cho đơn thức $B$, bằng cách so số mũ của từng biến.',
+    'Chia đơn thức cho đơn thức: chia các hệ số, trừ số mũ của cùng một biến.',
+    'Chia đa thức cho đơn thức bằng cách chia từng hạng tử, không bỏ sót hạng tử nào.',
+    'Kiểm lại một phép chia bằng phép nhân.'
+  ],
   lyThuyet: [
     { loai: 'dinhNghia', tieuDe: 'Phép chia hết',
       noiDung: 'Cho hai đa thức $A$ và $B$ với $B \\ne 0$. Ta nói đa thức $A$ **chia hết** cho đa thức $B$ nếu có đa thức $Q$ sao cho $A = B \\cdot Q$.\n\nKhi đó ta viết $A : B = Q$ hoặc $\\frac{A}{B} = Q$. Trong bài này ta chỉ xét phép chia hết cho một đơn thức.' },

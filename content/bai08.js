@@ -17,7 +17,7 @@ TOAN8.bai({
   nhin: {
     tieuDe: 'Khối lập phương bỏ một góc, còn lại ba tấm', loai: 'chungMinh',
     luuY: 'Hình đúng khi $a > b > 0$. Nhân phá ngoặc cho thấy công thức đúng với mọi số. Tổng hai lập phương có được khi thay $b$ bởi $-b$; hình của nó ở Ví dụ 1.',
-    canh: { ten: 'haiLapPhuong', tuyChon: { dang: 'hieu' }, moTa: 'Khối lập phương cạnh a bỏ đi khối nhỏ cạnh b ở một góc. Phần còn lại tách thành ba tấm cùng dày a trừ b, mặt lần lượt là a bình phương, a b, b bình phương.',
+    canh: { ten: 'haiLapPhuong', thuPha: true, tuyChon: { dang: 'hieu' }, moTa: 'Khối lập phương cạnh a bỏ đi khối nhỏ cạnh b ở một góc. Phần còn lại tách thành ba tấm cùng dày a trừ b, mặt lần lượt là a bình phương, a b, b bình phương.',
       dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); }, b = Math.max(0.5, Math.min(p.b, p.a - 0.5));
         return '$\\ca{' + so(p.a * p.a * p.a) + '} - \\cb{' + so(b * b * b) + '} = ' + so(p.a * p.a * p.a - b * b * b) + '$\n$(' + so(p.a) + ' - ' + so(b) + ')(\\ca{' + so(p.a * p.a) + '} + \\cc{' + so(p.a * b) + '} + \\cb{' + so(b * b) + '}) = ' + so(p.a * p.a * p.a - b * b * b) + '$'; } },
@@ -92,11 +92,31 @@ TOAN8.bai({
     }
   },
 
+  mucTieu: [
+    'Nói được vì sao $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$ bằng cách chỉ vào ba tấm cùng dày $a - b$.',
+    'Viết tổng và hiệu hai lập phương thành tích, đặt đúng dấu ở cả hai thừa số.',
+    'Phân biệt $A^3 - B^3$ với $(A - B)^3$.',
+    'Rút gọn biểu thức có tích dạng $(x - 2)(x^2 + 2x + 4)$.'
+  ],
   lyThuyet: [
     { loai: 'dinhLi', tieuDe: '1. Tổng hai lập phương',
       noiDung: 'Với $A$, $B$ là hai biểu thức tuỳ ý:\n\n$$\\ca{A}^3 + \\cb{B}^3 = (\\ca{A}+\\cb{B})(\\ca{A}^2 - \\cc{\\ca{A}\\cb{B}} + \\cb{B}^2)$$\n\nKiểm tra: nhân $(A+B)(A^2 - AB + B^2) = A^3 - A^2B + AB^2 + A^2B - AB^2 + B^3 = A^3 + B^3$.' },
     { loai: 'dinhLi', tieuDe: '2. Hiệu hai lập phương',
       noiDung: '$$\\ca{A}^3 - \\cb{B}^3 = (\\ca{A}-\\cb{B})(\\ca{A}^2 + \\cc{\\ca{A}\\cb{B}} + \\cb{B}^2)$$\n\nCó được bằng cách viết $A^3 - B^3 = A^3 + (-B)^3$ rồi dùng tổng hai lập phương.' },
+    { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$?', config: {
+      de: 'Xếp các bước theo đúng thứ tự lập luận (với $a > b > 0$). Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+      canh: { ten: 'haiLapPhuong', tuyChon: { dang: 'hieu' } },
+      buoc: [
+        { id: 'gt', chu: 'Khối lập phương cạnh $a$ có thể tích $a^3$; ở một góc là khối nhỏ cạnh $b$.', canh: { t: 0 } },
+        { id: 'bo', chu: 'Bỏ khối nhỏ đi: phần còn lại có thể tích $a^3 - b^3$.', can: ['gt'], canh: { t: 0.35 } },
+        { id: 'tach', chu: 'Tách phần còn lại thành ba tấm, không cắt thêm, không đổi kích thước.', can: ['bo'], canh: { t: 0.75 } },
+        { id: 'day', chu: 'Cả ba tấm cùng dày $a - b$: cạnh $a$ bỏ đi đoạn $b$ của khối nhỏ.', can: ['tach'], canh: { t: 1 } },
+        { id: 'mat', chu: 'Mặt của ba tấm là $a \\cdot a$, $a \\cdot b$ và $b \\cdot b$.', can: ['tach'], canh: { t: 1 } },
+        { id: 'the', chu: 'Thể tích một tấm bằng mặt nhân bề dày, nên ba tấm có tổng thể tích $(a - b)(a^2 + ab + b^2)$.', can: ['day', 'mat'], canh: { t: 1 } },
+        { id: 'kl', chu: 'Vậy $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$.', can: ['bo', 'the'], canh: { t: 1 } }
+      ],
+      ketLuan: 'Cùng một phần còn lại, tính thể tích hai cách: $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$.'
+    } },
     { loai: 'chuY', tieuDe: 'Cách nhớ dấu',
       noiDung: 'Thừa số thứ nhất **cùng dấu** với đề: $A^3 \\mathbf{+} B^3 \\to (A \\mathbf{+} B)$, $\\;A^3 \\mathbf{-} B^3 \\to (A \\mathbf{-} B)$.\n\nTrong thừa số thứ hai, hạng tử $\\cc{AB}$ mang dấu **ngược lại**, còn $A^2$ và $B^2$ luôn **cộng**.\n\nThừa số thứ hai chỉ có $AB$ (hệ số 1), **không** phải $2AB$ như trong bình phương.' },
     { loai: 'chuY', tieuDe: 'Hay nhầm',

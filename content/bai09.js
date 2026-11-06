@@ -23,7 +23,7 @@
     nhin: {
       tieuDe: 'Xếp các mảnh thành một hình chữ nhật', loai: 'chungMinh',
       luuY: 'Hình đúng khi $x$ dương. Nhân phá ngoặc $2x(x + 3)$ cho thấy kết quả đúng với mọi $x$.',
-      canh: { ten: 'xepChuNhat', tuyChon: { hang: [{ ten: '2x', dai: [2, 0] }], cot: [{ ten: 'x', dai: X }, { ten: '3', dai: 3 }], o: [['2x²', '6x']], tenRong: 'x + 3' },
+      canh: { ten: 'xepChuNhat', thuPha: true, tuyChon: { hang: [{ ten: '2x', dai: [2, 0] }], cot: [{ ten: 'x', dai: X }, { ten: '3', dai: 3 }], o: [['2x²', '6x']], tenRong: 'x + 3' },
         moTa: 'Hai mảnh hình chữ nhật có diện tích 2x bình phương và 6x, cùng có cạnh 2x, ghép lại thành hình chữ nhật cạnh 2x và x cộng 3.',
         dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (v) { return String(Math.round(v * 1000) / 1000).replace('.', '{,}'); };
@@ -87,6 +87,13 @@
       }
     },
 
+    mucTieu: [
+      'Phân tích đa thức thành nhân tử bằng cách đặt nhân tử chung, chỉ ra được cạnh chung của các mảnh trên hình.',
+      'Phân tích đa thức thành nhân tử bằng hằng đẳng thức.',
+      'Nhóm các hạng tử để làm xuất hiện nhân tử chung.',
+      'Tìm $x$ khi một tích bằng $0$, sau khi đã phân tích thành nhân tử.',
+      'Tính nhanh các biểu thức như $37 \\cdot 64 + 37 \\cdot 36$.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Phân tích đa thức thành nhân tử',
         noiDung: '**Phân tích đa thức thành nhân tử** (hay thừa số) là biến đổi đa thức đó thành một **tích** của những đa thức.\n\nVí dụ: $x^3 + x = x(x^2 + 1)$. Ở đây $x$ và $x^2 + 1$ là các **nhân tử**.' },

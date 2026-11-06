@@ -77,6 +77,12 @@ TOAN8.bai(anKetQua({
       loiGiai: ['$A + B = x^2 + 2x + x^2 + x$', '$= (x^2 + x^2) + (2x + x) = 2x^2 + 3x$']
     }
   },
+  mucTieu: [
+    'Cộng hai đa thức: bỏ ngoặc, nhóm các hạng tử đồng dạng rồi thu gọn.',
+    'Trừ hai đa thức, đổi dấu đúng mọi hạng tử trong ngoặc có dấu trừ đằng trước.',
+    'Nói được vì sao trừ một đa thức là lật mọi mảnh của nó.',
+    'Tìm đa thức chưa biết trong đẳng thức dạng $M + A = B$.'
+  ],
   lyThuyet: [
     { loai: 'dinhLi', tieuDe: 'Cộng, trừ hai đa thức',
       noiDung: 'Muốn cộng (hay trừ) hai đa thức, ta nối hai đa thức đã cho bởi dấu "$+$" (hay dấu "$-$") rồi **bỏ dấu ngoặc** (nếu có) và **thu gọn** đa thức nhận được.' },

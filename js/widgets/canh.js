@@ -114,7 +114,7 @@
       if (!m) { oSoi.hidden = true; soiDang = null; return; }
       soiDang = khoa;
       oSoi.hidden = false;
-      oSoi.innerHTML = '<b>' + T.mdInline(m.tieuDe || khoa) + '</b> ' + T.md(m.chu || '').replace(/^<p>|<\/p>$/g, '');
+      oSoi.innerHTML = '<b class="c-soi-ten">' + T.mdInline(m.tieuDe || khoa) + '</b>' + T.md(m.chu || '').replace(/^<p>|<\/p>$/g, '');
       oSoi.appendChild(el('button', { class: 'c-soi-dong', type: 'button', 'aria-label': 'Đóng', onclick: function () { oSoi.hidden = true; soiDang = null; } }, '✕'));
     }
     svg.addEventListener('click', function (e) {

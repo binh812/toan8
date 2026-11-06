@@ -72,6 +72,30 @@
     return thu.map(function (k) { return bang[k]; }).filter(function (d) { return d.he[0] !== 0; });
   }
   function giaTri(mu, v) { return chuCai(mu).reduce(function (s, k) { return s * Math.pow(v[k] == null ? 1 : v[k], mu[k]); }, 1); }
+  function giaTriDon(d, v) { return d.he[0] / d.he[1] * giaTri(d.mu, v); }
+
+  /* ---------- Chữ TeX cho thẻ soi và thử phá ---------- */
+  // Thanh kéo bước 0,25 hay 0,5 nên các số ở đây đúng tới vài chữ số thập phân: ghi đúng, không làm tròn
+  function soT(x) { return String(+x.toFixed(6)).replace('.', '{,}'); }
+  function soN(x) { return x < 0 ? '(' + soT(x) + ')' : soT(x); }
+  // '= 7{,}5' hoặc '\approx 7{,}59' khi phải làm tròn tới hai chữ số thập phân
+  function bangT(x) { var r = Math.round(x * 100) / 100; return (Math.abs(r - x) < 1e-9 ? '= ' : '\\approx ') + soT(r); }
+  function texBien(mu) { return chuCai(mu).map(function (k) { return k + (mu[k] > 1 ? '^' + mu[k] : ''); }).join(''); }
+  function texDon(d, boDau) {
+    var b = texBien(d.mu), t = Math.abs(d.he[0]), m = d.he[1], dau = d.he[0] < 0 && !boDau ? '-' : '';
+    var ps = m === 1 ? String(t) : '\\frac{' + t + '}{' + m + '}';
+    if (!b || t === 0) return dau + (t === 0 ? '0' : ps);
+    return dau + (m === 1 && t === 1 ? '' : ps) + b;
+  }
+  function texNgoac(d) { return d.he[0] < 0 ? '(' + texDon(d) + ')' : texDon(d); }
+  function texDa(ds) {
+    var s = '';
+    ds.forEach(function (d) { if (d.he[0] === 0) return; s += (s ? (d.he[0] < 0 ? ' - ' : ' + ') : (d.he[0] < 0 ? '-' : '')) + texDon(d, true); });
+    return s || '0';
+  }
+  // Dãy số cộng lại: 9 + 9 - 6 + 6
+  function texTong(ds) { return ds.map(function (x, i) { return i === 0 ? soT(x) : (x < 0 ? ' - ' : ' + ') + soT(Math.abs(x)); }).join(''); }
+  function cong(ds) { return ds.reduce(function (s, x) { return s + x; }, 0); }
 
   /* ---------- Tiện ích vẽ ---------- */
   function mau(m) { return m && m.charAt(0) === '-' ? 'var(' + m + ')' : m; }
@@ -244,9 +268,9 @@
     }
   });
 
-  function veMot(svg, m, co, thuChu) {
+  function veMot(svg, m, co, thuChu, soi) {
     var w = m.w * m.co, x = m.x + (m.w - w) / 2, y = m.y, d = m.d, s = SAU * d, am = m.dauNay < 0;
-    var g = C.mk('g', { opacity: m.op < 1 ? m.op : null }, svg);
+    var g = C.mk('g', { opacity: m.op < 1 ? m.op : null, 'data-soi': soi }, svg);
     var vien = am ? '--sai' : '--muc', net = am ? { 'stroke-dasharray': '5 3' } : null;
     if (m.loai === 'the') {
       C.mk('rect', Object.assign({ x: x, y: y, width: w, height: m.h, rx: Math.min(w, m.h) / 2, fill: mau(m.mau), 'fill-opacity': am ? 0.08 : 0.3, stroke: mau(vien), 'stroke-width': 1.4 }, NET, net || {}), g);
@@ -272,7 +296,7 @@
     }
     var dauLoai = {};
     k.manh.forEach(function (m) {
-      veMot(svg, m, co, chuBien(m.g.d.mu));
+      veMot(svg, m, co, chuBien(m.g.d.mu), m.dauNay < 0 ? 'am' : 'loai-' + m.k);
       // Mảnh lẽ ra phải lật mà em chưa lật: viền đỏ
       if (m.g.latSai && t > 0.3) C.mk('rect', Object.assign({ x: m.x - 0.12, y: m.y - SAU * m.d - 0.12, width: m.w + SAU * m.d + 0.24, height: m.h + SAU * m.d + 0.24, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2.5 }, NET), svg);
       // Mảnh có hệ số phân số: ghi hệ số ngay trên mặt mảnh
@@ -292,12 +316,55 @@
       viet(svg, g.bx + g.rong / 2, g.nhanY, g.chu, co, null, anNhan * g.hien);
       if (!k.gop && o.bac) viet(svg, g.bx + g.rong / 2, g.nhanY + 1.15 * co, 'bậc ' + g.bac, 0.85 * co, '--nhat', C.muot((t - 0.3) / 0.3) * g.hien);
     });
-    k.ngoac.forEach(function (n) { viet(svg, n.x, n.y, n.s, 1.5 * co, null, anNhan, n.neo); });
+    var gNgoac = k.ngoac.length ? C.mk('g', { 'data-soi': 'ngoac' }, svg) : null;
+    k.ngoac.forEach(function (n) { viet(gNgoac, n.x, n.y, n.s, 1.5 * co, null, anNhan, n.neo); });
+    var gTong = k.gop ? C.mk('g', { 'data-soi': 'tong' }, svg) : null;
     if (k.gop) k.hang.forEach(function (h) {
-      viet(svg, h.x, h.y, giau ? '= ?' : h.s + (o.bac && h.con ? '  (bậc ' + h.bac + ')' : ''), co, h.con ? k.manh.filter(function (m) { return m.k === h.k; })[0].mau : '--nhat', k.ket, 'start');
+      viet(gTong, h.x, h.y, giau ? '= ?' : h.s + (o.bac && h.con ? '  (bậc ' + h.bac + ')' : ''), co, h.con ? k.manh.filter(function (m) { return m.k === h.k; })[0].mau : '--nhat', k.ket, 'start');
     });
-    if (k.tong) viet(svg, k.tong.x, k.tong.y, giau ? '= ?' : k.tong.s, 1.1 * co, giai ? '--cc' : null, k.ket, 'start');
+    if (k.tong) viet(gTong, k.tong.x, k.tong.y, giau ? '= ?' : k.tong.s, 1.1 * co, giai ? '--cc' : null, k.ket, 'start');
     if (o.demNhom && !giau) viet(svg, 0, k.khung[1] + k.khung[3] - 1.1 * co, k.nhom.length + ' nhóm', co, '--cc', C.muot((t - 0.85) / 0.1), 'start');
+  };
+
+  // Soi: mỗi loại mảnh một khoá, cộng mảnh âm, ngoặc bị trừ và dòng kết quả.
+  // o.anNhan mà em chưa giải xong: chỉ nói cạnh và giá trị một mảnh, không nói số mảnh, bậc hay kết quả.
+  C.lay('khoiGop').soi = function (k, p, o) {
+    var hien = !o.anNhan || p.trangThai === 'giai', v = { x: p.x, y: p.y, z: Z }, ra = {}, chuDung = {};
+    k.loai.forEach(function (kk) { chuCai(k.manh.filter(function (m) { return m.k === kk; })[0].g.d.mu).forEach(function (c) { chuDung[c] = true; }); });
+    var voiCua = function (ds) { return ds.map(function (c) { return '$' + c + ' = ' + soT(v[c]) + '$'; }).join(', '); };
+    var voi = voiCua(Object.keys(chuDung).sort());
+    k.loai.forEach(function (kk) {
+      var cua = k.manh.filter(function (m) { return m.k === kk; }), d = cua[0].g.d, h = hinhManh(d.mu, v), bien = texBien(d.mu);
+      var f = [], chu, voi = voiCua(chuCai(d.mu));
+      chuCai(d.mu).forEach(function (c) { for (var i = 0; i < d.mu[c]; i++) f.push(c); });
+      var gt = '$' + bien + ' ' + bangT(giaTri(d.mu, v)) + '$';
+      if (h.loai === 'so') chu = 'Ô vuông cạnh $1$: hạng tử chỉ có số, mỗi ô là $1$.';
+      else if (h.loai === 'the') chu = 'Thẻ ghi phần biến $' + bien + '$: có hơn ba thừa số chữ nên không vẽ thành khối được.';
+      else if (h.loai === 'thanh') chu = 'Thanh dài $' + f[0] + '$, rộng $1$, nên giá trị là $' + f[0] + '$. Với ' + voi + ': ' + gt + '.';
+      else chu = (h.loai === 'tam' ? 'Tấm có hai cạnh ' : 'Khối có ba cạnh ') + f.map(function (c) { return '$' + c + '$'; }).join(', ') +
+        ', nên ' + (h.loai === 'tam' ? 'diện tích' : 'thể tích') + ' là $' + f.join(' \\cdot ') + ' = ' + bien + '$. Với ' + voi + ': ' + gt + '.';
+      if (hien) {
+        if (cua.some(function (m) { return m.g.gon; })) chu += ' Hệ số là phân số nên ghi ngay trên mảnh, không đếm từng mảnh.';
+        else {
+          var nd = cua.filter(function (m) { return m.dauNay > 0; }).length, na = cua.length - nd;
+          chu += ' Lúc này có $' + nd + '$ mảnh dương' + (na ? ' và $' + na + '$ mảnh âm' : '') + '.';
+          if (cua.some(function (m) { return m.op < 0.5; })) chu += ' Các mảnh mờ đi là những cặp dương, âm đã triệt tiêu.';
+        }
+        chu += ' Bậc $' + bacDon(d.mu) + '$' + (h.loai === 'so' ? ': không có chữ nào.' : ': bằng số thừa số chữ nhân với nhau.');
+      }
+      if (h.loai !== 'so') chu += ' Các mảnh cùng loại có cùng các cạnh, tức cùng phần biến: đó là các đơn thức đồng dạng.';
+      ra['loai-' + kk] = { tieuDe: bien ? 'Mảnh $' + bien + '$' : 'Ô số', chu: chu };
+    });
+    var am = k.manh.filter(function (m) { return m.dauNay < 0; })[0];
+    if (am) {
+      var b = texBien(am.g.d.mu) || '1';
+      ra.am = { tieuDe: 'Mảnh âm', chu: 'Viền đỏ đứt là mảnh âm. Một mảnh dương và một mảnh âm cùng loại cộng lại bằng $0$, như $' + b + ' + (-' + b + ') = 0$, nên chúng triệt tiêu nhau.' };
+    }
+    if (k.ngoac.length) ra.ngoac = { tieuDe: 'Dấu trừ trước ngoặc', chu: 'Bớt đi cả đa thức trong ngoặc cũng là thêm số đối của **từng** hạng tử trong đó. Vì vậy mọi mảnh trong ngoặc đều bị lật: dương thành âm, âm thành dương.' };
+    if (k.gop) ra.tong = { tieuDe: 'Kết quả', chu: !hien ? 'Kết quả là điều em cần tự đếm: mỗi hàng cộng mảnh dương, trừ mảnh âm.'
+      : k.ket < 0.5 ? 'Chạy hình tới cuối để xem kết quả.'
+      : 'Sau khi gộp và triệt tiêu còn $' + texDa(k.ketQua) + '$. ' + (voi ? 'Với ' + voi + ', cả hình' : 'Cả hình') + ' có giá trị $' + texDa(k.ketQua) + ' ' + bangT(k.giaTri) + '$.' };
+    return ra;
   };
 
   /* ================= 2. thuaSo: đơn thức là tích các thừa số, mỗi chữ một thẻ ================= */
@@ -480,7 +547,7 @@
           var tich = chia ? dt[j] : nhanDon(hd, cd), kk = khoa(tich.mu);
           if (loai.indexOf(kk) < 0) loai.push(kk);
           var ma = i + ',' + j, k = dem++;
-          o2.push({ i: i, j: j, x: x, y: y, w: rong[j], h: cao[i], tich: tich, s: nhanSai[ma] || chuDon(tich), sai: !!nhanSai[ma], mau: MAU[loai.indexOf(kk) % MAU.length],
+          o2.push({ i: i, j: j, x: x, y: y, w: rong[j], h: cao[i], tich: tich, s: nhanSai[ma] || chuDon(tich), sai: !!nhanSai[ma], mau: MAU[loai.indexOf(kk) % MAU.length], li: loai.indexOf(kk),
             sChia: chia ? chuDon(tich) + ' : ' + chuDon(hd) : null, bo: !!bo[ma], an: !!an[ma], khong: chia && cd.duoc === false, gt: thuc ? rong[j] * cao[i] : null,
             op: chia ? 1 : C.muot((t - (0.35 + 0.4 * k / Math.max(1, n))) / 0.08) });
           x += rong[j];
@@ -519,10 +586,39 @@
       if (!chia) { b.chu(W / 2, -0.75 * co, tenTren, co); b.chu(-0.4 * co, H / 2, tenTrai, co, 'end'); }
       var yTong = H + 1.3 * co;
       b.chu(0, yTong, tong, 1.05 * co, 'start');
+      var pha = phaHcn(p, v, hang, cot, dt, chia);
       return { o: o2, W: W, H: H, co: co, cat: cat, ket: ket, chia: chia, thuc: thuc, canhTren: canhTren, canhTrai: canhTrai, tenTren: tenTren, tenTrai: tenTrai,
-        tong: { s: tren ? '' : tong, y: yTong, duoc: !chia || chiaHet }, khung: b.hop(0.45 * co), dienTich: thuc ? W * H : null };
+        tong: { s: tren ? '' : tong, y: yTong, duoc: !chia || chiaHet }, khung: b.hop(0.45 * co), dienTich: thuc ? W * H : null,
+        hang: hang, cot: cot, dt: dt || null, v: v, pha: pha,
+        phaO: pha.hong ? o2.filter(function (c) { return pha.amHang[c.i] || pha.amCot[c.j]; }) : [] };
     }
   });
+  // Thử phá cho hcnNhan: x âm thì có đoạn cạnh âm, hình không còn là hình chữ nhật thật; nhưng tính lại hai vế vẫn bằng nhau
+  function phaHcn(p, v, hang, cot, dt, chia) {
+    var am = p.dau != null && p.dau < 0, vs = { x: am ? -v.x : v.x, y: v.y, z: v.z };
+    var gt = function (d) { return giaTriDon(d, vs); };
+    var coY = hang.concat(cot, dt || []).some(function (d) { return d.mu.y; });
+    var voi = '$x = ' + soT(vs.x) + '$' + (coY ? ', $y = ' + soT(vs.y) + '$' : '');
+    var nhom = function (ds) { return ds.length > 1 ? '(' + texDa(ds) + ')' : texDon(ds[0]); };
+    var dong;
+    if (chia) {
+      var B = hang[0], S = cong(dt.map(gt)), Q = cong(cot.map(gt));
+      dong = '$' + nhom(dt) + ' : ' + texNgoac(B) + ' = ' + soN(S) + ' : ' + soN(gt(B)) + ' = ' + soT(S / gt(B)) + '$' + (am ? ', và cạnh trên tìm được trên hình, tính lại với $x = ' + soT(vs.x) + '$, cũng bằng $' + soT(Q) + '$' : ', đúng bằng độ dài cạnh trên');
+    } else {
+      var L = cong(hang.map(gt)), T = cong(cot.map(gt)), oS = [];
+      hang.forEach(function (h) { cot.forEach(function (c) { oS.push(gt(h) * gt(c)); }); });
+      dong = '$' + nhom(hang) + nhom(cot) + ' = ' + soN(L) + ' \\cdot ' + soN(T) + ' = ' + soT(L * T) + '$, tổng các mảnh $' + texTong(oS) + ' = ' + soT(cong(oS)) + '$';
+    }
+    var amHang = hang.map(function (d) { return gt(d) < 0; }), amCot = cot.map(function (d) { return gt(d) < 0; }), thay = {}, ds = [];
+    // Phép chia: chỉ nói cạnh đã cho, kẻo lộ các đoạn của cạnh trên (thương) trước khi hình chạy tới
+    (chia ? hang : hang.concat(cot)).forEach(function (d) {
+      var s = '$' + texDon(d) + ' = ' + soT(gt(d)) + '$';
+      if (am && d.mu.x && gt(d) < 0 && !thay[s]) { thay[s] = true; ds.push(s); }
+    });
+    if (!am) return { hong: false, amHang: amHang, amCot: amCot, chu: 'Với ' + voi + ': ' + dong + '.' };
+    return { hong: true, amHang: amHang, amCot: amCot, chu: 'Hình hỏng: với ' + voi + (ds.length ? ', đoạn ' + ds.join(' và ') + ' âm, mà độ dài không thể âm, nên không có hình chữ nhật nào như thế' : '') +
+      '. ' + (chia ? 'Phép chia' : 'Phép nhân') + ' thì không hỏng: ' + dong + '. Quy tắc dựa vào tính chất phân phối nên đúng với mọi $x$; chỉ cách nhìn bằng diện tích mới cần $x > 0$.' };
+  }
   C.lay('hcnNhan').ve = function (svg, k, p, t, o) {
     // o.anNhan: chưa giải thì cạnh cần tìm và dòng tổng ghi dấu ?
     var giau = o && o.anNhan && !p.trangThai;
@@ -530,8 +626,11 @@
     svg.setAttribute('viewBox', k.khung.join(' '));
     // Chưa cắt: cả hình một màu xám
     C.mk('rect', Object.assign({ x: 0, y: 0, width: W, height: H, fill: 'var(--tg)', 'fill-opacity': 0.08 * (1 - cat) }, NET), svg);
+    var nen = svg;
     k.o.forEach(function (c) {
       var hien = k.chia ? 1 : cat;
+      // Mỗi ô (nền và chữ) nằm trong một nhóm để bấm vào đâu trên ô cũng soi được; ô bị bỏ, ô em bỏ sót thì không soi
+      var svg = C.mk('g', { 'data-soi': c.bo || c.an ? null : 'loai' + c.li }, nen);
       if (c.bo || c.an) {
         C.mk('rect', Object.assign({ x: c.x, y: c.y, width: c.w, height: c.h, fill: 'var(--mat)', stroke: 'var(--sai)', 'stroke-width': 1.6, 'stroke-dasharray': '6 4' }, NET), svg);
         viet(svg, c.x + c.w / 2, c.y + c.h / 2, (c.bo ? 'bỏ ' : 'thiếu ') + c.s, 0.85 * co, '--sai', c.bo ? 1 : 1);
@@ -547,6 +646,10 @@
         viet(svg, c.x + c.w / 2, c.y + c.h / 2 + 0.6 * coO, duoi, coO, '--nhat', c.op);
       } else viet(svg, c.x + c.w / 2, c.y + c.h / 2, c.s, Math.min(co, 0.55 * c.h + 0.1, 1.9 * c.w / Math.max(2, c.s.length)), c.sai ? '--sai' : c.khong ? '--sai' : null, c.op);
     });
+    // Thử phá: ô có đoạn cạnh âm thì viền đỏ đứt, vì không có ô nào như thế
+    (k.phaO || []).forEach(function (c) {
+      C.mk('rect', Object.assign({ x: c.x + 0.04 * co, y: c.y + 0.04 * co, width: c.w - 0.08 * co, height: c.h - 0.08 * co, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2.5, 'stroke-dasharray': '7 4' }, NET), svg);
+    });
     // Đường cắt
     if (cat > 0) {
       k.canhTren.slice(1).forEach(function (c) { C.mk('line', Object.assign({ x1: c.x0, y1: 0, x2: c.x0, y2: H * cat, stroke: 'var(--muc)', 'stroke-width': 1.5 }, NET), svg); });
@@ -555,24 +658,85 @@
     C.mk('rect', Object.assign({ x: 0, y: 0, width: W, height: H, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 2 }, NET), svg);
     // Nhãn cạnh: lúc đầu ghi cả thừa số, cắt xong ghi từng đoạn
     var tach = k.chia ? 1 : C.muot((cat - 0.5) / 0.5);
+    var gTren = C.mk('g', { 'data-soi': 'canhTren' }, svg), gTrai = C.mk('g', { 'data-soi': 'canhTrai' }, svg);
     if (!k.chia) {
-      viet(svg, W / 2, -0.75 * co, k.tenTren, co, null, 1 - tach);
-      viet(svg, -0.4 * co, H / 2, k.tenTrai, co, null, 1 - tach, 'end');
+      viet(gTren, W / 2, -0.75 * co, k.tenTren, co, null, 1 - tach);
+      viet(gTrai, -0.4 * co, H / 2, k.tenTrai, co, null, 1 - tach, 'end');
     }
     k.canhTren.forEach(function (c) {
-      C.mk('line', Object.assign({ x1: c.x0, y1: -0.15 * co, x2: c.x0, y2: 0.15 * co, stroke: 'var(--muc)', 'stroke-width': 1.4, opacity: tach }, NET), svg);
-      if (c.sai) viet(svg, c.x, -0.75 * co, c.s, co, '--sai');
-      else if (k.chia) { var lo = giau ? 0 : c.lo; viet(svg, c.x, -0.75 * co, '?', co, '--nhat', 1 - lo); viet(svg, c.x, -0.75 * co, c.s, co, c.khong ? '--sai' : giai ? '--cc' : null, lo); }
-      else viet(svg, c.x, -0.75 * co, c.s, co, null, tach);
+      C.mk('line', Object.assign({ x1: c.x0, y1: -0.15 * co, x2: c.x0, y2: 0.15 * co, stroke: 'var(--muc)', 'stroke-width': 1.4, opacity: tach }, NET), gTren);
+      if (c.sai) viet(gTren, c.x, -0.75 * co, c.s, co, '--sai');
+      else if (k.chia) { var lo = giau ? 0 : c.lo; viet(gTren, c.x, -0.75 * co, '?', co, '--nhat', 1 - lo); viet(gTren, c.x, -0.75 * co, c.s, co, c.khong ? '--sai' : giai ? '--cc' : null, lo); }
+      else viet(gTren, c.x, -0.75 * co, c.s, co, null, tach);
     });
-    k.canhTrai.forEach(function (c) { viet(svg, -0.4 * co, c.y, c.s, co, null, tach, 'end'); });
-    if (k.tong.s) viet(svg, 0, k.tong.y, giau ? '= ?' : k.tong.s, 1.05 * co, giai ? '--cc' : k.tong.duoc ? null : '--sai', k.ket, 'start');
+    k.canhTrai.forEach(function (c) { viet(gTrai, -0.4 * co, c.y, c.s, co, null, tach, 'end'); });
+    if (k.tong.s) viet(C.mk('g', { 'data-soi': 'tong' }, svg), 0, k.tong.y, giau ? '= ?' : k.tong.s, 1.05 * co, giai ? '--cc' : k.tong.duoc ? null : '--sai', k.ket, 'start');
+  };
+  // Soi: cạnh trái, cạnh trên, mỗi nhóm ô cùng màu, dòng tổng.
+  // o.anNhan mà em chưa giải xong: không nói cạnh cần tìm, không nói tổng (thẻ chỉ nói điều đã thấy trên hình và vì sao).
+  C.lay('hcnNhan').soi = function (k, p, o) {
+    var hien = !o.anNhan || p.trangThai === 'giai', v = k.v, ra = {};
+    var gt = function (d) { return giaTriDon(d, v); };
+    var coY = k.hang.concat(k.cot, k.dt || []).some(function (d) { return d.mu.y; });
+    var voi = 'Với $x = ' + soT(v.x) + '$' + (coY ? ', $y = ' + soT(v.y) + '$' : '');
+    var doDai = function (ds) { var g = ds.map(gt); return '$' + texDa(ds) + ' = ' + (ds.length > 1 ? texTong(g) + ' = ' : '') + soT(cong(g)) + '$'; };
+    var doan = function (ds) { return ds.map(function (d) { return '$' + texDon(d) + '$'; }).join(', '); };
+    var canh = function (ds, ten) {
+      if (!k.thuc) return 'Mỗi ' + ten + ' của bảng là một hạng tử: ' + doan(ds) + '. Có hạng tử âm nên các ô vẽ bằng nhau, không theo tỉ lệ.';
+      return (ds.length > 1 ? 'Gồm các đoạn ' + doan(ds) + '. ' : '') + voi + ', cạnh này dài ' + doDai(ds) + '.';
+    };
+    ra.canhTrai = { tieuDe: 'Cạnh trái $' + texDa(k.hang) + '$', chu: k.chia
+      ? 'Cạnh chung của mọi mảnh: mỗi mảnh là hình chữ nhật có một cạnh $' + texDon(k.hang[0]) + '$.' + (k.thuc ? ' ' + voi + ', cạnh này dài ' + doDai(k.hang) + '.' : '')
+      : canh(k.hang, 'hàng') };
+    var daHien = hien && k.canhTren.every(function (c) { return c.lo > 0.5; });
+    ra.canhTren = k.chia
+      ? { tieuDe: 'Cạnh trên', chu: daHien && k.canhTren.every(function (c) { return !c.khong; })
+        ? 'Gồm các đoạn ' + doan(k.cot) + ', mỗi đoạn là diện tích một mảnh chia cho $' + texDon(k.hang[0]) + '$. Cả cạnh là $' + texDa(k.cot) + '$.' + (k.thuc ? ' ' + voi + ', cạnh này dài ' + doDai(k.cot) + '.' : '')
+        : 'Cạnh trên chưa biết. Mỗi mảnh có một cạnh $' + texDon(k.hang[0]) + '$, nên đoạn trên của mảnh là đơn thức nhân với $' + texDon(k.hang[0]) + '$ ra diện tích mảnh.' }
+      : { tieuDe: 'Cạnh trên $' + texDa(k.cot) + '$', chu: canh(k.cot, 'cột') };
+    var nhomLi = {};
+    k.o.forEach(function (c) { if (!c.bo && !c.an) (nhomLi[c.li] = nhomLi[c.li] || []).push(c); });
+    Object.keys(nhomLi).forEach(function (li) {
+      var ds = nhomLi[li], c0 = ds[0], chu;
+      if (k.chia) {
+        var B = k.hang[0], q = k.cot[c0.j], dtj = k.dt[c0.j];
+        chu = 'Diện tích $' + texDon(dtj) + '$, một cạnh $' + texDon(B) + '$. ';
+        if (!(hien && k.canhTren[c0.j].lo > 0.5)) chu += 'Cạnh kia là đơn thức nhân với $' + texDon(B) + '$ ra $' + texDon(dtj) + '$.';
+        else if (q.duoc === false) chu += 'Không có đơn thức nào nhân với $' + texDon(B) + '$ ra $' + texDon(dtj) + '$: số mũ của một biến ở số chia lớn hơn ở mảnh này, nên không chia hết.';
+        else chu += 'Cạnh kia là $' + texDon(dtj) + ' : ' + texNgoac(B) + ' = ' + texDon(q) + '$, vì $' + texDon(B) + ' \\cdot ' + texNgoac(q) + ' = ' + texDon(dtj) + '$.';
+      } else {
+        chu = ds.map(function (c) { return '$' + texDon(k.hang[c.i]) + ' \\cdot ' + texNgoac(k.cot[c.j]) + ' = ' + texDon(c.tich) + '$'; }).join('; ') +
+          '. Diện tích một mảnh bằng tích hai đoạn cạnh của nó.' + (k.thuc ? ' ' + voi + ': ' + ds.map(function (c) { return '$' + soT(gt(c.tich)) + '$'; }).join(', ') + '.' : '');
+        if (ds.length > 1) chu += ' Các mảnh cùng màu có cùng phần biến (đồng dạng)' + (hien ? ', gộp lại được $' + texDa(gon(ds.map(function (c) { return c.tich; }))) + '$.' : ', nên gộp được.');
+      }
+      ra['loai' + li] = { tieuDe: ds.length > 1 ? ds.length + ' mảnh cùng màu' : 'Mảnh $' + texDon(c0.tich) + '$', chu: chu };
+    });
+    if (k.tong.s) {
+      var conLai = k.o.filter(function (c) { return !c.bo && !c.an; }), du = conLai.length === k.o.length, chuT;
+      if (!hien) chuT = k.chia ? 'Thương là điều em cần tìm: chia **từng** mảnh rồi cộng các đoạn.' : 'Tổng là điều em cần tìm: cộng mọi mảnh, gộp các mảnh cùng màu.';
+      else if (k.ket < 0.5) chuT = 'Chạy hình tới cuối để xem ' + (k.chia ? 'thương.' : 'tổng.');
+      else if (k.chia) chuT = 'Thương là tổng các đoạn của cạnh trên: $' + texDa(gon(k.cot)) + '$. Kiểm lại bằng phép nhân: $' + texDon(k.hang[0]) + '(' + texDa(gon(k.cot)) + ') = ' + texDa(k.dt) + '$.';
+      else {
+        var tichs = conLai.map(function (c) { return c.tich; });
+        chuT = 'Cộng các mảnh, gộp các mảnh cùng màu: $' + texDa(gon(tichs)) + '$.';
+        if (k.thuc && du) chuT += ' ' + voi + ': tổng các mảnh bằng $' + soT(cong(tichs.map(gt))) + '$, đúng bằng diện tích cả hình $' + soT(cong(k.hang.map(gt))) + ' \\cdot ' + soT(cong(k.cot.map(gt))) + '$.';
+      }
+      ra.tong = { tieuDe: k.chia ? 'Thương' : 'Tổng các mảnh', chu: chuT };
+    }
+    return ra;
   };
 
   // Cùng cảnh nhưng chỉ có thanh đổi x, cho đề chỉ có một biến (khỏi hiện thanh y thừa)
   var hcn = C.lay('hcnNhan');
   C.dangKi('hcnNhanX', { thamSo: { x: hcn.thamSo.x }, trangThai: hcn.trangThai, tinh: function (p, t, o) { return hcn.tinh(Object.assign({ y: hcn.thamSo.y.md }, p), t, o); } });
   C.lay('hcnNhanX').ve = function (svg, k, p, t, o) { return hcn.ve(svg, k, p, t, o); };
+  C.lay('hcnNhanX').soi = function (k, p, o) { return hcn.soi(k, p, o); };
+  // Cảnh của phần Nhìn bài 4, 5: như hcnNhanX, thêm thanh Thử phá đổi x thành số âm.
+  // Hình vẫn vẽ theo x dương (độ dài không âm được), k.pha tính lại hai vế với x âm.
+  C.dangKi('hcnNhanXPha', { thamSo: { x: hcn.thamSo.x, dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của x', pha: true } }, trangThai: hcn.trangThai,
+    tinh: function (p, t, o) { return hcn.tinh(Object.assign({ y: hcn.thamSo.y.md }, p), t, o); } });
+  C.lay('hcnNhanXPha').ve = function (svg, k, p, t, o) { return hcn.ve(svg, k, p, t, o); };
+  C.lay('hcnNhanXPha').soi = function (k, p, o) { return hcn.soi(k, p, o); };
 
   // Cho test và nội dung dùng lại
   C.daiSo = { docDon: docDon, docDa: docDa, chuDon: chuDon, chuDa: chuDa, nhanDon: nhanDon, chiaDon: chiaDon, gon: gon, giaTri: giaTri, bacDon: bacDon, khoa: khoa };

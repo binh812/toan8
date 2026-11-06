@@ -34,7 +34,7 @@
     nhin: {
       tieuDe: 'Bốn mảnh ghép khít thành một hình vuông', loai: 'chungMinh',
       luuY: 'Hình đúng khi $a$, $b$ dương. Nhân phá ngoặc cho thấy công thức đúng với mọi số.',
-      canh: { ten: 'manhVuong', tuyChon: { dang: 'tong' }, moTa: 'Bốn mảnh a bình phương, hai mảnh ab, b bình phương ghép lại thành hình vuông cạnh a cộng b.',
+      canh: { ten: 'manhVuong', thuPha: true, tuyChon: { dang: 'tong' }, moTa: 'Bốn mảnh a bình phương, hai mảnh ab, b bình phương ghép lại thành hình vuông cạnh a cộng b.',
         dongSo: function (p, f) { var so = function (x) { return f(x).replace(',', '{,}'); };
           return '$\\ca{' + so(p.a * p.a) + '} + \\cc{2 \\cdot ' + so(p.a * p.b) + '} + \\cb{' + so(p.b * p.b) + '} = ' + so((p.a + p.b) * (p.a + p.b)) + ' = (' + so(p.a) + ' + ' + so(p.b) + ')^2$'; } },
       buoc: [
@@ -82,6 +82,13 @@
       }
     },
 
+    mucTieu: [
+      'Nói được vì sao $(a + b)^2 = a^2 + 2ab + b^2$ bằng cách chỉ vào bốn mảnh ghép thành hình vuông.',
+      'Khai triển bình phương của một tổng, bình phương của một hiệu và viết hiệu hai bình phương thành tích.',
+      'Viết biểu thức dạng $A^2 + 2AB + B^2$ thành bình phương của một tổng (dùng hằng đẳng thức theo chiều ngược lại).',
+      'Tính nhanh các số như $99^2$ hay $52 \\cdot 48$ bằng hằng đẳng thức.',
+      'Chỉ ra chỗ sai khi một bạn viết $(a + b)^2 = a^2 + b^2$, bằng cách chỉ vào hai mảnh $ab$ bị bỏ quên.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hằng đẳng thức',
         noiDung: 'Nếu hai biểu thức $A$ và $B$ luôn cùng nhận giá trị bằng nhau **với mọi giá trị của biến** thì ta nói $A = B$ là một **đồng nhất thức** hay một **hằng đẳng thức**.\n\nVí dụ: $a(a-2) = a^2 - 2a$ là hằng đẳng thức (nhân phá ngoặc là thấy).\n\nCòn $a^2 - 1 = 3a$ **không** là hằng đẳng thức: thay $a = 1$ thì vế trái bằng $0$, vế phải bằng $3$.' },
@@ -94,6 +101,20 @@
 
       { loai: 'dinhLi', tieuDe: '2. Bình phương của một tổng',
         noiDung: '$$(\\ca{A}+\\cb{B})^2 = \\ca{A}^2 + \\cc{2\\ca{A}\\cb{B}} + \\cb{B}^2$$\n\nBiến đổi từ vế trái sang vế phải gọi là **khai triển** $(A+B)^2$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $(a + b)^2 = a^2 + 2ab + b^2$?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận (với $a$, $b$ dương). Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        canh: { ten: 'manhVuong', tuyChon: { dang: 'tong' } },
+        buoc: [
+          { id: 'gt', chu: 'Hình vuông cạnh $a + b$ có diện tích $(a + b)^2$.', canh: { t: 1 } },
+          { id: 'cat', chu: 'Cắt mỗi cạnh thành một đoạn $a$ và một đoạn $b$, kẻ hai đường cắt: hình chia thành bốn mảnh.', can: ['gt'], canh: { t: 0.5 } },
+          { id: 'a2', chu: 'Mảnh có hai cạnh đều là $a$ là hình vuông, diện tích $a^2$.', can: ['cat'], canh: { t: 0 } },
+          { id: 'b2', chu: 'Mảnh có hai cạnh đều là $b$ là hình vuông, diện tích $b^2$.', can: ['cat'], canh: { t: 0 } },
+          { id: 'ab', chu: 'Hai mảnh còn lại có một cạnh $a$, một cạnh $b$: mỗi mảnh diện tích $ab$, cả hai là $2ab$.', can: ['cat'], canh: { t: 0 } },
+          { id: 'cong', chu: 'Bốn mảnh ghép khít, không chồng lên nhau, nên diện tích cả hình bằng tổng bốn mảnh: $a^2 + 2ab + b^2$.', can: ['a2', 'b2', 'ab'], canh: { t: 1 } },
+          { id: 'kl', chu: 'Vậy $(a + b)^2 = a^2 + 2ab + b^2$.', can: ['gt', 'cong'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Cùng một hình vuông, tính diện tích hai cách: $(a + b)^2 = a^2 + 2ab + b^2$.'
+      } },
       { loai: 'hinh', widget: 'dienTich', config: hinhTong,
         chuThich: 'Mỗi mảnh màu ứng với một hạng tử: mảnh cam $\\ca{a^2}$, mảnh xanh dương $\\cb{b^2}$ và **hai** mảnh xanh lá, mỗi mảnh $ab$, cộng lại là $\\cc{2ab}$.' },
 

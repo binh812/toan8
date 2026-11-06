@@ -11,7 +11,17 @@
     if (p.trangThai === 'thieuHaiManh') { m[1].an = true; m[2].an = true; }
     if (p.trangThai === 'thieuMotManh') m[2].an = true;
     if (p.trangThai === 'thieuManhB') m[3].an = true;
-    return { a: a, b: b, manh: m, khung: { w: a + b, h: a + b } };
+    return { a: a, b: b, manh: m, khung: { w: a + b, h: a + b }, pha: phaTong(a, b, p.dau) };
+  }
+  // Thử phá: b âm. Hình vẫn vẽ theo b dương; k.pha tính lại hai vế với b âm
+  function so(x) { return String(+x.toFixed(6)).replace('.', '{,}'); }
+  function soN(x) { return x < 0 ? '(' + so(x) + ')' : so(x); }
+  function phaTong(a, b, dau) {
+    var am = dau != null && dau < 0, bs = am ? -b : b, ve = (a + bs) * (a + bs), ab2 = 2 * a * bs;
+    var dong = '$(' + so(a) + ' + ' + soN(bs) + ')^2 = ' + so(ve) + '$ và $a^2 + 2ab + b^2 = ' + so(a * a) + (ab2 < 0 ? ' - ' : ' + ') + so(Math.abs(ab2)) + ' + ' + so(bs * bs) + ' = ' + so(ve) + '$';
+    if (!am) return { hong: false, chu: 'Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: ' + dong + '.' };
+    return { hong: true, chu: 'Hình hỏng: với $b = ' + so(bs) + '$, mảnh $ab = ' + so(a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * bs) + '$ có diện tích âm, mảnh $b^2$ có cạnh âm: không có mảnh nào như thế. ' +
+      'Công thức thì không hỏng: ' + dong + '. Với $b$ âm, $(a + b)^2$ chính là bình phương của một hiệu, $(' + so(a) + ' - ' + so(b) + ')^2$: hình vuông $a^2$ bị cắt bớt hai dải, như hình ở phần Suy ra.' };
   }
   function hieu(p, t) {
     var q = hopLe(p), a = q.a, b = q.b, r = a - b;
@@ -31,7 +41,8 @@
       khung: { w: a + b, h: a }, lo: { x: r, y: r, w: b, h: b, hien: 1 - C.muot(t / 0.2) } };
   }
   C.dangKi('manhVuong', {
-    thamSo: { a: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'Cạnh b', mau: '--b' } },
+    thamSo: { a: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'Cạnh b', mau: '--b' },
+      dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của b', pha: true } },
     trangThai: { thieuHaiManh: true, thieuMotManh: true, thieuManhB: true },
     tinh: function (p, t, o) {
       var dang = (o && o.dang) || 'tong';
@@ -64,17 +75,21 @@
       k.manh.forEach(function (m) {
         // o.anAb: chưa làm thì hai mảnh giữa ghi dấu hỏi, để em tự tính
         var chu = m.ten === 'a2' ? a2 : m.ten === 'b2' ? b2 : o.anAb && t < 1 && !m.an && !p.trangThai ? '?' : ab;
-        if (!m.an) { veManh(svg, m, co, chu); return; }
+        if (!m.an) { veManh(svg, m, co, chu, { 'data-soi': m.ten === 'a2' || m.ten === 'b2' ? m.ten : 'ab' }); return; }
         // Mảnh bị thiếu: chỉ còn viền đứt, để thấy ngay chỗ trống
         C.mk('polygon', { points: C.diem(m.dinh), fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '6 4' }, svg);
         var x = 0, y = 0; m.dinh.forEach(function (q) { x += q[0] / 4; y += q[1] / 4; });
         C.chu(svg, x, y, 'thiếu ' + chu, co * 0.85, '--sai');
       });
-      var g = lech * (1 - C.muot((t - 0.1) / 0.7));
-      C.chu(svg, a / 2, -g - d * 0.35, tenA, co, '--a', nhCanh);
-      C.chu(svg, a + g + b / 2, -g - d * 0.35, tenB, co, '--b', nhCanh);
-      C.chu(svg, -g - d * 0.35, a / 2, tenA, co, '--a', nhCanh);
-      C.chu(svg, -g - d * 0.35, a + g + b / 2, tenB, co, '--b', nhCanh);
+      // Thử phá: mảnh có cạnh b âm thì viền đỏ đứt, vì không có mảnh nào như thế
+      if (k.pha && k.pha.hong) k.manh.forEach(function (m) {
+        if (m.ten !== 'a2' && !m.an) C.mk('polygon', { points: C.diem(m.dinh), fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '7 4' }, svg);
+      });
+      var g = lech * (1 - C.muot((t - 0.1) / 0.7)), gc = C.mk('g', { 'data-soi': 'canh' }, svg);
+      C.chu(gc, a / 2, -g - d * 0.35, tenA, co, '--a', nhCanh);
+      C.chu(gc, a + g + b / 2, -g - d * 0.35, tenB, co, '--b', nhCanh);
+      C.chu(gc, -g - d * 0.35, a / 2, tenA, co, '--a', nhCanh);
+      C.chu(gc, -g - d * 0.35, a + g + b / 2, tenB, co, '--b', nhCanh);
     } else if (dang === 'hieu') {
       veManh(svg, k.manh[0], co, null);
       var r = k.conLai.w;
@@ -106,5 +121,22 @@
       C.chu(svg, (a + b) / 2, -d * 0.35, anCanh ? '?' : nh.tong || (tenA + '+' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
       C.chu(svg, -d * 0.5, xa / 2, anCanh ? '?' : nh.hieu || (tenA + '−' + tenB), co, '--muc', Object.assign({ opacity: ket }, nhCanh));
     }
+  };
+  // Soi (dạng tổng): ba loại mảnh và cạnh hình vuông lớn. Đề đặt tên cạnh riêng (tenA, tenB) thì hình chỉ là mô hình, không ghi số đo.
+  // o.anAb mà em chưa giải: không nói diện tích mảnh giữa.
+  function tex(s) { return String(s).replace(/−/g, '-').replace(/²/g, '^2').replace(/³/g, '^3').replace(/·/g, ' \\cdot '); }
+  C.lay('manhVuong').soi = function (k, p, o) {
+    if ((o.dang || 'tong') !== 'tong') return {};
+    var a = k.a, b = k.b, nh = o.nhan || {}, A = tex(o.tenA || 'a'), B = tex(o.tenB || 'b'), coSo = !o.tenA && !o.tenB;
+    var vab = o.anAb && p.trangThai !== 'giai', ab = tex(nh.ab || (A + B)), a2 = tex(nh.a2 || A + '^2'), b2 = tex(nh.b2 || B + '^2');
+    var voi = function (s, x) { return coSo ? ' Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: $' + s + ' = ' + so(x) + '$.' : ''; };
+    return {
+      a2: { tieuDe: 'Hình vuông $' + a2 + '$', chu: 'Hai cạnh đều là $' + A + '$, nên diện tích là $' + A + ' \\cdot ' + A + ' = ' + a2 + '$.' + voi('a^2', a * a) },
+      b2: { tieuDe: 'Hình vuông $' + b2 + '$', chu: 'Hai cạnh đều là $' + B + '$, nên diện tích là $' + B + ' \\cdot ' + B + ' = ' + b2 + '$.' + voi('b^2', b * b) },
+      ab: { tieuDe: 'Mảnh chữ nhật', chu: vab ? 'Một cạnh bằng cạnh hình vuông $' + a2 + '$, cạnh kia bằng cạnh hình vuông $' + b2 + '$. Diện tích là tích hai cạnh.'
+        : 'Một cạnh $' + A + '$, một cạnh $' + B + '$: diện tích $' + ab + '$.' + voi('ab', a * b) + ' Có **hai** mảnh như thế, một bên phải, một bên dưới, nên trong công thức có $2 \\cdot ' + ab + '$.' },
+      canh: { tieuDe: 'Cạnh hình vuông lớn', chu: 'Mỗi cạnh gồm một đoạn $' + A + '$ và một đoạn $' + B + '$, nên dài $' + A + ' + ' + B + '$. Diện tích hình vuông lớn là $(' + A + ' + ' + B + ')^2$, cũng bằng tổng các mảnh ghép khít bên trong.' +
+        (coSo ? ' Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: $(a + b)^2 = ' + so((a + b) * (a + b)) + '$.' : '') }
+    };
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

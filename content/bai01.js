@@ -78,6 +78,13 @@ TOAN8.bai(anKetQua({
         'Nhân số với số, chữ với chữ: $S = 3x \\cdot 2y = (3 \\cdot 2)(x \\cdot y) = 6xy$']
     }
   },
+  mucTieu: [
+    'Nhận ra một biểu thức có phải đơn thức không, và viết đơn thức ở dạng thu gọn.',
+    'Chỉ ra hệ số, phần biến và tính bậc của một đơn thức thu gọn.',
+    'Nhận ra hai đơn thức đồng dạng bằng cách so phần biến, tức so hình hai khối.',
+    'Cộng, trừ các đơn thức đồng dạng và nói được vì sao phần biến giữ nguyên.',
+    'Tính giá trị của một đơn thức khi biết giá trị của các biến.'
+  ],
   lyThuyet: [
     { loai: 'dinhNghia', tieuDe: 'Đơn thức',
       noiDung: '**Đơn thức** là biểu thức đại số chỉ gồm một số, hoặc một biến, hoặc có dạng tích của những số và biến.\n\nVí dụ: $6xy$; $-5x^2y$; $\\frac{1}{2}$; $z$ là các đơn thức.\n\n$x + 2y$ **không** là đơn thức (có phép cộng). $\\frac{3}{x}$ **không** là đơn thức (có phép chia cho biến).' },

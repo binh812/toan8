@@ -20,7 +20,7 @@ TOAN8.bai(anKetQua({
   nhin: {
     tieuDe: 'Nhân hai đa thức là tính diện tích hình chữ nhật', loai: 'chungMinh',
     luuY: 'Hình chứng minh khi $x$ dương (kéo thanh để đổi $x$): diện tích cả hình bằng tổng diện tích bốn mảnh. Với số bất kì quy tắc vẫn đúng, vì nó chỉ dùng tính chất phân phối: $(x + 2)(x + 3) = x(x + 3) + 2(x + 3)$.',
-    canh: Object.assign(hcn('x+2', 'x+3'), { moTa: 'Hình chữ nhật cạnh x cộng 2 và x cộng 3, cắt thành bốn mảnh: x bình phương, 3x, 2x và 6.',
+    canh: Object.assign(hcn('x+2', 'x+3'), { ten: 'hcnNhanXPha', thuPha: true, moTa:'Hình chữ nhật cạnh x cộng 2 và x cộng 3, cắt thành bốn mảnh: x bình phương, 3x, 2x và 6.',
       dongSo: function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: cả hình $(' + so(x) + ' + 2)(' + so(x) + ' + 3) = ' + so((x + 2) * (x + 3)) + '$; bốn mảnh $' + so(x * x) + ' + ' + so(3 * x) + ' + ' + so(2 * x) + ' + 6 = ' + so(x * x + 5 * x + 6) + '$.'; } }),
     buoc: [
       { t: 0, chu: 'Hình chữ nhật có hai cạnh $x + 2$ và $x + 3$, nên diện tích là $(x + 2)(x + 3)$.' },
@@ -79,6 +79,12 @@ TOAN8.bai(anKetQua({
         '$(x + 2)(x + 3) = x^2 + 3x + 2x + 6 = x^2 + 5x + 6$']
     }
   },
+  mucTieu: [
+    'Nhân hai đơn thức: nhân các hệ số, cộng số mũ của cùng một biến.',
+    'Nhân đơn thức với đa thức, giữ đúng dấu của từng hạng tử.',
+    'Nhân hai đa thức bằng bảng các mảnh: đủ số tích, rồi gộp các tích đồng dạng.',
+    'Nói được vì sao $(x + 2)(x + 3) = x^2 + 5x + 6$ bằng cách chỉ vào bốn mảnh của hình chữ nhật.'
+  ],
   lyThuyet: [
     { loai: 'dinhLi', tieuDe: 'Nhân hai đơn thức',
       noiDung: 'Muốn nhân hai đơn thức, ta nối hai đơn thức với nhau bởi dấu nhân rồi bỏ dấu ngoặc (nếu có) và thu gọn đơn thức nhận được.\n$$3x^2y \\cdot (-2xy^3) = [3 \\cdot (-2)] \\cdot (x^2 \\cdot x) \\cdot (y \\cdot y^3) = -6x^3y^4$$' },

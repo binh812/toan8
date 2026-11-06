@@ -78,6 +78,12 @@ TOAN8.bai(anKetQua({
       loiGiai: ['Có 2 mảnh $x^2$ (cam) và 3 mảnh $xy$ (xanh lá).', 'Chỉ gộp được các mảnh **cùng phần biến**: $S = (x^2 + x^2) + (xy + xy + xy) = 2x^2 + 3xy$.']
     }
   },
+  mucTieu: [
+    'Nhận ra đa thức và các hạng tử của nó, kể cả dấu của từng hạng tử.',
+    'Thu gọn đa thức bằng cách gom các hạng tử đồng dạng, chỉ ra được mảnh dương và mảnh âm nào triệt tiêu nhau.',
+    'Tìm bậc của đa thức sau khi đã thu gọn.',
+    'Tính giá trị của đa thức tại giá trị cho trước của các biến.'
+  ],
   lyThuyet: [
     { loai: 'dinhNghia', tieuDe: 'Đa thức',
       noiDung: '**Đa thức** là tổng của những đơn thức; mỗi đơn thức trong tổng gọi là một **hạng tử** của đa thức đó.\n\nVí dụ: $A = x^3 - 3x^2y + xy - 1$ viết được thành $x^3 + (-3x^2y) + xy + (-1)$, nên $A$ có 4 hạng tử: $x^3$; $-3x^2y$; $xy$; $-1$.\n\n**Chú ý:** Mỗi đơn thức cũng được coi là một đa thức.' },
