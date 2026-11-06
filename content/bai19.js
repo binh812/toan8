@@ -24,11 +24,8 @@
     nhan: ['24', '28', '32', '36', '40'], chuoi: [{ ten: 'Cân nặng (gam)', so: [600, 1000, 1700, 2600, 3500] }], donVi: 'gam' };
 
   // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
-  function hg(c, giai) {
-    var cf = Object.assign({ chiXem: true, t: 1 }, c);
-    if (giai) cf.thamSo = Object.assign({}, cf.thamSo, { trangThai: 'giai' });
-    return { widget: 'canh', config: cf };
-  }
+  // Hình lời giải: trang tự đưa cảnh sang trạng thái 'giai' khi em xem lời giải, nên ở đây không đặt sẵn
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   function bh(tc, them) { return Object.assign({ ten: 'bienHinh', tuyChon: tc }, them || {}); }
   var GIAY_VUN = { nhan: ['8A', '8B', '8C', '8D'], so: [12.7, 16.8, 15.5, 14.3], don: 'kg', den: 'cot', moi: 1, voNghia: true };
   var KHACH_SAN = { nhan: ['Rất tốt', 'Tốt', 'Trung bình', 'Kém'], so: [6, 22, 8, 4], don: 'khách', den: 'bang', giai: 'bang', thuoc: '%', hoi: 1 };
@@ -68,6 +65,7 @@
               if (v <= 0 || v > 100) return { t: 1, loi: 'Tỉ lệ phần trăm phải lớn hơn $0$ và không quá $100$.' };
               return { t: 1, loi: 'Nếu "Tốt" chiếm $' + soVN(v) + '\\%$ thì có $40 \\cdot ' + soVN(v) + '\\% = ' + soVN(0.4 * v) + '$ khách, mà đề cho $22$ khách.' };
             },
+            phanUng: [{ gt: 22, loi: '$22$ là số khách chọn "Tốt". Đề hỏi **phần trăm**: đoạn "Tốt" chiếm bao nhiêu phần của cả băng $40$ khách?' }],
             dungChu: 'Đoạn "Tốt" dài $22$ trên $40$ phần của băng: $\\frac{22}{40} \\cdot 100\\% = 55\\%$.',
             saiChu: 'Cả băng là $40$ khách, tức $100\\%$. Đoạn "Tốt" dài $22$ phần: chia $22$ cho $40$.' },
           { tuBai: '19.6', canh: bh({ nhan: ['Cam', 'Xoài', 'Bưởi', 'Nho'], so: [100, 60, 50, 40], don: 'kg', nguoc: true, thuoc: { tong: 250, don: 'kg' }, hoi: 1, anLucDau: true },
@@ -156,7 +154,7 @@
         { lam: 'Bảng: Lê $60$ | Táo $90$ | Nhãn $120$ | Nho $30$ (kg). Từ bảng này em vẽ được biểu đồ cột.', vi: 'Đây là **chuyển dữ liệu** từ biểu đồ quạt tròn → bảng → biểu đồ cột.' } ] },
       { de: 'Mật độ dân số (người/km²) của ba vùng năm 2009 và năm 2019 được cho trong bảng dưới đây. Muốn biết sau 10 năm mật độ dân số **thay đổi thế nào ở mỗi vùng**, nên dùng biểu đồ nào?',
         hinh: { widget: 'bieuDo', config: { loai: 'cotKep', tieuDe: 'Mật độ dân số (người/km²)', hienBang: true, tenNhan: 'Vùng',
-          nhan: ['ĐB sông Hồng', 'Bắc Trung Bộ – DH miền Trung', 'ĐB sông Cửu Long'], chuoi: [{ ten: 'Năm 2009', so: [930, 196, 424] }, { ten: 'Năm 2019', so: [1060, 211, 423] }], donVi: 'người/km²' } },
+          nhan: ['ĐB sông Hồng', 'Bắc Trung Bộ và Duyên hải miền Trung', 'ĐB sông Cửu Long'], chuoi: [{ ten: 'Năm 2009', so: [930, 196, 424] }, { ten: 'Năm 2019', so: [1060, 211, 423] }], donVi: 'người/km²' } },
         buoc: [
         { lam: 'Ta có **hai tập dữ liệu** (năm 2009 và năm 2019) cần đặt cạnh nhau để so sánh.', vi: 'Mỗi vùng có hai số liệu: một của năm 2009, một của năm 2019.' },
         { lam: 'Nên dùng **biểu đồ cột kép**.', vi: 'Biểu đồ cột kép đặt hai cột của cùng một vùng cạnh nhau: nhìn là thấy vùng nào tăng, vùng nào giảm.' } ] }
@@ -216,13 +214,13 @@
         loiGiai: ['Xoài chiếm $24\\%$.', 'Số xoài bán được: $250 \\cdot 24\\% = 250 \\cdot \\frac{24}{100} = 60$'],
         loiThuongGap: [{ gt: 24, giaiThich: '$24$ là **tỉ lệ phần trăm**. Muốn ra kilôgam phải nhân với tổng: $250 \\cdot 24\\%$.' }] },
 
-      { id: '19.7', hinhGiai: hg(bh(KHACH_SAN), true), muc: 2, de: 'Một khách sạn hỏi $40$ khách về chất lượng dịch vụ: Rất tốt $6$ người, Tốt $22$ người, Trung bình $8$ người, Kém $4$ người. Nếu vẽ biểu đồ hình quạt tròn thì phần "Tốt" chiếm bao nhiêu phần trăm?',
+      { id: '19.7', hinhGiai: hg(bh(Object.assign({ anLucDau: true }, KHACH_SAN))), muc: 2, de: 'Một khách sạn hỏi $40$ khách về chất lượng dịch vụ: Rất tốt $6$ người, Tốt $22$ người, Trung bình $8$ người, Kém $4$ người. Nếu vẽ biểu đồ hình quạt tròn thì phần "Tốt" chiếm bao nhiêu phần trăm?',
         dapAn: { kieu: 'so', gt: 55 },
         goiY: ['Tổng số khách là $40$.', 'Tỉ lệ $= \\frac{22}{40} \\cdot 100\\%$.'],
         loiGiai: ['Tổng: $6 + 22 + 8 + 4 = 40$ khách.', 'Tỉ lệ "Tốt": $\\frac{22}{40} \\cdot 100\\% = 55\\%$'],
         loiThuongGap: [{ gt: 22, giaiThich: '$22$ là số khách. Tỉ lệ phần trăm là $\\frac{22}{40} \\cdot 100\\%$.' }] },
 
-      { id: '19.8', hinhGiai: hg(bh(GIAY_VUN), true), muc: 2, de: 'Khối lượng giấy vụn các lớp thu gom được: 8A $12{,}7$ kg; 8B $16{,}8$ kg; 8C $15{,}5$ kg; 8D $14{,}3$ kg. Nên chọn biểu đồ nào để biểu diễn bảng này?',
+      { id: '19.8', hinhGiai: hg(bh(GIAY_VUN)), muc: 2, de: 'Khối lượng giấy vụn các lớp thu gom được: 8A $12{,}7$ kg; 8B $16{,}8$ kg; 8C $15{,}5$ kg; 8D $14{,}3$ kg. Nên chọn biểu đồ nào để biểu diễn bảng này?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Biểu đồ tranh', 'Biểu đồ cột', 'Biểu đồ đoạn thẳng', 'Biểu đồ hình quạt tròn'] },
         goiY: ['Số liệu là số thập phân – vẽ tranh được không?', 'Số liệu thay đổi theo lớp hay theo thời gian?'],
         loiGiai: ['Số thập phân nên biểu đồ tranh không phù hợp.', 'Dữ liệu thay đổi theo **lớp**, không theo thời gian → không dùng đoạn thẳng.', 'Ta muốn so sánh khối lượng giữa các lớp → **biểu đồ cột**.'] },
@@ -239,13 +237,13 @@
         loiGiai: ['Tuần 40: $3\\,500$ g; tuần 28: $1\\,000$ g.', '$3\\,500 : 1\\,000 = 3{,}5$'],
         loiThuongGap: [{ gt: 2500, giaiThich: '$3\\,500 - 1\\,000 = 2\\,500$ g là **nặng hơn bao nhiêu**. Đề hỏi **gấp bao nhiêu lần**: phép chia.' }] },
 
-      { id: '19.11', hinhGiai: hg({ ten: 'chongThe', tuyChon: { the: DU_DOAN_20, nhom: ['A', 'B', 'C', 'D'], hoi: 'B' } }, true), muc: 3, de: 'Bình hỏi $20$ bạn dự đoán đội vô địch giải bóng đá khối 8 và ghi được: A, B, A, C, A, A, B, D, A, B, A, C, A, B, A, D, A, B, C, A. Nếu vẽ biểu đồ hình quạt tròn thì phần ứng với **đội B** chiếm bao nhiêu phần trăm?',
+      { id: '19.11', hinhGiai: hg({ ten: 'chongThe', tuyChon: { the: DU_DOAN_20, nhom: ['A', 'B', 'C', 'D'], hoi: 'B', anLucDau: true } }), muc: 3, de: 'Bình hỏi $20$ bạn dự đoán đội vô địch giải bóng đá khối 8 và ghi được: A, B, A, C, A, A, B, D, A, B, A, C, A, B, A, D, A, B, C, A. Nếu vẽ biểu đồ hình quạt tròn thì phần ứng với **đội B** chiếm bao nhiêu phần trăm?',
         dapAn: { kieu: 'so', gt: 25 },
         goiY: ['Lập bảng: đếm số lần mỗi chữ A, B, C, D xuất hiện.', 'Tỉ lệ đội B = (số lần B) : $20 \\cdot 100\\%$.'],
         loiGiai: ['Bảng thống kê: A: $10$; B: $5$; C: $3$; D: $2$ (tổng $20$).', 'Tỉ lệ dự đoán đội B: $\\frac{5}{20} \\cdot 100\\% = 25\\%$'],
         loiThuongGap: [{ gt: 5, giaiThich: '$5$ là số bạn chọn B. Tỉ lệ là $\\frac{5}{20} \\cdot 100\\%$.' }, { gt: 50, giaiThich: '$50\\%$ là tỉ lệ của **đội A** ($10$ bạn). Em đếm lại số chữ B.' }] },
 
-      { id: '19.12', hinhGiai: hg(bh({ nhan: ['Đoàn Kết', 'Bình Minh', 'Hoà Bình'], so: [13, 47, 183], moi: 5, don: 'học sinh', den: 'tranh' })), muc: 3, de: 'Số học sinh ba trường đăng kí giải chạy việt dã: Đoàn Kết $13$, Bình Minh $47$, Hoà Bình $183$. Nếu vẽ biểu đồ tranh, mỗi biểu tượng ứng với $5$ học sinh (phần lẻ vẫn vẽ thêm một biểu tượng bị cắt) thì phải vẽ tất cả bao nhiêu biểu tượng?',
+      { id: '19.12', hinhGiai: hg(bh({ nhan: ['Đoàn Kết', 'Bình Minh', 'Hoà Bình'], so: [13, 47, 183], moi: 5, don: 'học sinh', den: 'tranh', demBT: true })), muc: 3, de: 'Số học sinh ba trường đăng kí giải chạy việt dã: Đoàn Kết $13$, Bình Minh $47$, Hoà Bình $183$. Nếu vẽ biểu đồ tranh, mỗi biểu tượng ứng với $5$ học sinh (phần lẻ vẫn vẽ thêm một biểu tượng bị cắt) thì phải vẽ tất cả bao nhiêu biểu tượng?',
         dapAn: { kieu: 'so', gt: 50 },
         goiY: ['Đoàn Kết: $13 : 5 = 2{,}6$ → cần $3$ biểu tượng (2 nguyên + 1 bị cắt).', 'Làm tương tự với Bình Minh và Hoà Bình rồi cộng lại.'],
         loiGiai: ['Đoàn Kết: $13 : 5 = 2{,}6$ → $3$ biểu tượng.', 'Bình Minh: $47 : 5 = 9{,}4$ → $10$ biểu tượng.', 'Hoà Bình: $183 : 5 = 36{,}6$ → $37$ biểu tượng.', 'Tổng: $3 + 10 + 37 = 50$ biểu tượng. Quá nhiều và nhiều biểu tượng bị cắt → nên dùng **biểu đồ cột**.'],

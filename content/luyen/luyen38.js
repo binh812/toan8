@@ -9,9 +9,9 @@
   }
   // Hình giải theo chính số của đề (js/canh/hinhChop.js): trải phẳng thành hình chữ nhật p × d, hoặc đổ nước sang lăng trụ cùng đáy, cùng cao
   function sv(x) { return String(Math.round(x * 100) / 100).replace('.', ','); }
-  function trai(a, d, ten, dong) { return { widget: 'canh', config: { ten: 'traiChop', tuyChon: { n: 3, ten: ten, dong: dong }, thamSo: { a: a, d: d }, chiXem: true, t: 1 } }; }
+  function trai(a, d, ten, dong, them, t) { return { widget: 'canh', config: { ten: 'traiChop', tuyChon: Object.assign({ n: 3, ten: ten, dong: dong }, them || {}), thamSo: { a: a, d: d }, chiXem: true, t: t == null ? 1 : t } }; }
   function nuoc(a, h, ten, ghiDay) { return { widget: 'canh', config: { ten: 'doNuoc', tuyChon: { n: 3, ten: ten, ghiDay: ghiDay }, thamSo: { a: a, h: h }, chiXem: true, t: 1 } }; }
-  var VAT = ['Một chiếc chóp trang trí', 'Một chiếc đèn ngủ', 'Một hộp quà', 'Một mô hình kim tự tháp mini'];
+  var VAT = ['Một chiếc chóp trang trí', 'Một chiếc đèn ngủ', 'Một hộp quà', 'Một khối chặn giấy'];
 
   TOAN8.luyen(38, [
     { ten: 'Diện tích xung quanh', muc: 1, sinh: function (r, cc) {
@@ -69,6 +69,7 @@
       return {
         de: vat[0] + ' có dạng hình chóp tam giác đều, cạnh đáy $' + a + '$ ' + vat[2] + ', cạnh bên $' + l + '$ ' + vat[2] + '. Tính ' + vat[1] + ' (' + vat[3] + ', coi mép nối không đáng kể).',
         hinh: hinh(a, d),
+        hinhGiai: trai(a, d, { a: String(a), l: String(l), nua: String(nua), d: String(d), p: sv(1.5 * a) }, null, { soi: 'SAM', anD: true }, 0.45),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Mỗi mặt bên là tam giác cân có cạnh bên $' + l + '$, đáy $' + a + '$. Trung đoạn là đường cao của tam giác cân đó, chia đôi cạnh đáy.', 'Tính trung đoạn $d = \\sqrt{' + l + '^2 - ' + nua + '^2}$ rồi dùng $S_{xq} = p \\cdot d$.'],
         loiGiai: ['Trung đoạn $d = \\sqrt{' + l + '^2 - ' + nua + '^2} = \\sqrt{' + (l * l - nua * nua) + '} = ' + d + '$ (' + vat[2] + ').',
@@ -83,6 +84,7 @@
       return {
         de: vat + ' có dạng hình chóp tam giác đều, **tất cả các cạnh** đều dài $' + a + '$ cm. Người ta dán giấy màu kín ba mặt bên. Tính diện tích giấy cần dùng (cm²), **làm tròn đến hàng đơn vị**.',
         hinh: hinh(a, d),
+        hinhGiai: trai(a, d, { a: String(a), l: String(a), nua: sv(a / 2), d: '≈' + sv(d), p: sv(1.5 * a) }, null, { soi: 'SAM', anD: true }, 0.45),
         dapAn: { kieu: 'so', gt: lam, saiSo: 0.5 },
         goiY: ['Mỗi mặt bên là tam giác **đều** cạnh $' + a + '$. Trung đoạn là đường cao của tam giác đều đó.', 'Trung đoạn $d = \\sqrt{' + a + '^2 - ' + a / 2 + '^2}$, rồi $S_{xq} = p \\cdot d$ với $p = \\frac{3 \\cdot ' + a + '}{2}$.'],
         loiGiai: ['$d = \\sqrt{' + a + '^2 - ' + a / 2 + '^2} = \\sqrt{' + (a * a - a * a / 4) + '} \\approx ' + cc.so(Math.round(d * 100) / 100) + '$ (cm).',

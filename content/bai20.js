@@ -109,11 +109,8 @@
     nhan: ['2017', '2018', '2019', '2020'], chuoi: [{ ten: 'Việt Nam', so: [13, 14, 16, 15] }, { ten: 'Thái Lan', so: [25, 22, 18, 13] }], donVi: '%' };
 
   // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
-  function hg(c, giai) {
-    var cf = Object.assign({ chiXem: true, t: 1 }, c);
-    if (giai) cf.thamSo = Object.assign({}, cf.thamSo, { trangThai: 'giai' });
-    return { widget: 'canh', config: cf };
-  }
+  // Hình lời giải: trang tự đưa cảnh sang trạng thái 'giai' khi em xem lời giải, nên ở đây không đặt sẵn
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   function soVN(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
   var KHA_GIOI = { nhan: ['2019 – 2020', '2020 – 2021'], so: [81, 82], goc: 80, dinh: 84, don: '%', hoi: [1, 0], tenCot: ['vàng', 'xanh'] };
   var THI_DUA = { nhan: ['2021', '2022'], so: [84, 92], goc: 80, dinh: 96, don: 'điểm', hoi: [1, 0], nguoc: true };
@@ -141,7 +138,7 @@
         moiThu: 'Đo phần cột nằm trên gốc $80$. Nếu gõ sai, hình sẽ dựng một cột nét đứt cao đúng số lần em gõ để em so với cột 2022.',
         phanUng: [
           { gt: 1.1, trangThai: 'goc0', loi: '$1{,}1$ là tỉ lệ **số liệu** $92 : 84$, đúng khi trục bắt đầu từ $0$ như hình bên. Đề hỏi chiều cao cột trên biểu đồ gốc $80$.' },
-          { gt: 8, loi: '$8$ là $92 - 84$: cột 2022 cao hơn bao nhiêu điểm, chưa phải gấp bao nhiêu lần. Trên gốc $80$, cột 2021 chỉ cao $84 - 80 = 4$ phần.' }
+          { gt: 8, t: 0, loi: '$8$ là $92 - 84$: cột 2022 cao hơn bao nhiêu điểm, chưa phải gấp bao nhiêu lần. Trên gốc $80$, cột 2021 chỉ cao $84 - 80 = 4$ phần.' }
         ],
         soBatKi: function (v) {
           if (v <= 0) return { t: 1, loi: 'Số lần phải lớn hơn $0$.' };
@@ -216,7 +213,7 @@
 
     viDu: [
       { de: 'Một biểu đồ cột có gốc trục đứng là $86$ biểu diễn tỉ lệ học sinh đạt yêu cầu: năm 2021 là $88\\%$, năm 2022 là $90\\%$. So sánh tỉ lệ chiều cao hai cột với tỉ lệ hai số liệu.',
-        canh: { ten: 'catTruc', tuyChon: { nhan: ['2021', '2022'], so: [88, 90], goc: 86, dinh: 92, don: '%', hoi: [1, 0] } },
+        canh: { ten: 'catTruc', tuyChon: { nhan: ['2021', '2022'], so: [88, 90], goc: 86, dinh: 94, don: '%', hoi: [1, 0], anLucDau: true } },
         buoc: [
         { canh: { t: 1 }, lam: 'Cột năm 2021 cao $88 - 86 = 2$; cột năm 2022 cao $90 - 86 = 4$ (đơn vị chia).', vi: 'Gốc là $86$ nên chiều cao cột chỉ ứng với **phần vượt trên 86**.' },
         { canh: { t: 1, trangThai: 'giai' }, lam: 'Cột 2022 cao gấp $4 : 2 = 2$ lần cột 2021.', vi: 'Nhìn biểu đồ, người xem dễ tưởng tỉ lệ đạt yêu cầu tăng gấp đôi.' },
@@ -272,7 +269,7 @@
         loiGiai: ['Năm 2021: $8$ nghìn; năm 2022: $30$ nghìn lượt khách.', '$30 - 8 = 22$'],
         loiThuongGap: [{ gt: 38, giaiThich: '$30 + 8 = 38$ là tổng hai năm. Đề hỏi **nhiều hơn bao nhiêu**: phép trừ.' }] },
 
-      { id: '20.3', hinhGiai: hg({ ten: 'catTruc', tuyChon: PHE_LIEU }, true), muc: 1, de: 'Biểu đồ cho biết số tiền mỗi bạn có được nhờ bán phế liệu. Bạn Tâm nói: "Số tiền của Tuyết gấp đôi số tiền của Khánh, vì cột của Tuyết cao gấp đôi." Bạn Tâm nói đúng hay sai?',
+      { id: '20.3', hinhGiai: hg({ ten: 'catTruc', tuyChon: them(PHE_LIEU, { anLucDau: true }) }), muc: 1, de: 'Biểu đồ cho biết số tiền mỗi bạn có được nhờ bán phế liệu. Bạn Tâm nói: "Số tiền của Tuyết gấp đôi số tiền của Khánh, vì cột của Tuyết cao gấp đôi." Bạn Tâm nói đúng hay sai?',
         hinh: cotGoc({ tieuDe: 'Tiền bán phế liệu (gốc 200)', nhan: ['An', 'Bình', 'Tuyết', 'Khánh', 'Hải'], so: [225, 250, 290, 245, 340], goc: 200, dinh: 360, buoc: 20, donVi: 'nghìn đồng' }),
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Gốc trục đứng của biểu đồ là bao nhiêu?', 'Đọc số tiền của Tuyết và Khánh rồi chia.'],
@@ -284,14 +281,14 @@
         goiY: ['Tìm màu của "Ăn uống" trong chú giải.', 'Đọc số phần trăm ghi trên hình quạt đó.'],
         loiGiai: ['Theo chú giải, hình quạt màu xanh dương là Ăn uống, ghi $40\\%$.'] },
 
-      { id: '20.5', hinhGiai: hg({ ten: 'bienHinh', tuyChon: { nhan: ['Ăn uống', 'Học tập', 'Điện nước', 'Khác'], so: [40, 20, 15, 25], don: 'triệu đồng', nguoc: true, thuoc: { tong: 15 }, hoi: 1 } }, true), muc: 2, de: 'Gia đình ở câu trên chi tiêu tất cả $15$ triệu đồng một tháng. Khoản **Học tập** là bao nhiêu triệu đồng?',
+      { id: '20.5', hinhGiai: hg({ ten: 'bienHinh', tuyChon: { nhan: ['Ăn uống', 'Học tập', 'Điện nước', 'Khác'], so: [40, 20, 15, 25], don: 'triệu đồng', nguoc: true, thuoc: { tong: 15 }, hoi: 1, anLucDau: true } }), muc: 2, de: 'Gia đình ở câu trên chi tiêu tất cả $15$ triệu đồng một tháng. Khoản **Học tập** là bao nhiêu triệu đồng?',
         hinh: { widget: 'bieuDo', config: chiTieu },
         dapAn: { kieu: 'so', gt: 3 },
         goiY: ['Đọc tỉ lệ của Học tập trên biểu đồ.', 'Số tiền = tổng × tỉ lệ $= 15 \\cdot 20\\%$.'],
         loiGiai: ['Học tập chiếm $20\\%$.', 'Số tiền: $15 \\cdot 20\\% = 15 \\cdot \\frac{20}{100} = 3$'],
         loiThuongGap: [{ gt: 20, giaiThich: '$20$ là tỉ lệ phần trăm. Số tiền là $15 \\cdot 20\\% = 3$ triệu đồng.' }, { gt: 0.75, giaiThich: 'Em lấy $15 : 20$ rồi. Biết tổng và tỉ lệ thì **nhân**: $15 \\cdot \\frac{20}{100} = 3$.' }] },
 
-      { id: '20.6', hinhGiai: hg({ ten: 'catTruc', tuyChon: THI_DUA }, true), muc: 2, de: 'Biểu đồ cột có gốc trục đứng là $80$ biểu diễn điểm trung bình thi đua của lớp 8A: năm 2021 là $84$, năm 2022 là $92$. Trên biểu đồ, cột năm 2022 cao gấp bao nhiêu lần cột năm 2021?',
+      { id: '20.6', hinhGiai: hg({ ten: 'catTruc', tuyChon: them(THI_DUA, { anLucDau: true }) }), muc: 2, de: 'Biểu đồ cột có gốc trục đứng là $80$ biểu diễn điểm trung bình thi đua của lớp 8A: năm 2021 là $84$, năm 2022 là $92$. Trên biểu đồ, cột năm 2022 cao gấp bao nhiêu lần cột năm 2021?',
         hinh: cotGoc({ tieuDe: 'Điểm thi đua lớp 8A (gốc 80)', nhan: ['2021', '2022'], so: [84, 92], goc: 80, dinh: 96, buoc: 4, donVi: 'điểm', mau: [VANG, XANH] }),
         dapAn: { kieu: 'so', gt: 3 },
         goiY: ['Chiều cao cột chỉ tính phần **trên gốc** $80$.', 'Cột 2021 cao $84 - 80$, cột 2022 cao $92 - 80$.'],
@@ -311,20 +308,20 @@
         goiY: ['Đọc các cột màu cam (Thái Lan) theo thứ tự năm.', 'Bấm **Biểu đồ đoạn thẳng** để thấy xu thế rõ hơn.'],
         loiGiai: ['Thái Lan: $25\\% \\to 22\\% \\to 18\\% \\to 13\\%$.', 'Năm sau luôn thấp hơn năm trước → **giảm liên tục**.'] },
 
-      { id: '20.9', hinhGiai: hg({ ten: 'soVoiCu', tuyChon: DOANH_THU }, true), muc: 2, de: 'Doanh thu (tỉ đồng) của một nhà máy được cho trong biểu đồ. Từ năm 2017 đến năm 2021 doanh thu tăng bao nhiêu phần trăm?',
+      { id: '20.9', hinhGiai: hg({ ten: 'soVoiCu', tuyChon: them(DOANH_THU, { anLucDau: true }) }), muc: 2, de: 'Doanh thu (tỉ đồng) của một nhà máy được cho trong biểu đồ. Từ năm 2017 đến năm 2021 doanh thu tăng bao nhiêu phần trăm?',
         hinh: { widget: 'bieuDo', config: { loai: 'duong', tieuDe: 'Doanh thu của nhà máy', nhan: ['2017', '2018', '2019', '2020', '2021'], chuoi: [{ ten: 'Doanh thu', so: [32, 34, 35, 37, 40] }], donVi: 'tỉ đồng' } },
         dapAn: { kieu: 'so', gt: 25 },
         goiY: ['Đọc doanh thu năm 2017 (giá trị cũ) và năm 2021 (giá trị mới).', 'Mức tăng = (mới − cũ) : cũ $\\cdot\\, 100\\%$.'],
         loiGiai: ['Năm 2017: $32$ tỉ; năm 2021: $40$ tỉ đồng. Tăng $40 - 32 = 8$ tỉ.', 'Tỉ lệ tăng: $\\frac{8}{32} \\cdot 100\\% = 25\\%$'],
         loiThuongGap: [{ gt: 20, giaiThich: 'Em chia cho $40$. Phải chia cho **giá trị cũ** $32$: $\\frac{8}{32} = 25\\%$.' }, { gt: 8, giaiThich: '$8$ tỉ đồng là mức tăng; đề hỏi tăng bao nhiêu **phần trăm**.' }] },
 
-      { id: '20.10', hinhGiai: hg({ ten: 'bienHinh', tuyChon: { nhan: ['Rừng năm 2018', 'Rừng thêm', 'Đất khác'], so: [52, 3, 45], don: 'km²', den: 'bang', giai: 'bang', thuoc: { tong: 4860, don: 'km²' }, hoi: 1, ptTrong: true, tongChu: 'Cả băng: đất của tỉnh, 4 860 km²' } }, true), muc: 3, de: 'Một tỉnh có diện tích đất là $4\\,860$ km². Biểu đồ cho biết tỉ lệ đất rừng của tỉnh năm 2018 là $52\\%$, năm 2022 là $55\\%$. Diện tích đất rừng năm 2022 nhiều hơn năm 2018 bao nhiêu kilômét vuông?',
+      { id: '20.10', hinhGiai: hg({ ten: 'bienHinh', tuyChon: { nhan: ['Rừng năm 2018', 'Rừng thêm', 'Đất khác'], so: [52, 3, 45], don: 'km²', den: 'bang', giai: 'bang', thuoc: { tong: 4860, don: 'km²' }, hoi: 1, ptTrong: true, anLucDau: true, tongChu: 'Cả băng: đất của tỉnh, 4 860 km²' } }), muc: 3, de: 'Một tỉnh có diện tích đất là $4\\,860$ km². Biểu đồ cho biết tỉ lệ đất rừng của tỉnh năm 2018 là $52\\%$, năm 2022 là $55\\%$. Diện tích đất rừng năm 2022 nhiều hơn năm 2018 bao nhiêu kilômét vuông?',
         dapAn: { kieu: 'so', gt: 145.8 },
         goiY: ['Tính diện tích rừng mỗi năm: tổng × tỉ lệ.', 'Hoặc nhanh hơn: tỉ lệ tăng $55\\% - 52\\% = 3\\%$, rồi lấy $4\\,860 \\cdot 3\\%$.'],
         loiGiai: ['Năm 2018: $4\\,860 \\cdot 52\\% = 2\\,527{,}2$ (km²).', 'Năm 2022: $4\\,860 \\cdot 55\\% = 2\\,673$ (km²).', 'Nhiều hơn: $2\\,673 - 2\\,527{,}2 = 145{,}8$'],
         loiThuongGap: [{ gt: 3, giaiThich: '$3$ là chênh lệch **tỉ lệ** ($3\\%$). Diện tích chênh lệch là $4\\,860 \\cdot 3\\%$.' }] },
 
-      { id: '20.11', hinhGiai: hg({ ten: 'trucNgang', tuyChon: CLB }, true), muc: 3, de: 'Biểu đồ đoạn thẳng về số thành viên một câu lạc bộ có trục ngang chia **đều** từng mốc dù các năm cách nhau không đều. Trung bình mỗi năm từ 2018 đến 2022 số thành viên tăng bao nhiêu người?',
+      { id: '20.11', hinhGiai: hg({ ten: 'trucNgang', tuyChon: them(CLB, { anLucDau: true }) }), muc: 3, de: 'Biểu đồ đoạn thẳng về số thành viên một câu lạc bộ có trục ngang chia **đều** từng mốc dù các năm cách nhau không đều. Trung bình mỗi năm từ 2018 đến 2022 số thành viên tăng bao nhiêu người?',
         hinh: duongLech(doanhThuLech),
         dapAn: { kieu: 'so', gt: 2 },
         goiY: ['Từ 2018 đến 2022 là mấy năm?', 'Lấy mức tăng $34 - 26$ chia cho số năm.'],

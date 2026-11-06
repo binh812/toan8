@@ -152,7 +152,7 @@
         { diem: [M, Y, A], ten: [null, 'Y', 'A'], lechTen: [null, [-0.9, 0], null], canh: [null, an('5,5', '?'), null], goc: [{ mau: '--a' }, { vuong: true, mau: '--muc', r: 0.5 }, null] }],
         them: [{ k: 'doan', a: [-0.5, 0], b: [17.5, 0], mau: '--nhat', day: 2 }, { k: 'doan', a: [0, 0], b: M, mau: '--b', day: 4 },
           { k: 'doan', a: [1.5, 0], b: X, mau: '--nhat', day: 4 }, { k: 'doan', a: [16.5, 0], b: Y, mau: '--cc', day: 5 },
-          { k: 'chu', p: [9, -0.9], s: '15 m' }, { k: 'chu', p: [0.75, -0.9], s: '1,5' }, { k: 'chu', p: [-1, 0.75 * D], s: '1,5' }],
+          { k: 'chu', p: [9, -0.9], s: '15 m' }, { k: 'chu', p: [0.75, -0.9], s: '1,5' }, { k: 'chu', p: [-1.3, 0.3 * D], s: '1,5' }, { k: 'chu', p: [3.2, 0.9 * D], s: 'cọc 2 m' }],
         di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }], loiCuoi: [{ s: 'h = AY + 1,5', hien: [0.9, 1] }], thu: { goc: [17.1, 0], huong: [0, 1], ten: 'h', tiLe: D } } };
   }
   // 36.8 (đổi câu hỏi): AH = 8, BH = 6, tính CH; tam giác HBA quay quanh H rồi phóng thành HAC
@@ -179,7 +179,7 @@
       ketLuan: 'Hai tam giác vuông có một góc nhọn bằng nhau thì đồng dạng. Với đường cao $AH$: $$\\triangle HBA \\backsim \\triangle ABC \\backsim \\triangle HAC$$ nên $AB^2 = BH \\cdot BC$, $AC^2 = CH \\cdot BC$, $AH^2 = BH \\cdot CH$.',
       dung: {
         tieuDe: 'Đường cao dài bao nhiêu?', tuBai: '36.7',
-        de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $BH = 3{,}6$ cm, $CH = 6{,}4$ cm. Tính $AH$ (cm).',
+        de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $BH = 3{,}6$ cm, $CH = 6{,}4$ cm. Tính $AH$ (cm). *(Bài 36.7, chỉ hỏi $AH$.)*',
         dapAn: { kieu: 'so', gt: 4.8 },
         goiY: ['Quay tam giác $HBA$ quanh $H$ một góc vuông: nó nằm trong tam giác $HAC$, hai tam giác đồng dạng.', 'Từ $\\triangle HBA \\backsim \\triangle HAC$: $\\frac{HB}{HA} = \\frac{HA}{HC}$, nên $AH^2 = BH \\cdot CH$.'],
         loiGiai: ['$\\triangle HBA \\backsim \\triangle HAC$ nên $AH^2 = BH \\cdot CH = 3{,}6 \\cdot 6{,}4 = 23{,}04$.', '$AH = 4{,}8$'],
@@ -209,10 +209,11 @@
           { tuBai: '36.6', tenNut: 'Chồng hai tam giác',
             canh: haiTG({ diem: [[0, 0], [0, 6], [8, 0]], ten: ['A', 'B', 'C'], canh: ['6', '10', null], goc: [{ vuong: true, mau: '--muc', r: 0.6 }] },
               { diem: [[0, 0], [0, 9], [12, 0]], ten: ['D', 'E', 'F'], canh: ['9', '15', an('12', 'x')], goc: [{ vuong: true, mau: '--muc', r: 0.6 }] }, { loiCuoi: [{ s: 'EF : BC = DE : AB = 1,5', hien: [0.9, 1] }] }),
-            phanUng: [{ gt: 'sqrt(306)', loi: 'Em cộng $15^2 + 9^2$. $EF$ là cạnh huyền nên $DF^2 = 15^2 - 9^2$.' }, { gt: 8, loi: '$8$ là cạnh $AC$ của tam giác nhỏ. Tam giác $DEF$ là bản phóng $1{,}5$ lần, nên $DF = 1{,}5 \\cdot 8$.' }],
+            phanUng: [{ gt: 'sqrt(306)', loi: 'Em cộng $15^2 + 9^2$. $EF$ là cạnh huyền nên $DF^2 = 15^2 - 9^2$.' },
+              { gt: 17.49, loi: '$17{,}49 \\approx \\sqrt{15^2 + 9^2}$: em cộng hai bình phương. $EF$ là cạnh huyền nên phải trừ: $DF^2 = 15^2 - 9^2$.' }, { gt: 8, loi: '$8$ là cạnh $AC$ của tam giác nhỏ. Tam giác $DEF$ là bản phóng $1{,}5$ lần, nên $DF = 1{,}5 \\cdot 8$.' }],
             dungChu: '$\\frac{EF}{BC} = \\frac{DE}{AB} = 1{,}5$ và $AC = 8$, nên $DF = 1{,}5 \\cdot 8 = 12$.', saiChu: 'Cạnh huyền và một cạnh góc vuông cùng tỉ số $1{,}5$: tam giác $DEF$ là tam giác $ABC$ phóng $1{,}5$ lần.' },
           { tuBai: '36.8', canh: hinh368, tenNut: 'Quay và phóng',
-            de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $AH = 8$ cm, $BH = 6$ cm. Tính $CH$ (cm; viết phân số hoặc số thập phân làm tròn đến hàng phần trăm).',
+            de: 'Tam giác $ABC$ vuông tại $A$, đường cao $AH$, $AH = 8$ cm, $BH = 6$ cm. Tính $CH$ (cm; viết phân số hoặc số thập phân làm tròn đến hàng phần trăm). *(Dựa theo bài 36.8, đổi câu hỏi.)*',
             dapAn: { kieu: 'so', gt: '32/3', saiSo: 0.006 },
             goiY: ['Quay tam giác $HBA$ quanh $H$ một góc vuông: $HB$ nằm lên $HA$, $HA$ nằm lên $HC$.', 'Vậy $\\frac{HB}{HA} = \\frac{HA}{HC}$, nên $CH = \\frac{AH^2}{BH}$.'],
             loiGiai: ['$\\triangle HBA \\backsim \\triangle HAC$ nên $\\frac{HB}{HA} = \\frac{HA}{HC}$.', '$CH = \\frac{8^2}{6} = \\frac{32}{3} \\approx 10{,}67$'],

@@ -6,7 +6,13 @@
   function hg(c, t) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: t == null ? 1 : t }, c) }; }
   var SAU_XEP = 0.86;
 
-TOAN8.bai({
+// Dùng và Suy ra: kết quả trên hình chỉ hiện khi em đã giải (nút chạy hình không được lộ đáp án)
+  function anKetQua(L) {
+    [L.nhin.dung].concat(L.nhin.suyRa.baDe).forEach(function (d) { d.canh.tuyChon = Object.assign({}, d.canh.tuyChon, { anNhan: true }); });
+    return L;
+  }
+
+TOAN8.bai(anKetQua({
   id: 3, ten: 'Phép cộng và phép trừ đa thức', sgk: { tap: 1, trang: 15 },
   nhin: {
     tieuDe: 'Trừ một đa thức là lật mọi mảnh của nó', loai: 'minhHoa',
@@ -97,8 +103,8 @@ TOAN8.bai({
   viDu: [
     { de: 'Cho $A = 3x^2y - 2xy + 5$ và $B = x^2y + 4xy - 1$. Tính $A + B$.', canh: gop('3x^2y-2xy+5+x^2y+4xy-1', null, { nhanCanh: true }), buoc: [
       { canh: { t: 0 }, lam: '$A + B = (3x^2y - 2xy + 5) + (x^2y + 4xy - 1)$', vi: 'Nối hai đa thức bởi dấu $+$.' },
-      { lam: '$= 3x^2y - 2xy + 5 + x^2y + 4xy - 1$', vi: 'Trước ngoặc là dấu $+$: bỏ ngoặc, giữ nguyên dấu.' },
-      { canh: { t: 0.62 }, lam: '$= (3x^2y + x^2y) + (-2xy + 4xy) + (5 - 1)$', vi: 'Nhóm các hạng tử đồng dạng. Trên hình: mỗi loại về một hàng, mảnh dương và âm cùng loại triệt tiêu nhau.' },
+      { canh: { t: 0 }, lam: '$= 3x^2y - 2xy + 5 + x^2y + 4xy - 1$', vi: 'Trước ngoặc là dấu $+$: bỏ ngoặc, giữ nguyên dấu.' },
+      { canh: { t: 0.86 }, lam: '$= (3x^2y + x^2y) + (-2xy + 4xy) + (5 - 1)$', vi: 'Nhóm các hạng tử đồng dạng. Trên hình: mỗi loại về một hàng, mảnh dương và âm cùng loại triệt tiêu nhau.' },
       { canh: { t: 1 }, lam: '$= 4x^2y + 2xy + 4$', vi: 'Cộng hệ số trong mỗi nhóm.' } ] },
     { de: 'Với $A$, $B$ như ví dụ trên, tính $A - B$.', canh: gop('3x^2y-2xy+5', 'x^2y+4xy-1', { nhanCanh: true }), buoc: [
       { canh: { t: 0 }, lam: '$A - B = (3x^2y - 2xy + 5) - (x^2y + 4xy - 1)$', vi: 'Nối hai đa thức bởi dấu $-$. Nhớ đặt $B$ trong ngoặc.' },
@@ -193,5 +199,5 @@ TOAN8.bai({
       giaiThich: 'Nếu $M + A = B$ thì $M = B - A$. Bạn Nam đã cộng thay vì trừ.',
       sua: '$M = (3x^2 + y) - (x^2 - 2y) = 3x^2 + y - x^2 + 2y = 2x^2 + 3y$' }
   ]
-});
+}));
 })();

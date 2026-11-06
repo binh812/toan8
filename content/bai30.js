@@ -20,7 +20,8 @@
 
   // ---------- Cấu hình hình cho "Nhìn là hiểu": lưới kết quả, mỗi kết quả là một chấm ----------
   function lk(tuyChon, them) { return Object.assign({ ten: 'luoiKetQua', tuyChon: tuyChon }, them); }
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  // Hình lời giải: số đáp án chỉ hiện khi em đã xem lời giải (cảnh sang trạng thái giai)
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c, { tuyChon: Object.assign({ anSo: true }, c.tuyChon) }) }; }
   function g(ten, so, mau, chu) { return { ten: ten, so: so, mau: mau, chu: chu }; }
   var DOI_SGK = [g('8A nam', 4, '#1971c2', 'A'), g('8B nữ', 5, '#c2255c', 'B'), g('8C nam', 3, '#0c8599', 'C'), g('8D nữ', 2, '#9c36b5', 'D')];
   var DOI_BT = [g('8A nam', 3, '#1971c2', 'A'), g('8B nữ', 4, '#c2255c', 'B'), g('8C nam', 2, '#0c8599', 'C'), g('8D nữ', 5, '#9c36b5', 'D')];
@@ -187,7 +188,7 @@
         goiY: ['Liệt kê từng nhóm số rồi đếm.', 'Nhớ: 1 không phải số nguyên tố, nhưng 1 là số chính phương.'],
         loiGiai: ['$A$: $2;\\ 4;\\ 6;\\ 8;\\ 10;\\ 12;\\ 14$ → 7 kết quả thuận lợi.', '$B$: $2;\\ 3;\\ 5;\\ 7;\\ 11;\\ 13$ → 6 kết quả thuận lợi.', '$C$: $1;\\ 4;\\ 9$ → 3 kết quả thuận lợi.'] },
 
-      { id: '30.6', hinhGiai: hg(lk({ nhom: SACH, nhomThuan: ['KHTN', 'Toán'], tenBienCo: 'Sách KHTN hoặc sách Toán' })), muc: 2, de: 'Tủ sách của Hà có 16 cuốn sách khác nhau: 5 cuốn tiểu thuyết, 6 cuốn Lịch sử, 2 cuốn Khoa học tự nhiên và 3 cuốn Toán. Bạn Minh lấy ngẫu nhiên một cuốn. Hãy đếm:',
+      { id: '30.6', hinhGiai: hg(lk({ nhom: SACH, bienCo: [{ ten: 'KHTN hoặc Toán', nhom: ['KHTN', 'Toán'] }, { ten: 'Không phải Lịch sử', nhom: ['Tiểu thuyết', 'KHTN', 'Toán'] }] })), muc: 2, de: 'Tủ sách của Hà có 16 cuốn sách khác nhau: 5 cuốn tiểu thuyết, 6 cuốn Lịch sử, 2 cuốn Khoa học tự nhiên và 3 cuốn Toán. Bạn Minh lấy ngẫu nhiên một cuốn. Hãy đếm:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: 16,
             loiThuongGap: [{ gt: 4, giaiThich: 'Mỗi **cuốn sách** là một kết quả có thể (16 cuốn khác nhau), không phải mỗi loại sách.' }] },
@@ -223,7 +224,7 @@
         loiGiai: ['Số chấm chia hết cho 3: $3;\\ 6$.', 'Không chia hết cho 3: $1;\\ 2;\\ 4;\\ 5$.', 'Số kết quả thuận lợi $= 4$'],
         loiThuongGap: [{ gt: 2, giaiThich: '2 là số kết quả **chia hết** cho 3 (3 và 6). Đề hỏi **không** chia hết cho 3: $6 - 2 = 4$.' }] },
 
-      { id: '30.10', hinhGiai: hg(THE(10, 99, [{ ten: 'Số chính phương có hai chữ số', thuanLoi: [16, 25, 36, 49, 64, 81] }])), muc: 3, de: 'Chọn ngẫu nhiên một số tự nhiên có hai chữ số. Hãy đếm:',
+      { id: '30.10', hinhGiai: hg(Object.assign(THE(10, 99, [{ ten: 'Nhỏ hơn 20', thuanLoi: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19] }, { ten: 'Số chính phương', thuanLoi: [16, 25, 36, 49, 64, 81] }]), { thamSo: { chon: 1 } })), muc: 3, de: 'Chọn ngẫu nhiên một số tự nhiên có hai chữ số. Hãy đếm:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: 90,
             loiThuongGap: [{ gt: 99, giaiThich: 'Số có hai chữ số bắt đầu từ **10** (không phải từ 1): $99 - 10 + 1 = 90$.' },

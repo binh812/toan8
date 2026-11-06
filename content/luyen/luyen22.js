@@ -85,7 +85,10 @@
     return b <= 16 && M <= 12 && n <= 4 && b * M * n <= 200;
   }
   // Tử A, mẫu B, nhân tử M (mảng hệ số): lưới ô tại x nguyên dương nhỏ nhất vẽ được; không có thì hai hàng đoạn chia
+  // Tên đa thức gõ kiểu máy (x-3, x^2) đổi thành kiểu sách (x − 3, x²)
+  function dep(s) { return String(s).replace(/\^([0-9])/g, function (m, d) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+d]; }).replace(/([^ (])([+-])/g, function (m, a, d) { return a + ' ' + (d === '-' ? '−' : '+') + ' '; }).replace(/-/g, '−'); }
   function hinhNhanM(A, B, M, tenM, chieu, ten) {
+    tenM = dep(tenM);
     for (var x = 1; x <= 12; x++) {
       if (luoiDuoc(giaTri(A, x), giaTri(B, x), giaTri(M, x)))
         return hg('luoiPhanSo', { dang: 'mot', tu: A, mau: B, M: M, tenM: tenM, chieu: chieu, x: x }, 'Vẽ tại x = ' + x + ': ' + (chieu === 'gop' ? 'gộp' : 'cắt') + ' theo ' + tenM + ' = ' + giaTri(M, x) + ', phần tô không đổi.');

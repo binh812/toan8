@@ -42,7 +42,7 @@
   function hienRa(t, w) { return w ? C.muot((t - w[0]) / Math.max(EPS, w[1] - w[0])) : 1; }
   function doMo(t, x) { return x ? (x.hien ? hienRa(t, x.hien) : 1) * (x.mat ? 1 - hienRa(t, x.mat) : 1) : 1; }
 
-  function dungDiem(h, ds) {
+  function dungDiem(h, ds, rong) {
     var d;
     if (h.diem) d = h.diem.map(function (q) { return q.slice(); });
     else if (h.dai) d = tuCanh(h.dai);
@@ -54,7 +54,7 @@
     var dx = dt.x || 0, dy = dt.y || 0;
     if (dt.sau != null) {
       var b = bien(ds[dt.sau]), m = bien(d);
-      dx += b.x1 + (dt.cach != null ? dt.cach : Math.max(0.375 * (b.x1 - b.x0 + m.x1 - m.x0), 0.3 * Math.max(b.y1 - b.y0, m.y1 - m.y0))) - m.x0; dy += b.y0 - m.y0;
+      dx += b.x1 + (dt.cach != null ? dt.cach : Math.max((rong ? 0.55 : 0.375) * (b.x1 - b.x0 + m.x1 - m.x0), 0.3 * Math.max(b.y1 - b.y0, m.y1 - m.y0))) - m.x0; dy += b.y0 - m.y0;
     }
     return d.map(function (q) { return [q[0] + dx, q[1] + dy]; });
   }
@@ -112,16 +112,20 @@
     var kin = h.kin !== false && d.length > 2, g = trongTam(d), op = mo * doMo(t, h);
     if (h.to && d.length > 2) net.push({ k: 'da', d: d, to: h.to, mo: h.mo != null ? h.mo : 0.18, op: op * doMo(t, h.toHien) });
     net.push({ k: kin ? 'da' : 'duong', d: d, vien: mauVien || h.mau || '--muc', net: h.net, day: h.day, op: op });
+    var ngoai = [], dt2 = d.length > 2 ? Math.abs(dtCoDau(d)) * 2 : 0;
     (h.goc || []).forEach(function (x, i) {
       if (!x || d.length < 3) return;
       var o = typeof x === 'object' ? x : { mau: x === 'v' ? '--muc' : x, vuong: x === 'v' };
-      net.push({ k: 'goc', o: d[i], a: d[(i + d.length - 1) % d.length], b: d[(i + 1) % d.length], mau: o.mau || '--muc', vuong: o.vuong, r: co * (o.r || 1.1), op: op * doMo(t, o) });
+      var P = d[(i + d.length - 1) % d.length], Q = d[(i + 1) % d.length];
+      net.push({ k: 'goc', o: d[i], a: P, b: Q, mau: o.mau || '--muc', vuong: o.vuong, r: co * (o.r || 1.1), op: op * doMo(t, o) });
       var nh = nhanChu(o.nhan, p, t);
-      if (nh) {
-        var ph = donVi(cong(donVi(tru(d[(i + d.length - 1) % d.length], d[i])), donVi(tru(d[(i + 1) % d.length], d[i]))));
-        var xa = Math.min(co * (o.xa || 2.3), 0.5 * Math.min(kc(d[i], d[(i + 1) % d.length]), kc(d[i], d[(i + d.length - 1) % d.length])));
-        net.push({ k: 'chu', p: cong(d[i], nhan(ph, xa)), s: nh.s, co: co * 0.85, mau: o.mau, op: op * nh.op * doMo(t, o) });
-      }
+      if (!nh) return;
+      var ph = donVi(cong(donVi(tru(P, d[i])), donVi(tru(Q, d[i])))), xa = co * (o.xa || 2.3);
+      // Ghi số đo bên trong góc chỉ khi đủ chỗ: góc đủ mở và tam giác đủ cao. Không thì ghi ra ngoài đỉnh, đẩy tên đỉnh ra xa hơn
+      var nua = goc(P, d[i], Q) * RAD / 2, cao = dt2 / kc(P, Q), chuVi = d.reduce(function (a, q, j) { return a + kc(q, d[(j + 1) % d.length]); }, 0);
+      var duCho = 2 * xa * Math.tan(nua) >= 1.7 * co && cao >= xa + 0.7 * co && dt2 / chuVi >= 1.25 * co;
+      if (!duCho) ngoai[i] = true;
+      net.push({ k: 'chu', p: cong(d[i], nhan(ph, duCho ? xa : -1.15 * co)), s: nh.s, co: co * 0.85, mau: o.mau, op: op * nh.op * doMo(t, o) });
     });
     (h.canh || []).forEach(function (x, i) {
       var nh = nhanChu(x, p, t);
@@ -133,7 +137,7 @@
     (h.ten || []).forEach(function (s, i) {
       if (!s) return;
       var huong = d.length > 2 ? donVi(tru(d[i], g)) : [0, 1], lech = (h.lechTen && h.lechTen[i]) || [0, 0];
-      net.push({ k: 'chu', p: cong(cong(d[i], nhan(huong, co * 0.95)), nhan(lech, co)), s: s, co: co, mau: mauVien || h.mauTen, op: op * (moTen == null ? 1 : moTen), nghieng: true });
+      net.push({ k: 'chu', p: cong(cong(d[i], nhan(huong, co * (ngoai[i] ? 2.3 : 0.95))), nhan(lech, co)), s: s, co: co, mau: mauVien || h.mauTen, op: op * (moTen == null ? 1 : moTen), nghieng: true });
     });
   }
   function moTaChu(x) { return typeof x === 'object' ? x : { s: x }; }
@@ -141,7 +145,8 @@
   // o: { hinh: [...], di: [{ tu, toi, neo, tam, k, mau, khung }], them: [...], loiCuoi: [...], co }
   function lo(o, p, t) {
     var ds = [], net = [], diem = [];
-    (o.hinh || []).forEach(function (h) { var d = dungDiem(h, ds); ds.push(d); if (!h.khongTinh) diem = diem.concat(d); });
+    var coSoGoc = (o.hinh || []).some(function (h) { return (h.goc || []).some(function (g) { return g && typeof g === 'object' && g.nhan; }); });
+    (o.hinh || []).forEach(function (h) { var d = dungDiem(h, ds, coSoGoc); ds.push(d); if (!h.khongTinh) diem = diem.concat(d); });
     var soDi = (o.di || []).length;
     var di = (o.di || []).map(function (m, i) {
       var S = ds[m.tu], T = m.tam ? S.map(function (q) { return phong(q, m.tam, m.k); }) : (typeof m.toi === 'number' ? ds[m.toi] : m.toi);
@@ -151,7 +156,8 @@
       return { S: S, T: T, kh: kh, w: w, m: m, diem: vt.diem, dang: vt.dang, khop: S.length === T.length && vt.diem.every(function (q, j) { return kc(q, T[j]) < 1e-6; }) };
     });
     (o.them || []).forEach(function (x) { ['a', 'b', 'p'].forEach(function (k) { if (x[k] && !x.khongTinh) diem.push(x[k]); }); if (x.d && !x.khongTinh) diem = diem.concat(x.d); });
-    var b = bien(diem), L = Math.max(b.x1 - b.x0, b.y1 - b.y0, EPS), co = L / 12.8 * (o.co || 1), pad = 1.6 * co;
+    // Hình có ghi số đo góc thì chừa lề rộng hơn, vì số đo có thể phải ghi ra ngoài đỉnh
+    var le = coSoGoc ? 3 : 1.6, b = bien(diem), L = Math.max(b.x1 - b.x0, b.y1 - b.y0, EPS), co = L / (16 - 2 * le) * (o.co || 1), pad = le * co;
     var dong = (o.loiCuoi || []).map(moTaChu), soDong = Math.max(dong.length, soDi && o.chuBuoc !== false ? 1 : 0);
     var x0 = b.x0 - 1.4 * pad, x1 = b.x1 + 1.4 * pad, yTren = b.y1 + pad, yDuoi = b.y0 - pad - soDong * 1.3 * co;
     // Hình cố định, nét thêm, rồi tới các bản sao đang di chuyển (vẽ sau cùng để nằm trên)
@@ -173,7 +179,7 @@
     if (dangLam && o.chuBuoc !== false) net.push({ k: 'chu', p: [(x0 + x1) / 2, b.y0 - pad - 0.55 * co], s: tenBuoc(dangLam.dang), co: co, mau: dangLam.m.mau || '--a', op: 1 });
     dong.forEach(function (x, i) {
       var nh = nhanChu(x, p, t);
-      net.push({ k: 'chu', p: [(x0 + x1) / 2, b.y0 - pad - (0.55 + 1.3 * i) * co], s: nh.s, co: co * (x.co || 1), mau: x.mau, op: (dangLam && i === 0 ? 0 : 1) * doMo(t, x.hien ? x : { hien: [0.9, 1] }) * nh.op });
+      net.push({ k: 'chu', p: [(x0 + x1) / 2, b.y0 - pad - (0.55 + 1.3 * i) * co], s: nh.s, co: co * (x.co || 1), mau: x.mau, op: (dangLam && i === 0 && o.chuBuoc !== false ? 0 : 1) * doMo(t, x.hien ? x : { hien: [0.9, 1] }) * nh.op });
     });
     return { khung: [x0, yDuoi, x1 - x0, yTren - yDuoi], co: co, net: net, ds: ds, di: di };
   }
@@ -256,7 +262,7 @@
       return lo({
         hinh: [
           { goc3: [0, gB, gC], day: 3, ten: ['A', 'B', 'C'], goc: [A0, '--b', '--cc'] },
-          { goc3: [0, gB, gC], day: 3 * k, dat: { sau: 0, cach: 1.2 }, ten: ["A'", "B'", "C'"], goc: [A0, '--b', '--cc'] }
+          { goc3: [0, gB, gC], day: 3 * k, dat: { sau: 0 }, ten: ["A'", "B'", "C'"], goc: [A0, '--b', '--cc'] }
         ],
         di: [{ tu: 0, toi: 1, neo: 1, mau: '--a', khung: [0.1, 0.9] }],
         loiCuoi: [{ s: 'Mọi cạnh nhân k = ' + C.fmt(k), hien: [0.9, 1] }]

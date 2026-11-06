@@ -19,7 +19,8 @@
     nhin: {
       tieuDe: 'Sang phải $1$, lên đúng $a$: các điểm thẳng hàng', loai: 'minhHoa',
       luuY: 'Hình cho thấy các điểm có $x$ nguyên. Lập luận chung: giữa hai điểm bất kì của đồ thị, sang ngang $d$ thì lên đúng $a \\cdot d$, nên mọi tam giác bậc thang đều cùng một hình dạng (đồng dạng, em học ở chương IX), và mọi điểm nằm trên một đường thẳng. SGK công nhận điều này ở bài 28.',
-      canh: mp({ theoThamSo: true, khung: [-4, 4, -6.5, 6.5], bac: [{ duong: 0, tu: -2, soBuoc: 4, nhan: true }], diem: [] }, {
+      canh: mp({ theoThamSo: true, tiLe: false, khung: [-3, 3, -8.5, 8.5], bac: [{ duong: 0, tu: -2, soBuoc: 4, nhan: true }], diem: [] }, {
+        thamSo: { a: 3 }, ghiChu: 'Hai trục khác tỉ lệ.',
         giay: 14, moTa: 'Đồ thị y bằng a x cộng b. Từ điểm có x bằng âm 2, mỗi bậc sang phải 1 đơn vị và lên a đơn vị; các điểm nằm trên một đường thẳng.',
         dongSo: function (p, f) {
           var so = function (x) { return f(x).replace(',', '{,}'); };
@@ -36,7 +37,7 @@
       ketLuan: 'Đồ thị của $y = \\ca{a}x + \\cb{b}$ $(a \\ne 0)$ là **một đường thẳng**, cắt trục tung tại điểm $(0; \\cb{b})$.',
       dung: {
         tieuDe: 'Bậc thang nào đi từ $P$ tới đúng $M$?', tuBai: '28.5',
-        canh: mp({ khung: [-1, 4, -3, 6], duong: [{ a: -2, b: 3, an: 'giai' }], diem: [{ x: 0, y: 3, ten: 'P' }, { x: 2, y: -1, ten: 'M' }], bac: [{ duong: 0, tu: 0, soBuoc: 2, nhan: true }], thu: { duong: 0, gan: 'a' } },
+        canh: mp({ khung: [-1, 4, -3, 8], duong: [{ a: -2, b: 3, an: 'giai' }], diem: [{ x: 0, y: 3, ten: 'P', nhanTrai: true }, { x: 2, y: -1, ten: 'M' }], bac: [{ duong: 0, tu: 0, soBuoc: 2, nhan: true }], thu: { duong: 0, gan: 'a' } },
           { moTa: 'Điểm P(0; 3) trên trục tung và điểm M(2; âm 1). Đường thẳng y bằng a x cộng 3 phải đi qua M.' }),
         moiThu: 'Gõ $a$. Hình sẽ đi hai bậc thang từ $P$ theo số em gõ, xem có tới đúng $M$ không.',
         phanUng: [
@@ -52,12 +53,12 @@
       suyRa: {
         tieuDe: 'Đề đổi, nhưng vẫn là đi bậc thang',
         baDe: [
-          { tuBai: '28.3', canh: mp(Object.assign({ diem: [{ x: 0, y: 5, ten: 'P' }] }, B283), { ghiChu: KHAC_TI_LE }), tenNut: 'Đi bậc thang',
+          { tuBai: '28.3', canh: mp(Object.assign({ diem: [{ x: 0, y: 5, ten: 'P' }], anKetQua: true }, B283), { ghiChu: KHAC_TI_LE }), tenNut: 'Đi bậc thang',
             phanUng: [{ gt: -1, loi: 'Đi sang **trái** thì đường $y = -2x + 5$ đi **lên**: $-2 \\cdot (-3) = +6$.' }],
             dungChu: 'Ba bậc sang trái, mỗi bậc lên $2$: $5 + 6 = 11$.', saiChu: 'Từ $P(0; 5)$ đi sang trái $3$ bậc. Mỗi bậc lên $2$.' },
-          { tuBai: '28.7', canh: mp(B287), tenNut: 'Đi bậc thang',
+          { tuBai: '28.7', canh: mp(Object.assign({ anKetQua: true }, B287)), tenNut: 'Đi bậc thang',
             dungChu: 'Từ $P(0; 2)$ sang trái $1$ thì lên $3$, tới đúng $(-1; 5)$, tức $A$.', saiChu: 'Thay $x = -1$: $y = -3 \\cdot (-1) + 2 = 5$. So với tung độ của $A$.' },
-          { tuBai: '28.10', canh: mp(B2810, { ghiChu: KHAC_TI_LE }), tenNut: 'Đi bậc thang',
+          { tuBai: '28.10', canh: mp(Object.assign({ anKetQua: true }, B2810), { ghiChu: KHAC_TI_LE }), tenNut: 'Đi bậc thang',
             phanUng: [{ gt: 50, loi: 'Chi phí cố định $40$ triệu đã có từ đầu (điểm $P$). Chỉ còn $100 - 40 = 60$ triệu cho các xe.' }, { gt: 70, loi: 'Đi từ $40$ lên $100$ là tăng $60$, không phải $140$.' }],
             dungChu: 'Mỗi $10$ xe thêm $20$ triệu: từ $40$ lên $100$ cần $3$ bậc, tức $30$ xe.', saiChu: 'Bắt đầu ở $P(0; 40)$. Mỗi bậc $10$ xe thì chi phí tăng $20$ triệu. Mấy bậc thì tới $100$?' }
         ],
@@ -164,7 +165,7 @@
         goiY: ['Trên trục tung $x = 0$; trên trục hoành $y = 0$.', 'Cho $y = 0$: giải $2x - 6 = 0$.'],
         loiGiai: ['Cho $x = 0$: $y = -6$, được $P(0; -6)$.', 'Cho $y = 0$: $2x - 6 = 0$, $x = 3$, được $Q(3; 0)$.'] },
 
-      { id: '28.5', hinhGiai: hg(mp({ khung: [-1, 4, -3, 6], duong: [{ a: -2, b: 3 }], diem: [{ x: 0, y: 3, ten: 'P' }, { x: 2, y: -1, ten: 'M' }], bac: [{ duong: 0, tu: 0, soBuoc: 2, nhan: true }] })), muc: 2, de: 'Cho hàm số bậc nhất $y = ax + 3$. Tìm $a$, biết đồ thị đi qua điểm $(2; -1)$.',
+      { id: '28.5', hinhGiai: hg(mp({ khung: [-1, 4, -3, 6], duong: [{ a: -2, b: 3 }], diem: [{ x: 0, y: 3, ten: 'P', nhanTrai: true }, { x: 2, y: -1, ten: 'M' }], bac: [{ duong: 0, tu: 0, soBuoc: 2, nhan: true }] })), muc: 2, de: 'Cho hàm số bậc nhất $y = ax + 3$. Tìm $a$, biết đồ thị đi qua điểm $(2; -1)$.',
         dapAn: { kieu: 'so', gt: -2 },
         goiY: ['Thay $x = 2$, $y = -1$ vào công thức.', '$-1 = 2a + 3$. Giải ra $a$.'],
         loiGiai: ['$-1 = a\\cdot 2 + 3$', '$2a = -4$', '$a = -2$'],

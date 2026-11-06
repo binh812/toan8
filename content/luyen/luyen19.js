@@ -44,7 +44,7 @@
   ];
 
   // Hình lời giải: cảnh bienHinh theo chính số của đề, ở trạng thái đã giải
-  function hg(tc) { return { widget: 'canh', config: { ten: 'bienHinh', tuyChon: tc, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } }; }
+  function hg(tc) { return { widget: 'canh', config: { ten: 'bienHinh', tuyChon: Object.assign({ anLucDau: true }, tc), chiXem: true, t: 1 } }; }
 
   TOAN8.luyen(19, [
     { ten: 'Đọc biểu đồ cột', muc: 1, sinh: function (r) {
@@ -136,7 +136,7 @@
         hinhGiai: hg({ nhan: b.nhan.slice(), so: so.slice(), don: 'bạn', den: 'bang', giai: 'bang', thuoc: '%', hoi: i }),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tổng số học sinh là $' + N + '$ (kiểm tra: $' + so.join(' + ') + ' = ' + N + '$).', 'Tỉ lệ $= \\frac{' + so[i] + '}{' + N + '} \\cdot 100\\%$.'],
-        loiGiai: ['Tổng: $' + so.join(' + ') + ' = ' + N + '$ học sinh.', 'Tỉ lệ ' + b.nhan[i] + ': $\\frac{' + so[i] + '}{' + N + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '$.'],
+        loiGiai: ['Tổng: $' + so.join(' + ') + ' = ' + N + '$ học sinh.', 'Tỉ lệ ' + b.nhan[i] + ': $\\frac{' + so[i] + '}{' + N + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '\\%$.'],
         loiThuongGap: ltg
       };
     } },
@@ -154,7 +154,7 @@
       return {
         de: 'Biểu đồ cột kép cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Ở ' + b.o + '**' + b.nhan[i] + '**, ' + b.chuoi[lon] + ' nhiều hơn ' + b.chuoi[1 - lon] + ' bao nhiêu ' + b.dv + '?',
         hinh: { widget: 'bieuDo', config: { loai: 'cotKep', tieuDe: b.td, tenNhan: b.tenNhan, nhan: b.nhan.slice(), chuoi: [{ ten: b.chuoi[0], so: s1 }, { ten: b.chuoi[1], so: s2 }], donVi: b.dv } },
-        hinhGiai: { widget: 'canh', config: { ten: 'bienHinh', tuyChon: { nhan: b.chuoi.slice(), so: a.slice(), don: b.dv, den: 'cot', hieu: [lon, 1 - lon] }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1, ghiChu: 'Hai cột của ' + b.o + b.nhan[i] + '.' } },
+        hinhGiai: { widget: 'canh', config: { ten: 'bienHinh', tuyChon: { nhan: b.chuoi.slice(), so: a.slice(), don: b.dv, den: 'cot', hieu: [lon, 1 - lon] }, chiXem: true, t: 1, ghiChu: 'Hai cột của ' + b.o + b.nhan[i] + '.' } },
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tìm hai cột của ' + b.nhan[i] + ': cột xanh dương là ' + b.chuoi[0] + ', cột cam là ' + b.chuoi[1] + '.', 'Lấy số lớn trừ số nhỏ.'],
         loiGiai: [b.nhan[i] + ': ' + b.chuoi[0] + ' $' + s1[i] + '$, ' + b.chuoi[1] + ' $' + s2[i] + '$.', '$' + a[lon] + ' - ' + a[1 - lon] + ' = ' + kq + '$'],
@@ -202,7 +202,7 @@
       dapAn: { kieu: 'chon', gt: 2, luaChon: ['Biểu đồ tranh', 'Biểu đồ hình quạt tròn', 'Biểu đồ đoạn thẳng', 'Biểu đồ cột kép'] },
       goiY: ['Dữ liệu thay đổi theo cái gì?', 'Thay đổi theo thời gian → biểu đồ …?'],
       loiGiai: ['Nhiệt độ thay đổi **theo thời gian** (theo ngày) → **biểu đồ đoạn thẳng**.'] },
-    { id: '19.L2', muc: 1, de: 'Để biểu diễn **tỉ lệ** số học sinh giỏi, khá, đạt, chưa đạt **trong tổng số** học sinh của trường, nên dùng biểu đồ nào?',
+    { id: '19.L2', muc: 1, de: 'Để biểu diễn **tỉ lệ** số học sinh xếp loại Tốt, Khá, Đạt, Chưa đạt **trong tổng số** học sinh của trường, nên dùng biểu đồ nào?',
       dapAn: { kieu: 'chon', gt: 3, luaChon: ['Biểu đồ tranh', 'Biểu đồ đoạn thẳng', 'Biểu đồ cột kép', 'Biểu đồ hình quạt tròn'] },
       goiY: ['Tỉ lệ các phần trong tổng thể ($100\\%$).', 'Biểu đồ nào chia một hình tròn thành các phần?'],
       loiGiai: ['Tỉ lệ các phần trong tổng thể → **biểu đồ hình quạt tròn**.'] },

@@ -22,7 +22,8 @@
 
   // ---------- Cấu hình hình cho "Nhìn là hiểu": mỗi kết quả là một chấm; thanh xác suất 1 chia đều cho các chấm ----------
   function lk(tuyChon, them) { return Object.assign({ ten: 'luoiKetQua', tuyChon: Object.assign({ cheDo: 'chia' }, tuyChon) }, them); }
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  // Hình lời giải: số đáp án chỉ hiện khi em đã xem lời giải (cảnh sang trạng thái giai)
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c, { tuyChon: Object.assign({ anSo: true }, c.tuyChon) }) }; }
   function g(ten, so, mau, nhan) { return { ten: ten, so: so, mau: mau, nhan: nhan }; }
   var BONG = [g('Xanh', 12, '#1971c2'), g('Đỏ', 10, '#e03131'), g('Trắng', 8, '#868e96')];
   var DIEM = ['100', '200', '300', '400', '500', '1000', '2000'].map(function (d, i) { return g(d, [2, 2, 2, 2, 1, 2, 1][i], ['#e03131', '#1971c2', '#c2255c', '#f08c00', '#2f9e44', '#9c36b5', '#e8590c'][i], d === '1000' ? '1k' : d === '2000' ? '2k' : d); });
@@ -47,7 +48,7 @@
         { t: 0, chu: 'Tấm bìa có $12$ hình quạt **như nhau**, đánh số $1$ đến $12$. Mỗi hình quạt là một chấm. Các hình quạt như nhau nên $\\cb{12}$ kết quả **đồng khả năng**: không ô nào dễ trúng hơn ô nào.' },
         { t: 0.08, chu: 'Chắc chắn mũi tên chỉ vào một ô nào đó, nên cả thanh là xác suất $1$. Các chấm có khả năng như nhau nên chia **đều** thanh: mỗi chấm được $\\frac{1}{12}$.' },
         { t: 0.47, chu: 'Biến cố $A$: "Mũi tên chỉ vào số nguyên tố". Các chấm $2, 3, 5, 7, 11$ sáng lên, cùng với phần của chúng trên thanh.' },
-        { t: 0.66, chu: 'Dồn các phần sáng về đầu thanh: $\\cc{5}$ phần, mỗi phần $\\frac{1}{12}$. Phần sáng dài $\\frac{5}{12}$ cả thanh.' }
+        { t: 0.66, chu: 'Dồn các phần sáng về đầu thanh: $\\cc{5}$ phần, mỗi phần $\\frac{1}{12}$. Phần sáng dài $\\frac{5}{12}$ cả thanh. Mỗi lần quay, mũi tên chỉ vào đúng một ô. $A$ xảy ra khi mũi tên chỉ vào một trong $5$ ô sáng, nên xác suất của $A$ là tổng $5$ phần đó.' }
       ],
       ketLuan: 'Xác suất của $A$ là phần sáng của thanh: $P(A) = \\dfrac{\\cc{5}}{\\cb{12}}$. Tổng quát, có $\\cb{n}$ kết quả **đồng khả năng**, trong đó $\\cc{m}$ kết quả thuận lợi cho $E$ thì $$P(E) = \\dfrac{\\cc{m}}{\\cb{n}}$$',
       dung: {
@@ -57,7 +58,7 @@
         moiThu: 'Mỗi quả bóng là một chấm, cả thanh dài $1$ chia đều cho các chấm. Gõ xác suất. Nếu sai, hình vẽ đúng số em gõ để em so.',
         phanUng: [
           { gt: '1/3', trangThai: 'theoLoai', t: 1, loi: 'Em đã coi ba **màu** là ba kết quả đồng khả năng, mỗi màu $\\frac13$. Nhìn thanh dưới: chia theo màu thì không khớp với số bóng. Mỗi **quả** mới có phần bằng nhau, mà bóng xanh có tới $12$ quả.' },
-          { gt: '12/18', trangThai: 'chiaKhong', t: 1, loi: 'Em chia $12$ cho $18$ chấm **tối** (viền đỏ). Mẫu số là **tất cả** các chấm, kể cả chấm sáng.' },
+          { gt: '12/18', trangThai: 'chiaKhong', t: 1, loi: 'Em chia $12$ cho $18$ chấm **không sáng** (viền đỏ). Mẫu số là **tất cả** các chấm, kể cả chấm sáng.' },
           { gt: 12, thamSo: { thu: 12 }, t: 1, loi: '$12$ là **số** chấm sáng. Xác suất là **phần** của thanh: số chấm sáng chia cho tổng số chấm.' }
         ],
         soBatKi: soBatKi,
@@ -67,7 +68,7 @@
         tieuDe: 'Đề đổi, nhưng vẫn là phần sáng của thanh',
         baDe: [
           { tuBai: '31.2', canh: the(1, 20, [{ ten: 'Chia hết cho 5', thuanLoi: [5, 10, 15, 20] }], { cot: 10, anSo: true }), tenNut: 'Chia thanh xác suất',
-            phanUng: [{ gt: '1/4', trangThai: 'chiaKhong', loi: 'Em chia $4$ cho $16$ chấm **tối**. Mẫu số là **tất cả** $20$ chấm.' }],
+            phanUng: [{ gt: '1/4', trangThai: 'chiaKhong', loi: 'Em chia $4$ cho $16$ chấm **không sáng** (viền đỏ). Mẫu số là **tất cả** $20$ chấm.' }],
             dungChu: '$4$ chấm sáng trên $20$ chấm: $\\frac{4}{20} = \\frac{1}{5}$.', saiChu: 'Đếm chấm sáng rồi chia cho **tất cả** $20$ chấm.' },
           { tuBai: '31.7', canh: lk({ nhom: DIEM, nhomThuan: ['100', '200'], tenBienCo: 'Ít hơn 300 điểm', gom: true, anSo: true, cot: 6 }, { ghiChu: '1k là 1 000 điểm, 2k là 2 000 điểm.' }), tenNut: 'Tách từng hình quạt',
             de: 'Vòng quay may mắn chia thành 12 hình quạt như nhau: 2 ô 100 điểm, 2 ô 200 điểm, 2 ô 300 điểm, 2 ô 400 điểm, 1 ô 500 điểm, 2 ô 1 000 điểm, 1 ô 2 000 điểm. Lan quay một lần. Tính xác suất để Lan được ít hơn 300 điểm.',
@@ -131,10 +132,10 @@
         { lam: 'Mỗi viên bi là một kết quả: có 17 kết quả có thể, đồng khả năng.', vi: '17 viên bi cùng kích thước, lấy ngẫu nhiên.', canh: { t: 0.45 } },
         { lam: 'Có 8 kết quả thuận lợi (8 viên đỏ), nên $P(E) = \\dfrac{8}{17}$. Bạn Tròn đúng.', vi: 'Áp dụng công thức tỉ số.', canh: { t: 1 } },
         { lam: 'Vuông sai vì 3 màu **không đồng khả năng**.', vi: 'Bi đỏ nhiều nhất nên dễ lấy được màu đỏ hơn màu vàng: không thể chia đều $\\frac{1}{3}$.', canh: { t: 1, trangThai: 'theoLoai' } } ] },
-      { de: 'Trên giá có 15 cuốn sách, trong đó có một số cuốn tiểu thuyết. Thủ thư đặt thêm 5 cuốn tiểu thuyết mới vào giá. Chọn ngẫu nhiên một cuốn trên giá thì xác suất được tiểu thuyết là $\\dfrac{3}{4}$. Lúc đầu có bao nhiêu cuốn tiểu thuyết?', canh: lk({ nhom: [g('Tiểu thuyết cũ', 10, '#1971c2'), g('Tiểu thuyết mới', 5, '#0c8599'), g('Sách khác', 5, '#868e96')], nhomThuan: ['Tiểu thuyết cũ', 'Tiểu thuyết mới'], tenBienCo: 'Chọn được tiểu thuyết' }), buoc: [
+      { de: 'Trên giá có 15 cuốn sách, trong đó có một số cuốn tiểu thuyết. Thủ thư đặt thêm 5 cuốn tiểu thuyết mới vào giá. Chọn ngẫu nhiên một cuốn trên giá thì xác suất được tiểu thuyết là $\\dfrac{3}{4}$. Lúc đầu có bao nhiêu cuốn tiểu thuyết?', canh: lk({ nhom: [{ ten: 'Tiểu thuyết', so: 15, mau: '#1971c2', danhDau: { so: 5, chu: 'Viền cam: 5 cuốn mới đặt thêm' } }, g('Sách khác', 5, '#868e96')], nhomThuan: ['Tiểu thuyết'], tenBienCo: 'Chọn được tiểu thuyết' }), buoc: [
         { lam: 'Sau khi thêm, giá có $15 + 5 = 20$ cuốn.', vi: 'Xác suất $\\frac{3}{4}$ là tính **sau khi** đã thêm sách.', canh: { t: 0.45 } },
         { lam: 'Số tiểu thuyết lúc này: $20 \\cdot \\dfrac{3}{4} = 15$ cuốn.', vi: 'Số thuận lợi chia cho 20 bằng $\\dfrac{3}{4}$, suy ra số thuận lợi $= 20\\cdot \\frac{3}{4}$.', canh: { t: 1 } },
-        { lam: 'Lúc đầu có $15 - 5 = 10$ cuốn tiểu thuyết.', vi: 'Bớt đi 5 cuốn mới đặt thêm.', canh: { t: 1 } } ] }
+        { lam: 'Lúc đầu có $15 - 5 = 10$ cuốn tiểu thuyết.', vi: 'Bớt đi 5 cuốn mới đặt thêm.', canh: { t: 1, thamSo: { danhDau: true } } } ] }
     ],
 
     viDuMo: [
@@ -219,7 +220,7 @@
         goiY: ['Số bạn nam $= 40 - 22$.', 'Bạn không tham gia gồm nữ không tham gia và nam không tham gia.'],
         loiGiai: ['Số nam: $40 - 22 = 18$; nam tham gia: $18 - 6 = 12$ → $P = \\dfrac{12}{40} = \\dfrac{3}{10}$.', 'Nữ không tham gia: $22 - 8 = 14$; tổng không tham gia: $14 + 6 = 20$ → $P = \\dfrac{20}{40} = \\dfrac{1}{2}$.'] },
 
-      { id: '31.9', hinhGiai: hg(lk({ nhom: PHONG, nhomThuan: ['8A nam', '8B nam'], tenBienCo: 'E: Chọn được học sinh nam' })), muc: 2, de: 'Trong phòng có 16 học sinh lớp 8A (10 nam, 6 nữ) và 14 học sinh lớp 8B (8 nam, 6 nữ). Chọn ngẫu nhiên một học sinh trong phòng. Tính xác suất của các biến cố:',
+      { id: '31.9', hinhGiai: hg(lk({ nhom: PHONG, bienCo: [{ ten: 'E: Học sinh nam', nhom: ['8A nam', '8B nam'] }, { ten: 'F: Nam lớp 8B', nhom: ['8B nam'] }, { ten: 'G: Nữ lớp 8A', nhom: ['8A nữ'] }] })), muc: 2, de: 'Trong phòng có 16 học sinh lớp 8A (10 nam, 6 nữ) và 14 học sinh lớp 8B (8 nam, 6 nữ). Chọn ngẫu nhiên một học sinh trong phòng. Tính xác suất của các biến cố:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: '$E$: "Chọn được học sinh nam"', kieu: 'so', gt: '3/5',
             loiThuongGap: [{ gt: '5/8', giaiThich: 'Đây là tỉ lệ nam **trong lớp 8A**. Em phải xét cả phòng: $10 + 8 = 18$ nam trên 30 học sinh.' }] },
@@ -230,7 +231,7 @@
         goiY: ['Cả phòng có $16 + 14 = 30$ học sinh: 30 kết quả có thể.', 'Mẫu số luôn là 30 vì ta chọn trong cả phòng.'],
         loiGiai: ['Có 30 kết quả có thể, đồng khả năng.', '$P(E) = \\dfrac{10 + 8}{30} = \\dfrac{18}{30} = \\dfrac{3}{5}$.', '$P(F) = \\dfrac{8}{30} = \\dfrac{4}{15}$; $\\;P(G) = \\dfrac{6}{30} = \\dfrac{1}{5}$.'] },
 
-      { id: '31.10', hinhGiai: hg(the(10, 99, [{ ten: 'A: Số nhỏ hơn 20', thuanLoi: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19] }])), muc: 3, de: 'Chọn ngẫu nhiên một số tự nhiên có hai chữ số. Tính xác suất của các biến cố:',
+      { id: '31.10', hinhGiai: hg(the(10, 99, [{ ten: 'A: Số nhỏ hơn 20', thuanLoi: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19] }, { ten: 'B: Số chính phương', thuanLoi: [16, 25, 36, 49, 64, 81] }])), muc: 3, de: 'Chọn ngẫu nhiên một số tự nhiên có hai chữ số. Tính xác suất của các biến cố:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: '$A$: "Số được chọn nhỏ hơn 20"', kieu: 'so', gt: '1/9',
             loiThuongGap: [{ gt: '10/99', giaiThich: 'Số có hai chữ số là từ 10 đến 99: có **90** số, không phải 99.' }] },

@@ -62,7 +62,8 @@
       } else ly = 'Mỗi biến của đơn thức chia đều có trong đơn thức bị chia với số mũ không lớn hơn ($' + rr + ' \\le ' + p + '$' + (s ? ', $' + s + ' \\le ' + q + '$' : '') + ').';
       var A = tx(cc, ds(cc, [[a, p, q]])), B = tx(cc, ds(cc, [[b, rr, s]]));
       return {
-        hinhGiai: hgThe(ds(cc, [[a, p, q]]), ds(cc, [[b, rr, s]])),
+        // Hệ số chia không hết thì thẻ số ghi phân số, hình rối: chỉ kèm hình khi chia hết
+        hinhGiai: a % b === 0 ? hgThe(ds(cc, [[a, p, q]]), ds(cc, [[b, rr, s]])) : undefined,
         de: 'Đúng hay sai: Đơn thức $' + A + '$ chia hết cho đơn thức $' + B + '$.',
         dapAn: { kieu: 'dungSai', gt: dung },
         goiY: ['$A$ chia hết cho $B$ khi mỗi biến của $B$ đều là biến của $A$ với số mũ **không lớn hơn** số mũ của nó trong $A$.', 'So sánh số mũ của $x$, rồi của $y$ trong hai đơn thức. (Hệ số không ảnh hưởng.)'],

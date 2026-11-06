@@ -37,7 +37,7 @@
 
     nhin: {
       tieuDe: 'Cùng bậc thang thì đẩy lên được: hai đường song song', loai: 'chungMinh',
-      luuY: 'Lập luận đúng với mọi $x$, không chỉ những chỗ có mũi tên: $(ax + b\') - (ax + b) = b\' - b$. Hai tung độ luôn chênh nhau cùng một số, nên hai đường không có điểm chung nào khi $b\' \\ne b$.',
+      luuY: 'Lập luận đúng với mọi $x$, không chỉ những chỗ có mũi tên: $(ax + b\') - (ax + b) = b\' - b$. Hai tung độ luôn chênh nhau cùng một số, nên hai đường không có điểm chung nào khi $b\' \\ne b$. Ngược lại, nếu $a \\ne a\'$ thì phương trình $ax + b = a\'x + b\'$, tức $(a - a\')x = b\' - b$, có nghiệm $x = \\frac{b\' - b}{a - a\'}$, nên hai đường có điểm chung: chúng cắt nhau.',
       canh: { ten: 'haiDuongThang', tuyChon: { theoThamSo: 2, khung: [-4, 4, -5, 5], tinhTien: { tu: 0, den: 1 }, bac: [{ duong: 0, tu: 0, soBuoc: 1, nhan: true }] }, giay: 14,
         moTa: 'Đường thẳng y bằng a x cộng b được đẩy thẳng lên (hoặc xuống) thành đường y bằng a x cộng b phẩy; mũi tên dọc ở mọi chỗ dài bằng nhau.',
         dongSo: function (p, f) {
@@ -58,20 +58,24 @@
         phanUng: [{ gt: 2, thamSo: { thu: 2 }, loi: 'Với $m = 2$, hệ số góc là $5$: đường đi lên, cắt đường kia. Chuyển $3$ sang vế phải phải đổi dấu: $m = -1 - 3$.' }],
         soBatKi: function (v) {
           var so = function (n) { return String(Math.round(n * 1000) / 1000).replace('.', '{,}'); };
-          return { thamSo: { thu: v }, loi: 'Với $m = ' + so(v) + '$, hệ số góc là $' + so(v) + ' + 3 = ' + so(v + 3) + '$, khác $-1$: hai đường cắt nhau ở chỗ vòng tròn.' };
+          if (v === -3) return { thamSo: { thu: v }, loi: 'Đề cho $m \\ne -3$: với $m = -3$ thì hệ số của $x$ bằng $0$, hàm số không còn là bậc nhất.' };
+          // Hai đường cắt nhau khi (m + 4)x = 4; khung hình chỉ từ x = −3 đến 6, y từ −3 đến 7
+          var x = 4 / (v + 4), trong = x >= -3 && x <= 6 && 5 - x >= -3 && 5 - x <= 7;
+          var xGhi = Math.abs(x * 100 - Math.round(x * 100)) > 1e-9 ? '\\approx ' + so(Math.round(x * 100) / 100) : '= ' + so(x);
+          return { thamSo: { thu: v }, loi: 'Với $m = ' + so(v) + '$, hệ số góc là $' + so(v) + ' + 3 = ' + so(v + 3) + '$, khác $-1$: hai đường cắt nhau ' + (trong ? 'ở chỗ vòng tròn' : 'tại $x ' + xGhi + '$, ngoài khung hình') + '.' };
         },
         dungChu: '$m + 3 = -1$ nên $m = -4$: hai đường cùng bậc thang, chênh nhau $4$ ở mọi chỗ, song song.'
       },
       suyRa: {
         tieuDe: 'Đề đổi, nhưng vẫn là bậc thang',
         baDe: [
-          { tuBai: '29.1', canh: mp({ khung: [-1, 4, -1, 8], duong: [{ a: -2, b: 7, nhan: 'y = 7 − 2x' }], bac: [{ duong: 0, tu: 0, soBuoc: 1 }] }), tenNut: 'Vẽ bậc thang',
+          { tuBai: '29.1', canh: mp({ anKetQua: true, khung: [-1, 4, -1, 8], duong: [{ a: -2, b: 7, nhan: 'y = 7 − 2x' }], bac: [{ duong: 0, tu: 0, soBuoc: 1 }] }), tenNut: 'Vẽ bậc thang',
             phanUng: [{ gt: 7, loi: '$7$ là chỗ đường thẳng cắt trục tung. Hệ số góc là độ dốc: sang phải $1$ thì đi xuống mấy?' }, { gt: 2, loi: 'Đường thẳng đi **xuống** từ trái sang phải nên hệ số góc âm.' }],
             dungChu: 'Sang phải $1$ thì xuống $2$: hệ số góc $-2$.', saiChu: 'Hệ số góc là hệ số của $x$, lấy cả dấu: $y = -2x + 7$.' },
-          { tuBai: '29.6', canh: mp(B296, { ghiChu: KHAC_TI_LE }), tenNut: 'Vẽ bậc thang',
+          { tuBai: '29.6', canh: mp(Object.assign({ anKetQua: true }, B296), { ghiChu: KHAC_TI_LE }), tenNut: 'Vẽ bậc thang',
             phanUng: [{ gt: '4x+3', loi: '$3$ là tung độ của điểm $(2; 3)$, không phải $b$. Đi bậc thang về tới trục tung.' }],
             dungChu: 'Từ $(2; 3)$ lùi $2$ bậc, mỗi bậc xuống $4$: tới $(0; -5)$, nên $y = 4x - 5$.', saiChu: 'Hệ số góc $4$: mỗi bậc sang trái $1$ thì xuống $4$. Đi từ $(2; 3)$ về tới $x = 0$.' },
-          { tuBai: '29.9', canh: mp(B299), tenNut: 'Đẩy đường thẳng',
+          { tuBai: '29.9', canh: mp(Object.assign({ anKetQua: true, bac: [{ duong: 0, tu: -1, soBuoc: 2 }] }, B299)), tenNut: 'Tìm đường song song',
             phanUng: [{ gt: '2x-1', loi: 'Đó chính là đường thẳng đã cho, nó không đi qua $(-1; 3)$.' }],
             dungChu: 'Đẩy $y = 2x - 1$ lên $6$ đơn vị thì đi qua $(-1; 3)$: $y = 2x + 5$.', saiChu: 'Song song nên giữ hệ số góc $2$. Thay $(-1; 3)$ vào $y = 2x + b$ để tìm $b$.' }
         ],
@@ -132,11 +136,11 @@
         { lam: 'Hàm số có dạng $y = -3x + b$.', vi: 'Hệ số góc đã cho chính là $a$.' },
         { lam: 'Đi qua $(1; 1)$: $1 = -3\\cdot 1 + b$, nên $b = 4$.', vi: 'Thay toạ độ điểm vào công thức để tìm $b$.' },
         { lam: 'Vậy $y = -3x + 4$.', vi: 'Thử lại: $x = 1$ thì $y = -3 + 4 = 1$. Đúng!' } ] },
-      { de: 'Tìm $m$ để đường thẳng $y = (m - 2)x + 5$ $(m \\ne 2)$ song song với đường thẳng $y = 3x - 1$.', canh: mp({ khung: [-3, 3, -4, 8], duong: [{ a: 3, b: -1, nhan: 'y = 3x − 1' }, { a: 3, b: 5, an: true, mau: '--cc', nhan: 'm = 5' }], tinhTien: { tu: 0, den: 1 } }), buoc: [
+      { de: 'Tìm $m$ để đường thẳng $y = (m - 2)x + 5$ $(m \\ne 2)$ song song với đường thẳng $y = 3x - 1$.', canh: mp({ khung: [-3, 3, -4, 8], duong: [{ a: 3, b: -1, nhan: 'y = 3x − 1', nhanX: 2 }, { a: 3, b: 5, an: true, mau: '--cc', nhan: 'm = 5', nhanX: -2 }], tinhTien: { tu: 0, den: 1 } }), buoc: [
         { lam: 'Song song khi $m - 2 = 3$ và $5 \\ne -1$.', vi: 'Hai hệ số góc bằng nhau, hai tung độ gốc khác nhau.' },
         { lam: '$m - 2 = 3$, nên $m = 5$.', vi: 'Giải phương trình bậc nhất ẩn $m$.' },
         { lam: '$m = 5$ thoả mãn $m \\ne 2$. Vậy $m = 5$.', vi: 'Luôn đối chiếu với điều kiện ban đầu.' } ] },
-      { de: 'Tìm $m$ để đường thẳng $y = mx + 1$ $(m \\ne 0)$ cắt đường thẳng $y = 4x - 2$.', canh: mp({ khung: [-3, 3, -5, 5], duong: [{ a: 4, b: -2, nhan: 'y = 4x − 2' }, { a: 1, b: 1, mau: '--cc' }, { a: -1, b: 1, mau: '--cc' }, { a: 4, b: 1, mau: '--sai', net: true, nhan: 'm = 4' }], giao: [0, 1] }, { ghiChu: 'Các đường xanh lá (m khác 4) đều cắt; đường đứt đỏ (m = 4) song song, không cắt.' }), buoc: [
+      { de: 'Tìm $m$ để đường thẳng $y = mx + 1$ $(m \\ne 0)$ cắt đường thẳng $y = 4x - 2$.', canh: mp({ khung: [-3, 3, -5, 5], duong: [{ a: 4, b: -2, nhan: 'y = 4x − 2', nhanX: 1.5 }, { a: 1, b: 1, mau: '--cc' }, { a: -1, b: 1, mau: '--cc' }, { a: 4, b: 1, mau: '--sai', net: true, nhan: 'm = 4', nhanX: -1.2 }], giao: [0, 1] }, { ghiChu: 'Các đường xanh lá (m khác 4) đều cắt; đường đứt đỏ (m = 4) song song, không cắt.' }), buoc: [
         { lam: 'Hai đường thẳng cắt nhau khi $m \\ne 4$.', vi: 'Cắt nhau khi hai hệ số góc **khác nhau**.' },
         { lam: 'Kết hợp điều kiện: $m \\ne 0$ và $m \\ne 4$.', vi: 'Điều kiện $m \\ne 0$ để hàm số là bậc nhất.' } ] },
       { de: 'Tìm hàm số bậc nhất có đồ thị song song với đường thẳng $y = 2x - 3$ và đi qua điểm $(1; 5)$.', canh: mp({ khung: [-3, 3, -5, 8], duong: [{ a: 2, b: -3, nhan: 'y = 2x − 3' }, { a: 2, b: 3, an: true, mau: '--cc', nhan: 'y = 2x + 3' }], diem: [{ x: 1, y: 5, ten: '(1; 5)' }], tinhTien: { tu: 0, den: 1 } }), buoc: [
@@ -220,7 +224,7 @@
 
       { id: '29.11', hinhGiai: hg(mp({ khung: [-2, 5, -3, 6], duong: [{ a: 2, b: -1, nhan: 'y = 2x − 1', nhanX: 3.3 }, { a: -1, b: 5, mau: '--cc', nhan: 'y = −x + 5' }], giao: [0, 1], mauGiao: '--cc', diem: [{ x: 2, y: 3, ten: '', chieu: true }] })), muc: 3, de: 'Tìm toạ độ giao điểm của hai đường thẳng $y = 2x - 1$ và $y = -x + 5$.',
         dapAn: { kieu: 'nhieuO', o: [
-          { nhan: 'Hoành độ giao điểm', kieu: 'so', gt: 2, loiThuongGap: [{ gt: 4 / 3, giaiThich: 'Chuyển $-x$ sang trái phải thành $+x$: $2x + x = 3x$, và $-1$ sang phải thành $+1$: $3x = 6$.' }] },
+          { nhan: 'Hoành độ giao điểm', kieu: 'so', gt: 2, loiThuongGap: [{ gt: 4 / 3, giaiThich: 'Chuyển $-1$ sang vế phải phải đổi dấu thành $+1$: $3x = 5 + 1 = 6$, không phải $5 - 1$.' }] },
           { nhan: 'Tung độ giao điểm', kieu: 'so', gt: 3, loiThuongGap: [{ gt: 2, giaiThich: '$2$ là hoành độ. Tung độ: thay $x = 2$ vào $y = 2x - 1$.' }] }] },
         goiY: ['Tại giao điểm hai giá trị $y$ bằng nhau: $2x - 1 = -x + 5$.', 'Tìm $x$ rồi thay vào một trong hai công thức để tìm $y$.'],
         loiGiai: ['$2x - 1 = -x + 5$, nên $3x = 6$, $x = 2$.', 'Thay vào: $y = 2\\cdot 2 - 1 = 3$.', 'Giao điểm là $(2; 3)$. Thử lại: $-2 + 5 = 3$. Đúng!'] },

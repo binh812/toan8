@@ -28,8 +28,8 @@
     var so = dao ? [lon, nho] : [nho, lon], iLon = dao ? 0 : 1;
     // Hình lời giải: cắt trục ở gốc g, đỉnh trục chia 4 khoảng đều theo bước của bối cảnh
     var khoang = b.buoc * Math.ceil(h2 * 1.2 / 4), dinh = b.g + 4 * khoang;
-    var hinhGiai = { widget: 'canh', config: { ten: 'catTruc', tuyChon: { nhan: b.nhan.slice(), so: so.slice(), goc: b.g, dinh: dinh, don: b.dv, hoi: [iLon, 1 - iLon], nguoc: true },
-      thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } };
+    var hinhGiai = { widget: 'canh', config: { ten: 'catTruc', tuyChon: { nhan: b.nhan.slice(), so: so.slice(), goc: b.g, dinh: dinh, don: b.dv, hoi: [iLon, 1 - iLon], nguoc: true, anLucDau: true },
+      chiXem: true, t: 1 } };
     return { b: b, nho: nho, lon: lon, lan: lan, so: so, iLon: iLon, hinhGiai: hinhGiai,
       hinh: { widget: 'bieuDo', config: { loai: 'cot', gocTruc: b.g, tieuDe: b.td + ' (gốc ' + b.g + ')', nhan: b.nhan.slice(), chuoi: [{ ten: b.ten, so: so }], donVi: b.dv } } };
   }
@@ -99,11 +99,11 @@
       return {
         de: 'Biểu đồ đoạn thẳng cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Từ ' + b.nhan[i] + ' đến ' + b.nhan[j] + ', số liệu ' + (giam ? '**giảm**' : '**tăng**') + ' bao nhiêu phần trăm?',
         hinh: { widget: 'bieuDo', config: { loai: 'duong', tieuDe: b.td, nhan: b.nhan.slice(), chuoi: [{ ten: b.td, so: so }], donVi: b.dv } },
-        hinhGiai: { widget: 'canh', config: { ten: 'soVoiCu', tuyChon: { cu: a, moi: bb, nhanCu: b.nhan[i], nhanMoi: b.nhan[j], don: b.dv }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } },
+        hinhGiai: { widget: 'canh', config: { ten: 'soVoiCu', tuyChon: { cu: a, moi: bb, nhanCu: b.nhan[i], nhanMoi: b.nhan[j], don: b.dv, anLucDau: true }, chiXem: true, t: 1 } },
         dapAn: { kieu: 'so', gt: pt },
         goiY: ['Đọc giá trị cũ (' + b.nhan[i] + ') và giá trị mới (' + b.nhan[j] + ').', 'Mức ' + (giam ? 'giảm' : 'tăng') + ' $= \\frac{\\text{chênh lệch}}{\\text{giá trị cũ}} \\cdot 100\\%$.'],
         loiGiai: [b.nhan[i] + ': $' + a + '$; ' + b.nhan[j] + ': $' + cs(bb) + '$ (' + b.dv + '). Chênh lệch: $' + cs(doi) + '$.',
-          'Tỉ lệ ' + (giam ? 'giảm' : 'tăng') + ': $\\frac{' + cs(doi) + '}{' + a + '} \\cdot 100\\% = ' + pt + '\\%$.', 'Đáp số: $' + pt + '$.'],
+          'Tỉ lệ ' + (giam ? 'giảm' : 'tăng') + ': $\\frac{' + cs(doi) + '}{' + a + '} \\cdot 100\\% = ' + pt + '\\%$.', 'Đáp số: $' + pt + '\\%$.'],
         loiThuongGap: ltg
       };
     } },
@@ -111,9 +111,10 @@
     { ten: 'Nhận xét xu thế', muc: 2, sinh: function (r) {
       var kieu = r.chon([0, 1, 2]); // 0 tăng liên tục, 1 giảm liên tục, 2 lúc tăng lúc giảm
       var b = r.chon([
-        { td: 'Thị phần xuất khẩu gạo (%)', chuoi: ['Việt Nam', 'Thái Lan'], dv: '%', lo: 10, hi: 30 },
+        // Số liệu giả định, nên dùng tên giả định
+        { td: 'Thị phần xuất khẩu gạo của hai nước A, B (%)', chuoi: ['Nước A', 'Nước B'], dv: '%', lo: 8, hi: 20 },
         { td: 'Số học sinh đạt giải học sinh giỏi', chuoi: ['Trường A', 'Trường B'], dv: 'bạn', lo: 8, hi: 30 },
-        { td: 'Lượng mưa trung bình (mm)', chuoi: ['Hà Nội', 'Huế'], dv: 'mm', lo: 40, hi: 300 }]);
+        { td: 'Lượng mưa tháng 9 (mm)', chuoi: ['Thành phố A', 'Thành phố B'], dv: 'mm', lo: 60, hi: 200 }]);
       var nhan = ['2019', '2020', '2021', '2022', '2023'], ai = r.so(0, 1);
       function day(k) {
         var v = r.so(b.lo, Math.round((b.lo + b.hi) / 2)), out = [v];
@@ -138,7 +139,7 @@
       var chuoi = ai === 0 ? [{ ten: b.chuoi[0], so: s }, { ten: b.chuoi[1], so: khac }] : [{ ten: b.chuoi[0], so: khac }, { ten: b.chuoi[1], so: s }];
       var lc = ['Tăng liên tục.', 'Giảm liên tục.', 'Lúc tăng lúc giảm.', 'Không thay đổi.'];
       return {
-        de: 'Biểu đồ cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + ' từ năm 2019 đến năm 2023. Nhận xét nào đúng về số liệu của **' + b.chuoi[ai] + '**?',
+        de: 'Biểu đồ cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + ' từ năm 2019 đến năm 2023 (số liệu giả định). Nhận xét nào đúng về số liệu của **' + b.chuoi[ai] + '**?',
         hinh: { widget: 'bieuDo', config: { loai: 'duong', tieuDe: b.td, tenNhan: 'Năm', nhan: nhan, chuoi: chuoi, donVi: b.dv } },
         hinhGiai: { widget: 'canh', config: { ten: 'trucNgang', tuyChon: { nam: nhan.map(Number), so: s.slice(), don: b.dv, deu: true, dauBuoc: true }, chiXem: true, t: 1,
           ghiChu: 'Chỉ vẽ đường của ' + b.chuoi[ai] + ': xanh lá là tăng, đỏ là giảm.' } },

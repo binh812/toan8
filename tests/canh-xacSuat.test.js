@@ -74,6 +74,15 @@ test('luoiKetQua: chọn biến cố theo p.chon', () => {
   assert.strictEqual(tinh('luoiKetQua', {}, 1, o).m, 2);
   assert.strictEqual(tinh('luoiKetQua', { chon: 1 }, 1, o).m, 4);
 });
+test('luoiKetQua: đề nhiều ý đếm đúng từng biến cố; đánh dấu đúng số vật mới', () => {
+  const o = { loai: 'theSo', tu: 10, den: 99, bienCo: [{ ten: 'A', loc: v => v < 20 }, { ten: 'B', thuanLoi: [16, 25, 36, 49, 64, 81] }] };
+  assert.deepStrictEqual(tinh('luoiKetQua', { chon: 1 }, 1, o).moiBienCo.map(b => [b.m, b.dangXem]), [[10, false], [6, true]]);
+  const sach = { nhom: [{ ten: 'Tiểu thuyết', so: 15, danhDau: { so: 5, chu: 'mới' } }, { ten: 'Khác', so: 5 }], nhomThuan: ['Tiểu thuyết'], cheDo: 'chia' };
+  assert.strictEqual(tinh('luoiKetQua', {}, 1, sach).cham.filter(c => c.danhDau).length, 0);
+  const k = tinh('luoiKetQua', { danhDau: true }, 1, sach);
+  assert.deepStrictEqual(k.cham.map((c, i) => c.danhDau ? i : -1).filter(i => i >= 0), [10, 11, 12, 13, 14]);
+  GAN(k.phanSang, 15 / 20);
+});
 test('luoiKetQua: cấu hình sai thì báo lỗi', () => {
   assert.throws(() => tinh('luoiKetQua', {}, 1, { loai: 'theSo', tu: 5, den: 2 }), /khoảng/);
   assert.throws(() => tinh('luoiKetQua', {}, 1, { nhom: [{ ten: 'a', so: 0 }] }), /số lượng/);

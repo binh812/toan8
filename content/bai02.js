@@ -4,9 +4,16 @@
   // Hình cho "Nhìn là hiểu": mỗi hạng tử là một nhóm mảnh; mảnh viền đỏ đứt là mảnh âm
   function gop(da, them) { return { ten: 'khoiGop', tuyChon: Object.assign(typeof da === 'string' ? { da: da } : { nhom: da }, them || {}) }; }
   function hg(c, t) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: t == null ? 1 : t }, c) }; }
-  var SAU_XEP = 0.8;
+  var SAU_XEP = 0.8, THE = 'Thẻ ghi phần biến bậc từ 4 trở lên, không vẽ theo kích thước.';
+  function the(c) { return Object.assign(c, { ghiChu: THE }); }
 
-TOAN8.bai({
+// Dùng và Suy ra: kết quả trên hình chỉ hiện khi em đã giải (nút chạy hình không được lộ đáp án)
+  function anKetQua(L) {
+    [L.nhin.dung].concat(L.nhin.suyRa.baDe).forEach(function (d) { d.canh.tuyChon = Object.assign({}, d.canh.tuyChon, { anNhan: true }); });
+    return L;
+  }
+
+TOAN8.bai(anKetQua({
   id: 2, ten: 'Đa thức', sgk: { tap: 1, trang: 11 },
   nhin: {
     tieuDe: 'Thu gọn là xếp các mảnh cùng loại về một chỗ', loai: 'minhHoa',
@@ -40,16 +47,16 @@ TOAN8.bai({
         { tuBai: '2.3', canh: gop('x^2+2xy-3x^2+y', { nhanCanh: true }), tenNut: 'Xếp mảnh',
           dungChu: '$x^2$ và $-3x^2$ cùng loại mảnh, còn gộp được thành $-2x^2$. Đa thức chưa thu gọn, nên khẳng định **sai**.',
           saiChu: 'Bấm "Xếp mảnh": có hàng nào gồm hai nhóm mảnh cùng loại không?' },
-        { tuBai: '2.6', canh: gop('2x^5-x^2y+4xy-2x^5+3', { bac: true }), tenNut: 'Xếp mảnh', saiT: SAU_XEP,
-          phanUng: [{ gt: 5, t: SAU_XEP, loi: 'Bấm "Xếp mảnh": hai thẻ $x^5$ dương và hai thẻ $x^5$ âm triệt tiêu hết. Không còn hạng tử bậc $5$.' },
+        { tuBai: '2.6', canh: the(gop('2x^5-x^2y+4xy-2x^5+3', { bac: true })), tenNut: 'Xếp mảnh', saiT: SAU_XEP,
+          phanUng: [{ gt: 5, t: SAU_XEP, loi: 'Nếu em chọn bậc của $x^5$: bấm "Xếp mảnh", hai thẻ $x^5$ dương và hai thẻ âm triệt tiêu hết, không còn hạng tử bậc $5$. Nếu em cộng $3 + 2 + 0$: bậc của đa thức là bậc **lớn nhất**, không cộng các bậc.' },
             { gt: 6, t: SAU_XEP, loi: 'Bậc của đa thức là bậc **lớn nhất** của các hạng tử, không cộng các bậc lại.' }],
           dungChu: 'Thẻ $x^5$ triệt tiêu hết. Còn $-x^2y$ (bậc $3$), $4xy$ (bậc $2$), $3$ (bậc $0$). Bậc của $H$ là $3$.',
           saiChu: 'Thu gọn trước: xếp mảnh rồi xem loại nào còn lại.' },
-        { tuBai: '2.10', canh: gop(['x^2', 'xy', 'y^2', 'x', 'y', '1'], { gop: false, bac: true }), tenNut: 'Ghi bậc',
+        { tuBai: '2.10', canh: gop(['x^2', 'xy', 'y^2', { don: 'x', sau: true }, { don: 'y', sau: true }, { don: '1', sau: true }], { gop: false, bac: true }), tenNut: 'Thêm mảnh bậc thấp',
           phanUng: [{ gt: 3, loi: 'Ngoài ba mảnh bậc $2$ ($x^2$, $xy$, $y^2$), đa thức bậc hai vẫn có thể có mảnh bậc $1$ ($x$, $y$) và ô số $1$ (bậc $0$).' },
             { gt: 5, loi: 'Gần đúng rồi. Còn ô vuông nhỏ: số $1$ (bậc $0$).' }],
           dungChu: 'Mỗi loại mảnh có bậc không quá $2$ góp một hạng tử: $x^2$, $xy$, $y^2$, $x$, $y$, $1$. Có $6$ loại.',
-          saiChu: 'Liệt kê mọi loại mảnh có bậc không quá $2$, kể cả bậc $1$ và bậc $0$.' }
+          saiChu: 'Ngoài ba loại mảnh bậc $2$ trên hình, còn những loại mảnh nào có bậc nhỏ hơn? Bấm nút để xem.' }
       ],
       cachNhan: 'Gặp đa thức chưa gọn: xếp mảnh cùng loại về một hàng, mảnh dương và mảnh âm cùng loại triệt tiêu nhau. Bậc của đa thức là bậc của loại mảnh cao nhất còn lại.'
     }
@@ -134,14 +141,14 @@ TOAN8.bai({
       loiThuongGap: [
         { gt: '4x^4+3x^2y^2-y^2', giaiThich: 'Em đã cộng cả số mũ. Khi cộng hạng tử đồng dạng chỉ cộng hệ số, giữ nguyên phần biến.' },
         { gt: '4x^2-7xy-y^2', giaiThich: 'Chú ý dấu: $-2xy + 5xy = (-2 + 5)xy = 3xy$.' }] },
-    { id: '2.5', hinhGiai: hg(gop('x^3y^2-4xy+2x^2+1', { gop: false, bac: true })), muc: 2, de: 'Tìm bậc của đa thức $x^3y^2 - 4xy + 2x^2 + 1$.',
+    { id: '2.5', hinhGiai: hg(the(gop('x^3y^2-4xy+2x^2+1', { gop: false, bac: true }))), muc: 2, de: 'Tìm bậc của đa thức $x^3y^2 - 4xy + 2x^2 + 1$.',
       dapAn: { kieu: 'so', gt: 5 },
       goiY: ['Đa thức đã thu gọn. Tìm bậc của từng hạng tử, rồi lấy bậc **lớn nhất**.', 'Bậc của $x^3y^2$ là $3 + 2$.'],
       loiGiai: ['Các hạng tử $x^3y^2$; $-4xy$; $2x^2$; $1$ có bậc lần lượt là $5$; $2$; $2$; $0$.', 'Bậc của đa thức là $5$'],
       loiThuongGap: [
         { gt: 9, giaiThich: 'Em đã cộng bậc các hạng tử ($5 + 2 + 2 + 0$). Bậc của đa thức là bậc **lớn nhất** của các hạng tử: $5$.' },
         { gt: 3, giaiThich: 'Bậc của hạng tử $x^3y^2$ là $3 + 2 = 5$ (cộng số mũ của mọi biến), không phải $3$.' }] },
-    { id: '2.6', hinhGiai: hg(gop('2x^5-x^2y+4xy-2x^5+3', { bac: true })), muc: 2, de: 'Tìm bậc của đa thức $H = 2x^5 - x^2y + 4xy - 2x^5 + 3$.',
+    { id: '2.6', hinhGiai: hg(the(gop('2x^5-x^2y+4xy-2x^5+3', { bac: true }))), muc: 2, de: 'Tìm bậc của đa thức $H = 2x^5 - x^2y + 4xy - 2x^5 + 3$.',
       dapAn: { kieu: 'so', gt: 3 },
       goiY: ['Phải **thu gọn trước** rồi mới tìm bậc.', '$2x^5 - 2x^5 = 0$. Còn lại những hạng tử nào?'],
       loiGiai: ['$H = (2x^5 - 2x^5) - x^2y + 4xy + 3 = -x^2y + 4xy + 3$', 'Các hạng tử có bậc $3$; $2$; $0$. Bậc của $H$ là $3$'],
@@ -153,7 +160,7 @@ TOAN8.bai({
       loiThuongGap: [
         { gt: 6, giaiThich: '$(-1)^2 = (-1) \\cdot (-1) = 1$, không phải $-1$.' },
         { gt: 2, giaiThich: 'Chú ý dấu: $-2xy = -2 \\cdot (-1) \\cdot 2 = +4$ (âm nhân âm ra dương).' }] },
-    { id: '2.8', hinhGiai: hg(gop('1/2x^2y+3xy-5/2x^2y+xy')), muc: 2, de: 'Thu gọn rồi tính giá trị của $M = \\frac{1}{2}x^2y + 3xy - \\frac{5}{2}x^2y + xy$ tại $x = 3$, $y = -1$.',
+    { id: '2.8', hinhGiai: hg(Object.assign(gop('1/2x^2y+3xy-5/2x^2y+xy'), { ghiChu: 'Khối ghi hệ số phân số (1/2, 5/2) không vẽ theo kích thước.' })), muc: 2, de: 'Thu gọn rồi tính giá trị của $M = \\frac{1}{2}x^2y + 3xy - \\frac{5}{2}x^2y + xy$ tại $x = 3$, $y = -1$.',
       dapAn: { kieu: 'so', gt: 6 },
       goiY: ['Thu gọn: $\\frac{1}{2} - \\frac{5}{2} = -2$; $3 + 1 = 4$.', 'Dạng thu gọn $M = -2x^2y + 4xy$. Thay $x = 3$, $y = -1$.'],
       loiGiai: ['$M = \\left(\\frac{1}{2} - \\frac{5}{2}\\right)x^2y + (3 + 1)xy = -2x^2y + 4xy$', '$M = -2 \\cdot 9 \\cdot (-1) + 4 \\cdot 3 \\cdot (-1) = 18 - 12 = 6$'],
@@ -183,5 +190,5 @@ TOAN8.bai({
       giaiThich: 'Bạn Nam chưa thu gọn đa thức. $x^4 - x^4 = 0$ nên dạng thu gọn là $B = -2x^2y + 3$, không còn hạng tử $x^4$.',
       sua: 'Thu gọn: $B = -2x^2y + 3$. Hạng tử bậc cao nhất là $-2x^2y$ (bậc 3), nên bậc của $B$ là $3$.' }
   ]
-});
+}));
 })();

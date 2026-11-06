@@ -11,7 +11,6 @@
   }
   function mp(tuyChon, them) { return Object.assign({ ten: 'duongThang', tuyChon: tuyChon }, them); }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
-  var GIAI = { trangThai: 'giai' };
 
   TOAN8.bai({
     id: 27, ten: 'Khái niệm hàm số và đồ thị của hàm số', sgk: { tap: 2, trang: 40 },
@@ -46,7 +45,11 @@
             dungChu: '$12 : (-4) = -3$.', saiChu: 'Máy chia $12$ cho $x$. Thay $x = -4$, nhớ dấu.' },
           { tuBai: '27.6', canh: may({ k: 6 }, [-3, 4], 'f(x) = 6 : x', { tuyChon: { an: true, nguoc: { y: -6 } } }), tenNut: 'Cho x vào máy',
             dungChu: '$f(-3) = -2$; $f(-1) = -6$; $f(4) = 1{,}5$.', saiChu: 'Hai ô đầu và cuối: cho $x$ vào máy. Ô giữa thì ngược lại: tìm $x$ để máy ra $-6$ (đường nét đứt).' },
-          { tuBai: '27.8', canh: may({ a: 0.5, b: 1 }, [-2, 0, 2], 'f(x) = x : 2 + 1', { tuyChon: { nguoc: { y: 4 } } }), tenNut: 'Cho x vào máy',
+          { tuBai: '27.8', canh: may({ a: 0.5, b: 1 }, [-2, 0, 2], 'f(x) = x : 2 + 1', { tuyChon: { nguoc: { y: 4 }, khung: [-3, 9, -1, 6] } }), tenNut: 'Cho x vào máy',
+            soBatKi: function (v) {
+              var so = function (n) { return String(Math.round(n * 1000) / 1000).replace('.', '{,}'); }, y = v / 2 + 1;
+              return { thamSo: { thu: v }, loi: 'Máy nhận $' + so(v) + '$ thì ra $' + so(y) + '$, ' + (y > 4 ? 'vượt quá' : 'chưa tới') + ' $4$. Cứ $x$ tăng $2$ thì $y$ tăng $1$.' };
+            },
             phanUng: [{ gt: 3, thamSo: { thu: 3 }, loi: 'Máy nhận $3$ thì ra $2{,}5$, chưa tới $4$. $\\frac{1}{2}x = 3$ nghĩa là **một nửa** của $x$ bằng $3$.' },
               { gt: 10, thamSo: { thu: 10 }, loi: 'Máy nhận $10$ thì ra $6$, vượt quá $4$. Chuyển $1$ sang vế phải phải đổi dấu: $\\frac{1}{2}x = 3$.' }],
             dungChu: 'Máy nhận $6$ thì ra $6 : 2 + 1 = 4$.', saiChu: 'Cứ $x$ tăng $2$ thì $y$ tăng $1$. Từ điểm $(2; 2)$, đi tiếp tới khi $y = 4$.' }
@@ -170,7 +173,7 @@
         goiY: ['Kiểm tra: có giá trị $x$ nào ứng với **hai** giá trị $y$ khác nhau không?', 'Nhiều $x$ cùng cho một $y$ thì không vi phạm định nghĩa.'],
         loiGiai: ['Mỗi giá trị của $x$ cho đúng một giá trị $y = 3$.', 'Vậy $y$ **là** hàm số của $x$ (gọi là hàm hằng). Chọn **Đúng**.'] },
 
-      { id: '27.8', hinhGiai: hg(may({ a: 0.5, b: 1 }, [-2, 0, 2], 'f(x) = x : 2 + 1', { tuyChon: { nguoc: { y: 4 } }, thamSo: GIAI })), muc: 2, de: 'Cho hàm số $f(x) = \\frac{1}{2}x + 1$. Tìm $x$ sao cho $f(x) = 4$.',
+      { id: '27.8', hinhGiai: hg(may({ a: 0.5, b: 1 }, [-2, 0, 2], 'f(x) = x : 2 + 1', { tuyChon: { nguoc: { y: 4 } } })), muc: 2, de: 'Cho hàm số $f(x) = \\frac{1}{2}x + 1$. Tìm $x$ sao cho $f(x) = 4$.',
         dapAn: { kieu: 'so', gt: 6 },
         goiY: ['Giải phương trình $\\frac{1}{2}x + 1 = 4$.', '$\\frac{1}{2}x = 3$, nhân hai vế với $2$.'],
         loiGiai: ['$\\frac{1}{2}x + 1 = 4$', '$\\frac{1}{2}x = 3$', '$x = 6$'],

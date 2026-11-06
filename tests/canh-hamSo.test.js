@@ -110,3 +110,17 @@ test('duongThang: khung tự chọn luôn chứa gốc toạ độ và mọi đi
   const k = tinh('duongThang', {}, 1, { duong: [{ a: 2, b: 40 }], diem: [{ x: 30, y: 100 }], bac: [{ duong: 0, tu: 0, soBuoc: 3, dx: 10 }] });
   assert.ok(k.kh.x0 <= 0 && k.kh.x1 >= 30 && k.kh.y0 <= 0 && k.kh.y1 >= 100);
 });
+test('duongThang anKetQua: chưa giải thì bỏ bậc cuối, giấu đường cần tìm và tịnh tiến; giải rồi thì hiện đủ', () => {
+  const o = { anKetQua: true, duong: [{ a: -2, b: 5 }, { a: -2, b: 1, an: true }], bac: [{ duong: 0, tu: 0, soBuoc: -3, nhan: true }], tinhTien: { tu: 0, den: 1 }, diem: [{ x: -3, y: 11, an: true }] };
+  const chua = tinh('duongThang', {}, 1, o), roi = tinh('duongThang', { trangThai: 'giai' }, 1, o);
+  assert.strictEqual(chua.bac[0].buoc.length, 2); assert.strictEqual(chua.bac[0].anNhan, true);
+  assert.strictEqual(chua.ds[1].hien, 0); assert.strictEqual(chua.dich, null); assert.strictEqual(chua.diem[0].hien, 0);
+  assert.strictEqual(roi.bac[0].buoc.length, 3); assert.strictEqual(roi.ds[1].hien, 1); assert.ok(roi.dich); assert.strictEqual(roi.diem[0].hien, 1);
+  const motBac = tinh('duongThang', {}, 1, { anKetQua: true, duong: [{ a: -3, b: 2 }], bac: [{ duong: 0, tu: 0, soBuoc: -1 }] });
+  assert.strictEqual(motBac.bac[0].buoc.length, 1); assert.strictEqual(motBac.bac[0].buoc[0].anDoc, true);
+});
+test('soDoDoan: thử số làm một mảnh dài âm thì đánh dấu mảnh đó', () => {
+  const o = { tren: [{ x: 1 }, { x: 1, so: -5 }], duoi: [{ so: 25 }] };
+  assert.ok(tinh('soDoDoan', { thu: 3 }, 1, o).hang[0].manh[1].am);
+  assert.ok(!tinh('soDoDoan', { thu: 8 }, 1, o).hang[0].manh.some(m => m.am));
+});

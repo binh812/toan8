@@ -95,7 +95,7 @@
       luuY: 'Hình đếm ô khi $x$ là số nguyên dương. Lập luận chung: theo tính chất cơ bản (bài 22), nhân cả tử và mẫu với nhân tử phụ không làm đổi phân thức; khi đã cùng mẫu $M$ thì $\\frac{A}{M} + \\frac{B}{M} = \\frac{A + B}{M}$, giống như dồn các ô cùng cỡ.',
       canh: lp({ dang: 'cong', p1: { tu: 1, mau: [0, 1] }, p2: { tu: 1, mau: [1, 1] }, mtc: [0, 1, 1] }, {
         moTa: 'Hình trái chia x cột, tô một cột. Hình phải chia x cộng 1 hàng, tô một hàng. Cắt thêm để hai hình cùng một lưới ô, rồi dồn các ô tô màu vào hình tổng.',
-        dongSo: function (p) { var x = p.x, m = x * (x + 1); return 'Tại $x = ' + x + '$: $\\frac{1}{\\ca{' + x + '}} + \\frac{1}{\\cb{' + (x + 1) + '}} = \\frac{' + (x + 1) + '}{' + m + '} + \\frac{' + x + '}{' + m + '} = \\frac{' + (2 * x + 1) + '}{' + m + '}$'; } }),
+        dongSo: function (p) { var x = p.x, m = x * (x + 1); return 'Tại $x = ' + x + '$: $\\frac{1}{\\ca{' + x + '}} + \\frac{1}{\\cb{' + (x + 1) + '}}$, mẫu chung $' + x + ' \\cdot ' + (x + 1) + ' = ' + m + '$'; } }),
       buoc: [
         { t: 0, chu: '$\\frac{1}{\\ca{x}}$: chia $\\ca{x}$ cột, tô một cột. $\\frac{1}{\\cb{x+1}}$: chia $\\cb{x+1}$ hàng, tô một hàng. Ô hai bên to nhỏ khác nhau, chưa cộng được.' },
         { t: 0.1, chu: 'Cắt hình trái thêm $\\cb{x+1}$ hàng, hình phải thêm $\\ca{x}$ cột. Cả hai thành $\\ca{x}(\\cb{x+1})$ ô bằng nhau. Đó là **quy đồng**; $\\cb{x+1}$ và $\\ca{x}$ là hai nhân tử phụ.' },

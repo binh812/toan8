@@ -59,7 +59,7 @@
       var gt = ds.findIndex(function (d) { return d.a === dung; });
       return {
         de: 'Đường thẳng nào dưới đây tạo với trục $Ox$ một **góc ' + (tu ? 'tù' : 'nhọn') + '**?',
-        hinhGiai: hgDt({ tiLe: true, khung: [-6, 6, -7, 7], duong: as.map(function (a, i) { return { a: a, b: bs[i], mau: i ? '--nhat' : '--a' }; }), goc: [0] }, 'Đường cam đi ' + (dung > 0 ? 'lên' : 'xuống') + ' từ trái sang phải; ba đường xám đi ' + (dung > 0 ? 'xuống' : 'lên') + '.'),
+        hinhGiai: hgDt({ tiLe: true, khung: [-8, 8, -7, 7], duong: as.map(function (a, i) { return { a: a, b: bs[i], mau: i ? '--nhat' : '--a' }; }), goc: [0] }, 'Đường cam đi ' + (dung > 0 ? 'lên' : 'xuống') + ' từ trái sang phải; ba đường xám đi ' + (dung > 0 ? 'xuống' : 'lên') + '.'),
         dapAn: { kieu: 'chon', gt: gt, luaChon: ds.map(function (d) { return d.tex; }) },
         goiY: ['Góc tạo bởi đường thẳng $y = ax + b$ và trục $Ox$ là góc nhọn khi $a > 0$, là góc tù khi $a < 0$.', 'Tìm hệ số của $x$ (cả dấu) trong từng đường thẳng.'],
         loiGiai: ['Chỉ có ' + ds[gt].tex + ' có hệ số góc $a = ' + dung + (tu ? ' < 0' : ' > 0') + '$, các đường còn lại có $a ' + (tu ? '> 0' : '< 0') + '$.', 'Vậy đáp án là ' + ds[gt].tex + '.']

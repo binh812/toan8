@@ -15,7 +15,17 @@
   // lũy thừa trong lời giải: x^1 viết gọn là x
   function lt(b, e) { return e === 1 ? b : b + '^{' + e + '}'; }
   // Hình lời giải theo chính số của đề: thẻ thừa số (thuaSo) hoặc mảnh, khối (khoiGop)
-  function hg(ten, tuyChon) { return { widget: 'canh', config: { ten: ten, tuyChon: tuyChon, chiXem: true, t: 1 } }; }
+  function hg(ten, tuyChon) {
+    var c = { ten: ten, tuyChon: tuyChon, chiXem: true, t: 1 };
+    if (ten === 'khoiGop') {
+      // Quá nhiều mảnh thì mảnh bé tí, không rõ hơn: đề đó không kèm hình
+      var ds = (tuyChon.nhom || []).map(function (g) { return typeof g === 'string' ? g : g.don; }).concat(tuyChon.da ? String(tuyChon.da).match(/[+-]?[^+-]+/g) : []);
+      if (ds.reduce(function (s, d) { var m = /^[+-]?([0-9]*)/.exec(d); return s + (m[1] ? +m[1] : 1); }, 0) > 16) return undefined;
+      if (ds.some(function (d) { return (d.match(/[a-z][^a-z]*/g) || []).reduce(function (s, b) { return s + (b.length > 1 ? +b.slice(2) : 1); }, 0) >= 4; }))
+        c.ghiChu = 'Thẻ ghi phần biến bậc từ 4 trở lên, không vẽ theo kích thước.';
+    }
+    return { widget: 'canh', config: c };
+  }
 
   TOAN8.luyen(1, [
     { ten: 'Thu gọn tích hai đơn thức', muc: 1, sinh: function (r, cc) {

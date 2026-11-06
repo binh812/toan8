@@ -18,8 +18,9 @@
   }
   function nguyen(v) { return la(v) && Math.abs(v - Math.round(v)) < GAN; }
   // Số đã làm tròn thì ghi ≈, không ghi =
-  function tron(v) { return Math.abs(v * 100 - Math.round(v * 100)) > 1e-6; }
-  function viet(v) { return (v < -GAN ? '−' : '') + C.fmt(Math.abs(v)); }
+  // Viết tới 3 chữ số thập phân (0,125 không bị tròn thành 0,13); còn dư thì ghi ≈
+  function tron(v) { return Math.abs(v * 1000 - Math.round(v * 1000)) > 1e-6; }
+  function viet(v) { return (v < -GAN ? '−' : '') + String(Math.round(Math.abs(v) * 1000) / 1000).replace('.', ','); }
   function bang(v) { return (tron(v) ? ' ≈ ' : ' = ') + viet(v); }
   function ucln(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var r = a % b; a = b; b = r; } return a; }
   function huong(neo, mau) { return { style: 'fill:var(' + (mau || '--muc') + ');text-anchor:' + neo }; }
@@ -51,8 +52,9 @@
     return String(s).replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\*/g, '·')
       .replace(/(\S)\s*([+\-−])\s*/g, function (m, a, d) { return a + ' ' + d + ' '; }).replace(/-/g, '−');
   }
-  function nhanDoan(chu, ten, v, chua) {
-    var so = chua ? ' = ?' : bang(v);
+  // soChu: cách viết con số do nội dung đưa (ví dụ phân số −2/3 thay cho −0,667)
+  function nhanDoan(chu, ten, v, chua, soChu) {
+    var so = chua ? ' = ?' : soChu ? ' = ' + soChu : bang(v);
     if (ten) ten = dep(ten);
     if (!ten) return chu + so;
     return chu + ' ' + ten + (' = ' + String(ten).replace(/\s/g, '') === so ? '' : so);
@@ -83,7 +85,7 @@
           for (var i = 0; i < soBan && i < daDat; i++) ban.push({ tu: i * Math.abs(d.B), dai: Math.min(1, daDat - i, d.dem - i) * Math.abs(d.B), du: d.dem - i >= 1 - GAN });
         }
         return { x: d.x, A: d.A, B: d.B, xd: d.xd, dem: d.dem, gt: d.gt, ban: ban, tenTu: r.h.tenTu, tenMau: r.h.tenMau, ten: r.h.ten,
-          chuTu: r.h.chuTu || 'tử', chuMau: r.h.chuMau || 'mẫu', coX: Array.isArray(r.h.tu) || Array.isArray(r.h.mau) };
+          chuTu: r.h.chuTu || 'tử', chuMau: r.h.chuMau || 'mẫu', soTu: r.h.soTu, soMau: r.h.soMau, coX: Array.isArray(r.h.tu) || Array.isArray(r.h.mau) };
       });
       return { hang: ra, L: L, hienDoan: hienDoan, hienBan: hienBan, hienGT: hienGT, hienTach: giai ? 1 : C.muot((t - 0.5) / 0.3), giai: giai, coThu: coThu };
     }
@@ -96,10 +98,11 @@
     if (cungX) { C.chu(g0, X0, y + 3.5, 'x' + bang(k.hang[0].x) + (k.coThu ? ' (em chọn)' : ''), CO, null, huong('start', '--muc')); y += 9; }
     k.hang.forEach(function (h) {
       // o.tiLeRieng: mỗi hàng một tỉ lệ (khi các hàng chênh nhau quá nhiều)
-      var g = mk('g', {}, svg), ve = k.hienDoan, chua = ve < 0.5, s = RONG / (o.tiLeRieng ? Math.max(Math.abs(h.A), Math.abs(h.B), GAN) : k.L);
+      // o.anSo: giấu mọi con số tới khi em giải đúng (đoạn vẫn hiện)
+      var g = mk('g', {}, svg), ve = k.hienDoan, chua = ve < 0.5 || (o.anSo && !k.giai && !k.coThu), s = RONG / (o.tiLeRieng ? Math.max(Math.abs(h.A), Math.abs(h.B), GAN) : k.L);
       if (h.ten) { C.chu(g, X0, y + 3, h.ten, CO * 0.85, null, huong('start', '--nhat')); y += 7; }
       var xRieng = h.coX && !cungX && !o.anX ? ' (x = ' + viet(h.x) + ')' : '';
-      C.chu(g, X0, y + 3.5, nhanDoan(h.chuTu, h.tenTu, h.A, chua) + xRieng, CO, null, huong('start', '--a'));
+      C.chu(g, X0, y + 3.5, nhanDoan(h.chuTu, h.tenTu, h.A, chua, h.soTu) + xRieng, CO, null, huong('start', '--a'));
       var yTu = y + 7.5, yMau = yTu + CAO + 1.6;
       var am = function (v) { return v < -GAN ? { 'fill-opacity': 0.3, stroke: 'currentColor', 'stroke-dasharray': '1.4 0.8', 'stroke-width': 0.4 } : { 'fill-opacity': 0.85 }; };
       var gd = mk('g', { opacity: ve }, g);
@@ -113,18 +116,19 @@
           var r = { x: X0 + b.tu * s, y: yMau, w: b.dai * s, h: CAO };
           hcn(gd, r, hop({ fill: 'var(--b)', 'fill-opacity': i ? (i % 2 ? 0.4 : 0.62) : 0.85, stroke: day ? 'none' : 'var(--mat)', 'stroke-width': 0.35 }, h.B < -GAN && !i ? { 'stroke-dasharray': '1.4 0.8', stroke: 'var(--b)' } : null));
           var so = String(i + 1), co = Math.min(4.6, r.w * 0.8 / so.length / 0.6);
-          if (!day && b.du && co >= 2.4 && h.ban.length > 1) C.chu(gd, r.x + r.w / 2, yMau + CAO / 2 + 0.2, so, co, null, { style: 'fill:var(--mat)' });
+          // Nhiều bản quá thì không đánh số, kẻo các số chen chúc
+          if (h.ban.length <= 16 && b.du && co >= 2.4 && h.ban.length > 1) C.chu(gd, r.x + r.w / 2, yMau + CAO / 2 + 0.2, so, co, null, { style: 'fill:var(--mat)' });
         });
       } else mk('circle', { cx: X0, cy: yMau + CAO / 2, r: 1.5, fill: 'var(--sai)' }, gd);
       var yChu = yMau + CAO + 5.5;
-      C.chu(g, X0, yChu, nhanDoan(h.chuMau, h.tenMau, h.B, chua), CO, null, huong('start', h.xd ? '--b' : '--sai'));
+      C.chu(g, X0, yChu, nhanDoan(h.chuMau, h.tenMau, h.B, chua, h.soMau), CO, null, huong('start', h.xd ? '--b' : '--sai'));
       // o.tachMau: mẫu viết thành tích, hiện dần (nút "Phân tích mẫu")
       if (o.tachMau) { yChu += 7.5; C.chu(g, X0, yChu, 'mẫu = ' + o.tachMau, CO, null, hop(huong('start', '--b'), { opacity: k.hienTach < 0.01 ? 0 : k.hienTach })); }
       var kq, mauKq = '--muc';
       if (chua) kq = '';
       else if (!h.xd) { kq = 'mẫu bằng 0: không chia được'; mauKq = '--sai'; }
       else if (Math.abs(h.A) < GAN) kq = 'tử bằng 0, nên giá trị = 0';
-      else kq = viet(h.A) + ' : ' + viet(h.B) + (k.hienGT > 0.5 ? bang(h.gt) : ' = ?');
+      else kq = (h.soTu || viet(h.A)) + ' : ' + (h.soMau || viet(h.B)) + (k.hienGT > 0.5 ? bang(h.gt) : ' = ?');
       if (kq) C.chu(g, X0, yChu + 7.5, kq, CO, null, hop(huong('start', mauKq), !h.xd || k.hienGT > 0.5 ? null : { opacity: 0.8 }));
       y = yChu + 13;
     });
@@ -251,12 +255,16 @@
       k.cotTo.forEach(function (r) { veO(svg, r, '--a', 0.75); });
       k.khoi.forEach(function (r) { keLuoi(svg, r, k.b, 1, 1); if (M > 1) keLuoi(svg, r, 1, M, mien, '--cc'); vien(svg, r); });
       y = k.day + 7;
-      var cu = 'tô ' + k.a + ' trong ' + k.b + ' cột', moi = 'tô ' + k.a * M + ' trong ' + k.b * M + ' ô';
+      // Lớn hơn 1 thì nhiều hình: "tô 60 ô, mỗi hình 20 ô" (không viết "60 trong 20")
+      var cu = k.n > 1 ? 'tô ' + k.a + ' cột, mỗi hình ' + k.b + ' cột' : 'tô ' + k.a + ' trong ' + k.b + ' cột';
+      var moi = k.n > 1 ? 'tô ' + k.a * M + ' ô, mỗi hình ' + k.b * M + ' ô' : 'tô ' + k.a * M + ' trong ' + k.b * M + ' ô';
       // Một dòng chữ, đổi khi lưới đã mịn quá nửa (hai dòng mờ chồng nhau thì khó đọc)
       if (M > 1) chuGiua(svg, 50, y, mien < 0.5 ? cu : moi, CO, mien < 0.5 ? '--a' : '--cc');
       else chuGiua(svg, 50, y, cu, CO, '--a');
       y += 8;
-      if (o.tenM && M > 1) { chuGiua(svg, 50, y, 'mỗi cột cắt thành ' + (o.tenM ? o.tenM + ' = ' : '') + M + ' ô', CO * 0.85, '--cc', o.chieu === 'gop' ? 1 - C.muot((t - 0.2) / 0.3) : C.muot((t - 0.3) / 0.3)); y += 7; }
+      // o.anM: chưa giải thì không ghi số ô của mỗi cột (đó là nhân tử chung em cần tìm)
+      var soM = o.anM && !k.giai ? '?' : (String(o.tenM) === String(M) ? '' : o.tenM + ' = ') + M;
+      if (o.tenM && M > 1) { chuGiua(svg, 50, y, 'mỗi cột cắt thành ' + soM + ' ô', CO * 0.85, '--cc', o.chieu === 'gop' ? 1 - C.muot((t - 0.2) / 0.3) : C.muot((t - 0.3) / 0.3)); y += 7; }
     } else if (k.dang === 'cong' || k.dang === 'tru') {
       var tru = k.dang === 'tru', A = k.A, B = k.B;
       veO(svg, A, '--mat', 1); veO(svg, B, '--mat', 1);

@@ -190,12 +190,12 @@
       { diem: [[X8, Y8], [X8 + 3, Y8], [0, 0]], ten: ['A', 'B', 'D'], canh: ['3', '6', '4'], goc: ['--a', '--b', null] },
       { diem: [[X8 + 3, Y8], [0, 0], [12, 0]], ten: [null, null, 'C'], canh: [null, an('12', 'y'), an('8', 'x')], goc: ['--a', '--b', null] }],
       di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }] } };
-  // 34.11: tam giác trên giấy (A'B' = 4 cm) và tam giác thật (AB = 20 m), cùng góc 80° ở A, 70° ở B
+  // 34.11 (SGK tr. 88, H.9.20): tam giác trên giấy A'B' = 2 cm, A'C' = 3,76 cm và tam giác thật AB = 10 m, cùng góc 80° ở A, 70° ở B
   var hinh3411 = { ten: 'trungKhit', moTa: 'Tam giác vẽ trên giấy và tam giác thật có cùng hai góc 80 độ và 70 độ.', ghiChu: 'Hình không theo tỉ lệ: tam giác thật lớn gấp 500 lần.',
     tuyChon: { chuBuoc: false, hinh: [
-      { goc3: [30, 80, 70], day: 5, ten: ["C'", "A'", "B'"], canh: ['6,5 cm', '4 cm', null], goc: [null, { mau: '--a', nhan: '80°' }, { mau: '--b', nhan: '70°' }] },
-      { goc3: [30, 80, 70], day: 10, ten: ['C', 'A', 'B'], canh: [an('32,5 m', '?'), '20 m', null], goc: [null, { mau: '--a', nhan: '80°' }, { mau: '--b', nhan: '70°' }], dat: { sau: 0 } }],
-      di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }], loiCuoi: [{ s: 'Mọi cạnh thật gấp 2000 : 4 = 500 lần', hien: [0.9, 1] }] } };
+      { goc3: [30, 80, 70], day: 5, ten: ["C'", "A'", "B'"], canh: [null, '2 cm', null], goc: [null, { mau: '--a', nhan: '80°' }, { mau: '--b', nhan: '70°' }] },
+      { goc3: [30, 80, 70], day: 10, ten: ['C', 'A', 'B'], canh: [an('18,8 m', '?'), '10 m', null], goc: [null, { mau: '--a', nhan: '80°' }, { mau: '--b', nhan: '70°' }], dat: { sau: 0 } }],
+      di: [{ tu: 0, toi: 1, neo: 1, mau: '--a' }], loiCuoi: [{ s: "Trên giấy: A'C' = 3,76 cm", hien: [-1, -0.5] }, { s: 'Cạnh thật gấp 1000 : 2 = 500 lần', hien: [0.9, 1] }] } };
 
   TOAN8.bai({
     id: 34, ten: 'Ba trường hợp đồng dạng của hai tam giác', sgk: { tap: 2, trang: 83 },
@@ -207,14 +207,14 @@
       buoc: [
         { t: 0, chu: "Hai tam giác có $\\cb{\\widehat{B}} = \\cb{\\widehat{B'}}$ và $\\cc{\\widehat{C}} = \\cc{\\widehat{C'}}$. Ta chưa biết gì về các cạnh." },
         { t: 0.1, chu: "Trượt tam giác $ABC$ cho đỉnh $B$ tới $B'$, cạnh $BC$ nằm trên $B'C'$. Vì $\\widehat{B} = \\widehat{B'}$ nên cạnh $BA$ nằm trên tia $B'A'$." },
-        { t: 0.5, chu: "Phóng tam giác từ $B'$ lên $k = \\frac{B'C'}{BC}$ lần. Phóng từ một đỉnh thì cạnh mới song song cạnh cũ (bài 33): các góc giữ nguyên, mọi cạnh nhân $k$." },
-        { t: 0.9, chu: "$C$ tới đúng $C'$. Từ $B'$ và $C'$, hai tia với đúng hai góc ấy chỉ gặp nhau tại một điểm, đó là $A'$. Tam giác phóng trùng khít $A'B'C'$." }
+        { t: 0.5, chu: "Sau khi trượt, $C$ nằm trên $B'C'$ và $A$ nằm trên $B'A'$. $\\cc{\\widehat{C}} = \\cc{\\widehat{C'}}$ là cặp góc đồng vị, nên $AC \\parallel A'C'$. Theo bài 33, $\\triangle A'B'C' \\backsim \\triangle ABC$." },
+        { t: 0.9, chu: "Phóng tam giác nhỏ từ $B'$ lên $k = \\frac{B'C'}{BC}$ lần chỉ để minh họa: nó trùng khít $A'B'C'$, mọi cạnh nhân $k$." }
       ],
       ketLuan: "Hai cặp góc bằng nhau thì hai tam giác đồng dạng (g.g): $$\\widehat{B} = \\widehat{B'},\\ \\widehat{C} = \\widehat{C'} \\Rightarrow \\triangle A'B'C' \\backsim \\triangle ABC$$",
       dung: {
         tieuDe: 'Tam giác nằm ngược: lật lại rồi phóng', tuBai: '34.7', canh: hinh347,
-        moiThu: 'Tam giác $AMN$ nằm "ngược" trong tam giác $ABC$: $M$ trên $AB$ nhưng $AM = 8$ dài hơn $AN = 6$. Lật nó qua tia phân giác góc $A$ thì $AM$ nằm trên cạnh nào? Gõ thử đi.',
-        phanUng: [{ gt: 12, t: 1, loi: 'Em ghép $AM = 8$ với $AB = 9$. Xem hình: chưa lật thì $MN$ không song song $BC$. Lật tam giác $AMN$ qua phân giác góc $A$: $AN = 6$ nằm trên $AB = 9$, $AM = 8$ nằm trên $AC = 12$, cùng tỉ số $\\frac{2}{3}$.' }],
+        moiThu: 'Tam giác $AMN$ nằm "ngược" trong tam giác $ABC$: $M$ trên $AB$ nhưng $AM = 8$ dài hơn $AN = 6$. Lật nó qua tia phân giác góc $A$ thì $AM$ nằm trên cạnh $AC$. Gõ độ dài $MN$.',
+        phanUng: [{ gt: 6.75, t: 1, loi: 'Em ghép $AN = 6$ với $AC = 12$. Xem hình: $N$ nằm trên $AC$, nhưng sau khi lật thì $AN$ nằm trên $AB = 9$. Tỉ số đúng là $\\frac{AN}{AB} = \\frac{6}{9}$.' },{ gt: 12, t: 1, loi: 'Em ghép $AM = 8$ với $AB = 9$. Xem hình: chưa lật thì $MN$ không song song $BC$. Lật tam giác $AMN$ qua phân giác góc $A$: $AN = 6$ nằm trên $AB = 9$, $AM = 8$ nằm trên $AC = 12$, cùng tỉ số $\\frac{2}{3}$.' }],
         soBatKi: function (v) {
           if (v <= 0) return { t: 0, loi: 'Độ dài phải lớn hơn $0$.' };
           var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); };
@@ -226,13 +226,14 @@
         tieuDe: 'Tìm hai góc bằng nhau, chồng hai tam giác lên nhau',
         baDe: [
           { tuBai: '34.9', canh: hinh349, tenNut: 'Lật và phóng',
-            phanUng: [{ gt: 'sqrt(20)', loi: 'Em dùng $CD = 5$. Sau khi lật, $AC$ nằm trên $AB$ còn $AB$ nằm trên **cả đoạn** $AD = 4 + 5 = 9$.' }, { gt: 36, loi: '$36$ là $AB^2$. $AB$ là số nào bình phương lên bằng $36$?' }],
+            phanUng: [{ gt: 'sqrt(20)', loi: 'Em dùng $CD = 5$. Sau khi lật, $AC$ nằm trên $AB$ còn $AB$ nằm trên **cả đoạn** $AD = 4 + 5 = 9$.' },
+              { gt: 4.47, loi: '$4{,}47 \\approx \\sqrt{20}$: em dùng $CD = 5$. Sau khi lật, $AB$ nằm trên **cả đoạn** $AD = 4 + 5 = 9$.' }, { gt: 36, loi: '$36$ là $AB^2$. $AB$ là số nào bình phương lên bằng $36$?' }],
             dungChu: '$\\frac{AB}{AD} = \\frac{AC}{AB}$, nên $AB^2 = 4 \\cdot 9 = 36$ và $AB = 6$.', saiChu: 'Hai tam giác chung góc $A$ và có $\\widehat{ABC} = \\widehat{ADB}$. Lật tam giác nhỏ qua phân giác góc $A$: $AC$ nằm lên $AB$, $AB$ nằm lên $AD$.' },
           { tuBai: '34.8', canh: hinh348, tenNut: 'Chồng hai tam giác',
             dungChu: 'Tam giác $ABD$ phóng $2$ lần thành tam giác $BDC$: $x = 2 \\cdot 4 = 8$, $y = 2 \\cdot 6 = 12$.', saiChu: 'Ghép cạnh theo cặp đỉnh có góc bằng nhau: $AB \\leftrightarrow BD$, $AD \\leftrightarrow BC$, $BD \\leftrightarrow DC$. Tỉ số là $\\frac{BD}{AB} = 2$.' },
           { tuBai: '34.11', canh: hinh3411, tenNut: 'Chồng hai tam giác',
-            phanUng: [{ gt: 3250, loi: '$3250$ là số xăng-ti-mét. Đề hỏi theo mét.' }, { gt: 26, loi: 'Em lấy $6{,}5 \\cdot 4$. Tỉ số phải là cạnh thật chia cạnh trên giấy, cùng đơn vị: $\\frac{2000 \\text{ cm}}{4 \\text{ cm}} = 500$.' }],
-            dungChu: '$\\frac{AB}{A\'B\'} = \\frac{2000}{4} = 500$, nên $AC = 500 \\cdot 6{,}5 = 3250$ cm $= 32{,}5$ m.', saiChu: 'Hai tam giác có hai cặp góc bằng nhau nên tam giác thật là bản phóng của tam giác trên giấy. Đổi $20$ m ra cm trước khi chia.' }
+            phanUng: [{ gt: 1880, loi: '$1880$ là số xăng-ti-mét. Đề hỏi theo mét.' }, { gt: 7.52, loi: 'Em nhân $3{,}76$ với $2$. Tỉ số phải là cạnh thật chia cạnh trên giấy, cùng đơn vị: $\\frac{1000 \\text{ cm}}{2 \\text{ cm}} = 500$.' }],
+            dungChu: '$\\frac{AB}{A\'B\'} = \\frac{1000}{2} = 500$, nên $AC = 500 \\cdot 3{,}76 = 1880$ cm $= 18{,}8$ m.', saiChu: 'Hai tam giác có hai cặp góc bằng nhau nên tam giác thật là bản phóng của tam giác trên giấy. Đổi $10$ m ra cm trước khi chia.' }
         ],
         cachNhan: 'Thấy hai tam giác có hai cặp góc bằng nhau (góc chung, góc so le, góc đo được…): lật hoặc trượt cho hai góc bằng nhau chồng lên nhau, một tam giác là bản phóng của tam giác kia. Cạnh tương ứng là cạnh nằm cùng chỗ sau khi chồng.'
       }
@@ -364,11 +365,11 @@
         goiY: ['Gọi $H$ là chân đường vuông góc hạ từ $I$ xuống mặt đất. $IH$ song song với hai cột.', 'Trong $\\triangle RPQ$: $\\frac{h}{4} = \\frac{RH}{PR}$; trong $\\triangle PRS$: $\\frac{h}{6} = \\frac{PH}{PR}$. Cộng hai đẳng thức lại.'],
         loiGiai: ['$IH \\parallel PQ$ nên $\\triangle RHI \\backsim \\triangle RPQ$: $\\frac{h}{4} = \\frac{RH}{PR}$.', '$IH \\parallel RS$ nên $\\triangle PHI \\backsim \\triangle PRS$: $\\frac{h}{6} = \\frac{PH}{PR}$.', 'Cộng lại: $\\frac{h}{4} + \\frac{h}{6} = \\frac{RH + PH}{PR} = 1$, nên $\\frac{5h}{12} = 1$.', '$h = \\frac{12}{5} = 2{,}4$'],
         loiThuongGap: [{ gt: 5, giaiThich: '$5$ m là trung bình cộng hai cột, không phải độ cao điểm cắt. Điểm cắt luôn **thấp hơn** cột ngắn.' }] },
-      { id: '34.11', hinhGiai: hg(hinh3411), muc: 3, de: 'Để đo khoảng cách $AC$ từ bạn Tròn (điểm $A$) tới cột cờ $C$ bên kia sông, anh Pi chọn điểm $B$ cùng bờ với $AB = 20$ m, đo được $\\widehat{ABC} = 70^\\circ$, $\\widehat{BAC} = 80^\\circ$. Anh vẽ trên giấy $\\triangle A\'B\'C\'$ có $A\'B\' = 4$ cm, $\\widehat{A\'B\'C\'} = 70^\\circ$, $\\widehat{B\'A\'C\'} = 80^\\circ$ và đo được $A\'C\' = 6{,}5$ cm. Tính $AC$ (m).',
-        dapAn: { kieu: 'so', gt: 32.5 },
-        goiY: ['Hai tam giác có hai cặp góc bằng nhau nên $\\triangle A\'B\'C\' \\backsim \\triangle ABC$ (g.g).', 'Đổi cùng đơn vị: $AB = 20$ m $= 2000$ cm. Tỉ số $\\frac{AB}{A\'B\'} = \\frac{2000}{4} = 500$.'],
-        loiGiai: ['$\\triangle A\'B\'C\' \\backsim \\triangle ABC$ (g.g), nên $\\frac{AC}{A\'C\'} = \\frac{AB}{A\'B\'} = \\frac{2000}{4} = 500$.', '$AC = 500 \\cdot 6{,}5 = 3250$ (cm).', '$AC = 32{,}5$ (m)'],
-        loiThuongGap: [{ gt: 3250, giaiThich: '$3250$ là số xăng-ti-mét. Đề hỏi theo mét: $3250$ cm $= 32{,}5$ m.' }] },
+      { id: '34.11', hinhGiai: hg(hinh3411), muc: 3, de: 'Để đo khoảng cách $AC$ từ bạn Tròn (điểm $A$) tới cột cờ $C$ bên kia sông, anh Pi chọn điểm $B$ cùng bờ với $AB = 10$ m, đo được $\\widehat{ABC} = 70^\\circ$, $\\widehat{BAC} = 80^\\circ$. Anh vẽ trên giấy $\\triangle A\'B\'C\'$ có $A\'B\' = 2$ cm, $\\widehat{A\'B\'C\'} = 70^\\circ$, $\\widehat{B\'A\'C\'} = 80^\\circ$ và đo được $A\'C\' = 3{,}76$ cm. Tính $AC$ (m).',
+        dapAn: { kieu: 'so', gt: 18.8 },
+        goiY: ['Hai tam giác có hai cặp góc bằng nhau nên $\\triangle A\'B\'C\' \\backsim \\triangle ABC$ (g.g).', 'Đổi cùng đơn vị: $AB = 10$ m $= 1000$ cm. Tỉ số $\\frac{AB}{A\'B\'} = \\frac{1000}{2} = 500$.'],
+        loiGiai: ['$\\triangle A\'B\'C\' \\backsim \\triangle ABC$ (g.g), nên $\\frac{AC}{A\'C\'} = \\frac{AB}{A\'B\'} = \\frac{1000}{2} = 500$.', '$AC = 500 \\cdot 3{,}76 = 1880$ (cm).', '$AC = 18{,}8$ (m)'],
+        loiThuongGap: [{ gt: 1880, giaiThich: '$1880$ là số xăng-ti-mét. Đề hỏi theo mét: $1880$ cm $= 18{,}8$ m.' }] },
       { id: '34.12', muc: 3, de: 'Cho góc $xOy$; $A$, $B$ trên tia $Ox$; $C$, $D$ trên tia $Oy$ với $OA = 3$, $OB = 8$, $OC = 4$, $OD = 6$. $AD$ cắt $BC$ tại $E$. Tính tỉ số $\\frac{BE}{DE}$ (phân số).',
         hinh: h12,
         dapAn: { kieu: 'so', gt: '5/2' },

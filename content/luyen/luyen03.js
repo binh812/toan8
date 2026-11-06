@@ -3,7 +3,13 @@
   'use strict';
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
   // Hình lời giải theo chính số của đề: mảnh bày sẵn (da), đa thức bị trừ thì lật mọi mảnh (tru)
-  function hg(da, tru) { var o = { da: da }; if (tru) o.tru = tru; return { widget: 'canh', config: { ten: 'khoiGop', tuyChon: o, chiXem: true, t: 1 } }; }
+  // Quá nhiều mảnh thì mảnh bé tí: đề đó không kèm hình
+  function hg(da, tru) {
+    var o = { da: da }; if (tru) o.tru = tru;
+    var ds = (String(da) + (tru ? '+' + tru : '')).match(/[+-]?[^+-]+/g) || [];
+    if (ds.reduce(function (s, d) { var m = /^[+-]?([0-9]*)/.exec(d); return s + (m[1] ? +m[1] : 1); }, 0) > 22) return undefined;
+    return { widget: 'canh', config: { ten: 'khoiGop', tuyChon: o, chiXem: true, t: 1 } };
+  }
   function noi(a, b) { return a + (String(b).charAt(0) === '-' ? '' : '+') + b; }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
   // đa thức = [[hệ số, phần biến], …] theo cùng một thứ tự phần biến

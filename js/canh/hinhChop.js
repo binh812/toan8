@@ -103,14 +103,21 @@
     trangThai: { soiSAM: true, soiSOM: true, caChuVi: true, motMat: true },
     tinh: function (p, t, o) {
       var k = traiTai(p, t, o), b = bao(k.chuNhat);
-      // Khung cố định theo số đo, không theo t, để hình không nhảy khi chạy
+      // Khung theo số đo, không theo t, để hình không nhảy khi chạy
       for (var i = 0; i <= 20; i++) {
-        var q = i === Math.round(t * 20) ? k : traiTai(p, i / 20, o);
+        var q = traiTai(p, i / 20, o);
         q.manh.forEach(function (m) { b = gop(b, bao(m.dinh)); });
         b = gop(b, bao(q.day));
       }
-      if (p.trangThai === 'caChuVi') b.x1 = Math.max(b.x1, 1.5 * k.p);
-      k.khung = b;
+      var cn = bao(k.chuNhat);
+      if (p.trangThai === 'caChuVi') { b.x1 = Math.max(b.x1, 1.5 * k.p); cn.x1 = 1.5 * k.p; }
+      // Cuối cùng máy quay tiến lại gần hình chữ nhật (giữ tỉ lệ khung, chừa chỗ cho tên cạnh)
+      var rong = cn.x1 - cn.x0, cao = cn.y1 - cn.y0, tl = (b.x1 - b.x0) / (b.y1 - b.y0);
+      var R = Math.max(rong * 1.35, cao * 1.3 * tl), Cao = R / tl, gx = (cn.x0 + cn.x1) / 2;
+      // Hình chữ nhật đã chiếm gần hết khung (đề có trung đoạn dài) thì giữ nguyên khung
+      var gan = R >= b.x1 - b.x0 ? b : { x0: gx - R / 2, x1: gx + R / 2, y0: -Cao / 2, y1: Cao / 2 }, z = C.muot((t - 0.84) / 0.12);
+      k.khungXa = b;
+      k.khung = { x0: C.noiSuy(b.x0, gan.x0, z), x1: C.noiSuy(b.x1, gan.x1, z), y0: C.noiSuy(b.y0, gan.y0, z), y1: C.noiSuy(b.y1, gan.y1, z) };
       return k;
     }
   });
@@ -197,6 +204,8 @@
 
   C.lay('traiChop').ve = function (svg, k, p, t, o) {
     var giai = p.trangThai === 'giai', tt = p.trangThai;
+    // o.soi: tô tam giác vuông cố định (hình lời giải), vẫn giữ khi em đã giải xong
+    if ((!tt || tt === 'giai') && o.soi) tt = 'soi' + o.soi;
     var kh = datKhung(svg, k.khung, 2.4), co = kh.co;
     var tA = ten(o, 'a', 'a'), tD = o.anD && !giai ? '?' : ten(o, 'd', 'd'), tL = ten(o, 'l', ''), tH = ten(o, 'h', 'h'), tP = ten(o, 'p', 'p');
     var traiDuoi = k.s < 0.02;
@@ -223,7 +232,8 @@
         nhanDoan(gh, k.O, k.M0, k.S, ten(o, 'r', ''), co * 0.85, '--muc');
       }
       duong(gh, k.S, k.O, TIM, 2.5, { 'stroke-dasharray': '6 4' });
-      nhanDoan(gh, k.S, k.O, k.M0, tH, co * 0.9, TIM);
+      // Ghi bên phải đường cao, để không đè lên cạnh đáy khuất
+      chuMau(gh, (k.S[0] + k.O[0]) / 2 + co * 0.6, (k.S[1] + k.O[1]) / 2, tH, co * 0.9, TIM, { 'font-style': 'italic' });
     }
     // Tên đoạn lúc đầu (hình chóp, rồi lưới trải phẳng): cạnh đáy và trung đoạn của mặt 0
     var nhanDau = k.dau * (tt === 'soiSAM' ? 0 : 1);
@@ -255,9 +265,9 @@
       if (tt === 'caChuVi') {
         var x1 = cn[0][0] + 2 * k.p;
         daGiac(gc, [cn[0], [x1, cn[0][1]], [x1, cn[2][1]], cn[3]], { fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2, 'stroke-dasharray': '7 5' });
-        dong = 'Dài cả chu vi thì gấp đôi các mặt bên';
+        dong = 'Dùng cả chu vi: gấp đôi các mặt bên';
       }
-      chuMau(gc, kh.x0 + kh.rong / 2, kh.day + co * 1.3, dong, co * (dong.length > 26 ? 0.75 : 0.95), tt === 'caChuVi' || tt === 'motMat' ? '--sai' : '--muc');
+      chuMau(gc, kh.x0 + kh.rong / 2, kh.day + co * 1.3, dong, co * Math.min(0.95, 28 / dong.length), tt === 'caChuVi' || tt === 'motMat' ? '--sai' : '--muc');
     }
   };
 
@@ -265,7 +275,7 @@
     var giai = p.trangThai === 'giai', tt = p.trangThai, b = k.khung;
     var kh = datKhung(svg, { x0: b.x0, y0: b.y0 - (b.x1 - b.x0) * 0.08, x1: b.x1, y1: b.y1 }, o.ghiDay ? 3.2 : 2.6), co = kh.co;
     var L = k.lang, Cc = k.coc, n = k.n, xy = function (q) { return [q[0], q[1]]; };
-    var tA = ten(o, 'a', 'a'), tH = ten(o, 'h', 'h');
+    var tA = ten(o, 'a', 'a'), tH = o.anH && !giai ? '?' : ten(o, 'h', 'h');
     // Nước trong lăng trụ: các mặt đứng phía trước và mặt nước
     if (k.zLang > 1e-6) {
       for (var i = 0; i < n; i++) if (k.truocLang[i]) daGiac(svg, [L.day[i], L.day[(i + 1) % n], L.nuocTren[(i + 1) % n], L.nuocTren[i]].map(xy), { fill: 'var(--b)', 'fill-opacity': 0.28, stroke: 'none' });
@@ -289,7 +299,8 @@
       var vd = vach(m);
       daGiac(svg, vd, { fill: 'none', stroke: 'var(--b)', 'stroke-width': 1, 'stroke-dasharray': '3 3' });
       var tr = vd.reduce(function (s, q) { return q[0] > s[0] ? q : s; });
-      chuMau(svg, tr[0] + co * 0.5, tr[1], String(m), co * 0.75, '--b');
+      // Hình hộp thấp thì các vạch sát nhau: bỏ số cho khỏi chồng
+      if (Math.abs(L.tren[0][1] - L.day[0][1]) / 3 >= 0.8 * co) chuMau(svg, tr[0] + co * 0.5, tr[1], String(m), co * 0.75, '--b');
     }
     // Cốc hình chóp (đỉnh ở dưới): nước là một hình chóp nhỏ, rồi vỏ cốc
     if (k.zCoc > 1e-6) {
@@ -316,12 +327,14 @@
     var trai = L.day.reduce(function (s, q, i) { return q[0] < L.day[s][0] ? i : s; }, 0);
     nhanDoan(svg, xy(L.day[trai]), xy(L.tren[trai]), tLang, tH, co * 0.9, TIM);
     duong(svg, xy(Cc.dinh), xy(k.tamMieng), TIM, 2, { 'stroke-dasharray': '6 4' });
-    var phaiCoc = Cc.mieng.reduce(function (s, q) { return Math.max(s, q[0]); }, -Infinity);
-    chuMau(svg, phaiCoc + co * 0.7, (Cc.dinh[1] + k.tamMieng[1]) / 2, tH, co * 0.9, TIM, { 'font-style': 'italic' });
+    var phaiCoc = Cc.mieng.reduce(function (s, q) { return Math.max(s, q[0]); }, -Infinity), traiCoc = Cc.mieng.reduce(function (s, q) { return Math.min(s, q[0]); }, Infinity);
+    var gm = k.giuaMieng[iT], dBenTrai = gm[0] < k.tamMieng[0], yGiua = (Cc.dinh[1] + k.tamMieng[1]) / 2;
+    var hBenTrai = tt === 'trungDoan' && !dBenTrai;
+    chuMau(svg, hBenTrai ? traiCoc - co * 0.7 : phaiCoc + co * 0.7, (Cc.dinh[1] + k.tamMieng[1]) / 2, tH, co * 0.9, TIM, { 'font-style': 'italic' });
     if (tt === 'trungDoan') {
-      var gm = k.giuaMieng[iT];
+      // Trung đoạn nằm nghiêng trên mặt bên phía trước; tên ghi ra ngoài cốc, phía bên nó
       duong(svg, xy(Cc.dinh), xy(gm), '--b', 3);
-      nhanDoan(svg, xy(Cc.dinh), xy(gm), k.tamMieng, ten(o, 'd', 'd'), co * 0.9, '--b');
+      chuMau(svg, dBenTrai ? traiCoc - co * 0.7 : phaiCoc + co * 0.7, yGiua, ten(o, 'd', 'd'), co * 0.9, '--b', { 'font-style': 'italic' });
     }
     // Dòng chữ dưới hình
     var dong = k.nuoc.xong >= 3 ? '3 lần cốc chóp = 1 ' + (o.tenLang || 'lăng trụ') : k.nuoc.xong > 0 || k.nuoc.dangDo >= 0 ? 'Đổ lần ' + Math.min(3, k.nuoc.xong + (k.nuoc.dangDo >= 0 ? 1 : 0)) : 'Cùng đáy, cùng chiều cao';
@@ -329,7 +342,7 @@
     if (tt === 'quen13' && k.cuoi > 0.5) { dong = 'S·h là cả ' + (o.tenLang || 'lăng trụ') + ', gấp 3 hình chóp'; mau = '--sai'; }
     if (tt === 'trungDoan') { dong = 'Chiều cao đo thẳng đứng, không theo mặt bên'; mau = '--sai'; }
     if (giai && o.ketQua) dong = o.ketQua;
-    chuMau(svg, kh.x0 + kh.rong / 2, kh.day + co * (o.ghiDay ? 1.8 : 1.2), dong, co * (dong.length > 28 ? 0.72 : 0.9), mau);
+    chuMau(svg, kh.x0 + kh.rong / 2, kh.day + co * (o.ghiDay ? 1.8 : 1.2), dong, co * Math.min(0.9, 28 / dong.length), mau);
     if (o.ghiDay) chuMau(svg, tLang[0], kh.day + co * 0.05, o.ghiDay, co * 0.75, '--cc');
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

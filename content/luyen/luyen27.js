@@ -114,7 +114,7 @@
       var fy = nua ? p * y0 / 2 + q : p * y0 + q;
       return {
         de: 'Cho hàm số $f(x) = ' + tex + '$. Tìm $x$ sao cho $f(x) = ' + y0 + '$.',
-        hinhGiai: hgMay({ a: nua ? p / 2 : p, b: q }, [0], vietHam(nua ? p / 2 : p, q), { tuyChon: { nguoc: { y: y0 } }, thamSo: { trangThai: 'giai' }, ghiChu: 'Tìm x để máy ra đúng ' + chu(y0) + ' (đường nét đứt).' }),
+        hinhGiai: hgMay({ a: nua ? p / 2 : p, b: q }, [0], vietHam(nua ? p / 2 : p, q), { tuyChon: { nguoc: { y: y0 } }, ghiChu: 'Tìm x để máy ra đúng ' + chu(y0) + ' (đường nét đứt).' }),
         dapAn: { kieu: 'so', gt: x0 },
         goiY: ['$f(x) = ' + y0 + '$ nghĩa là $' + tex + ' = ' + y0 + '$: một phương trình ẩn $x$.', 'Chuyển $' + q + '$ sang vế phải (đổi dấu) rồi chia cho hệ số của $x$.'],
         loiGiai: ['$' + tex + ' = ' + y0 + '$', '$' + hs + 'x = ' + (y0 - q) + '$', '$x = ' + x0 + '$'].filter(function (d, i, m) { return d !== m[i - 1]; }),

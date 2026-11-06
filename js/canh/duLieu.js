@@ -113,7 +113,8 @@
     });
     return Math.max(1, tang.length);
   }
-  function boTriHang(h, W) {
+  // trung: chưa cho biết loại (anTen, em chưa làm đúng): chữ chỉ đứng dàn hàng trên một đường đáy phẳng
+  function boTriHang(h, W, trung) {
     var loai = h.loai;
     var ds = h.the.map(function (v, i) {
       var s = typeof v === 'number' ? soDep(v) : String(v);
@@ -138,15 +139,23 @@
       vl.forEach(function (c, k) { c.x = W - 0.4 - c.w / 2; c.tang = k; });
       soTang = Math.max(soTang, vl.length);
       if (h.giua) { r.giua = { s: h.giua.s + '?', v: h.giua.v, x: X(h.giua.v), w: rongThe(h.giua.s + '?'), tang: soTang }; soTang++; }
-    } else if (loai === 3) {
+    } else if (loai === 3 && !trung) {
       var thu = h.thuTu, kb = thu.length, sw = (W - 1.6) / kb, dem = {};
       ds.forEach(function (c) { c.bac = thu.indexOf(c.s); c.x = 0.8 + sw * (c.bac + 0.5); c.tang = dem[c.bac] = dem[c.bac] == null ? 0 : dem[c.bac] + 1; });
       soTang = 1 + lonNhat(ds.map(function (c) { return c.tang; }));
       bac = (kb - 1) * BAC;
       r.bac = { k: kb, x0: 0.8, sw: sw };
     } else {
-      var sw2 = (W - 1.6) / ds.length;
-      ds.forEach(function (c, i) { c.x = 0.8 + sw2 * (i + 0.5); });
+      // Dàn đều; dài quá một hàng thì xếp hai tầng
+      var hai = tong(ds.map(function (c) { return c.w + 0.5; })) + 1.6 > W, moiTang = hai ? Math.ceil(ds.length / 2) : ds.length;
+      ds.forEach(function (c, i) {
+        var tg = Math.floor(i / moiTang), soO = tg ? ds.length - moiTang : moiTang, sw2 = (W - 1.6) / soO;
+        c.x = 0.8 + sw2 * (i - tg * moiTang + 0.5); c.tang = tg;
+      });
+      soTang = hai ? 2 : 1;
+      // Hàng chữ có thứ tự đang giấu: chừa sẵn chỗ cho bậc thang để hàng không đổi cao khi hiện ra
+      if (loai === 3) { bac = (h.thuTu.length - 1) * BAC; soTang = Math.max(soTang, 1 + lonNhat(h.thuTu.map(function (x) { return h.the.filter(function (y) { return y === x; }).length - 1; }))); }
+      r.trung = trung;
     }
     r.soTang = soTang;
     r.duoi = loai <= 1 ? 1.15 : 0.55;
@@ -159,11 +168,11 @@
     tinh: function (p, t, o) {
       // Khung rộng thêm khi thẻ chữ dài, để các thẻ không đè nhau
       var can = (o.hang || HANG_MD).map(function (h) {
-        if (h.loai === 2) return tong(h.the.map(function (s) { return rongThe(s); })) + 0.5 * h.the.length + 1.6;
         if (h.loai === 3) return h.thuTu.length * (lonNhat(h.thuTu.map(function (s) { return rongThe(s); })) + 0.3) + 1.6;
         return 16;
       });
-      var W = o.rong || Math.max(16, lonNhat(can)), y = 0.15, hang = (o.hang || HANG_MD).map(function (h) { return boTriHang(h, W); }), the = [];
+      var trung = o.anTen && p.trangThai !== 'giai' && p.trangThai !== 'kiem';
+      var W = o.rong || Math.max(16, lonNhat(can)), y = 0.15, hang = (o.hang || HANG_MD).map(function (h) { return boTriHang(h, W, trung); }), the = [];
       hang.forEach(function (r, ih) {
         r.y0 = y; r.day = y + r.cao - r.duoi; y += r.cao;
         // Chưa xếp: các thẻ đứng thành hàng theo thứ tự ghi, ngay dưới tên câu hỏi
@@ -178,8 +187,12 @@
       var n = the.length;
       // Nhìn: thẻ để lẫn lộn, mỗi thẻ bắt đầu ở chỗ của một thẻ khác
       if (o.tron) { var lech = Math.ceil(n / 2); the.forEach(function (c, j) { c.xuat = the[(j + lech) % n].dich; }); }
+      // Nhìn: thẻ về giá theo từng hàng, hàng sau bắt đầu khi hàng trước gần xong (khớp với các bước chữ)
+      var thuTrongHang = {};
       the.forEach(function (c, j) {
-        var s = nhip(t, 0.15 + 0.45 * j / Math.max(1, n - 1), 0.15);
+        var k = thuTrongHang[c.hang] = thuTrongHang[c.hang] == null ? 0 : thuTrongHang[c.hang] + 1;
+        var a = o.tron ? 0.12 + 0.15 * c.hang + 0.025 * k : 0.15 + 0.45 * j / Math.max(1, n - 1);
+        var s = nhip(t, a, o.tron ? 0.1 : 0.15);
         c.s0 = s;
         var P = lerp(c.xuat, c.dich, s);
         c.x = P[0]; c.y = P[1];
@@ -216,21 +229,24 @@
           tr.vach.forEach(function (v) { net(svg, [v.x, day - 0.28], [v.x, day + 0.2], m, 0.06, opG); });
         }
         tr.vach.forEach(function (v) { viet(svg, v.x, day + 0.72, soDep(v.v), 0.7, { nhe: true, op: hienGia }); });
+      } else if (r.trung && hienGia > 0) {
+        net(svg, [0.6, day], [W - 0.6, day], '--nhat', 0.06, opG);
       } else if (r.loai === 3 && hienGia > 0) {
         var b = r.bac, pts = [[b.x0, day]];
         for (var i = 0; i < b.k; i++) { pts.push([b.x0 + i * b.sw, day - i * BAC]); pts.push([b.x0 + (i + 1) * b.sw, day - i * BAC]); }
         pts.push([b.x0 + b.k * b.sw, day]);
         da(svg, pts, m, { dac: 0.15, vien: m, day: 0.06, op: hienGia });
       } else if (r.loai === 2 && hienGia > 0) {
-        hcn(svg, 0.45, day - 1.75, W - 0.9, 1.7, { vien: m, day: 0.05, dut: '0.25 0.18', rx: 0.5, op: hienGia });
+        hcn(svg, 0.45, day - 0.3 - TANG * r.soTang, W - 0.9, TANG * r.soTang + 0.25, { vien: m, day: 0.05, dut: '0.25 0.18', rx: 0.5, op: hienGia });
       }
     });
     // Túi chữ không thứ tự: đổi chỗ hai thẻ cạnh nhau vẫn thế
     g.hang.forEach(function (r, ih) {
-      if (r.loai !== 2) return;
+      if (r.loai !== 2 || r.trung) return;
       var ds = g.the.filter(function (c) { return c.hang === ih; }), xong = Math.min.apply(null, ds.map(function (c) { return c.s0; }));
       for (var i = 0; i + 1 < ds.length; i++) {
         var a = ds[i].dich, b = ds[i + 1].dich, x0 = a[0] + ds[i].w / 2 + 0.15, x1 = b[0] - ds[i + 1].w / 2 - 0.15;
+        if (Math.abs(a[1] - b[1]) > 1e-9) continue;
         if (x1 - x0 > 0.8) muiTen2(svg, [x0, a[1]], [x1, a[1]], r.mau, hienGia * C.muot((xong - 0.9) / 0.1));
       }
     });
@@ -259,14 +275,15 @@
   C.dangKi('cotHopLi', {
     trangThai: { giai: true },
     tinh: function (p, t, o) {
-      var so = o.so, n = so.length, W = Math.max(16, 2.5 * n + 2), x0 = 1.5, base = 9.6;
+      var so = o.so, n = so.length, W = 16, x0 = 1.5, base = 9.6;
       var max = Math.max(lonNhat(so), o.hi || 0), k = 7.4 / max, slot = (W - x0 - 0.4) / n, len = nhip(t, 0.12, 0.45);
       var cot = so.map(function (v, i) {
         var h = v * k * len;
         return { v: v, s: soDep(v), x: x0 + slot * (i + 0.5), w: Math.min(1.6, slot * 0.6), h: h, ngoai: (o.lo != null && v < o.lo) || (o.hi != null && v > o.hi),
           thu: typeof p.thu === 'number' && Math.abs(p.thu - v) < 1e-9 };
       });
-      return { W: W, H: base + 1.75, base: base, x0: x0, slot: slot, cot: cot, k: k, len: len,
+      var chat = so.some(function (v) { return 0.56 * 0.8 * soDep(v).length + 0.4 > slot - 0.1; });
+      return { W: W, H: base + (chat ? 3.0 : 1.75), base: base, x0: x0, slot: slot, cot: cot, k: k, len: len, soLe: chat,
         dai: o.lo != null ? { y0: base - o.hi * k, y1: base - o.lo * k } : null };
     }
   });
@@ -287,7 +304,7 @@
         if (la && opDo > 0) hcn(svg, c.x - c.w / 2, base - c.h, c.w, c.h, { nen: '--sai', rx: 0.06, op: opDo });
         if (c.thu) hcn(svg, c.x - c.w / 2 - 0.12, base - c.h - 0.12, c.w + 0.24, c.h + 0.12, { vien: '--muc', day: 0.12, rx: 0.08 });
       }
-      veThe(svg, { x: c.x, y: base + 0.85, w: Math.min(g.slot - 0.12, rong(c.s, 0.72) + 0.45), h: 1.15, co: 0.72 }, c.s,
+      veThe(svg, { x: c.x, y: base + 0.85 + (g.soLe && i % 2 ? 1.25 : 0), w: rong(c.s, 0.8) + 0.4, h: 1.15, co: 0.8 }, c.s,
         { vien: la && opDo > 0.5 ? '--sai' : (c.thu ? '--muc' : '--b'), chu: la && opDo > 0.5 ? '--sai' : null, day: c.thu ? 0.14 : 0.08 });
       if (la && opDo > 0) viet(svg, c.x, Math.min(base - c.h - 0.5, base - 0.5), 'vô lí', 0.75, { mau: '--sai', op: opDo });
     });
@@ -403,7 +420,8 @@
 
   /* ================= 6. Một bộ số biến hình: bảng → cột → băng → quạt tròn (hoặc đoạn thẳng, tranh) ================= */
   // tuyChon: { nhan, so, don, den: 'cot' | 'bang' | 'tron' | 'duong' | 'tranh', giai, nguoc (từ quạt trải ra băng),
-  //   thuoc: '%' | { tong, don } (thước dưới băng), hoi, hieu: [i, j], moi (mỗi biểu tượng), voNghia, voTong, tongChu, ptTrong (ghi phần trăm trong băng), anLucDau }
+  //   thuoc: '%' | { tong, don } (thước dưới băng), hoi, hieu: [i, j], moi (mỗi biểu tượng), voNghia, voTong, tongChu, ptTrong (ghi phần trăm trong băng),
+  //   demBT (biểu đồ tranh: khi giải xong ghi số biểu tượng mỗi hàng và tổng), anLucDau }
   var LOAI_HINH = ['cot', 'bang', 'tron', 'duong', 'tranh'];
   var BH = { W: 14, H: 10.6, base: 8.9, L: 12.0, xs: 1.0, yo: 3.2, cao: 5.3, tableY: [2.6, 4.1, 5.6], chuThich: 9.85 };
   C.dangKi('bienHinh', {
@@ -532,8 +550,11 @@
           var phan = Math.min(1, h.hien - k);
           hcn(svg, 3.9 + k * tr.iw, h.y - sz / 2, sz * phan, sz, { nen: mu, rx: Math.min(0.12, sz * 0.2) });
         }
+        if (o.demBT && giai) viet(svg, BH.W - 0.2, h.y - Math.min(0.6, sz / 2 + 0.35), Math.ceil(h.so - 1e-9) + ' biểu tượng', 0.62, { neo: 'end', mau: mu });
         if (giai && o.hoi === i) viet(svg, 3.9 + Math.ceil(h.so) * tr.iw + 0.25, h.y + 0.03, soDep(h.so) + ' × ' + soDep(tr.moi) + ' = ' + soDep(g.muc[i].v), 0.75, { neo: 'start', mau: '--muc' });
       });
+      if (o.demBT && giai) viet(svg, BH.W / 2, BH.chuThich - 1.0, 'Tổng: ' + tr.hang.map(function (h) { return Math.ceil(h.so - 1e-9); }).join(' + ') + ' = ' +
+        tong(tr.hang.map(function (h) { return Math.ceil(h.so - 1e-9); })) + ' biểu tượng', 0.75, { mau: '--muc' });
       var opCG = s1;
       hcn(svg, 0.6, BH.chuThich - 0.32, 0.64, 0.64, { nen: MAU[0], rx: 0.1, op: opCG });
       viet(svg, 1.5, BH.chuThich + 0.03, '= ' + soDep(tr.moi) + ' ' + (o.don || ''), 0.75, { neo: 'start', op: opCG });
@@ -546,7 +567,15 @@
         if (!o.nguoc) P = lerp(P, [m.cx, base + 0.65], s1);
         if (s2 > 0 && g.den !== 'duong') { P = lerp(P, m.tenCG, s2); co = C.noiSuy(coNhan, 0.65, s2); }
       }
-      viet(svg, P[0], P[1], ten, co, { mau: s1 > 0.5 || o.nguoc ? mu : null });
+      var tach = ten.indexOf(' ') > 0 && coNhan < 0.62 && g.den !== 'tranh' && !o.nguoc, op2 = 1 - s2;
+      if (tach && op2 > 0) {
+        // Tên dài: xuống hai dòng ở bảng và dưới cột, gộp lại một dòng khi về chú giải
+        var cat = ten.lastIndexOf(' ', Math.ceil(ten.length / 2)) > 0 ? ten.lastIndexOf(' ', Math.ceil(ten.length / 2)) : ten.indexOf(' ');
+        var d1 = ten.slice(0, cat), d2 = ten.slice(cat + 1), co2 = Math.min(0.8, (slot - 0.2) / (0.62 * Math.max(d1.length, d2.length)));
+        var mau2 = { mau: s1 > 0.5 ? mu : null, op: s2 > 0 ? 1 - C.muot(s2 / 0.5) : 1 };
+        viet(svg, P[0], P[1] - 0.42, d1, co2, mau2); viet(svg, P[0], P[1] + 0.42, d2, co2, mau2);
+        if (s2 > 0) viet(svg, P[0], P[1], ten, co, { mau: mu, op: C.muot(s2 / 0.5) });
+      } else viet(svg, P[0], P[1], ten, co, { mau: s1 > 0.5 || o.nguoc ? mu : null });
       if (s2 > 0 && g.den !== 'duong' && g.den !== 'tranh') hcn(svg, m.chuGiai[0] - 0.3, m.chuGiai[1] - 0.3, 0.6, 0.6, { nen: mu, rx: 0.1, op: o.nguoc ? 1 : s2 });
     });
     // Số: ô bảng → đỉnh cột → giữa đoạn băng; phần trăm trong hình quạt
@@ -748,7 +777,7 @@
       hcn(svg, b.x - w / 2, b.y, w, b.cao, { nen: '--a', dac: 0.35, vien: '--a', day: 0.06, rx: 0 });
     });
     var xong = g.ban.length ? g.ban[g.ban.length - 1].s : 0, xG = (g.theoMoi ? g.xMoi : g.xCu) + g.bw / 2 + 0.65;
-    if (xong > 0) viet(svg, xG + 0.6, base - g.goc * k / 2, (Math.abs(g.soBan - Math.round(g.soBan)) < 1e-9 ? '× ' : '≈ × ') + soDep(Math.round(g.soBan * 100) / 100), 0.75, { neo: 'start', mau: '--a', op: xong });
+    if (xong > 0) viet(svg, xG + 0.6, base - g.goc * k / 2, (Math.abs(g.soBan - Math.round(g.soBan * 100) / 100) < 1e-9 ? '× ' : '≈ × ') + soDep(Math.round(g.soBan * 100) / 100), 0.75, { neo: 'start', mau: '--a', op: xong });
     if ((giai || (!o.anLucDau && !p.trangThai) || g.theoMoi) && xong >= 1)
     { var pt = phanTram(g.d, g.goc, 2); vietDong(svg, g.W, base + 1.55, soDep(g.d) + ' : ' + soDep(g.goc) + (pt.charAt(0) === '≈' ? ' ' : ' = ') + pt, 0.8, { mau: g.theoMoi ? '--sai' : '--cc' }); }
   };

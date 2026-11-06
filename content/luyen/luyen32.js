@@ -17,7 +17,8 @@
     return hop.length ? r.chon(hop) : tranh * r.chon([2, 3, 4, 5, 10]);
   }
   // Hình lời giải: mỗi lần thử là một ô, ô sáng là lần biến cố xảy ra (nhiều lần quá thì vẽ thanh theo tỉ lệ)
-  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'lanThu', tuyChon: tuyChon, chiXem: true, t: 1 } }; }
+  // Số đáp án chỉ hiện khi em đã xem lời giải (cảnh sang trạng thái giai)
+  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'lanThu', tuyChon: Object.assign({ anSo: true }, tuyChon), chiXem: true, t: 1 } }; }
   function hoa(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function tong(m) { return m.reduce(function (s, x) { return s + x; }, 0); }
   // lỗi dạng phân số: bỏ nếu mẫu ≤ 0, trùng đáp án hoặc trùng nhau
@@ -174,7 +175,7 @@
       return {
         de: ctx.de(n, k, M),
         dapAn: { kieu: 'so', gt: kq },
-        hinhGiai: hg({ n: n, k: k, duBao: M, tieuDe: hoa(ctx.bc), nhan1: n + ' ' + ctx.dt + ' đã biết', nhan2: M + ' ' + ctx.dt + ' cần dự đoán', tenCo: 'Sáng' }),
+        hinhGiai: hg({ n: n, k: k, duBao: M, nhan1: n + ' ' + ctx.dt + ' đã biết', nhan2: M + ' ' + ctx.dt + ' cần dự đoán', tenCo: hoa(ctx.bc.replace(/^một /, '')), donVi: ctx.dt }),
         goiY: ['Ước lượng xác suất của biến cố "' + ctx.bc + '" bằng xác suất thực nghiệm $\\dfrac{' + k + '}{' + n + '}$.', 'Số lần dự đoán = số lượng mới $\\times$ xác suất.'],
         loiGiai: ['Xác suất của biến cố "' + ctx.bc + '" được ước lượng là $' + pTex(cc, k, n) + '$.', 'Số ' + ctx.dt + ' dự đoán $\\approx ' + so(M) + ' \\cdot ' + p.tex + ' = ' + so(kq) + '$'],
         loiThuongGap: locSo(kq, [{ gt: M - kq, giaiThich: 'Đó là số ' + ctx.dt + ' **' + ctx.bu + '**. Em xem lại đề hỏi biến cố nào.' }, { gt: Math.round(M * p.mau / p.tu), giaiThich: 'Dự đoán thì **nhân** với xác suất, không chia.' }])

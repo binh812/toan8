@@ -82,20 +82,20 @@
   function tn(tuyChon, them) { return Object.assign({ ten: 'theNhanTu', tuyChon: tuyChon }, them); }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   function f(v) { return String(Math.round(v * 1000) / 1000).replace('.', '{,}'); }
-  var L22_6 = lp({ tu: [-3, 1], mau: [3, 1], M: [-3, 1], tenM: 'x − 3', chieu: 'gop', x: 5 }, { moTa: 'Tại x bằng 5: hình chữ nhật 16 ô, tô 4 ô. Gộp mỗi 2 ô thành một cột.' });
-  var L22_4 = lp({ tu: [-3, 1], mau: 2, M: [3, 1], tenM: 'x + 3', chieu: 'gop', x: 4 }, { moTa: 'Tại x bằng 4: hình chữ nhật 14 ô, tô 7 ô.' });
-  var L22_10 = lp({ tu: [0, -3, 1], mau: [3, 1], M: [3, 1], tenM: 'x + 3', chieu: 'gop', x: 4 }, { moTa: 'Tại x bằng 4: hình chữ nhật 49 ô, tô 28 ô.' });
-  var L22_11 = lp({ tu: 2, mau: 3, M: 9, tenM: '9', chieu: 'gop', dauDe: 'Lá cờ 18 cm × 27 cm' }, { moTa: 'Hình chữ nhật 27 ô, tô 18 ô; gộp mỗi 9 ô thành một cột.' });
+  var L22_6 = lp({ tu: [-3, 1], mau: [3, 1], M: [-3, 1], tenM: 'x − 3', chieu: 'gop', x: 5, anM: true }, { moTa: 'Tại x bằng 5: hình chữ nhật 16 ô, tô 4 ô. Gộp mỗi 2 ô thành một cột.' });
+  var L22_4 = lp({ tu: [-3, 1], mau: 2, M: [3, 1], tenM: 'x + 3', chieu: 'gop', x: 4, anM: true }, { moTa: 'Tại x bằng 4: hình chữ nhật 14 ô, tô 7 ô.' });
+  var L22_10 = lp({ tu: [0, -3, 1], mau: [3, 1], M: [3, 1], tenM: 'x + 3', chieu: 'gop', x: 4, anM: true }, { moTa: 'Tại x bằng 4: hình chữ nhật 49 ô, tô 28 ô.' });
+  var L22_11 = lp({ tu: 2, mau: 3, M: 9, tenM: '9', chieu: 'gop', anM: true, dauDe: 'Lá cờ 18 cm × 27 cm' }, { moTa: 'Hình chữ nhật 27 ô, tô 18 ô; gộp mỗi 9 ô thành một cột.' });
 
   TOAN8.bai({
     id: 22, ten: 'Tính chất cơ bản của phân thức đại số', sgk: { tap: 2, trang: 8 },
 
     nhin: {
       tieuDe: 'Cắt mỗi ô thành nhiều ô nhỏ, phần tô vẫn y nguyên', loai: 'minhHoa',
-      luuY: 'Hình đếm ô khi $x$ là số nguyên dương, để tử, mẫu và $M$ đều là số đếm được. Lập luận chung cho mọi $x$: $(A \\cdot M) \\cdot B = A \\cdot (B \\cdot M)$, nên theo định nghĩa hai phân thức bằng nhau, miễn là $M$ khác $0$.',
+      luuY: 'Hình đếm ô khi $x$ là số nguyên dương, để tử, mẫu và $M$ đều là số đếm được. Lập luận chung cho mọi $x$: $(A \\cdot M) \\cdot B = A \\cdot (B \\cdot M)$, nên theo định nghĩa hai phân thức bằng nhau, với $M$ là đa thức khác đa thức $0$. Hai phân thức có cùng giá trị tại mọi $x$ làm cả hai mẫu khác $0$ (ví dụ tại $x = -2$ thì $\\frac{x(x+2)}{(x+1)(x+2)}$ là $\\frac{0}{0}$, không xác định).',
       canh: lp({ tu: [0, 1], mau: [1, 1], M: [2, 1], tenM: 'x + 2', chieu: 'chia' }, {
         moTa: 'Hình chữ nhật chia x cộng 1 cột, tô x cột. Mỗi cột được cắt thành x cộng 2 ô nhỏ; phần tô không đổi.',
-        dongSo: function (p) { var x = p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\cb{' + (x + 1) + '}} = \\frac{' + x + ' \\cdot \\cc{' + (x + 2) + '}}{' + (x + 1) + ' \\cdot \\cc{' + (x + 2) + '}} = \\frac{' + x * (x + 2) + '}{' + (x + 1) * (x + 2) + '}$'; } }),
+        dongSo: function (p) { var x = p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\cb{' + (x + 1) + '}} = \\frac{' + x + ' \\cdot \\cc{' + (x + 2) + '}}{' + (x + 1) + ' \\cdot \\cc{' + (x + 2) + '}}$'; } }),
       buoc: [
         { t: 0, chu: 'Phân thức $\\frac{\\ca{x}}{\\cb{x+1}}$: hình chữ nhật chia $\\cb{x+1}$ cột, tô $\\ca{x}$ cột.' },
         { t: 0.15, chu: 'Cắt **mỗi** cột thành $\\cc{x+2}$ ô bằng nhau. Không thêm, không bớt phần tô nào.' },

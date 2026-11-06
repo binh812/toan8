@@ -38,7 +38,7 @@
         return { ten: h.ten, tong: tongDoan(h.ds, x), manh: h.ds.map(function (m) {
           var w = Math.max(0, daiManh(m, x)), hien = dan ? C.muot((t - 0.1 - 0.6 * j / soManh) / (0.6 / soManh)) : 1;
           j++;
-          var q = { tu: tu, dai: w, nhan: m.nhan, bo: !!m.bo, laAn: !!m.x, hien: hien };
+          var q = { tu: tu, dai: w, am: daiManh(m, x) < -GAN, nhan: m.nhan, bo: !!m.bo, laAn: !!m.x, hien: hien };
           tu += w;
           return q;
         }) };
@@ -53,7 +53,7 @@
   });
   C.lay('soDoDoan').ve = function (svg, k, p, t, o) {
     var X0 = 4, RONG = 92, CAO = 11, KC = 23, mk = C.mk, s = RONG / k.lon, giai = p.trangThai === 'giai';
-    var H = 11 + (k.hang.length - 1) * KC + CAO + 11;
+    var H = 11 + (k.hang.length - 1) * KC + CAO + 14;
     svg.setAttribute('viewBox', '0 0 100 ' + H);
     k.hang.forEach(function (h, r) {
       var y = 11 + r * KC;
@@ -66,7 +66,9 @@
         if (m.bo) mk('rect', { x: x + 0.2, y: y, width: Math.max(0, w - 0.4), height: CAO, fill: 'var(--mat)', stroke: 'var(--sai)', 'stroke-width': 0.4, 'stroke-dasharray': '1.5 1' }, g);
         else mk('rect', { x: x + 0.2, y: y, width: Math.max(0, w - 0.4), height: CAO, rx: 0.6, fill: m.laAn ? 'var(--a)' : 'var(--b)', 'fill-opacity': 0.88 }, g);
         var nhan = m.nhan || '', co = Math.min(5, (w - 1) / (Math.max(1, nhan.length) * 0.52));
-        if (nhan && co >= 2.2) C.chu(g, x + w / 2, y + CAO / 2 + 0.2, nhan, co, null, { style: 'fill:var(' + (m.bo ? '--sai' : '--mat') + ')', opacity: m.hien });
+        if (nhan && co >= 2.6) C.chu(g, x + w / 2, y + CAO / 2 + 0.2, nhan, co, null, { style: 'fill:var(' + (m.bo ? '--sai' : '--mat') + ')', opacity: m.hien });
+        // Mảnh hẹp quá thì ghi nhãn ngay dưới mảnh
+        else if (nhan) { var nua = nhan.length * 1.1 + 1; C.chu(g, C.kep(x + w / 2, X0 + nua, 100 - nua), y + CAO + 3.4, nhan, 3.8, m.bo ? '--sai' : m.laAn ? '--a' : '--b', { opacity: m.hien }); }
       });
     });
     var yCuoi = 11 + (k.hang.length - 1) * KC + CAO;
@@ -83,23 +85,26 @@
     }
     // Dòng chữ dưới hình: phương trình của bước, hoặc hai độ dài khi em thử một số
     var bien = o.bien || 'x', chu, mau = null;
-    if (k.thu !== null && k.lech !== null) {
+    var coAm = k.hang.some(function (h) { return h.manh.some(function (m) { return m.am; }); });
+    if (k.thu !== null && coAm) { chu = bien + ' = ' + viet(k.thu) + ': có đoạn dài âm, không vẽ được'; mau = '--sai'; }
+    else if (k.thu !== null && k.lech !== null) {
       var bg = Math.abs(k.lech) < 1e-9;
-      var gan = function (v) { return (tron(v) ? '≈' : '') + viet(v); };
-      chu = bien + (tron(k.thu) ? ' ≈ ' : ' = ') + viet(k.thu) + ': ' + gan(k.hang[0].tong) + (bg ? ' = ' : ' ≠ ') + gan(k.hang[1].tong);
+      var gan = function (v) { return (tron(v) ? '≈ ' : '') + viet(v); };
+      chu = bien + (tron(k.thu) ? ' ≈ ' : ' = ') + viet(k.thu) + ': ' + (bg ? 'hai đoạn cùng dài ' + gan(k.hang[0].tong) : 'trên ' + gan(k.hang[0].tong) + ', dưới ' + gan(k.hang[1].tong));
       mau = bg ? '--cc' : '--sai';
     } else {
       chu = k.ghi || '';
-      if (giai || (o.hienX && t >= 1)) chu = (chu ? chu + '   ' : '') + bien + bang(k.goc) + (o.donVi || '');
+      // Chỉ một đoạn thì x là số chọn để vẽ, không phải đáp số: không ghi ra
+      if (o.duoi && (giai || (o.hienX && t >= 1))) chu = (chu ? chu + '; ' : '') + bien + bang(k.goc) + (o.donVi || '');
     }
-    if (chu) C.chu(svg, 50, H - 4, chu, 4.8, mau, { opacity: k.thu !== null ? 1 : k.ketHien });
+    if (chu) C.chu(svg, 50, H - 4, chu, Math.min(4.8, 96 / (chu.length * 0.55)), mau, { opacity: k.thu !== null ? 1 : k.ketHien });
   };
 
   /* ================= Mặt phẳng toạ độ dùng chung ================= */
   var BUOC_VACH = [0.5, 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000, 10000, 20000, 25000, 50000];
   function vach(nhip) { for (var i = 0; i < BUOC_VACH.length; i++) if (nhip / BUOC_VACH[i] <= 8.5) return BUOC_VACH[i]; return BUOC_VACH[BUOC_VACH.length - 1]; }
   // Vạch thưa đủ để số không chồng nhau (mỗi vạch cách nhau ít nhất 5 đơn vị hình)
-  function vachThua(nhip, s) { var b = vach(nhip), i = BUOC_VACH.indexOf(b); while (b * s < 5 && i < BUOC_VACH.length - 1) b = BUOC_VACH[++i]; return b; }
+  function vachThua(nhip, s, nho) { var b = Math.max(vach(nhip), nho || 0), i = BUOC_VACH.indexOf(b); while (b * s < 5 && i < BUOC_VACH.length - 1) b = BUOC_VACH[++i]; return b; }
   // Khung vừa mọi điểm cần thấy, luôn chứa gốc O
   function tuKhung(o, diem) {
     if (o.khung) return { x0: o.khung[0], x1: o.khung[1], y0: o.khung[2], y1: o.khung[3] };
@@ -124,7 +129,7 @@
   }
   function nhanVach(v) { return (tron(v) ? '≈' : '') + viet(v); }
   function veMatPhang(svg, kh, M, o, tranh) {
-    var mk = C.mk, co = 3.1, bx = vachThua(kh.x1 - kh.x0, M.sx), by = vachThua(kh.y1 - kh.y0, M.sy);
+    var mk = C.mk, co = 3.1, nho = o.bac ? 1 : 0, bx = vachThua(kh.x1 - kh.x0, M.sx, nho), by = vachThua(kh.y1 - kh.y0, M.sy, nho);
     var ax = C.kep(0, kh.y0, kh.y1), ay = C.kep(0, kh.x0, kh.x1), i, v, q;
     for (v = Math.ceil(kh.x0 / bx) * bx; v <= kh.x1 + GAN; v += bx) { q = M.P(v, 0); mk('line', { x1: q[0], y1: M.tren, x2: q[0], y2: M.duoi, stroke: 'var(--nhat)', 'stroke-width': 0.12, opacity: 0.45 }, svg); }
     for (v = Math.ceil(kh.y0 / by) * by; v <= kh.y1 + GAN; v += by) { q = M.P(0, v); mk('line', { x1: M.trai, y1: q[1], x2: M.phai, y2: q[1], stroke: 'var(--nhat)', 'stroke-width': 0.12, opacity: 0.45 }, svg); }
@@ -133,8 +138,8 @@
     mk('line', { x1: gy[0], y1: M.duoi, x2: gy[0], y2: M.tren - 1.6, stroke: 'var(--muc)', 'stroke-width': 0.35 }, svg);
     mk('path', { d: 'M' + (M.phai + 2.2) + ' ' + gx[1] + 'l-1.8 -0.9v1.8z', fill: 'var(--muc)' }, svg);
     mk('path', { d: 'M' + gy[0] + ' ' + (M.tren - 2.2) + 'l-0.9 1.8h1.8z', fill: 'var(--muc)' }, svg);
-    C.chu(svg, M.phai + 1.2, gx[1] - 2.6, 'x', co * 1.1, null, { 'font-style': 'italic' });
-    C.chu(svg, gy[0] + 2.4, M.tren - 0.6, 'y', co * 1.1, null, { 'font-style': 'italic' });
+    C.chu(svg, M.phai + 1.2, gx[1] - 2.6, o.bien || 'x', co * 1.1, null, { 'font-style': 'italic' });
+    C.chu(svg, gy[0] + 2.4, M.tren - 0.6, o.tenHam || 'y', co * 1.1, null, { 'font-style': 'italic' });
     var gan = function (u, ds, b) { return (ds || []).some(function (d) { return Math.abs(d - u) < b * 0.6; }); };
     for (v = Math.ceil(kh.x0 / bx) * bx; v <= kh.x1 + GAN; v += bx) {
       if (Math.abs(v) < GAN || gan(v, tranh && tranh.x, bx)) continue;
@@ -171,7 +176,7 @@
     C.mk('circle', { cx: c[0], cy: c[1], r: 1.25, fill: 'var(' + (mau || '--muc') + ')' }, g);
     if (ten) {
       // Nhãn đặt bên phải điểm; sát mép phải thì đặt bên trái, sát mép trên thì đặt dưới
-      var rong = ten.length * 2, benTrai = c[0] + 2 + rong > 99, ly = c[1] - 2.4 < M.tren + 2 ? c[1] + 3 : c[1] - 2.2;
+      var rong = ten.length * 2, benTrai = q[2] === 'trai' || c[0] + 2 + rong > 99, ly = c[1] - 2.4 < M.tren + 2 ? c[1] + 3 : c[1] - 2.2;
       C.chu(g, benTrai ? c[0] - 1.6 : c[0] + 1.6, ly, ten, 3.8, mau || null, { style: 'fill:var(' + (mau || '--muc') + ');text-anchor:' + (benTrai ? 'end' : 'start'), opacity: mo == null ? 1 : mo });
     }
   }
@@ -284,10 +289,12 @@
       }
       thu = p.thu;
     }
+    // anKetQua: bấm nút chỉ đi tới trước điểm cuối; điểm cuối, nhãn bậc và đường cần tìm chỉ hiện khi em đã giải (hoặc đã gõ thử)
+    var an = !!o.anKetQua && !giai && thu === null;
     // an: true thì hiện dần ở cuối cảnh; an: 'giai' thì chỉ hiện khi em đã gõ (đúng hoặc sai)
     ds.forEach(function (d) {
       if (!la(d.a) || !la(d.b)) throw new Error('duongThang: hệ số lạ');
-      d.hien = !d.an || d.thu || giai ? 1 : d.an === true ? C.muot((t - 0.8) / 0.15) : 0;
+      d.hien = !d.an || d.thu || giai ? 1 : an ? 0 : d.an === true ? C.muot((t - 0.8) / 0.15) : 0;
     });
     // Bậc thang: sang ngang dx thì đứng a·dx, lần lượt từng bậc
     var bac = (o.bac || []).map(function (b) {
@@ -298,10 +305,11 @@
         ds2.push({ x1: x1, y1: d.a * x1 + d.b, x2: x2, y2: d.a * x2 + d.b, len: d.a * dx, ngang: dx,
           tienNgang: C.muot((t - bd) / (khe / 2)), tienDoc: C.muot((t - bd - khe / 2) / (khe / 2)) });
       }
-      return { duong: b.duong || 0, buoc: ds2, mau: d.thu ? (d.dung ? '--cc' : '--sai') : null };
+      if (an && ds2.length > 1) ds2.pop(); else if (an && ds2.length) ds2[0].anDoc = true;
+      return { duong: b.duong || 0, buoc: ds2, anNhan: an, mau: d.thu ? (d.dung ? '--cc' : '--sai') : null };
     });
     var dich = null;
-    if (o.tinhTien) {
+    if (o.tinhTien && !an) {
       var A = ds[o.tinhTien.tu], B = ds[o.tinhTien.den], k2 = C.muot((t - 0.15) / 0.55);
       dich = { a: A.a, b: C.noiSuy(A.b, B.b, k2), tien: k2, khoang: B.b - A.b, cungA: Math.abs(A.a - B.a) < GAN, hienKhoang: C.muot((t - 0.72) / 0.15) };
     }
@@ -311,13 +319,13 @@
       if (Math.abs(u.a - v.a) > GAN) { var gx = (v.b - u.b) / (u.a - v.a); giao = { x: gx, y: u.a * gx + u.b }; }
     }
     var diem = (o.diem || []).map(function (q) {
-      return Object.assign({}, q, { hien: !q.an ? 1 : giai ? 1 : q.an === true ? C.muot((t - 0.9) / 0.1) : 0 });
+      return Object.assign({}, q, { hien: !q.an ? 1 : giai ? 1 : an ? 0 : q.an === true ? C.muot((t - 0.9) / 0.1) : 0 });
     });
     var can = [];
     diem.forEach(function (q) { can.push([q.x, q.y]); });
     bac.forEach(function (b) { b.buoc.forEach(function (s) { can.push([s.x1, s.y1], [s.x2, s.y2]); }); });
     ds.forEach(function (d) { can.push([0, d.b]); });
-    return { ds: ds, bac: bac, dich: dich, giao: giao, diem: diem, thu: thu, giai: giai, kh: tuKhung(o, can) };
+    return { ds: ds, bac: bac, dich: dich, giao: giao, diem: diem, thu: thu, giai: giai, an: an, kh: tuKhung(o, can) };
   }
   function veDuong(svg, k, p, t, o) {
     var mk = C.mk, kh = k.kh, tiLe = o.tiLe !== false, xs = kh.x1 - kh.x0, ys = kh.y1 - kh.y0;
@@ -350,11 +358,13 @@
         if (diemCong.length > 1) mk('polyline', { points: C.diem(diemCong), fill: 'none', stroke: 'var(' + mau + ')', 'stroke-width': 0.7, opacity: d.hien }, svg);
       } else net(d.a, d.b, mau, d.hien, d.net);
       if (d.nhan && d.hien > 0) {
-        // Nhãn đặt ở gần cuối đoạn nhìn thấy (hoặc ở hoành độ nhanX), bên trái điểm; không đủ chỗ thì sang phải
+        // Nhãn đặt ở gần cuối đoạn nhìn thấy (hoặc ở hoành độ nhanX), về phía không có đường: đường đi lên thì phía trên bên trái,
+        // đường đi xuống thì phía trên bên phải; không đủ chỗ thì đổi sang phía dưới bên kia
         var c = catKhung(d.a, d.b, { x0: kh.x0, x1: kh.x1 - xs * 0.05, y0: kh.y0 + ys * 0.08, y1: kh.y1 - ys * 0.08 });
-        var xn = d.nhanX != null ? d.nhanX : c ? c[0][0] + (c[1][0] - c[0][0]) * 0.82 : kh.x1 - xs * 0.25;
-        var q = M.P(xn, C.kep(d.a * xn + d.b, kh.y0, kh.y1)), rongNhan = d.nhan.length * 1.85, benPhai = q[0] - 1.5 - rongNhan < 1;
-        C.chu(svg, benPhai ? Math.min(q[0] + 1.5, 99 - rongNhan) : Math.min(q[0] - 1.5, 96), q[1] - 2.4, d.nhan, 3.6, mau, { style: 'fill:var(' + mau + ');text-anchor:' + (benPhai ? 'start' : 'end'), opacity: d.hien });
+        var xn = d.nhanX != null ? d.nhanX : c ? c[0][0] + (c[1][0] - c[0][0]) * (d.a < 0 ? 0.3 : 0.82) : kh.x1 - xs * 0.25;
+        var q = M.P(xn, C.kep(d.a * xn + d.b, kh.y0, kh.y1)), rongNhan = d.nhan.length * 1.85, xuong = d.a < 0;
+        var benPhai = xuong ? q[0] + 1.5 + rongNhan <= 99 : q[0] - 1.5 - rongNhan < 1, tren = xuong ? benPhai : !benPhai;
+        C.chu(svg, benPhai ? Math.min(q[0] + 1.5, 99 - rongNhan) : Math.max(q[0] - 1.5, rongNhan + 1), q[1] + (tren ? -2.4 : 3.6), d.nhan, 3.6, mau, { style: 'fill:var(' + mau + ');text-anchor:' + (benPhai ? 'start' : 'end'), opacity: d.hien });
       }
     });
     if (k.dich) {
@@ -371,7 +381,8 @@
           var u = M.P(x, y1), w = M.P(x, y2), len = w[1] > u[1] ? -1 : 1, g = mk('g', { opacity: dc.hienKhoang }, svg);
           mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1] + len * 0.9, stroke: 'var(--a)', 'stroke-width': 0.5 }, g);
           mk('path', { d: 'M' + w[0] + ' ' + w[1] + 'l-1 ' + (len * 1.8) + 'h2z', fill: 'var(--a)' }, g);
-          if (i === chon.length - 1) C.chu(g, u[0] + 1.4, (u[1] + w[1]) / 2, (dc.khoang > 0 ? '+' : '−') + C.fmt(Math.abs(dc.khoang)), 3.6, '--a', { style: 'fill:var(--a);text-anchor:start', opacity: dc.hienKhoang });
+          var phai0 = (goc0.a > 0) !== (dc.khoang > 0);
+          if (i === chon.length - 1) C.chu(g, w[0] + (phai0 ? 1.4 : -1.4), w[1] + (dc.khoang > 0 ? -1.6 : 3), (dc.khoang > 0 ? '+' : '−') + C.fmt(Math.abs(dc.khoang)), 3.6, '--a', { style: 'fill:var(--a);text-anchor:' + (phai0 ? 'start' : 'end'), opacity: dc.hienKhoang });
         });
       }
     }
@@ -383,13 +394,16 @@
         if (!trongKhung(s.x1, s.y1, kh) || !trongKhung(s.x2, s.y1, kh)) return;
         var u = M.P(s.x1, s.y1), w = M.P(xm, s.y1);
         mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(--nhat)', 'stroke-width': 0.45, 'stroke-dasharray': '1.2 0.8' }, svg);
-        if (s.tienDoc <= 0 || !trongKhung(s.x2, s.y2, kh)) return;
+        if (s.anDoc || s.tienDoc <= 0 || !trongKhung(s.x2, s.y2, kh)) return;
         var ym = s.y1 + (s.y2 - s.y1) * s.tienDoc, z = M.P(s.x2, ym);
         mk('line', { x1: w[0], y1: w[1], x2: z[0], y2: z[1], stroke: 'var(' + mauDoc + ')', 'stroke-width': 0.8, 'stroke-linecap': 'round' }, svg);
-        if (cau.nhan && s.tienDoc >= 1) {
+        if (cau.nhan && !b.anNhan && s.tienDoc >= 1) {
           var trai0 = s.ngang < 0;
           C.chu(svg, (u[0] + w[0]) / 2, u[1] + (s.len > 0 ? 2.6 : -2.2), C.fmt(Math.abs(s.ngang)), 3.1, '--nhat');
-          C.chu(svg, z[0] + (trai0 ? -1.2 : 1.2), (w[1] + z[1]) / 2, (s.len >= 0 ? '+' : '−') + C.fmt(Math.abs(s.len)), 3.3, mauDoc, { style: 'fill:var(' + mauDoc + ');text-anchor:' + (trai0 ? 'end' : 'start') });
+          // Nhãn ở giữa đoạn đứng; nếu sát trục hoành (đè số trên trục) thì dời về đầu xa trục hơn
+          var ym = (w[1] + z[1]) / 2, yTruc = M.P(0, C.kep(0, kh.y0, kh.y1))[1];
+          if (Math.abs(ym - yTruc) < 3.5) ym = Math.abs(w[1] - yTruc) > Math.abs(z[1] - yTruc) ? w[1] + (z[1] > w[1] ? 1.5 : -1.5) : z[1] + (w[1] > z[1] ? 1.5 : -1.5);
+          C.chu(svg, z[0] + (trai0 ? -1.2 : 1.2), ym, (s.len >= 0 ? '+' : '−') + C.fmt(Math.abs(s.len)), 3.3, mauDoc, { style: 'fill:var(' + mauDoc + ');text-anchor:' + (trai0 ? 'end' : 'start') });
         }
         if (s.tienDoc >= 1) veDiem(svg, M, kh, [s.x2, s.y2], mauDoc);
       });
@@ -399,7 +413,8 @@
       var d = k.ds[i];
       if (!d || Math.abs(d.a) < GAN || d.hien <= 0) return;
       var xA = -d.b / d.a;
-      if (!trongKhung(xA, 0, kh)) return;
+      // Góc chỉ vẽ khi giao điểm với Ox còn đủ chỗ trong khung cho cung tròn
+      if (!trongKhung(xA, 0, kh) || M.P(xA, 0)[0] + 9 > M.phai) return;
       var A = M.P(xA, 0), r = 6, phi = Math.atan2(d.a * M.sy, M.sx); // hướng đi lên của đường thẳng trên hình
       if (phi < 0) phi += Math.PI;
       var E = [A[0] + r * Math.cos(phi), A[1] - r * Math.sin(phi)];
@@ -409,7 +424,7 @@
     });
     k.diem.forEach(function (q) {
       if (q.hien <= 0) return;
-      veDiem(svg, M, kh, [q.x, q.y], q.mau || '--muc', q.ten, q.hien);
+      veDiem(svg, M, kh, [q.x, q.y, q.nhanTrai ? 'trai' : null], q.mau || '--muc', q.ten, q.hien);
       if (q.chieu) veChieu(svg, M, kh, [q.x, q.y], q.mau || '--nhat', q.hien);
     });
     if (k.giao && trongKhung(k.giao.x, k.giao.y, kh) && k.ds[o.giao[0]].hien > 0.5 && k.ds[o.giao[1]].hien > 0.5) {
@@ -419,11 +434,12 @@
     if (o.ghi) C.chu(svg, 50, H - 1.8, typeof o.ghi === 'function' ? o.ghi(k, p) : o.ghi, 3.6, '--nhat');
   }
   C.dangKi('duongThang', {
-    thamSo: { a: { min: -2, max: 2, step: 0.5, md: 2, nhan: 'Hệ số a', mau: '--a' }, b: { min: -2, max: 2, step: 1, md: -1, nhan: 'b', mau: '--b' } },
+    // a chỉ nhận −3, −1, 1, 3: không có a = 0 (khi đó không còn là hàm số bậc nhất)
+    thamSo: { a: { min: -3, max: 3, step: 2, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -2, max: 2, step: 1, md: -1, nhan: 'b', mau: '--b' } },
     tinh: tinhDuong
   });
   C.dangKi('haiDuongThang', {
-    thamSo: { a: { min: -2, max: 2, step: 0.5, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -3, max: 3, step: 1, md: -2, nhan: 'b', mau: '--b' },
+    thamSo: { a: { min: -3, max: 3, step: 2, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -3, max: 3, step: 1, md: -2, nhan: 'b', mau: '--b' },
       c: { min: -3, max: 3, step: 1, md: 2, nhan: "b'", mau: '--cc' } },
     tinh: tinhDuong
   });

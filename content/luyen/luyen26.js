@@ -15,8 +15,9 @@
   // Hình lời giải: sơ đồ đoạn (mỗi vế là một đoạn) theo chính số của đề. m(hệ số x, số, nhãn) là một mảnh.
   function m(x, so, nhan) { return { x: x, so: so, nhan: nhan }; }
   function lap(n, manh) { var ds = []; for (var i = 0; i < n; i++) ds.push(manh); return ds; }
+  // x chỉ hiện khi em đã xem lời giải (trạng thái giai); donVi ghi rõ x là gì và đáp số nếu đề hỏi đại lượng khác
   function hg(tenTren, tren, tenDuoi, duoi, them) {
-    var tuyChon = Object.assign({ tenTren: tenTren, tren: tren, tenDuoi: tenDuoi, duoi: duoi, hienX: true }, them && them.tuyChon);
+    var tuyChon = Object.assign({ tenTren: tenTren, tren: tren, tenDuoi: tenDuoi, duoi: duoi }, them && them.tuyChon);
     return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, ten: 'soDoDoan' }, them, { tuyChon: tuyChon }) };
   }
   var X_BAT_KI = 'Hình vẽ với một giá trị x bất kì.';
@@ -87,7 +88,7 @@
         return {
           de: 'Lớp 8A có $' + N + '$ học sinh, số học sinh nữ nhiều hơn số học sinh nam là $' + hon + '$ bạn. Lớp 8A có bao nhiêu học sinh ' + (hoiNu ? 'nữ' : 'nam') + '?',
           dapAn: { kieu: 'so', gt: kq },
-          hinhGiai: hg('Nam + nữ', [m(1, 0, 'x'), m(1, hon, 'x + ' + hon)], 'Cả lớp', [m(0, N, String(N))]),
+          hinhGiai: hg('Nam + nữ', [m(1, 0, 'x'), m(1, hon, 'x + ' + hon)], 'Cả lớp', [m(0, N, String(N))], { tuyChon: { donVi: hoiNu ? ' bạn nam; nữ: ' + nam + ' + ' + hon + ' = ' + kq + ' bạn' : ' bạn nam' } }),
           goiY: ['Gọi $x$ là số học sinh nam ($x$ nguyên dương) thì số học sinh nữ là $x + ' + hon + '$.', 'Lập phương trình $x + (x + ' + hon + ') = ' + N + '$.'],
           loiGiai: ['Gọi $x$ là số học sinh nam, $x$ nguyên dương. Số học sinh nữ: $x + ' + hon + '$.', '$x + x + ' + hon + ' = ' + N + '$, nên $2x = ' + (N - hon) + '$, $x = ' + nam + '$.',
             hoiNu ? 'Số học sinh nữ: $' + nam + ' + ' + hon + ' = ' + kq + '$' : 'Số học sinh nam: $x = ' + kq + '$'],
@@ -162,7 +163,7 @@
       return {
         de: 'Hai thành phố A và B cách nhau $' + D + '$ km. Cùng một lúc, một xe đi từ A về B với vận tốc $' + a + '$ km/h và một xe đi từ B về A với vận tốc $' + b + '$ km/h. ' + (hoiCach ? 'Chỗ hai xe gặp nhau cách A bao nhiêu ki-lô-mét?' : 'Sau bao nhiêu giờ hai xe gặp nhau?'),
         dapAn: { kieu: 'so', gt: kq },
-        hinhGiai: hg('Xe từ A + xe từ B (km)', [m(a, 0, a + 'x'), m(b, 0, b + 'x')], 'Quãng đường AB', [m(0, D, D + ' km')], { tuyChon: { donVi: ' giờ' } }),
+        hinhGiai: hg('Xe từ A + xe từ B (km)', [m(a, 0, a + 'x'), m(b, 0, b + 'x')], 'Quãng đường AB', [m(0, D, D + ' km')], { tuyChon: { donVi: hoiCach ? ' giờ; cách A: ' + a + ' · ' + tg + ' = ' + kq + ' km' : ' giờ' } }),
         goiY: ['Gọi $x$ (giờ) là thời gian từ lúc xuất phát đến lúc gặp nhau. Hai xe đi được $' + a + 'x$ và $' + b + 'x$ km.', 'Lúc gặp nhau, **tổng** hai quãng đường bằng $' + D + '$ km.'],
         loiGiai: ['Gọi $x$ (giờ) là thời gian đến lúc gặp nhau, $x > 0$.', '$' + a + 'x + ' + b + 'x = ' + D + '$, tức là $' + (a + b) + 'x = ' + D + '$, nên $x = ' + tg + '$.',
           hoiCach ? 'Chỗ gặp cách A: $' + a + '\\cdot ' + tg + ' = ' + kq + '$' : 'Hai xe gặp nhau sau $x = ' + tg + '$'],
@@ -180,7 +181,7 @@
       return {
         de: 'Một ' + vat + ' hình chữ nhật có chu vi $' + P + '$ m, chiều dài hơn chiều rộng $' + hon + '$ m. Tính ' + muc + '.',
         dapAn: { kieu: 'so', gt: kq },
-        hinhGiai: hg('Rộng + dài + rộng + dài', [m(1, 0, 'x'), m(1, hon, 'x + ' + hon), m(1, 0, 'x'), m(1, hon, 'x + ' + hon)], 'Chu vi', [m(0, P, P + ' m')], { tuyChon: { donVi: ' m' } }),
+        hinhGiai: hg('Rộng + dài + rộng + dài', [m(1, 0, 'x'), m(1, hon, 'x + ' + hon), m(1, 0, 'x'), m(1, hon, 'x + ' + hon)], 'Chu vi', [m(0, P, P + ' m')], { tuyChon: { donVi: hoi === 'rong' ? ' m (chiều rộng)' : hoi === 'dai' ? ' m (rộng); dài: ' + dai + ' m' : ' m (rộng); diện tích: ' + dai + ' · ' + rong + ' = ' + kq + ' m²' } }),
         goiY: ['Gọi $x$ (m) là chiều rộng thì chiều dài là $x + ' + hon + '$. Nửa chu vi là $' + P / 2 + '$ m.', 'Lập phương trình $x + (x + ' + hon + ') = ' + P / 2 + '$.'],
         loiGiai: ['Gọi $x$ (m) là chiều rộng, $x > 0$. Chiều dài: $x + ' + hon + '$.', '$2(x + x + ' + hon + ') = ' + P + '$, nên $2x + ' + hon + ' = ' + P / 2 + '$, $2x = ' + (P / 2 - hon) + '$, $x = ' + rong + '$.',
           hoi === 'rong' ? 'Chiều rộng: $x = ' + rong + '$' : hoi === 'dai' ? 'Chiều dài: $' + rong + ' + ' + hon + ' = ' + dai + '$' : 'Chiều dài $' + dai + '$ m. Diện tích: $' + dai + '\\cdot ' + rong + ' = ' + kq + '$'],

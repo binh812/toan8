@@ -48,9 +48,11 @@ test('khoiGop: mỗi hàng chỉ một loại mảnh, mọi mảnh cùng loại 
   Object.values(theoLoai).forEach(s => assert.strictEqual(s.size, 1));
   const hinh = Object.keys(theoLoai).map(l => [...theoLoai[l]][0]);
   assert.strictEqual(new Set(hinh).size, hinh.length, 'hai loại khác nhau trùng hình: ' + hinh);
-  // Thể tích khối x²y = x·x·y, tấm x⁴ là hình vuông cạnh x²
+  // Thể tích khối x²y = x·x·y; bậc từ 4 là thẻ, riêng mảnh báo lỗi x⁴ là tấm vuông cạnh x²
   const x2y = k.manh.find(m => m.k === 'x2y1'); GAN(x2y.w * x2y.h * x2y.d, 2.25 * 2.25 * 1.5);
-  const x4 = k.manh.find(m => m.k === 'x4'); GAN(x4.w * x4.h, 2.25 ** 4);
+  assert.strictEqual(k.manh.find(m => m.k === 'x4').loai, 'the');
+  const ma = tinh('khoiGop', { x: 2.25, y: 1.5, trangThai: 'm' }, 1, { nhom: ['4x^2'], sai: { m: { ma: { don: 'x^4' } } } }).ma;
+  GAN(ma.hinh.w * ma.hinh.h, 2.25 ** 4);
 });
 test('khoiGop: lật mảnh của đa thức bị trừ; quên lật một mảnh thì kết quả đúng như lỗi đó', () => {
   const o = { da: '5xy-2y^2', tru: '3xy+y^2', sai: { quen: { khongLat: [3] } } };
@@ -130,6 +132,20 @@ test('hcnNhan chia: mỗi ô có cạnh trên bằng diện tích chia cạnh tr
   assert.strictEqual(k.tong.duoc, false);
   // Chưa chia thì cạnh trên chưa hiện
   assert.ok(tinh('hcnNhan', { x: 3, y: 2 }, 0, { chia: '2x', dt: '6x^2+4x' }).canhTren.every(c => c.lo === 0));
+});
+test('hcnNhan chia, trạng thái lỗi: ô nào nhân lại không ra diện tích thì bị chỉ ra, ô đúng thì không', () => {
+  const o = { chia: '4xy', dt: '12x^2y+8xy^2', sai: { heSo: { tren: ['3x^2y', '2y'] }, thieu: { tren: ['3x', null] } } };
+  const a = tinh('hcnNhan', { x: 3, y: 2, trangThai: 'heSo' }, 1, o);
+  assert.deepStrictEqual(a.o.map(c => !!c.lech), [true, false]);
+  assert.strictEqual(a.o[0].s, '12x³y² ≠');
+  const b = tinh('hcnNhan', { x: 3, y: 2, trangThai: 'thieu' }, 1, o);
+  assert.deepStrictEqual(b.o.map(c => !!c.thieu), [false, true]);
+  assert.strictEqual(b.canhTren[1].s, '?');
+});
+test('khoiGop: nhóm ghi sau chỉ hiện khi hình chạy', () => {
+  const o = { nhom: ['x^2', { don: 'x', sau: true }] };
+  assert.ok(tinh('khoiGop', { x: 2.25, y: 1.5 }, 0, o).manh.filter(m => m.g.sau).every(m => m.op === 0));
+  assert.ok(tinh('khoiGop', { x: 2.25, y: 1.5 }, 1, o).manh.every(m => m.op === 1));
 });
 test('hcnNhanX: chỉ có thanh x, tính giống hệt hcnNhan', () => {
   assert.deepStrictEqual(Object.keys(canh.lay('hcnNhanX').thamSo), ['x']);

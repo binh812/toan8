@@ -44,6 +44,23 @@ test('theDuLieu: bậc thang xếp chữ theo thứ tự, bậc cao hơn thì th
   assert.ok(theoBac[0].x < theoBac[1].x && theoBac[1].x < theoBac[2].x);
 });
 
+test('theDuLieu: chưa làm đúng (anTen) thì thẻ chữ chỉ dàn hàng, không lộ bậc thang; đúng rồi mới lên bậc', () => {
+  const hang = [{ loai: 3, ten: 'Xếp loại', the: ['Tốt', 'Khá', 'Tốt', 'Đạt', 'Khá'], thuTu: ['Đạt', 'Khá', 'Tốt'] }];
+  const an = tinh('theDuLieu', {}, 1, { anTen: true, hang });
+  assert.ok(an.the.every(c => Math.abs(c.y - an.the[0].y) < 1e-9), 'cùng một độ cao');
+  assert.ok(an.the.every((c, i) => i === 0 || c.x > an.the[i - 1].x), 'giữ thứ tự ghi');
+  const hien = tinh('theDuLieu', { trangThai: 'giai' }, 1, { anTen: true, hang });
+  assert.ok(hien.the.some(c => Math.abs(c.y - hien.the[0].y) > 0.1), 'lên bậc');
+  GAN(an.H, hien.H, 'hàng không đổi cao khi bậc thang hiện ra');
+});
+
+test('theDuLieu: túi chữ dài thì xếp hai tầng, khung giữ bề rộng 16', () => {
+  const g = tinh('theDuLieu', {}, 1, { hang: [{ loai: 2, ten: 'Nơi sinh', the: ['Hải Phòng', 'Hà Nội', 'Nam Định', 'Thái Bình', 'Huế'] }] });
+  assert.strictEqual(g.W, 16);
+  const tang = new Set(g.the.map(c => Math.round(c.y * 100))); assert.strictEqual(tang.size, 2);
+  g.the.forEach(a => g.the.forEach(b => { if (a !== b && Math.abs(a.y - b.y) < 1e-9) assert.ok(Math.abs(a.x - b.x) >= (a.w + b.w) / 2, 'thẻ đè nhau'); }));
+});
+
 test('theDuLieu: trộn thẻ ở Nhìn, mọi t hữu hạn, t = 0 chưa thẻ nào ở chỗ của mình', () => {
   TT.forEach(t => huuHan(tinh('theDuLieu', {}, t, { tron: true })));
   const g = tinh('theDuLieu', {}, 0, { tron: true });

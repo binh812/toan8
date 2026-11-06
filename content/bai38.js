@@ -85,7 +85,7 @@
       ketLuan: 'Diện tích xung quanh bằng diện tích hình chữ nhật: $$S_{xq} = \\cc{p} \\cdot \\cb{d}$$ ($\\cc{p}$ là nửa chu vi đáy, $\\cb{d}$ là trung đoạn).',
       dung: {
         tieuDe: 'Chóp inox: đề cho cạnh bên, chưa cho trung đoạn', tuBai: '38.10',
-        canh: tc(40, 48, { a: '40', l: '52', p: '60', nua: '20' }, { anD: true, ketQua: 'Sxq = 60 · 48 = 2880',
+        canh: tc(40, 48, { a: '40', l: '52', p: '60', nua: '20', d: '48' }, { anD: true, ketQua: 'Sxq = 60 · 48 = 2880', motMatChu: '40 · 48 / 2 = 960',
           moTa: 'Hình chóp tam giác đều cạnh đáy 40, cạnh bên 52, trung đoạn chưa biết. Trải phẳng thành hình chữ nhật dài 60.' }),
         moiThu: 'Gõ diện tích xung quanh. Nếu sai, hình sẽ chỉ ra em nhầm ở đâu.',
         phanUng: [
@@ -103,12 +103,15 @@
         tieuDe: 'Đề đổi, nhưng vẫn là hình chữ nhật p × d',
         baDe: [
           { tuBai: '38.6', canh: tc(8, 12, { a: '?', d: '12', p: 'p' }, { dong: '144 = p · 12', ketQua: 'p = 12, chu vi 24, a = 8', moTa: 'Ba mặt bên trải ra thành hình chữ nhật cao 12, diện tích 144.' }), tenNut: 'Trải phẳng',
-            phanUng: [{ gt: 12, t: 1, loi: '$12$ là chiều dài hình chữ nhật, tức **nửa** chu vi $p$. Chu vi là $24$, chia cho ba cạnh.' }],
+            phanUng: [{ gt: 24, t: 1, loi: '$24$ là cả chu vi đáy. Đáy là tam giác đều, ba cạnh bằng nhau: cạnh đáy $= 24 : 3$.' },
+              { gt: 12, t: 1, loi: '$12$ là chiều dài hình chữ nhật, tức **nửa** chu vi $p$. Chu vi là $24$, chia cho ba cạnh.' }],
             dungChu: '$p = 144 : 12 = 12$, chu vi $24$, cạnh đáy $24 : 3 = 8$ (cm).', saiChu: 'Chiều dài hình chữ nhật là $p = 144 : 12$. Đó là nửa chu vi đáy.' },
-          { tuBai: '38.11', canh: tc(12, Math.sqrt(108), { a: '12', l: '12', p: '18', nua: '6' }, { anD: true, ketQua: 'Sxq ≈ 18 · 10,39 ≈ 187', moTa: 'Hình chóp có mọi cạnh 12. Trải phẳng thành hình chữ nhật dài 18.' }), tenNut: 'Trải phẳng',
-            phanUng: [{ gt: 216, trangThai: 'soiSAM', t: 0.45, loi: 'Em lấy cạnh bên $12$ làm trung đoạn. Trong nửa mặt bên, $12$ là cạnh huyền; trung đoạn ngắn hơn: $d^2 = 12^2 - 6^2$.' }],
+          { tuBai: '38.11', canh: tc(12, Math.sqrt(108), { a: '12', l: '12', p: '18', nua: '6', d: '≈10,39' }, { anD: true, ketQua: 'Sxq ≈ 18 · 10,39 ≈ 187', moTa: 'Hình chóp có mọi cạnh 12. Trải phẳng thành hình chữ nhật dài 18.' }), tenNut: 'Trải phẳng',
+            phanUng: [{ gt: 374, trangThai: 'caChuVi', t: 1, loi: 'Trung đoạn đúng rồi, nhưng em nhân với cả chu vi $36$. Ba mặt bên xếp lại chỉ dài **nửa** chu vi, $p = 18$.' },
+              { gt: 1944, trangThai: 'soiSAM', t: 0.45, loi: 'Em quên lấy căn: $108$ là $d^2$, còn trung đoạn $d = \\sqrt{108} \\approx 10{,}39$. Rồi $S_{xq} = 18 \\cdot d$.' },
+              { gt: 216, trangThai: 'soiSAM', t: 0.45, loi: 'Em lấy cạnh bên $12$ làm trung đoạn. Trong nửa mặt bên, $12$ là cạnh huyền; trung đoạn ngắn hơn: $d^2 = 12^2 - 6^2$.' }],
             dungChu: '$d^2 = 12^2 - 6^2 = 108$, $d \\approx 10{,}39$; $S_{xq} \\approx 18 \\cdot 10{,}39 \\approx 187$ (cm²).', saiChu: 'Mỗi mặt bên là tam giác đều cạnh $12$. Trung đoạn là đường cao của nó: $d^2 = 12^2 - 6^2$.' },
-          { tuBai: '38.12', canh: tc(8, Math.sqrt(48), { a: '8', p: '12' }, { anD: true, ketQua: 'Sxq ≈ 12 · 6,93 ≈ 83', moTa: 'Gấp tấm bìa tam giác đều cạnh 16 thành hình chóp có mọi cạnh 8, rồi trải ba mặt bên thành hình chữ nhật.' }), tenNut: 'Trải phẳng',
+          { tuBai: '38.12', canh: tc(8, Math.sqrt(48), { a: '8', p: '12', l: '8', nua: '4', d: '≈6,93' }, { anD: true, ketQua: 'Sxq ≈ 12 · 6,93 ≈ 83', moTa: 'Gấp tấm bìa tam giác đều cạnh 16 thành hình chóp có mọi cạnh 8, rồi trải ba mặt bên thành hình chữ nhật.' }), tenNut: 'Trải phẳng',
             phanUng: [{ gt: 111, t: 0.45, loi: 'Em tính cả tấm bìa. Trải ra lại sẽ thấy: tam giác ở giữa là **mặt đáy**, không thuộc diện tích xung quanh.' },
               { gt: 96, trangThai: 'soiSAM', t: 0.45, loi: 'Em lấy cạnh bên $8$ làm trung đoạn. Trong nửa mặt bên, $8$ là cạnh huyền: $d^2 = 8^2 - 4^2$.' }],
             dungChu: '$d^2 = 8^2 - 4^2 = 48$, $d \\approx 6{,}93$; $S_{xq} \\approx 12 \\cdot 6{,}93 \\approx 83$ (cm²).', saiChu: 'Hình chóp có mọi cạnh $8$. Trung đoạn: $d^2 = 8^2 - 4^2$; nửa chu vi $p = 12$.' }
@@ -143,7 +146,7 @@
       { loai: 'dinhLi', tieuDe: 'Diện tích xung quanh',
         noiDung: 'Diện tích xung quanh (tổng diện tích các mặt bên) của hình chóp tam giác đều bằng tích của **nửa chu vi đáy** với **trung đoạn**:\n\n$$S_{xq} = p \\cdot \\cb{d},$$\n\ntrong đó $p$ là **nửa** chu vi đáy, $\\cb{d}$ là trung đoạn.\n\n**Diện tích toàn phần** = diện tích xung quanh + diện tích đáy.' },
       { loai: 'dinhLi', tieuDe: 'Thể tích',
-        noiDung: 'Thể tích hình chóp tam giác đều bằng $\\frac{1}{3}$ tích của diện tích đáy với chiều cao:\n\n$$V = \\frac{1}{3} S \\cdot \\cd{h},$$\n\ntrong đó $S$ là diện tích đáy, $\\cd{h}$ là chiều cao (độ dài đường cao).\n\n**Vì sao có $\\frac{1}{3}$?** Lấy cái cốc hình chóp múc đầy nước đổ vào cốc hình lăng trụ đứng cùng đáy, cùng chiều cao: phải đổ **3 lần** mới đầy. Vậy thể tích hình chóp $= \\frac{1}{3}$ thể tích lăng trụ $= \\frac{1}{3} S \\cdot h$.' },
+        noiDung: 'Thể tích hình chóp tam giác đều bằng $\\frac{1}{3}$ tích của diện tích đáy với chiều cao:\n\n$$V = \\frac{1}{3} S \\cdot \\cd{h},$$\n\ntrong đó $S$ là diện tích đáy, $\\cd{h}$ là chiều cao (độ dài đường cao).\n\n**Vì sao có $\\frac{1}{3}$?** (thí nghiệm; SGK công nhận công thức này, không chứng minh) Lấy cái cốc hình chóp múc đầy nước đổ vào cốc hình lăng trụ đứng cùng đáy, cùng chiều cao: phải đổ **3 lần** mới đầy. Vậy thể tích hình chóp $= \\frac{1}{3}$ thể tích lăng trụ $= \\frac{1}{3} S \\cdot h$.' },
       { loai: 'chuY', tieuDe: 'Tính diện tích đáy (tam giác đều cạnh a)',
         noiDung: 'Kẻ đường cao $CK$ của tam giác đều $ABC$ thì $K$ là trung điểm $AB$, $AK = \\frac{a}{2}$. Theo định lí Pythagore: $CK^2 = a^2 - \\left(\\frac{a}{2}\\right)^2$.\n\nRồi $S_{ABC} = \\frac{1}{2} \\cdot a \\cdot CK$.\n\nVí dụ $a = 6$: $CK^2 = 36 - 9 = 27$, $CK = \\sqrt{27} \\approx 5{,}2$; $S \\approx \\frac{1}{2} \\cdot 6 \\cdot 5{,}2 = 15{,}6$.' },
       { loai: 'chuY', tieuDe: 'Ba lỗi hay gặp',
@@ -154,17 +157,17 @@
         { lam: 'Nửa chu vi đáy: $p = \\frac{8 + 8 + 8}{2} = 12$ (cm)', vi: 'Đáy là tam giác đều nên ba cạnh bằng nhau. Nhớ chia đôi: $p$ là **nửa** chu vi, cũng là chiều dài hình chữ nhật khi trải ba mặt bên ra.', canh: { t: 1 } },
         { lam: 'Trung đoạn $d = 10$ cm', vi: 'Đề cho thẳng trung đoạn, dùng luôn.', canh: { t: 0 } },
         { lam: '$S_{xq} = p \\cdot d = 12 \\cdot 10 = 120$ (cm²)', vi: 'Áp dụng công thức $S_{xq} = p \\cdot d$.', canh: { t: 1 } } ] },
-      { de: 'Hình chóp tam giác đều $S.ABC$ có cạnh đáy $10$ cm, cạnh bên $13$ cm. Tính diện tích xung quanh.', canh: tc(10, 12, { a: '10', l: '13', d: '12', nua: '5', p: '15' }, { dong: 'Sxq = 15 · 12 = 180' }), buoc: [
+      { de: 'Hình chóp tam giác đều $S.ABC$ có cạnh đáy $10$ cm, cạnh bên $13$ cm. Tính diện tích xung quanh.', canh: tc(10, 12, { a: '10', l: '13', d: '12', nua: '5', p: '15' }, { anD: true, dong: 'Sxq = 15 · ? = 180', ketQua: 'Sxq = 15 · 12 = 180' }), buoc: [
         { lam: 'Gọi $M$ là trung điểm $AB$. Trung đoạn là $SM$, $AM = \\frac{10}{2} = 5$ (cm)', vi: 'Đề cho **cạnh bên**, chưa có trung đoạn. Trong mặt bên cân $SAB$, trung đoạn $SM$ vuông góc $AB$ tại trung điểm $M$.', canh: { t: 0, trangThai: 'soiSAM' } },
         { lam: '$SM^2 = SA^2 - AM^2 = 13^2 - 5^2 = 144$, nên $SM = 12$ (cm)', vi: 'Tam giác $SAM$ vuông tại $M$, cạnh bên $SA$ là cạnh huyền. Dùng định lí Pythagore.', canh: { t: 0.45, trangThai: 'soiSAM' } },
-        { lam: '$p = \\frac{3 \\cdot 10}{2} = 15$ (cm); $S_{xq} = 15 \\cdot 12 = 180$ (cm²)', vi: 'Có trung đoạn rồi thì áp dụng $S_{xq} = p \\cdot d$.', canh: { t: 1, trangThai: null } } ] },
+        { lam: '$p = \\frac{3 \\cdot 10}{2} = 15$ (cm); $S_{xq} = 15 \\cdot 12 = 180$ (cm²)', vi: 'Có trung đoạn rồi thì áp dụng $S_{xq} = p \\cdot d$.', canh: { t: 1, trangThai: 'giai' } } ] },
       { de: 'Tính thể tích hình chóp tam giác đều có cạnh đáy $4$ cm, chiều cao $9$ cm. Cho biết $\\sqrt{12} \\approx 3{,}46$.', canh: dn(4, 9, { a: '4', h: '9' }, { moTa: 'Cốc hình chóp tam giác đều cạnh đáy 4, cao 9 đổ nước sang cốc lăng trụ cùng đáy, cùng chiều cao.' }), buoc: [
         { lam: 'Đường cao của tam giác đáy: $k^2 = 4^2 - 2^2 = 12$, $k = \\sqrt{12} \\approx 3{,}46$ (cm)', vi: 'Muốn có diện tích đáy cần đường cao của tam giác đều cạnh $4$. Chân đường cao là trung điểm cạnh nên nửa cạnh là $2$, dùng Pythagore.', canh: { t: 0 } },
         { lam: 'Diện tích đáy: $S \\approx \\frac{1}{2} \\cdot 4 \\cdot 3{,}46 = 6{,}92$ (cm²)', vi: 'Diện tích tam giác = $\\frac{1}{2}$ · cạnh đáy · đường cao.', canh: { t: 0 } },
         { lam: '$V = \\frac{1}{3} S \\cdot h \\approx \\frac{1}{3} \\cdot 6{,}92 \\cdot 9 = 20{,}76$ (cm³)', vi: 'Nhân diện tích đáy với chiều cao rồi **chia 3**: múc đầy cốc hình chóp đổ sang cốc lăng trụ cùng đáy, cùng chiều cao thì ba lần mới đầy.', canh: { t: 1 } } ] },
       { de: 'Một hình chóp tam giác đều có diện tích đáy $15{,}6$ cm², chiều cao $10$ cm. Tính thể tích.', canh: dn(canhTuDienTich(15.6), 10, { a: '', h: '10' }, { ghiDay: 'đáy 15,6 cm²' }), buoc: [
-        { lam: '$V = \\frac{1}{3} S \\cdot h = \\frac{1}{3} \\cdot 15{,}6 \\cdot 10$', vi: 'Đã có sẵn diện tích đáy, chỉ việc thay vào công thức.' },
-        { lam: '$V = 52$ (cm³)', vi: '$15{,}6 \\cdot 10 = 156$, chia 3 được $52$.' } ] }
+        { lam: '$V = \\frac{1}{3} S \\cdot h = \\frac{1}{3} \\cdot 15{,}6 \\cdot 10$', vi: 'Đã có sẵn diện tích đáy, chỉ việc thay vào công thức.', canh: { t: 0 } },
+        { lam: '$V = 52$ (cm³)', vi: '$15{,}6 \\cdot 10 = 156$, chia 3 được $52$.', canh: { t: 1 } } ] }
     ],
     viDuMo: [
       { de: 'Tính diện tích xung quanh của hình chóp tam giác đều có cạnh đáy $6$ cm và trung đoạn $7$ cm.', buoc: [
@@ -240,9 +243,9 @@
         goiY: ['Đề cho **cạnh bên**, chưa có trung đoạn. Trung đoạn $SM$ vuông góc $AB$ tại trung điểm $M$, nên $AM = 20$.', 'Tam giác $SAM$ vuông tại $M$: $SM^2 = 52^2 - 20^2$. Rồi $S_{xq} = p \\cdot d$ với $p = 60$.'],
         loiGiai: ['$AM = 40 : 2 = 20$ (cm). Tam giác $SAM$ vuông tại $M$: $SM^2 = 52^2 - 20^2 = 2704 - 400 = 2304$, nên $d = SM = 48$ (cm).', '$p = \\frac{3 \\cdot 40}{2} = 60$ (cm).', '$S_{xq} = p \\cdot d = 60 \\cdot 48 = 2880$ (cm²)'],
         loiThuongGap: [
-          { gt: 3120, hinh: hg(tc(40, 48, { a: '40', l: '52', nua: '20', d: '?', p: '60' }), 0.45, 'soiSAM'), giaiThich: 'Em lấy **cạnh bên** $52$ làm trung đoạn. Trung đoạn phải tính bằng Pythagore: $d = 48$.' },
+          { gt: 3120, hinh: hg(tc(40, 48, { a: '40', l: '52', nua: '20', d: '?', p: '60' }, { soi: 'SAM' }), 0.45), giaiThich: 'Em lấy **cạnh bên** $52$ làm trung đoạn. Trung đoạn phải tính bằng Pythagore: $d = 48$.' },
           { gt: 5760, giaiThich: 'Em dùng cả chu vi $120$. Công thức dùng **nửa** chu vi $p = 60$.' }] },
-      { id: '38.11', hinhGiai: hg(tc(12, Math.sqrt(108), { a: '12', l: '12', nua: '6', p: '18' }), 1, 'soiSAM'), muc: 3, de: 'Một chiếc đèn trang trí có dạng hình chóp tam giác đều, **tất cả các cạnh** đều dài $12$ cm. Người ta dán giấy màu kín ba mặt bên. Tính diện tích giấy cần dùng (coi mép dán không đáng kể), **làm tròn đến hàng đơn vị** (cm²). Cho biết $\\sqrt{108} \\approx 10{,}39$.',
+      { id: '38.11', hinhGiai: hg(tc(12, Math.sqrt(108), { a: '12', l: '12', nua: '6', p: '18', d: '≈10,39' }, { soi: 'SAM', anD: true }), 1), muc: 3, de: 'Một chiếc đèn trang trí có dạng hình chóp tam giác đều, **tất cả các cạnh** đều dài $12$ cm. Người ta dán giấy màu kín ba mặt bên. Tính diện tích giấy cần dùng (coi mép dán không đáng kể), **làm tròn đến hàng đơn vị** (cm²). Cho biết $\\sqrt{108} \\approx 10{,}39$.',
         dapAn: { kieu: 'so', gt: 187, saiSo: 0.5 },
         goiY: ['Mỗi mặt bên là tam giác đều cạnh $12$. Trung đoạn là đường cao của tam giác đó.', '$d^2 = 12^2 - 6^2 = 108$, nên $d \\approx 10{,}39$. Rồi $S_{xq} = p \\cdot d$ với $p = 18$.'],
         loiGiai: ['Trung đoạn: $d^2 = 12^2 - 6^2 = 108$, $d \\approx 10{,}39$ (cm).', '$p = \\frac{3 \\cdot 12}{2} = 18$ (cm).', '$S_{xq} = p \\cdot d \\approx 18 \\cdot 10{,}39 = 187{,}02$; làm tròn: $S_{xq} \\approx 187$ (cm²).'],

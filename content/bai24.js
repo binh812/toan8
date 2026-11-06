@@ -96,17 +96,17 @@
 
     nhin: {
       tieuDe: 'Tô chồng hai chiều: tử nhân tử, mẫu nhân mẫu', loai: 'minhHoa',
-      luuY: 'Hình đếm ô khi $x$ là số nguyên dương, lúc hai phân thức có giá trị từ $0$ tới $1$. Với mọi $x$, tử và mẫu là những con số, và phép nhân phân thức làm đúng như nhân phân số; SGK lấy điều đó làm quy tắc nhân phân thức.',
+      luuY: 'Hình đếm ô khi $x$ là số nguyên dương, lúc hai phân thức có giá trị từ $0$ tới $1$. Với mọi $x$ làm các mẫu khác $0$ (ở đây $x \\ne 0$, $x \\ne -1$), tử và mẫu là những con số, và phép nhân phân thức làm đúng như nhân phân số; SGK lấy điều đó làm quy tắc nhân phân thức.',
       canh: nh({ p1: { tu: [0, 1], mau: [1, 1] }, p2: { tu: [-1, 1], mau: [0, 1] } }, {
         moTa: 'Hình vuông đơn vị. Dải dọc màu cam chiếm x trên x cộng 1 cột, dải ngang màu xanh chiếm x trừ 1 trên x hàng. Phần chồng màu xanh lá là tích.',
-        dongSo: function (p) { var x = p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\ca{' + (x + 1) + '}} \\cdot \\frac{\\cb{' + (x - 1) + '}}{\\cb{' + x + '}} = \\frac{\\cc{' + x * (x - 1) + '}}{' + (x + 1) * x + '}$'; } }),
+        dongSo: function (p) { var x = p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\ca{' + (x + 1) + '}} \\cdot \\frac{\\cb{' + (x - 1) + '}}{\\cb{' + x + '}}$'; } }),
       buoc: [
         { t: 0, chu: 'Hình vuông là $1$. Cần tính $\\frac{\\ca{x}}{\\ca{x+1}} \\cdot \\frac{\\cb{x-1}}{\\cb{x}}$, tức lấy một phần của một phần.' },
         { t: 0.1, chu: 'Theo chiều dọc: chia $\\ca{x+1}$ cột, tô $\\ca{x}$ cột.' },
         { t: 0.4, chu: 'Theo chiều ngang: chia $\\cb{x}$ hàng, tô $\\cb{x-1}$ hàng.' },
         { t: 0.72, chu: 'Phần tô chồng là tích. Nó có $\\ca{x} \\cdot \\cb{(x-1)}$ ô, trong cả hình $\\ca{(x+1)} \\cdot \\cb{x}$ ô: tử nhân tử, mẫu nhân mẫu. Kéo thanh $x$ để thử số khác.' }
       ],
-      ketLuan: '$$\\frac{\\ca{A}}{\\ca{B}} \\cdot \\frac{\\cb{C}}{\\cb{D}} = \\frac{\\ca{A}\\cb{C}}{\\ca{B}\\cb{D}}$$ Ở đây $\\frac{x}{x+1} \\cdot \\frac{x-1}{x} = \\frac{x(x-1)}{(x+1)x} = \\frac{x-1}{x+1}$. Chia cho một phân thức là nhân với phân thức nghịch đảo của nó.',
+      ketLuan: '$$\\frac{\\ca{A}}{\\ca{B}} \\cdot \\frac{\\cb{C}}{\\cb{D}} = \\frac{\\ca{A}\\cb{C}}{\\ca{B}\\cb{D}}$$ Ở đây $\\frac{x}{x+1} \\cdot \\frac{x-1}{x} = \\frac{x(x-1)}{(x+1)x} = \\frac{x-1}{x+1}$ (với $x \\ne 0$, $x \\ne -1$). Chia cho một phân thức là nhân với phân thức nghịch đảo của nó.',
       dung: {
         tieuDe: 'Đếm ô chồng', tuBai: '24.1', canh: N24_1,
         moiThu: 'Hình vẽ tại $x = 1$: $\\frac{2x}{x+1} = \\frac{2}{2}$ và $\\frac{x+1}{4x^2} = \\frac{2}{4}$. Em nhân, rút gọn rồi gõ kết quả. Nếu sai, hình so giá trị của em với phần tô chồng.',
@@ -127,7 +127,7 @@
           { tuBai: '24.10', de: 'Cho $P = \\frac{x-2}{x}$ và $Q = \\frac{x}{x+2}$. Tính $P \\cdot Q$.', dapAn: { kieu: 'bieuThuc', gt: '(x-2)/(x+2)', dang: 'rutGon' },
             goiY: ['Tử nhân tử, mẫu nhân mẫu.', '$x$ có ở cả tử và mẫu.'], loiGiai: ['$P \\cdot Q = \\frac{(x-2)x}{x(x+2)}$', '$= \\frac{x-2}{x+2}$'], loiThuongGap: [],
             canh: N24_10, tenNut: 'Tô chồng',
-            phanUng: [{ gt: '(x+2)/(x-2)', thamSo: { thu: 5 }, loi: 'Kết quả bị lật ngược: tại $x = 3$ của em bằng $5$, mà tích hai phân số nhỏ hơn $1$ không thể lớn hơn $1$.' }],
+            phanUng: [{ gt: '(x+2)/(x-2)', thamSo: { thu: 5 }, loi: 'Kết quả bị lật ngược: tại $x = 3$ của em bằng $5$, mà tại $x = 3$ cả hai phân thức đều nằm giữa $0$ và $1$, nên tích của chúng phải nhỏ hơn $1$.' }],
             dungChu: '$\\frac{(x-2)x}{x(x+2)} = \\frac{x-2}{x+2}$. Tại $x = 3$: tô chồng $1 \\cdot 3 = 3$ ô trong $3 \\cdot 5 = 15$ ô, tức $\\frac{1}{5}$.',
             saiChu: 'Nhân tử với tử, mẫu với mẫu, rồi bỏ nhân tử chung $x$.' },
           { tuBai: '24.9', canh: N24_9, tenNut: 'Tìm dải dọc',
@@ -181,13 +181,13 @@
         { canh: { t: 0.7 }, lam: '$= \\frac{3x\\cdot 5y^2}{5xy^2\\cdot 12xy}$', vi: 'Âm nhân âm được dương.' },
         { canh: { t: 1 }, lam: '$= \\frac{15xy^2}{60x^2y^3} = \\frac{1}{4xy}$', vi: 'Chia cả tử và mẫu cho $15xy^2$.' } ] },
       { de: 'Làm tính chia $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$.',
-        canh: dc({ hang: [{ tu: 5 / 3, mau: 3 / 2, tenTu: '5/(x² − 1)', tenMau: '3/(x² − x)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 2' }] },
+        canh: dc({ hang: [{ tu: 5 / 3, mau: 3 / 2, soTu: '5/3', soMau: '3/2', tenTu: '5/(x² − 1)', tenMau: '3/(x² − x)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 2' }] },
           { ghiChu: 'Chia là hỏi số chia nằm trong số bị chia bao nhiêu lần. Tại x = 2: 5/3 chứa 3/2 khoảng 1,11 lần, đúng bằng 5x/(3(x + 1)) = 10/9.' }), buoc: [
         { lam: '$= \\frac{5}{x^2-1}\\cdot\\frac{x^2-x}{3}$', vi: 'Nhân với phân thức nghịch đảo của số chia (lật $\\frac{3}{x^2-x}$ thành $\\frac{x^2-x}{3}$).' },
         { lam: '$= \\frac{5x(x-1)}{3(x-1)(x+1)}$', vi: 'Nhân tử với tử, mẫu với mẫu; phân tích $x^2 - x = x(x-1)$, $x^2 - 1 = (x-1)(x+1)$.' },
         { lam: '$= \\frac{5x}{3(x+1)}$', vi: 'Chia cho nhân tử chung $x - 1$.' } ] },
       { de: 'Làm tính chia $\\frac{3x}{2y^2} : \\left(-\\frac{5x^2}{12y^3}\\right)$.',
-        canh: dc({ hang: [{ tu: 1.5, mau: -5 / 12, tenTu: '3x/(2y²)', tenMau: '−5x²/(12y³)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
+        canh: dc({ hang: [{ tu: 1.5, mau: -5 / 12, soTu: '3/2', soMau: '−5/12', tenTu: '3x/(2y²)', tenMau: '−5x²/(12y³)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
           { ghiChu: 'Số chia âm (nét đứt): đoạn của nó nằm 3,6 lần trong đoạn bị chia, và thương mang dấu trừ.' }), buoc: [
         { lam: '$= \\frac{3x}{2y^2}\\cdot\\left(-\\frac{12y^3}{5x^2}\\right)$', vi: 'Lật phân thức thứ hai, giữ dấu trừ.' },
         { lam: '$= -\\frac{36xy^3}{10x^2y^2} = -\\frac{18y}{5x}$', vi: 'Nhân rồi chia cả tử và mẫu cho $2xy^2$.' } ] },
@@ -249,7 +249,7 @@
         loiGiai: ['$= \\frac{(x-3)(x+3)\\cdot x(x+1)}{(x+1)(x-3)}$', '$= x(x+3)$'],
         loiThuongGap: [{ gt: '1/(x(x+3))', giaiThich: 'Em lật nhầm phân thức thứ nhất. Chỉ lật phân thức **chia** (đứng sau dấu :).' }] },
 
-      { id: '24.7', hinhGiai: hg(dc({ hang: [{ tu: -2 / 3, mau: -4 / 9, tenTu: '−2x/(3y²)', tenMau: '−4x²/(9y)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
+      { id: '24.7', hinhGiai: hg(dc({ hang: [{ tu: -2 / 3, mau: -4 / 9, soTu: '−2/3', soMau: '−4/9', tenTu: '−2x/(3y²)', tenMau: '−4x²/(9y)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
         { ghiChu: 'Cả hai đều âm (nét đứt): âm chia âm được dương, 1,5 = 3/(2xy) tại x = y = 1.' })), muc: 2, de: 'Làm tính chia: $\\left(-\\frac{2x}{3y^2}\\right) : \\left(-\\frac{4x^2}{9y}\\right)$.',
         dapAn: { kieu: 'bieuThuc', gt: '3/(2xy)', dang: 'rutGon' },
         goiY: ['Âm chia âm được dương.', 'Lật phân thức thứ hai: $\\frac{2x}{3y^2}\\cdot\\frac{9y}{4x^2}$.'],

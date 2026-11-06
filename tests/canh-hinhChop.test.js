@@ -61,9 +61,20 @@ test('traiChop: t đi qua mọi khoảng không có NaN; trung đoạn quá ng�
   assert.throws(() => tinh('traiChop', { a: 6, d: 3 }, 0, { n: 4 }));
   assert.throws(() => tinh('traiChop', { a: 4, d: 6 }, 0, { n: 5 }));
 });
-test('traiChop: khung không đổi theo t (hình không nhảy)', () => {
-  const k0 = tinh('traiChop', { a: 4, d: 6 }, 0, { n: 3 }), k1 = tinh('traiChop', { a: 4, d: 6 }, 1, { n: 3 });
-  ['x0', 'y0', 'x1', 'y1'].forEach(c => GAN(k0.khung[c], k1.khung[c]));
+const tiLe = b => (b.x1 - b.x0) / (b.y1 - b.y0);
+const chua = (b, ds) => ds.forEach(q => assert.ok(q[0] >= b.x0 - 1e-9 && q[0] <= b.x1 + 1e-9 && q[1] >= b.y0 - 1e-9 && q[1] <= b.y1 + 1e-9, 'ra ngoài khung'));
+test('traiChop: khung đứng yên tới lúc ghép xong, rồi tiến lại gần hình chữ nhật mà giữ tỉ lệ (hình không nhảy)', () => {
+  BO.forEach(({ n, a, d }) => {
+    const k0 = tinh('traiChop', { a, d }, 0, { n });
+    [0.2, 0.5, 0.84].forEach(t => { const k = tinh('traiChop', { a, d }, t, { n }); ['x0', 'y0', 'x1', 'y1'].forEach(c => GAN(k.khung[c], k0.khung[c])); });
+    // Mọi mảnh ở mọi t nằm trong khung lúc đó
+    TT.concat([0.45, 0.6, 0.9]).forEach(t => { const k = tinh('traiChop', { a, d }, t, { n }); k.manh.forEach(m => chua(k.khung, m.dinh)); });
+    [0.9, 1].forEach(t => GAN(tiLe(tinh('traiChop', { a, d }, t, { n }).khung), tiLe(k0.khung), 'tỉ lệ khung', 1e-9));
+    const k1 = tinh('traiChop', { a, d }, 1, { n });
+    assert.ok(k1.khung.x1 - k1.khung.x0 <= k0.khung.x1 - k0.khung.x0 + 1e-9, 'cuối cùng không xa hơn');
+    assert.ok(k1.khung.x1 - k1.khung.x0 >= Math.min(1.35 * k1.p, k0.khung.x1 - k0.khung.x0) - 1e-9, 'chừa chỗ hai bên hình chữ nhật');
+    chua(tinh('traiChop', { a, d, trangThai: 'caChuVi' }, 1, { n }).khung, [[1.5 * k1.p, 0]]);
+  });
 });
 
 test('doNuoc: nước chỉ chuyển từ cốc chóp sang cốc lăng trụ; ba cốc chóp đầy đúng một lăng trụ', () => {

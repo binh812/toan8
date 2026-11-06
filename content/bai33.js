@@ -117,7 +117,7 @@
     return { ten: 'trungKhit', thamSo: thu ? { thu: thu } : undefined, moTa: 'Cọc CD cao 1,2 mét, bóng EC dài 0,9 mét; cột đèn BA cách đầu bóng E 6 mét. Tia sáng đi qua D và A.',
       tuyChon: { hinh: [
         { diem: [E, Cc, D], ten: ['E', 'C', 'D'], canh: ['0,9', '1,2', null], goc: [null, 'v', null] },
-        { diem: [E, B, A], ten: [null, 'B', 'A'], canh: ['6', an('8', 'h'), null], goc: [null, 'v', null] }],
+        { diem: [E, B, A], ten: [null, 'B', 'A'], canh: ['EB = 6', an('8', 'h'), null], goc: [null, 'v', null] }],
         di: [{ tu: 0, toi: 1, neo: 0, mau: '--a' }], loiCuoi: ['CD : BA = EC : EB'], thu: { goc: [6.4, 0], huong: [0, 1], ten: 'h' } } };
   }
   // Hình chữ X: AD cắt BC tại O, AB ∥ CD; OA = 2, OD = 5, AB = 3
@@ -166,7 +166,7 @@
             phanUng: [{ gt: 6.8, thamSo: { thu: 6.8 }, loi: 'Em dùng $CB = 5{,}1$ m thay cho $EB = 6$ m: cột đỏ cao $6{,}8$ m không chạm tia sáng. Cạnh ứng với $EC$ là **cả đoạn** $EB$ (cùng xuất phát từ $E$).' }],
             dungChu: '$\\frac{EB}{EC} = \\frac{6}{0{,}9}$, nên $h = 1{,}2 \\cdot \\frac{6}{0{,}9} = 8$ (m).', saiChu: 'Tam giác nhỏ $ECD$ phóng từ $E$ thành tam giác $EBA$. Tỉ số phóng là $\\frac{EB}{EC}$.' },
           { tuBai: '33.7', canh: chuX, tenNut: 'Tìm hai tam giác',
-            de: 'Hai đoạn thẳng $AD$ và $BC$ cắt nhau tại $O$, với $AB \\parallel CD$ (hình chữ X). Biết $OA = 2$, $OD = 5$, $AB = 3$. Tính $CD$.',
+            de: 'Hai đoạn thẳng $AD$ và $BC$ cắt nhau tại $O$, với $AB \\parallel CD$ (hình chữ X). Biết $OA = 2$, $OD = 5$, $AB = 3$. Tính $CD$. *(Đề mới, cùng khuôn với bài 33.7.)*',
             dapAn: { kieu: 'so', gt: 7.5 },
             goiY: ['$AB \\parallel CD$ nên $\\triangle OAB \\backsim \\triangle ODC$ (định lí vẫn đúng khi đường song song cắt phần kéo dài hai cạnh).', 'Quay tam giác $OAB$ nửa vòng quanh $O$ rồi phóng lên. Tỉ số phóng là $\\frac{OD}{OA}$.'],
             loiGiai: ['$AB \\parallel CD$ nên $\\triangle OAB \\backsim \\triangle ODC$, suy ra $\\frac{CD}{AB} = \\frac{OD}{OA} = \\frac{5}{2}$.', '$CD = 3 \\cdot \\frac{5}{2} = 7{,}5$'],
@@ -307,8 +307,8 @@
         loiThuongGap: [{ gt: 6.8, hinh: hg(hinhDen(6.8)), giaiThich: 'Em dùng $CB = 5{,}1$ m thay cho $EB = 6$ m. Cạnh tương ứng với $EC$ là **cả đoạn** $EB$ (cùng xuất phát từ $E$).' }] },
       { id: '33.11', hinhGiai: hg({ ten: 'trungKhit', tuyChon: { hinh: [
           { dai: [8, 9, 7], ten: ['A', 'B', 'C'], canh: ['8'] },
-          { dai: [6, 6.75, 5.25], ten: ["A'", "B'", "C'"], canh: [an('6')], dat: { sau: 0 } },
-          { dai: [12, 13.5, 10.5], ten: ["A''", "B''", "C''"], canh: [an('12')], dat: { sau: 1 } }],
+          { dai: [6, 6.75, 5.25], ten: ["A'", "B'", "C'"], canh: [an('6')], dat: { sau: 0, cach: 6 } },
+          { dai: [12, 13.5, 10.5], ten: ["A''", "B''", "C''"], canh: [an('12')], dat: { sau: 1, cach: 6 } }],
         di: [{ tu: 0, toi: 1, mau: '--a', khung: [0.1, 0.5] }, { tu: 1, toi: 2, mau: '--b', khung: [0.55, 0.95] }] } }), muc: 3,de: "Cho $\\triangle A''B''C'' \\backsim \\triangle A'B'C'$ theo tỉ số $2$ và $\\triangle A'B'C' \\backsim \\triangle ABC$ theo tỉ số $\\frac{3}{4}$. Biết $AB = 8$ cm, tính $A''B''$ (cm).",
         dapAn: { kieu: 'so', gt: 12 },
         goiY: ["Tính $A'B'$ trước: $A'B' = \\frac{3}{4} \\cdot AB$.", "Rồi $A''B'' = 2 \\cdot A'B'$. (Hoặc dùng: $\\triangle A''B''C'' \\backsim \\triangle ABC$ theo tỉ số $2 \\cdot \\frac{3}{4}$.)"],

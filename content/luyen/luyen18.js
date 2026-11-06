@@ -54,7 +54,7 @@
     return ds.length ? 'Viết gọn: ' + ds.join(', ') + '.' : null;
   }
   function hinhGia(cap) {
-    var cf = { ten: 'theDuLieu', tuyChon: { hang: cap.map(function (c) { return hangHinh(c[0], c[1]); }) }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 };
+    var cf = { ten: 'theDuLieu', tuyChon: { hang: cap.map(function (c) { return hangHinh(c[0], c[1]); }), anTen: true }, chiXem: true, t: 1 };
     var gc = ghiChuViet(cap.map(function (c) { return c[0]; }));
     if (gc) cf.ghiChu = gc;
     return { widget: 'canh', config: cf };
@@ -63,7 +63,7 @@
 
   // Bối cảnh cho "giá trị không hợp lí": [câu hỏi, đơn vị, min, max, bước, giá trị vô lí (hàm)]
   var BOI_CANH = [
-    { hoi: 'Bạn nặng bao nhiêu ki-lô-gam?', dv: 'kg', lo: 38, hi: 56, vl: function (r, x) { return r.dau() > 0 ? x * 10 : x + 100; } },
+    { hoi: 'Bạn nặng bao nhiêu ki-lô-gam?', dv: 'kg', lo: 38, hi: 56, vl: function (r, x) { return r.dau() > 0 ? x * 10 : x + 150; } },
     { hoi: 'Bạn cao bao nhiêu xăng-ti-mét?', dv: 'cm', lo: 142, hi: 170, vl: function (r, x) { return Math.round(x / 10); } },
     { hoi: 'Gia đình bạn có mấy người?', dv: 'người', lo: 3, hi: 7, vl: function (r, x) { return x * 10 + r.so(0, 5); } },
     { hoi: 'Nhà bạn có mấy chiếc ti vi?', dv: 'chiếc', lo: 1, hi: 3, vl: function (r, x) { return x * 10 + r.so(1, 9); } },
@@ -120,7 +120,7 @@
       var ltg = [{ gt: vl > b.hi ? lonNhatHopLi : nhoNhatHopLi, giaiThich: '$' + (vl > b.hi ? lonNhatHopLi : nhoNhatHopLi) + '$ ' + b.dv + ' vẫn là giá trị bình thường. Em tìm giá trị ' + (vl > b.hi ? '**lớn**' : '**nhỏ**') + ' đến mức vô lí.' }];
       return {
         de: ten + ' hỏi ' + ds.length + ' bạn lớp 8: "' + b.hoi + '" và ghi được: $' + ds.join('$; $') + '$. Giá trị nào **không hợp lí**?',
-        hinhGiai: { widget: 'canh', config: { ten: 'cotHopLi', tuyChon: { so: ds.slice(), don: b.dv, lo: b.lo, hi: b.hi, vl: [vt] }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } },
+        hinhGiai: { widget: 'canh', config: { ten: 'cotHopLi', tuyChon: { so: ds.slice(), don: b.dv, lo: b.lo, hi: b.hi, vl: [vt], anLucDau: true }, chiXem: true, t: 1 } },
         dapAn: { kieu: 'so', gt: vl },
         goiY: ['Với học sinh lớp 8, câu trả lời thường nằm trong khoảng từ $' + b.lo + '$ đến $' + b.hi + '$ ' + b.dv + '.', 'Giá trị nào ' + (vl > b.hi ? 'lớn' : 'nhỏ') + ' đến mức không thể xảy ra (có thể do ghi nhầm)?'],
         loiGiai: ['Các giá trị khác đều bình thường với học sinh lớp 8.', 'Không thể có câu trả lời $' + vl + '$ ' + b.dv + ' (có thể ghi nhầm). Giá trị không hợp lí là $' + vl + '$.'],
@@ -142,7 +142,7 @@
         de: 'Lớp ' + lopTen + ' có $' + lop + '$ học sinh. ' + ten + ' phát phiếu hỏi "' + cau + '" cho cả lớp và thu về $' + thu + '$ phiếu, trong đó có $' + hong + '$ phiếu ghi giá trị không hợp lí. Số phiếu **dùng được** chiếm bao nhiêu phần trăm số học sinh của lớp?',
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Phiếu dùng được = phiếu thu về − phiếu không hợp lí.', 'Tỉ lệ = (số phiếu dùng được) : $' + lop + ' \\cdot 100\\%$.'],
-        loiGiai: ['Số phiếu dùng được: $' + thu + ' - ' + hong + ' = ' + (thu - hong) + '$.', 'Tỉ lệ: $\\frac{' + (thu - hong) + '}{' + lop + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '$.'],
+        loiGiai: ['Số phiếu dùng được: $' + thu + ' - ' + hong + ' = ' + (thu - hong) + '$.', 'Tỉ lệ: $\\frac{' + (thu - hong) + '}{' + lop + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '\\%$.'],
         loiThuongGap: ltg
       };
     } },
@@ -161,11 +161,11 @@
       var chuDe = nhom[0] === 'A' ? 'dự đoán đội vô địch giải bóng đá khối 8 (các đội A, B, C, D)' : nhom[0] === 'Toán' ? 'chọn môn học yêu thích nhất' : 'chọn màu áo đồng phục thể thao';
       return {
         de: 'Bình hỏi $' + N + '$ bạn ' + chuDe + ' và ghi được:\n\n' + ds.join(', ') + '.\n\nCó bao nhiêu **phần trăm** số bạn được hỏi chọn **' + nhom[hoi] + '**?',
-        hinhGiai: { widget: 'canh', config: { ten: 'chongThe', tuyChon: { the: ds.slice(), nhom: nhom.slice(), hoi: nhom[hoi] }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } },
+        hinhGiai: { widget: 'canh', config: { ten: 'chongThe', tuyChon: { the: ds.slice(), nhom: nhom.slice(), hoi: nhom[hoi], anLucDau: true }, chiXem: true, t: 1 } },
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Lập bảng: đếm số lần mỗi lựa chọn xuất hiện (tổng phải bằng $' + N + '$).', 'Tỉ lệ = (số lần ' + nhom[hoi] + ') : $' + N + ' \\cdot 100\\%$.'],
         loiGiai: ['Bảng thống kê: ' + nhom.map(function (x, i) { return x + ': $' + dem[i] + '$'; }).join('; ') + ' (tổng $' + N + '$).',
-          'Tỉ lệ chọn ' + nhom[hoi] + ': $\\frac{' + dem[hoi] + '}{' + N + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '$.'],
+          'Tỉ lệ chọn ' + nhom[hoi] + ': $\\frac{' + dem[hoi] + '}{' + N + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '\\%$.'],
         loiThuongGap: ltg
       };
     } }

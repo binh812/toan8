@@ -214,6 +214,7 @@
         dapAn: { kieu: 'bieuThuc', gt: kq.ascii, dang: 'rutGon' },
         goiY: [nhan ? '$P$ là thừa số chưa biết: $P = ' + Es + ' : ' + Cs + '$.' : '$P$ là số bị chia: $P = ' + Es + '\\cdot ' + Cs + '$.', 'Phân tích thành nhân tử rồi rút gọn: $' + nt + '$.'],
         loiGiai: ['$P = ' + cach + '$', '$P = ' + nt + '$', '$P = ' + kq.tex + '$'],
+        hinhGiai: hinhRutGon(nhan ? nhanPT(E, daoPT(C)) : nhanPT(E, C), nhan ? 'P = tích chia thừa số đã biết: lật thừa số đó rồi nhân. Bỏ từng cặp thẻ giống nhau.' : 'P = thương nhân số chia. Bỏ từng cặp thẻ giống nhau.'),
         loiThuongGap: ltg
       };
     } },

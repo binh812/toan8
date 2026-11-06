@@ -99,7 +99,7 @@
             phanUng: [{ gt: 1, loi: '$x = 1$ giờ là đúng rồi, nhưng đề hỏi số **phút**.' }, { gt: 80, thamSo: { thu: 4 / 3 }, loi: '$80$ phút là thời gian **An** đi. Bình đi sau An $20$ phút.' }],
             dungChu: '$16x = 4 + 12x$, nên $4x = 4$, $x = 1$ giờ, tức $60$ phút.', saiChu: 'An đi trước $20$ phút $= \\frac{1}{3}$ giờ, được $4$ km. Lúc đuổi kịp, hai đoạn bằng nhau.' },
           { tuBai: '26.7', canh: doan('Giá ban đầu x', [m(0.75, 0, '0,75x'), m(0.25, 0, '25%', true)], 'Giá bán + phần đã giảm', [m(0, 450, '450'), m(0.25, 0, '25%', true)]), tenNut: 'Vẽ sơ đồ',
-            phanUng: [{ gt: 562.5, thamSo: { thu: 562.5 }, loi: '$25\\%$ được tính trên **giá ban đầu**, không phải trên $450$. Trên hình, hai phần $25\\%$ phải dài bằng nhau.' }],
+            phanUng: [{ gt: 562.5, thamSo: { thu: 562.5 }, loi: 'Với $x = 562{,}5$, đoạn trên dài $562{,}5$ còn đoạn dưới $\\approx 590{,}63$. $25\\%$ phải tính trên giá ban đầu $x$, không phải trên $450$.' }],
             dungChu: '$0{,}75x = 450$, nên $x = 600$.', saiChu: 'Giá bán là phần còn lại, $75\\%$ của giá ban đầu: $0{,}75x = 450$.' }
         ],
         cachNhan: 'Đề nào cũng vậy: tìm một đại lượng tính được bằng hai cách (cùng quãng đường, cùng số tiền, cùng chu vi). Hai cách là hai đoạn bằng nhau, và đó là phương trình.'
@@ -191,13 +191,13 @@
         goiY: ['Số học sinh có thể là $12{,}5$ không?', 'Số người phải là số **tự nhiên**, và lớp phải có học sinh.'],
         loiGiai: ['Số học sinh không thể là số thập phân hay số âm.', 'Vậy điều kiện: $x$ là số tự nhiên khác $0$.'] },
 
-      { id: '26.4', hinhGiai: hg(doan('Lương 12 tháng + thưởng Tết', [m(12, 0, '12x'), m(3, 0, '3x')], 'Thu nhập cả năm', [m(0, 225, '225')], { tuyChon: { hienX: true } })), muc: 1, de: 'Chị Linh được thưởng Tết bằng $3$ tháng lương. Tổng thu nhập một năm (lương $12$ tháng và thưởng Tết) là $225$ triệu đồng. Lương mỗi tháng của chị là bao nhiêu triệu đồng?',
+      { id: '26.4', hinhGiai: hg(doan('Lương 12 tháng + thưởng Tết', [m(12, 0, '12x'), m(3, 0, '3x')], 'Thu nhập cả năm', [m(0, 225, '225')], { tuyChon: { donVi: ' triệu đồng' } })), muc: 1, de: 'Chị Linh được thưởng Tết bằng $3$ tháng lương. Tổng thu nhập một năm (lương $12$ tháng và thưởng Tết) là $225$ triệu đồng. Lương mỗi tháng của chị là bao nhiêu triệu đồng?',
         dapAn: { kieu: 'so', gt: 15 },
         goiY: ['Gọi $x$ (triệu đồng) là lương một tháng. Thưởng Tết là $3x$.', 'Phương trình: $12x + 3x = 225$.'],
         loiGiai: ['Gọi $x$ (triệu đồng) là lương một tháng, $x > 0$.', '$12x + 3x = 225$, tức là $15x = 225$', 'Lương mỗi tháng: $x = 15$'],
         loiThuongGap: [{ gt: 18.75, giaiThich: 'Em quên tiền thưởng Tết ($3x$). Tổng thu nhập là $12x + 3x = 15x$.' }] },
 
-      { id: '26.5', hinhGiai: hg(doan('Lãi khoản 9% + lãi khoản 6%', [m(0.09, 0, '0,09x'), m(-0.06, 15, '0,06(250 − x)')], 'Tổng tiền lãi', [m(0, 18, '18')], { tuyChon: { hienX: true } })), muc: 2, de: 'Bác Hùng đầu tư $250$ triệu đồng vào hai khoản: một khoản lãi $9\\%$ một năm, khoản còn lại gửi tiết kiệm lãi $6\\%$ một năm. Cuối năm bác nhận $18$ triệu đồng tiền lãi. Hỏi bác đầu tư vào khoản lãi $9\\%$ bao nhiêu triệu đồng?',
+      { id: '26.5', hinhGiai: hg(doan('Lãi khoản 9% + lãi khoản 6%', [m(0.09, 0, '0,09x'), m(-0.06, 15, '0,06(250 − x)')], 'Tổng tiền lãi', [m(0, 18, '18')], { tuyChon: { donVi: ' triệu đồng' } })), muc: 2, de: 'Bác Hùng đầu tư $250$ triệu đồng vào hai khoản: một khoản lãi $9\\%$ một năm, khoản còn lại gửi tiết kiệm lãi $6\\%$ một năm. Cuối năm bác nhận $18$ triệu đồng tiền lãi. Hỏi bác đầu tư vào khoản lãi $9\\%$ bao nhiêu triệu đồng?',
         dapAn: { kieu: 'so', gt: 100 },
         goiY: ['Gọi $x$ (triệu đồng) là tiền đầu tư khoản $9\\%$; khoản kia là $250 - x$.', '$0{,}09x + 0{,}06(250 - x) = 18$.'],
         loiGiai: ['$0{,}09x + 0{,}06(250 - x) = 18$', '$0{,}09x + 15 - 0{,}06x = 18$', '$0{,}03x = 3$', 'Khoản lãi $9\\%$: $x = 100$'],
@@ -210,37 +210,37 @@
         loiGiai: ['Gọi $x$ (m) là chiều dài, $x > 5$. Chiều rộng là $x - 5$.', '$2(x + x - 5) = 50$, nên $2x - 5 = 25$', 'Chiều dài: $x = 15$'],
         loiThuongGap: [{ gt: 27.5, giaiThich: 'Chu vi $= 2\\cdot$(dài $+$ rộng). Em quên nhân $2$: $x + (x - 5)$ mới là **nửa** chu vi.' }, { gt: 10, giaiThich: '$10$ m là chiều **rộng**. Đề hỏi chiều dài.' }] },
 
-      { id: '26.7', hinhGiai: hg(doan('Giá ban đầu x', [m(0.75, 0, '0,75x'), m(0.25, 0, '25%', true)], 'Giá bán + phần đã giảm', [m(0, 450, '450'), m(0.25, 0, '25%', true)], { tuyChon: { hienX: true } })), muc: 2, de: 'Một chiếc áo len sau khi giảm giá $25\\%$ được bán với giá $450$ nghìn đồng. Giá ban đầu của chiếc áo là bao nhiêu nghìn đồng?',
+      { id: '26.7', hinhGiai: hg(doan('Giá ban đầu x', [m(0.75, 0, '0,75x'), m(0.25, 0, '25%', true)], 'Giá bán + phần đã giảm', [m(0, 450, '450'), m(0.25, 0, '25%', true)], { tuyChon: { donVi: ' nghìn đồng' } })), muc: 2, de: 'Một chiếc áo len sau khi giảm giá $25\\%$ được bán với giá $450$ nghìn đồng. Giá ban đầu của chiếc áo là bao nhiêu nghìn đồng?',
         dapAn: { kieu: 'so', gt: 600 },
         goiY: ['Gọi giá ban đầu là $x$. Sau khi giảm $25\\%$, giá còn $0{,}75x$.', 'Giải $0{,}75x = 450$.'],
         loiGiai: ['Gọi $x$ (nghìn đồng) là giá ban đầu, $x > 450$.', '$0{,}75x = 450$', 'Giá ban đầu: $x = 600$'],
         loiThuongGap: [{ gt: 562.5, giaiThich: 'Lấy $450$ cộng thêm $25\\%$ **của $450$** là sai: $25\\%$ được tính trên **giá ban đầu**, chưa biết. Phải giải $0{,}75x = 450$.' }] },
 
-      { id: '26.8', hinhGiai: hg(doan('Bình đi (km)', [m(16, 0, '16x')], 'An đi (km)', [m(0, 4, '4'), m(12, 0, '12x')], { tuyChon: { hienX: true, donVi: ' giờ' } })), muc: 2, de: 'An đi xe đạp rời nhà lúc $7$ giờ với vận tốc $12$ km/h. Lúc $7$ giờ $20$ phút, Bình đi xe đạp từ nhà An đuổi theo với vận tốc $16$ km/h. Sau bao nhiêu **phút** kể từ lúc Bình xuất phát thì Bình đuổi kịp An?',
+      { id: '26.8', hinhGiai: hg(doan('Bình đi (km)', [m(16, 0, '16x')], 'An đi (km)', [m(0, 4, '4'), m(12, 0, '12x')], { tuyChon: { donVi: ' giờ = 60 phút' } })), muc: 2, de: 'An đi xe đạp rời nhà lúc $7$ giờ với vận tốc $12$ km/h. Lúc $7$ giờ $20$ phút, Bình đi xe đạp từ nhà An đuổi theo với vận tốc $16$ km/h. Sau bao nhiêu **phút** kể từ lúc Bình xuất phát thì Bình đuổi kịp An?',
         dapAn: { kieu: 'so', gt: 60 },
         goiY: ['Đổi $20$ phút $= \\frac{1}{3}$ giờ. Gọi $x$ (giờ) là thời gian Bình đi thì An đã đi $x + \\frac{1}{3}$ giờ.', 'Đuổi kịp khi hai quãng đường bằng nhau: $16x = 12\\left(x + \\frac{1}{3}\\right)$.'],
         loiGiai: ['Gọi $x$ (giờ) là thời gian Bình đi đến lúc đuổi kịp, $x > 0$.', '$16x = 12\\left(x + \\frac{1}{3}\\right) = 12x + 4$, nên $4x = 4$, $x = 1$ (giờ).', 'Vậy Bình đuổi kịp An sau $1$ giờ, tức là $t = 60$ phút.'],
         loiThuongGap: [{ gt: 80, giaiThich: '$80$ phút là thời gian tính từ lúc **An** đi. Đề hỏi tính từ lúc Bình xuất phát.' }, { gt: 1, giaiThich: 'Em tìm đúng $1$ giờ rồi, nhưng đề hỏi số **phút**: $1$ giờ $= 60$ phút.' }] },
 
-      { id: '26.9', hinhGiai: hg(doan('Gói A (nghìn đồng)', [m(0, 30, '30'), m(0.8, 0, '0,8x')], 'Gói B (nghìn đồng)', [m(0, 40, '40'), m(0.6, 0, '0,6x')], { tuyChon: { hienX: true } })), muc: 2, de: 'Gói cước A: thuê bao $30\\,000$ đồng/tháng và $800$ đồng mỗi phút gọi. Gói cước B: thuê bao $40\\,000$ đồng/tháng và $600$ đồng mỗi phút gọi. Gọi bao nhiêu phút trong tháng thì tiền phải trả của hai gói bằng nhau?',
+      { id: '26.9', hinhGiai: hg(doan('Gói A (nghìn đồng)', [m(0, 30, '30'), m(0.8, 0, '0,8x')], 'Gói B (nghìn đồng)', [m(0, 40, '40'), m(0.6, 0, '0,6x')], { tuyChon: { donVi: ' phút' } })), muc: 2, de: 'Gói cước A: thuê bao $30\\,000$ đồng/tháng và $800$ đồng mỗi phút gọi. Gói cước B: thuê bao $40\\,000$ đồng/tháng và $600$ đồng mỗi phút gọi. Gọi bao nhiêu phút trong tháng thì tiền phải trả của hai gói bằng nhau?',
         dapAn: { kieu: 'so', gt: 50 },
         goiY: ['Đổi hết ra **nghìn đồng**: gói A trả $30 + 0{,}8x$, gói B trả $40 + 0{,}6x$.', 'Giải $30 + 0{,}8x = 40 + 0{,}6x$.'],
         loiGiai: ['Gọi $x$ là số phút gọi trong tháng, $x > 0$.', '$30 + 0{,}8x = 40 + 0{,}6x$ (nghìn đồng)', '$0{,}2x = 10$, nên $x = 50$'],
         loiThuongGap: [{ gt: 0.05, giaiThich: 'Đơn vị không thống nhất: thuê bao tính bằng **nghìn đồng** ($30$, $40$) mà cước gọi lại để **đồng** ($800$, $600$). Đổi $800$ đồng $= 0{,}8$ nghìn đồng.' }] },
 
-      { id: '26.10', hinhGiai: hg(doan('Thực tế: 18 ngày', [m(18, 54, '18(x + 3)')], 'Kế hoạch + 6 áo vượt', [m(20, 0, '20x'), m(0, 6, '6')], { tuyChon: { hienX: true } })), muc: 3, de: 'Một xưởng may dự định hoàn thành kế hoạch trong $20$ ngày. Nhưng mỗi ngày xưởng may vượt mức $3$ chiếc áo nên đã xong sớm $2$ ngày và còn vượt kế hoạch $6$ chiếc áo. Hỏi theo kế hoạch xưởng phải may bao nhiêu chiếc áo?',
+      { id: '26.10', hinhGiai: hg(doan('Thực tế: 18 ngày', [m(18, 54, '18(x + 3)')], 'Kế hoạch + 6 áo vượt', [m(20, 0, '20x'), m(0, 6, '6')], { tuyChon: { donVi: ' áo/ngày; kế hoạch 20 · 24 = 480 áo' } })), muc: 3, de: 'Một xưởng may dự định hoàn thành kế hoạch trong $20$ ngày. Nhưng mỗi ngày xưởng may vượt mức $3$ chiếc áo nên đã xong sớm $2$ ngày và còn vượt kế hoạch $6$ chiếc áo. Hỏi theo kế hoạch xưởng phải may bao nhiêu chiếc áo?',
         dapAn: { kieu: 'so', gt: 480 },
         goiY: ['Gọi $x$ là số áo dự định may mỗi ngày. Kế hoạch là $20x$ áo.', 'Thực tế may $x + 3$ áo mỗi ngày trong $18$ ngày, được $20x + 6$ áo: $18(x + 3) = 20x + 6$.'],
         loiGiai: ['Gọi $x$ (chiếc) là số áo dự định may mỗi ngày, $x$ nguyên dương.', '$18(x + 3) = 20x + 6$, tức là $18x + 54 = 20x + 6$', '$2x = 48$, nên $x = 24$ (chiếc mỗi ngày).', 'Số áo theo kế hoạch: $20\\cdot 24 = 480$'],
         loiThuongGap: [{ gt: 24, giaiThich: '$24$ là số áo may **mỗi ngày** theo dự định. Đề hỏi cả kế hoạch: $20\\cdot 24$.' }, { gt: 486, giaiThich: '$486$ là số áo **thực tế** đã may. Kế hoạch ít hơn $6$ chiếc.' }] },
 
-      { id: '26.11', hinhGiai: hg(doan('Xe thứ nhất đi AB (2,5 giờ)', [m(2.5, 25, '2,5(x + 10)')], 'Xe thứ hai đi AB (3 giờ)', [m(3, 0, '3x')], { tuyChon: { hienX: true } })), muc: 3, de: 'Hai ô tô cùng xuất phát lúc $7$ giờ từ A đi B. Vận tốc xe thứ nhất lớn hơn xe thứ hai $10$ km/h. Xe thứ nhất đến B lúc $9$ giờ $30$ phút, sớm hơn xe thứ hai $30$ phút. Tính độ dài quãng đường AB (km).',
+      { id: '26.11', hinhGiai: hg(doan('Xe thứ nhất đi AB (2,5 giờ)', [m(2.5, 25, '2,5(x + 10)')], 'Xe thứ hai đi AB (3 giờ)', [m(3, 0, '3x')], { tuyChon: { donVi: ' km/h; AB = 3 · 50 = 150 km' } })), muc: 3, de: 'Hai ô tô cùng xuất phát lúc $7$ giờ từ A đi B. Vận tốc xe thứ nhất lớn hơn xe thứ hai $10$ km/h. Xe thứ nhất đến B lúc $9$ giờ $30$ phút, sớm hơn xe thứ hai $30$ phút. Tính độ dài quãng đường AB (km).',
         dapAn: { kieu: 'so', gt: 150 },
         goiY: ['Xe thứ nhất đi $2{,}5$ giờ, xe thứ hai đi $3$ giờ.', 'Gọi $x$ (km/h) là vận tốc xe thứ hai: $2{,}5(x + 10) = 3x$ (cùng quãng đường AB).'],
         loiGiai: ['Gọi $x$ (km/h) là vận tốc xe thứ hai, $x > 0$; xe thứ nhất $x + 10$.', 'Thời gian: xe thứ nhất $2{,}5$ giờ, xe thứ hai $3$ giờ.', '$2{,}5(x + 10) = 3x$, nên $0{,}5x = 25$, $x = 50$.', 'Quãng đường $AB = 3\\cdot 50 = 150$'],
         loiThuongGap: [{ gt: 50, giaiThich: '$50$ km/h là **vận tốc** xe thứ hai. Đề hỏi quãng đường: $3\\cdot 50$.' }, { gt: 125, giaiThich: 'Xe thứ hai đi $3$ giờ (đến lúc $10$ giờ), không phải $2{,}5$ giờ.' }] },
 
-      { id: '26.12', hinhGiai: hg(doan('Vàng (g), không đổi', [m(0, 108, '108')], '80% của hợp kim mới', [m(0.8, 96, '0,8(120 + x)')], { tuyChon: { hienX: true } })), muc: 3, de: 'Người thợ có $8$ chiếc nhẫn, mỗi chiếc nặng $15$ g, làm bằng hợp kim $10\\%$ bạc và $90\\%$ vàng. Người thợ nấu chảy chúng và thêm bạc để hàm lượng vàng còn $80\\%$. Cần thêm bao nhiêu gam bạc?',
+      { id: '26.12', hinhGiai: hg(doan('Vàng (g), không đổi', [m(0, 108, '108')], '80% của hợp kim mới', [m(0.8, 96, '0,8(120 + x)')], { tuyChon: { donVi: ' g bạc' } })), muc: 3, de: 'Người thợ có $8$ chiếc nhẫn, mỗi chiếc nặng $15$ g, làm bằng hợp kim $10\\%$ bạc và $90\\%$ vàng. Người thợ nấu chảy chúng và thêm bạc để hàm lượng vàng còn $80\\%$. Cần thêm bao nhiêu gam bạc?',
         dapAn: { kieu: 'so', gt: 15 },
         goiY: ['Tổng khối lượng $8\\cdot 15 = 120$ g, trong đó vàng $108$ g. Thêm bạc thì lượng **vàng không đổi**.', 'Gọi $x$ (g) là bạc thêm vào: $108 = 0{,}8(120 + x)$.'],
         loiGiai: ['Khối lượng nhẫn: $120$ g; vàng: $0{,}9\\cdot 120 = 108$ g.', 'Gọi $x$ (g) là khối lượng bạc thêm vào, $x > 0$. Hợp kim mới nặng $120 + x$.', '$108 = 0{,}8(120 + x)$, nên $120 + x = 135$', 'Khối lượng bạc cần thêm: $x = 15$'],

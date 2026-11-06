@@ -8,7 +8,14 @@
 
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
   // Hình lời giải theo chính số của đề: mỗi hạng tử là một nhóm mảnh (khoiGop)
-  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'khoiGop', tuyChon: tuyChon, chiXem: true, t: 1 } }; }
+  // Quá nhiều mảnh thì mảnh bé tí: đề đó không kèm hình. Có hạng tử bậc từ 4 thì ghi chú thẻ không theo kích thước
+  function hg(tuyChon) {
+    var c = { ten: 'khoiGop', tuyChon: tuyChon, chiXem: true, t: 1 }, ds = String(tuyChon.da).match(/[+-]?[^+-]+/g) || [];
+    if (ds.reduce(function (s, d) { var m = /^[+-]?([0-9]*)/.exec(d); return s + (m[1] ? +m[1] : 1); }, 0) > 20) return undefined;
+    if (ds.some(function (d) { return (d.match(/[a-z][^a-z]*/g) || []).reduce(function (s, b) { return s + (b.length > 1 ? +b.slice(2) : 1); }, 0) >= 4; }))
+      c.ghiChu = 'Thẻ ghi phần biến bậc từ 4 trở lên, không vẽ theo kích thước.';
+    return { widget: 'canh', config: c };
+  }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
   function soMu(ph, b) { var m = ph.match(new RegExp(b + '(\\^(\\d+))?')); return m ? (m[2] ? +m[2] : 1) : 0; }
   function giaTri(heSo, x, y, saiDau) {

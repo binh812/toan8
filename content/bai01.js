@@ -5,9 +5,16 @@
   function gop(nhom, them) { return { ten: 'khoiGop', tuyChon: Object.assign({ nhom: nhom }, them || {}) }; }
   function the(o) { return { ten: 'thuaSo', tuyChon: o }; }
   function hg(c, t) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: t == null ? 1 : t }, c) }; }
+  var THE = 'Thẻ ghi phần biến bậc từ 4 trở lên, không vẽ theo kích thước.';
   var MA_X4 = { muMu: { ma: { don: 'x^4', nhan: 'một mảnh x⁴' } } };
 
-TOAN8.bai({
+// Dùng và Suy ra: kết quả trên hình chỉ hiện khi em đã giải (nút chạy hình không được lộ đáp án)
+  function anKetQua(L) {
+    [L.nhin.dung].concat(L.nhin.suyRa.baDe).forEach(function (d) { d.canh.tuyChon = Object.assign({}, d.canh.tuyChon, { anNhan: true }); });
+    return L;
+  }
+
+TOAN8.bai(anKetQua({
   id: 1, ten: 'Đơn thức', sgk: { tap: 1, trang: 5 },
   nhin: {
     tieuDe: 'Đơn thức là một nhóm khối giống nhau', loai: 'minhHoa',
@@ -104,9 +111,12 @@ TOAN8.bai({
       { canh: { t: 0.65 }, lam: '$3x^2y \\cdot (-2)xy^3 = [3 \\cdot (-2)] \\cdot (x^2 \\cdot x) \\cdot (y \\cdot y^3)$', vi: 'Nhóm các số với nhau, các lũy thừa của cùng một biến với nhau. Trên hình: thẻ số về một nhóm, mỗi chữ về một nhóm.' },
       { canh: { t: 1 }, lam: '$= -6x^3y^4$', vi: '$3 \\cdot (-2) = -6$; $x^2 \\cdot x = x^3$; $y \\cdot y^3 = y^4$ (nhân thì cộng số mũ, tức là đếm thẻ chữ).' },
       { canh: { t: 1 }, lam: 'Hệ số: $-6$. Phần biến: $x^3y^4$. Bậc: $3 + 4 = 7$.', vi: 'Bậc là tổng số mũ của các biến, cũng là số thẻ chữ: $7$ thẻ.' } ] },
-    { de: 'Cho hai đơn thức đồng dạng $A = 4xy^2$ và $B = -7xy^2$. Tính $A + B$ và $A - B$.', canh: gop(['4xy^2', '-7xy^2']), buoc: [
-      { canh: { t: 1 }, lam: '$A + B = 4xy^2 + (-7)xy^2 = [4 + (-7)]xy^2 = -3xy^2$', vi: 'Cộng hai hệ số, giữ nguyên phần biến $xy^2$. Trên hình: $4$ khối dương, $7$ khối âm (viền đỏ). Mỗi cặp một dương một âm triệt tiêu nhau, còn lại $3$ khối âm.' },
-      { lam: '$A - B = 4xy^2 - (-7)xy^2 = [4 - (-7)]xy^2 = 11xy^2$', vi: 'Trừ hai hệ số: $4 - (-7) = 4 + 7 = 11$. Bớt đi $7$ khối âm cũng như thêm $7$ khối dương.' } ] },
+    { de: 'Cho hai đơn thức đồng dạng $A = 4xy^2$ và $B = -7xy^2$. Tính $A + B$.', canh: gop(['4xy^2', '-7xy^2']), buoc: [
+      { canh: { t: 0 }, lam: '$A + B = 4xy^2 + (-7)xy^2 = [4 + (-7)]xy^2$', vi: 'Cộng hai hệ số, giữ nguyên phần biến $xy^2$. Trên hình: $4$ khối dương, $7$ khối âm (viền đỏ).' },
+      { canh: { t: 1 }, lam: '$= -3xy^2$', vi: 'Mỗi cặp một khối dương, một khối âm triệt tiêu nhau, còn lại $3$ khối âm.' } ] },
+    { de: 'Với $A = 4xy^2$ và $B = -7xy^2$ như trên, tính $A - B$.', canh: gop(['4xy^2', { don: '-7xy^2', lat: true }]), buoc: [
+      { canh: { t: 0.32 }, lam: '$A - B = 4xy^2 - (-7)xy^2 = [4 - (-7)]xy^2$', vi: 'Trừ hai hệ số. Trên hình: bớt đi $7$ khối âm cũng như lật chúng thành $7$ khối dương.' },
+      { canh: { t: 1 }, lam: '$= 11xy^2$', vi: '$4 - (-7) = 4 + 7 = 11$: $4$ khối thêm $7$ khối dương.' } ] },
     { de: 'Tính giá trị của đơn thức $-2x^2y$ tại $x = 3$, $y = -1$.', canh: the({ don: '-2x^2y', thay: { x: 3, y: -1 } }), buoc: [
       { canh: { t: 0.6 }, lam: '$-2x^2y = -2 \\cdot 3^2 \\cdot (-1)$', vi: 'Thay $x = 3$, $y = -1$ vào đơn thức: mỗi thẻ chữ lật thành giá trị của nó.' },
       { canh: { t: 1 }, lam: '$= -2 \\cdot 9 \\cdot (-1) = 18$', vi: 'Tính lũy thừa trước: $3^2 = 9$, rồi nhân. Âm nhân âm ra dương.' } ] }
@@ -160,7 +170,7 @@ TOAN8.bai({
         { gt: '7x^4', hinh: hg(Object.assign(gop(['4x^2', '3x^2'], { sai: MA_X4 }), { thamSo: { trangThai: 'muMu' } }), 0.8), giaiThich: 'Em đã cộng cả số mũ! Khi **cộng** đơn thức đồng dạng chỉ cộng hệ số, giữ nguyên phần biến $x^2$: $4x^2 + 3x^2 = 7x^2$.' },
         { gt: '12x^2', giaiThich: 'Đây là phép cộng: $4 + 3 = 7$, không phải $4 \\cdot 3$.' },
         { gt: '12x^4', giaiThich: 'Em đã làm như phép nhân. Đây là phép **cộng**: cộng hệ số $4 + 3 = 7$ và giữ nguyên $x^2$.' }] },
-    { id: '1.6', hinhGiai: hg(gop(['3xy^3', { don: '-5xy^3', lat: true }])), muc: 2, de: 'Cho $A = 3xy^3$ và $B = -5xy^3$. Tính $A - B$.',
+    { id: '1.6', hinhGiai: hg(Object.assign(gop(['3xy^3', { don: '-5xy^3', lat: true }]), { ghiChu: THE })), muc: 2, de: 'Cho $A = 3xy^3$ và $B = -5xy^3$. Tính $A - B$.',
       dapAn: { kieu: 'bieuThuc', gt: '8xy^3', dang: 'khaiTrien' },
       goiY: ['Trừ hai đơn thức đồng dạng: trừ hệ số, giữ nguyên phần biến.', '$A - B = [3 - (-5)]xy^3$. Trừ một số âm là cộng số đối của nó.'],
       loiGiai: ['$A - B = 3xy^3 - (-5)xy^3 = [3 - (-5)]xy^3$', '$= 8xy^3$'],
@@ -215,5 +225,5 @@ TOAN8.bai({
       giaiThich: 'Biến $y$ không ghi số mũ nghĩa là số mũ bằng $1$ (vì $y = y^1$), không phải $0$.',
       sua: 'Số mũ của $x$, $y$, $z$ là $3$, $1$, $2$ nên bậc là $3 + 1 + 2 = 6$.' }
   ]
-});
+}));
 })();

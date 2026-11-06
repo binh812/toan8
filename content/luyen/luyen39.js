@@ -9,7 +9,7 @@
   }
 
   // Hình giải theo chính số của đề (js/canh/hinhChop.js): trải phẳng thành hình chữ nhật p × d, hoặc đổ nước sang hình hộp cùng đáy, cùng cao
-  function trai(a, d, ten, dong, ghiChu) { return { widget: 'canh', config: { ten: 'traiChop', tuyChon: { n: 4, ten: ten, dong: dong }, thamSo: { a: a, d: d }, chiXem: true, t: 1, ghiChu: ghiChu } }; }
+  function trai(a, d, ten, dong, ghiChu, them, t) { return { widget: 'canh', config: { ten: 'traiChop', tuyChon: Object.assign({ n: 4, ten: ten, dong: dong }, them || {}), thamSo: { a: a, d: d }, chiXem: true, t: t == null ? 1 : t, ghiChu: ghiChu } }; }
   function nuoc(a, h, ten) { return { widget: 'canh', config: { ten: 'doNuoc', tuyChon: { n: 4, ten: ten, tenLang: 'hình hộp' }, thamSo: { a: a, h: h }, chiXem: true, t: 1 } }; }
 
   TOAN8.luyen(39, [
@@ -44,7 +44,7 @@
       var a, h;
       do { a = r.so(2, 12); h = r.so(2, 15); } while ((a * a * h) % 3 !== 0);
       var kq = a * a * h / 3, theoChuVi = r.dau() > 0;
-      var vat = r.chon([['Một chiếc bánh ít', 'cm', 'cm³'], ['Một chiếc lều', 'dm', 'dm³'], ['Một khối gỗ trang trí', 'cm', 'cm³'], ['Một mái che', 'dm', 'dm³']]);
+      var vat = r.chon([['Một chiếc bánh ít', 'cm', 'cm³'], ['Một chiếc lều', 'dm', 'dm³'], ['Một khối gỗ trang trí', 'cm', 'cm³'], ['Một khối đá trang trí', 'dm', 'dm³']]);
       var de = vat[0] + ' có dạng hình chóp tứ giác đều, ' + (theoChuVi ? '**chu vi đáy** $' + 4 * a + '$ ' : 'cạnh đáy $' + a + '$ ') + vat[1] + ', chiều cao $' + h + '$ ' + vat[1] + '. Tính thể tích của nó (' + vat[2] + ').';
       var ltg = [{ gt: a * a * h, giaiThich: 'Em quên nhân $\\frac{1}{3}$: $V = \\frac{1}{3} S_{đáy} \\cdot h$.' }];
       if (theoChuVi) ltg.push({ gt: 16 * a * a * h / 3, giaiThich: 'Em dùng chu vi $' + 4 * a + '$ làm cạnh đáy. Cạnh đáy $= ' + 4 * a + ' : 4 = ' + a + '$.' });
@@ -64,6 +64,7 @@
       return {
         de: 'Hình chóp tứ giác đều $S.ABCD$ có cạnh đáy $' + a + '$ cm, chiều cao $SO = ' + h + '$ cm ($O$ là tâm đáy, $M$ là trung điểm $AB$). Tính diện tích xung quanh (cm²).',
         hinh: hinh(a, h),
+        hinhGiai: trai(a, d, { a: String(a), h: String(h), r: String(nua), d: String(d), p: String(2 * a) }, null, null, { soi: 'SOM', anD: true }, 0),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tam giác $SOM$ vuông tại $O$, với $OM = \\frac{' + a + '}{2} = ' + nua + '$ (nửa cạnh đáy). Trung đoạn $SM$ là cạnh huyền.', '$SM = \\sqrt{SO^2 + OM^2}$, rồi $S_{xq} = p \\cdot SM$.'],
         loiGiai: ['$OM = ' + a + ' : 2 = ' + nua + '$ (cm); $SM = \\sqrt{' + h + '^2 + ' + nua + '^2} = \\sqrt{' + d * d + '} = ' + d + '$ (cm).',
@@ -80,6 +81,7 @@
       return {
         de: vat[0] + ' có dạng hình chóp tứ giác đều, ' + vat[1] + '. Cạnh đáy dài $' + cc.so(a) + '$ ' + vat[3] + ', mỗi cạnh bên dài $' + cc.so(l) + '$ ' + vat[3] + '. Tính ' + vat[2] + ' (' + vat[4] + '), coi viền không đáng kể.',
         hinh: hinh(a, null, d),
+        hinhGiai: trai(a, d, { a: cc.so(a).replace('{,}', ','), l: cc.so(l).replace('{,}', ','), nua: cc.so(nua).replace('{,}', ','), d: cc.so(d).replace('{,}', ','), p: cc.so(2 * a).replace('{,}', ',') }, null, null, { soi: 'SAM', anD: true }, 0.45),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Mỗi mặt bên là tam giác cân (cạnh bên $' + cc.so(l) + '$, đáy $' + cc.so(a) + '$). Trung đoạn là đường cao của tam giác đó, chia đôi cạnh đáy.', 'Trung đoạn $d = \\sqrt{' + cc.so(l) + '^2 - ' + cc.so(nua) + '^2}$; rồi $S_{xq} = p \\cdot d$.'],
         loiGiai: ['$d = \\sqrt{' + cc.so(l) + '^2 - ' + cc.so(nua) + '^2} = \\sqrt{' + cc.so(l * l - nua * nua) + '} = ' + cc.so(d) + '$ (' + vat[3] + ').',
@@ -93,6 +95,7 @@
       var H = a + c, v1 = a * a * a, v2 = a * a * c / 3, kq = v1 + v2;
       return {
         de: 'Một khối gỗ gồm đế là hình lập phương cạnh $' + a + '$ cm, phía trên là một hình chóp tứ giác đều có đáy là mặt trên của lập phương. Chiều cao của **cả khối gỗ** là $' + H + '$ cm. Tính thể tích khối gỗ (cm³).',
+        hinhGiai: (function (hg) { hg.config.ghiChu = 'Chỉ vẽ phần hình chóp, cao ' + H + ' − ' + a + ' = ' + c + ' cm; hình hộp bên cạnh là cốc để so.'; return hg; })(nuoc(a, c, { a: String(a), h: String(c) })),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Thể tích $=$ thể tích lập phương $+$ thể tích hình chóp. Hình chóp có cạnh đáy $' + a + '$ cm.', 'Chiều cao hình chóp $=$ chiều cao cả khối $-$ cạnh lập phương.'],
         loiGiai: ['Lập phương: $V_1 = ' + a + '^3 = ' + v1 + '$ (cm³).', 'Chiều cao hình chóp: $' + H + ' - ' + a + ' = ' + c + '$ (cm); $V_2 = \\frac{1}{3} \\cdot ' + a + '^2 \\cdot ' + c + ' = ' + v2 + '$ (cm³).',

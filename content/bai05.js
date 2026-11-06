@@ -9,13 +9,20 @@
   function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
   var TRUOC_TONG = 0.85;
 
-TOAN8.bai({
+// Dùng và Suy ra: kết quả trên hình chỉ hiện khi em đã giải (nút chạy hình không được lộ đáp án)
+  function anKetQua(L) {
+    [L.nhin.dung].concat(L.nhin.suyRa.baDe).forEach(function (d) { d.canh.tuyChon = Object.assign({}, d.canh.tuyChon, { anNhan: true }); });
+    return L;
+  }
+
+TOAN8.bai(anKetQua({
   id: 5, ten: 'Phép chia đa thức cho đơn thức', sgk: { tap: 1, trang: 22 },
   nhin: {
     tieuDe: 'Biết diện tích và một cạnh, tìm cạnh kia', loai: 'chungMinh',
-    luuY: 'Hình chứng minh khi $x$ dương (kéo thanh để đổi $x$): mỗi mảnh là hình chữ nhật có một cạnh $2x$, nên cạnh kia bằng diện tích chia $2x$. Với số bất kì, kiểm lại bằng phép nhân: $2x(3x + 2) = 6x^2 + 4x$.',
+    luuY: 'Hình chứng minh khi $x$ dương (kéo thanh để đổi $x$): mỗi mảnh là hình chữ nhật có một cạnh $2x$, nên cạnh kia bằng diện tích chia $2x$. Với số bất kì, kiểm lại bằng phép nhân: $2x(3x + 2) = 6x^2 + 4x$. Tổng quát, $(A + B) : C = A : C + B : C$ vì $C \\cdot (A : C + B : C) = A + B$.',
     canh: Object.assign(chia('6x^2+4x', '2x'), { moTa: 'Hình chữ nhật có một cạnh 2x, gồm hai mảnh diện tích 6x bình phương và 4x. Cạnh trên của mỗi mảnh lần lượt hiện ra.',
-      dongSo: function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: mảnh $6x^2 = ' + so(6 * x * x) + '$, cạnh trái $2x = ' + so(2 * x) + '$, nên cạnh trên dài $' + so(6 * x * x) + ' : ' + so(2 * x) + ' = ' + so(3 * x) + '$.'; } }),
+      // Dòng số không biết t nên không ghi cạnh trên (kẻo lộ kết quả từ đầu); chỉ cho số để em tự chia thử
+      dongSo: function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: mảnh trái có diện tích $6x^2 = ' + so(6 * x * x) + '$, cạnh trái $2x = ' + so(2 * x) + '$. Cạnh trên dài bao nhiêu?'; } }),
     buoc: [
       { t: 0, chu: 'Hình chữ nhật có cạnh trái $2x$, gồm hai mảnh có diện tích $6x^2$ và $4x$. Cạnh trên của mỗi mảnh chưa biết.' },
       { t: 0.15, chu: 'Mảnh trái: diện tích $6x^2$, một cạnh $2x$, nên cạnh kia là $6x^2 : 2x = 3x$ (vì $2x \\cdot 3x = 6x^2$).' },
@@ -25,12 +32,13 @@ TOAN8.bai({
     ketLuan: 'Chia đa thức cho đơn thức: chia **từng** hạng tử (từng mảnh) rồi cộng lại. $$(6x^2 + 4x) : 2x = 6x^2 : 2x + 4x : 2x = 3x + 2$$',
     dung: {
       tieuDe: 'Mỗi mảnh cho một đoạn của chiều dài', tuBai: '5.10',
-      canh: Object.assign(Object.assign(chia('12x^2y+8xy^2', '4xy'), { thamSo: { x: 2, y: 1 } }), { moTa: 'Hình chữ nhật chiều rộng 4xy, gồm hai mảnh diện tích 12x bình phương y và 8xy bình phương.' }),
-      moiThu: 'Mỗi mảnh có một cạnh $4xy$. Chia diện tích từng mảnh cho $4xy$. Nếu gõ sai, hình sẽ chỉ chỗ sai.',
+      canh: Object.assign(Object.assign(chia('12x^2y+8xy^2', '4xy', { sai: { heSo: { tren: ['3x^2y', '2xy^2'] }, tru: { tren: ['8x', '4y'] }, motDoan: { tren: ['3x', null] } } }), { thamSo: { x: 2, y: 1 } }),
+        { moTa: 'Hình chữ nhật chiều rộng 4xy, gồm hai mảnh diện tích 12x bình phương y và 8xy bình phương.' }),
+      moiThu: 'Mỗi mảnh có một cạnh $4xy$. Chia diện tích từng mảnh cho $4xy$. Nếu gõ sai, hình sẽ ghi đoạn em tìm lên cạnh trên và tô đỏ mảnh không khớp.',
       phanUng: [
-        { gt: '3x^2y+2xy^2', t: 0, loi: 'Em mới chia hệ số. Kiểm lại: $4xy \\cdot 3x^2y = 12x^3y^2$, không bằng diện tích mảnh $12x^2y$. Còn phải chia phần biến: $x^2y : xy = x$.' },
-        { gt: '8x+4y', t: 0, loi: 'Hệ số phải **chia**: $12 : 4 = 3$, không trừ. Kiểm lại: $4xy \\cdot 8x = 32x^2y$, quá lớn.' },
-        { gt: '3x', t: 0, loi: 'Mới có đoạn của mảnh trái. Mảnh phải $8xy^2$ cũng cho một đoạn: chiều dài là tổng hai đoạn.' }
+        { gt: '3x^2y+2xy^2', trangThai: 'heSo', t: 1, loi: 'Em mới chia hệ số. Kiểm lại: $4xy \\cdot 3x^2y = 12x^3y^2$, không bằng diện tích mảnh $12x^2y$. Còn phải chia phần biến: $x^2y : xy = x$.' },
+        { gt: '8x+4y', trangThai: 'tru', t: 1, loi: 'Hệ số phải **chia**: $12 : 4 = 3$, không trừ. Kiểm lại: $4xy \\cdot 8x = 32x^2y$, quá lớn.' },
+        { gt: '3x', trangThai: 'motDoan', t: 1, loi: 'Mới có đoạn của mảnh trái (mảnh phải viền đỏ còn để trống). Mảnh phải $8xy^2$ cũng cho một đoạn: chiều dài là tổng hai đoạn.' }
       ],
       saiT: 0,
       dungChu: '$12x^2y : 4xy = 3x$ và $8xy^2 : 4xy = 2y$. Chiều dài là $3x + 2y$.',
@@ -39,12 +47,12 @@ TOAN8.bai({
     suyRa: {
       tieuDe: 'Có số âm, có ba mảnh, tìm số chia: vẫn là chia từng mảnh',
       baDe: [
-        { tuBai: '5.5', canh: bang('9x^3-6x^2+3x', '3x'), tenNut: 'Chia từng ô', saiT: 0,
-          phanUng: [{ gt: '3x^2-2x', t: 0, loi: 'Có ba ô. Ô cuối $3x : 3x = 1$, đừng bỏ quên.' }],
+        { tuBai: '5.5', canh: bang('9x^3-6x^2+3x', '3x', { sai: { thieu: { tren: ['3x^2', '-2x', null] } } }), tenNut: 'Chia từng ô', saiT: 0,
+          phanUng: [{ gt: '3x^2-2x', trangThai: 'thieu', t: 1, loi: 'Có ba ô, ô cuối (viền đỏ) còn để trống. Ô cuối $3x : 3x = 1$, đừng bỏ quên.' }],
           dungChu: 'Ba ô cho ba đoạn: $3x^2$, $-2x$, $1$.', saiChu: 'Chia **từng** ô cho $3x$, giữ dấu của ô.' },
-        { tuBai: '5.6', canh: bang('8x^3y^2-12x^2y^3+4x^2y^2', '4x^2y'), tenNut: 'Chia từng ô', saiT: 0,
-          phanUng: [{ gt: '2xy-3y^2', t: 0, loi: 'Có ba ô. Ô cuối $4x^2y^2 : 4x^2y = y$.' },
-            { gt: '2xy+3y^2+y', t: 0, loi: 'Ô giữa mang dấu trừ: $-12x^2y^3 : 4x^2y = -3y^2$.' }],
+        { tuBai: '5.6', canh: bang('8x^3y^2-12x^2y^3+4x^2y^2', '4x^2y', { sai: { thieu: { tren: ['2xy', '-3y^2', null] }, dau: { tren: ['2xy', '3y^2', 'y'] } } }), tenNut: 'Chia từng ô', saiT: 0,
+          phanUng: [{ gt: '2xy-3y^2', trangThai: 'thieu', t: 1, loi: 'Có ba ô, ô cuối (viền đỏ) còn để trống. Ô cuối $4x^2y^2 : 4x^2y = y$.' },
+            { gt: '2xy+3y^2+y', trangThai: 'dau', t: 1, loi: 'Ô giữa (tô đỏ): $4x^2y \\cdot 3y^2 = 12x^2y^3$, nhưng ô đó là $-12x^2y^3$. Ô giữa mang dấu trừ: $-12x^2y^3 : 4x^2y = -3y^2$.' }],
           dungChu: 'Ba ô cho ba đoạn: $2xy$, $-3y^2$, $y$.', saiChu: 'Chia **từng** ô cho $4x^2y$, giữ dấu.' },
         { tuBai: '5.8', canh: the('12x^4y^3', '4x^2y'), tenNut: 'Ghép thẻ', saiT: 0.5,
           phanUng: [{ gt: '48x^6y^4', t: 0.5, loi: 'Em đã nhân. $M$ là số mà $4x^2y \\cdot M = 12x^4y^3$: lấy $12x^4y^3$ **chia** $4x^2y$.' },
@@ -109,8 +117,8 @@ TOAN8.bai({
       { lam: '$15x^3y^2 : 5xy = (15 : 5) \\cdot (x^3 : x) \\cdot (y^2 : y)$', vi: 'Chia hệ số cho hệ số, lũy thừa của từng biến cho lũy thừa của cùng biến đó. Trên hình: mỗi thẻ chữ của $5xy$ ghép với một thẻ cùng chữ của $15x^3y^2$.', canh: { t: 0.5 } },
       { canh: { t: 1 }, lam: '$= 3x^2y$', vi: '$15 : 5 = 3$; $x^3 : x = x^{3-1} = x^2$; $y^2 : y = y$.' } ] },
     { de: 'Cho đơn thức $A = 4x^2y^3z$. a) Vì sao $A$ không chia hết cho $B = 2xy^2z^2$? b) Vì sao $A$ chia hết cho $C = -2xy^2$? Tìm $A : C$.', canh: the('4x^2y^3z', '-2xy^2'), buoc: [
-      { lam: 'a) Số mũ của $z$ trong $B$ là $2$, lớn hơn số mũ của $z$ trong $A$ (là $1$). Vậy $A$ không chia hết cho $B$.', vi: 'Chỉ cần một biến không thỏa mãn là không chia hết.' },
-      { lam: 'b) Các biến $x$, $y$ của $C$ đều có trong $A$, với số mũ $1 \\le 2$ và $2 \\le 3$. Vậy $A$ chia hết cho $C$.', vi: 'Kiểm tra từng biến của số chia. Trên hình: thẻ nào của $C$ cũng tìm được thẻ cùng chữ trong $A$ để ghép. Với $B$ thì thừa một thẻ $z$.', canh: { t: 0.5 } },
+      { canh: { t: 0 }, lam: 'a) Số mũ của $z$ trong $B$ là $2$, lớn hơn số mũ của $z$ trong $A$ (là $1$). Vậy $A$ không chia hết cho $B$.', vi: 'Chỉ cần một biến không thỏa mãn là không chia hết.' },
+      { lam: 'b) Các biến $x$, $y$ của $C$ đều có trong $A$, với số mũ $1 \\le 2$ và $2 \\le 3$. Vậy $A$ chia hết cho $C$.', vi: 'Kiểm tra từng biến của số chia. Trên hình: thẻ nào của $C$ cũng tìm được thẻ cùng chữ trong $A$ để ghép.', canh: { t: 0.5 } },
       { canh: { t: 1 }, lam: '$A : C = 4x^2y^3z : (-2xy^2) = -2xyz$', vi: '$4 : (-2) = -2$; $x^2 : x = x$; $y^3 : y^2 = y$; $z$ giữ nguyên.' } ] },
     { de: 'Thực hiện phép chia $(12x^3y^2 - 8x^2y + 4xy) : 4xy$.', canh: bang('12x^3y^2-8x^2y+4xy', '4xy'), buoc: [
       { lam: '$= 12x^3y^2 : 4xy - 8x^2y : 4xy + 4xy : 4xy$', vi: 'Chia **từng** hạng tử cho $4xy$: mỗi ô của bảng cho một đoạn cạnh trên.', canh: { t: 0.5 } },
@@ -212,5 +220,5 @@ TOAN8.bai({
       giaiThich: 'Hệ số phải **chia**: $12 : 4 = 3$. Bạn Nam đã trừ $12 - 4 = 8$.',
       sua: '$= 3x^2 - 1$' }
   ]
-});
+}));
 })();

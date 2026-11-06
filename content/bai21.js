@@ -73,16 +73,16 @@
     id: 21, ten: 'Phân thức đại số', sgk: { tap: 2, trang: 4 },
 
     nhin: {
-      tieuDe: 'Đặt đoạn mẫu nối tiếp dọc đoạn tử: mẫu bằng 0 thì đặt mãi không xong', loai: 'minhHoa',
-      luuY: 'Hình vẽ $\\frac{x+1}{x-2}$ tại vài giá trị $x \\ge 2$, khi tử và mẫu không âm. Lập luận chung: $A : B$ là số nhân với $B$ thì được $A$. Khi $B = 0$, số nào nhân với $0$ cũng bằng $0$, nên không có số nào để làm giá trị của $\\frac{3}{0}$. Vì thế mọi phân thức chỉ có giá trị khi mẫu khác $0$.',
+      tieuDe: 'Đặt đoạn mẫu nối tiếp dọc đoạn tử: mẫu bằng 0 thì không đo được', loai: 'minhHoa',
+      luuY: 'Hình vẽ $\\frac{x+1}{x-2}$ tại vài giá trị $x \\ge 2$, khi tử và mẫu không âm. Lập luận chung: $A : B$ là số nhân với $B$ thì được $A$. Khi $B = 0$, số nào nhân với $0$ cũng bằng $0$, nên không có số nào để làm giá trị của $\\frac{3}{0}$. Còn $\\frac{0}{0}$ thì số nào nhân với $0$ cũng ra $0$, không có một giá trị duy nhất, nên cũng không xác định. Vì thế mọi phân thức chỉ có giá trị khi mẫu khác $0$.',
       canh: dc({ tu: [1, 1], mau: [-2, 1], tenTu: 'x + 1', tenMau: 'x − 2', xs: [6, 4, 3, 2.5, 2] },
         { moTa: 'Đoạn cam là tử x cộng 1, đoạn xanh là mẫu x trừ 2. Các bản của đoạn mẫu đặt nối tiếp dọc đoạn tử. Khi x giảm về 2, đoạn mẫu ngắn dần rồi bằng 0.' }),
       buoc: [
         { t: 0, chu: 'Tại $x = 6$: tử $\\ca{x + 1} = 7$, mẫu $\\cb{x - 2} = 4$. Đặt đoạn mẫu nối tiếp dọc đoạn tử: vừa $1{,}75$ lần. Vậy $\\frac{7}{4} = 1{,}75$.' },
-        { t: 0.1, chu: '$x = 4$: mẫu còn $\\cb{2}$, phải đặt $5 : 2 = 2{,}5$ lần.' },
-        { t: 0.33, chu: '$x = 3$: mẫu chỉ còn $\\cb{1}$, đặt $4$ lần.' },
-        { t: 0.55, chu: '$x = 2{,}5$: mẫu còn $\\cb{0{,}5}$, đặt tới $7$ lần. Mẫu càng ngắn, giá trị càng lớn.' },
-        { t: 0.78, chu: '$x = 2$: mẫu dài $\\cb{0}$. Đặt bao nhiêu lần cũng không phủ được đoạn tử dài $3$. Phân thức **không xác định**.' }
+        { t: 0.22, chu: '$x = 4$: mẫu còn $\\cb{2}$, phải đặt $5 : 2 = 2{,}5$ lần.' },
+        { t: 0.44, chu: '$x = 3$: mẫu chỉ còn $\\cb{1}$, đặt $4$ lần.' },
+        { t: 0.67, chu: '$x = 2{,}5$: mẫu còn $\\cb{0{,}5}$, đặt tới $7$ lần. Mẫu càng ngắn, giá trị càng lớn.' },
+        { t: 0.89, chu: '$x = 2$: mẫu dài $\\cb{0}$. Đặt bao nhiêu lần cũng không phủ được đoạn tử dài $3$. Phân thức **không xác định**.' }
       ],
       ketLuan: 'Giá trị của $\\frac{\\ca{A}}{\\cb{B}}$ là số lần $\\cb{B}$ nằm vừa trong $\\ca{A}$. Mẫu bằng $0$ thì không có giá trị, nên **điều kiện xác định** là $$\\cb{B} \\ne 0.$$',
       dung: {
@@ -106,6 +106,7 @@
           { tuBai: '21.7', canh: dc(Object.assign({ x: 3, anGiaTri: true, tachMau: 'x · (x − 2)', hangGiai: [Object.assign({ x: 0 }, MAU_21_7), Object.assign({ x: 2 }, MAU_21_7)] }, MAU_21_7),
             { moTa: 'Phân thức x cộng 4 trên x bình phương trừ 2x, vẽ tại x bằng 3.' }), tenNut: 'Phân tích mẫu',
             phanUng: [{ gt: [2], loi: 'Còn thiếu một giá trị. Mẫu là tích $x \\cdot (x - 2)$: thừa số $x$ bằng $0$ cũng làm mẫu bằng $0$.' },
+              { gt: [0], loi: 'Còn thiếu $x = 2$: thừa số $x - 2$ cũng có thể bằng $0$.' },
               { gt: [-4], loi: '$x = -4$ làm **tử** bằng $0$, khi đó giá trị bằng $0$ và vẫn tính được. Cần cho **mẫu** bằng $0$.' }],
             dungChu: '$x^2 - 2x = x(x - 2)$ bằng $0$ khi $x = 0$ hoặc $x = 2$. Hình vẽ cả hai chỗ: đoạn mẫu dài $0$.',
             saiChu: 'Phân tích mẫu thành tích. Một tích bằng $0$ khi một thừa số bằng $0$.' },
@@ -115,7 +116,7 @@
             phanUng: [{ gt: [0], loi: 'Tại $x = 0$ **tử** bằng $0$: chi phí $0$ đồng, vẫn tính được. Cần cho mẫu $100 - x = 0$.' }],
             dungChu: 'Mẫu $100 - x = 0$ khi $x = 100$. Càng gần $100\\%$, đoạn mẫu càng ngắn và chi phí càng lớn; tới $100\\%$ thì không tính được.',
             saiChu: 'Nhìn đoạn mẫu $100 - x$: nó ngắn dần khi $x$ tăng. Khi nào nó dài $0$?' },
-          { tuBai: '21.9', canh: dc({ tu: [-1, 3], mau: [1, 0, 1], tenTu: '3x − 1', tenMau: 'x² + 1', x: -2, anLucDau: true, anGiaTri: true },
+          { tuBai: '21.9', canh: dc({ tu: [-1, 3], mau: [1, 0, 1], tenTu: '3x − 1', tenMau: 'x² + 1', x: -2, anLucDau: true, anGiaTri: true, anSo: true },
             { moTa: 'Phân thức 3x trừ 1 trên x bình phương cộng 1, thay x bằng âm 2.' }), tenNut: 'Thay x = −2',
             phanUng: [{ gt: '7/3', loi: '$(-2)^2 = 4$, không phải $-4$: hình cho thấy mẫu bằng $4 + 1 = 5$.' },
               { gt: '7/5', loi: 'Tử $3 \\cdot (-2) - 1 = -7$ là số âm (đoạn tử nét đứt), nên giá trị cũng âm.' }],

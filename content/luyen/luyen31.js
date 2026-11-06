@@ -10,7 +10,7 @@
   function laCP(n) { var s = Math.round(Math.sqrt(n)); return s * s === n; }
   function ds(m) { return m.join(';\\ '); }
   // Hình lời giải: mỗi kết quả là một chấm, thanh xác suất 1 chia đều cho các chấm, phần sáng là xác suất
-  function hg(tuyChon, cheDo) { return { widget: 'canh', config: { ten: 'luoiKetQua', tuyChon: Object.assign({ cheDo: cheDo || 'chia' }, tuyChon), chiXem: true, t: 1 } }; }
+  function hg(tuyChon, cheDo) { return { widget: 'canh', config: { ten: 'luoiKetQua', tuyChon: Object.assign({ cheDo: cheDo || 'chia', anSo: true }, tuyChon), chiXem: true, t: 1 } }; }
   // Màu theo tên (kẹo đen, bóng tím…), không có tên màu thì lấy theo thứ tự
   var MAU_CHU = { 'đỏ': '#e03131', 'xanh': '#1971c2', 'vàng': '#f08c00', 'trắng': '#868e96', 'đen': '#343a40', 'tím': '#9c36b5', 'cam': '#e8590c' };
   function mauTen(ten, j) { return MAU_CHU[ten.split(' ').pop()] || MAU[j]; }
@@ -177,7 +177,8 @@
           { ten: 'Cả hai đồng xu đều ra mặt sấp', loc: function (x) { return x === 'SS'; }, sai: [{ tu: 1, mau: 3, giaiThich: 'Có 4 kết quả đồng khả năng SS, SN, NS, NN (không phải 3).' }, { tu: 1, mau: 2, giaiThich: 'Em mới tính cho một đồng xu. Với hai đồng xu có 4 kết quả.' }] }]);
         var tl0 = kqCo.filter(bc.loc);
         return cauHaiBuoc(cc, 'Tung cùng lúc hai đồng xu cân đối (đồng thứ nhất và đồng thứ hai).', bc.ten, kqCo, tl0, bc.sai,
-          'Viết kết quả thành cặp: mặt đồng thứ nhất trước, mặt đồng thứ hai sau.', 'Các kết quả có thể: SS, SN, NS, NN.');
+          'Viết kết quả thành cặp: mặt đồng thứ nhất trước, mặt đồng thứ hai sau.', 'Các kết quả có thể: SS, SN, NS, NN (4 kết quả đồng khả năng).',
+          hg({ loai: 'haiDongXu', thuanLoi: tl0, tenBienCo: bc.ten }));
       }
       if (loai === 1) {
         var k = r.so(2, 4), mat = r.chon(['S', 'N']), tenMat = mat === 'S' ? 'sấp' : 'ngửa';
@@ -188,8 +189,9 @@
           { ten: 'Đồng xu ra mặt ' + tenMat + ' và xúc xắc ra số chấm là số nguyên tố', loc: function (x) { return x[0] === mat && laNT(Number(x[1])); }, mot: 3 }]);
         var tl1 = kqCo.filter(bc.loc);
         sai = [{ tu: bc.mot, mau: 6, giaiThich: 'Em mới xét con xúc xắc, quên bước tung đồng xu. Mỗi kết quả là một **cặp** (mặt đồng xu, số chấm): có $2 \\cdot 6 = 12$ cặp.' }];
+        var hinh1 = hg({ tenBienCo: bc.ten, thuanLoi: tl1, nhom: [{ ten: 'Đồng xu sấp', chu: 'S', so: 6, mau: '#1971c2' }, { ten: 'Đồng xu ngửa', chu: 'N', so: 6, mau: '#e8590c' }] });
         return cauHaiBuoc(cc, 'Tung một đồng xu cân đối rồi gieo một con xúc xắc cân đối.', bc.ten, kqCo, tl1, sai,
-          'Mỗi kết quả là một cặp, ví dụ S3 là "đồng xu sấp, xúc xắc 3 chấm". Có $2 \\cdot 6 = 12$ kết quả.', 'Các kết quả có thể: S1, S2, …, S6, N1, N2, …, N6 (12 kết quả), đồng khả năng.');
+          'Mỗi kết quả là một cặp, ví dụ S3 là "đồng xu sấp, xúc xắc 3 chấm". Có $2 \\cdot 6 = 12$ kết quả.', 'Các kết quả có thể: S1, S2, …, S6, N1, N2, …, N6 (12 kết quả), đồng khả năng.', hinh1);
       }
       for (var i = 1; i <= 6; i++) for (var j = 1; j <= 6; j++) kqCo.push([i, j]);
       var s = r.so(3, 11);
@@ -200,7 +202,7 @@
       sai = [{ tu: khongThuTu, mau: 36, giaiThich: 'Cặp $(1; 2)$ và $(2; 1)$ là **hai** kết quả khác nhau (con thứ nhất 1 chấm hay con thứ hai 1 chấm).' }];
       return cauHaiBuoc(cc, 'Gieo đồng thời hai con xúc xắc cân đối (con thứ nhất và con thứ hai).', bc.ten,
         kqCo, tl2.map(function (x) { return '(' + x[0] + '; ' + x[1] + ')'; }), sai,
-        'Mỗi kết quả là một cặp $(a; b)$: $a$ là số chấm con thứ nhất, $b$ là số chấm con thứ hai. Có $6 \\cdot 6 = 36$ cặp.', 'Có $6 \\cdot 6 = 36$ kết quả có thể là các cặp $(a; b)$, đồng khả năng.');
+        'Mỗi kết quả là một cặp $(a; b)$: $a$ là số chấm con thứ nhất, $b$ là số chấm con thứ hai. Có $6 \\cdot 6 = 36$ cặp.', 'Có $6 \\cdot 6 = 36$ kết quả có thể là các cặp $(a; b)$, đồng khả năng.', hg({ loai: 'haiXucXac', loc: bc.loc, tenBienCo: bc.ten }));
     } },
 
     { ten: 'Tìm số lượng từ xác suất', muc: 3, sinh: function (r, cc) {
@@ -234,11 +236,12 @@
   ]);
 
   // Câu hỏi "hai bước": tl là danh sách kết quả thuận lợi (chuỗi để in), kqCo là danh sách kết quả có thể
-  function cauHaiBuoc(cc, boi, tenBC, kqCo, tl, sai, goiY2, giai1) {
+  function cauHaiBuoc(cc, boi, tenBC, kqCo, tl, sai, goiY2, giai1, hinh) {
     var n = kqCo.length, m = tl.length, kq = cc.phanSo(m, n);
     return {
       de: boi + ' Tính xác suất của biến cố "' + tenBC + '".',
       dapAn: { kieu: 'so', gt: kq.ascii },
+      hinhGiai: hinh,
       goiY: [goiY2, 'Liệt kê các kết quả thuận lợi rồi chia cho tổng số kết quả có thể.'],
       loiGiai: [giai1, 'Kết quả thuận lợi: ' + tl.join(', ') + ' (' + m + ' kết quả).', '$P = ' + pTex(cc, m, n) + '$'],
       loiThuongGap: locLoi(cc, kq, sai)

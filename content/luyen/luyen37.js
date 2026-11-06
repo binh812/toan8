@@ -26,7 +26,7 @@
         lechTen: (function () { var o = {}; o[P] = [-6, 16]; o[P + "'"] = [-6, 16]; return o; })() });
       // Hình giải: đoạn OP phóng từ O theo tỉ số k thành OP'
       var cuoi = [oa1 * ux, oa1 * uy], hinhG = hg({ ten: 'trungKhit', tuyChon: {
-        hinh: [{ diem: [[0, 0], D[P]], kin: false, ten: ['O', P], canh: [hoiK ? nh(oa) : nh(oa) + ' cm'], mau: '--b', day: 3 }],
+        hinh: [{ diem: [[0, 0], D[P]], kin: false, ten: ['O', P], canh: [nh(oa) + ' cm'], mau: '--b', day: 3 }],
         di: [{ tu: 0, tam: [0, 0], k: oa1 / oa, mau: '--a' }], chuBuoc: !hoiK,
         them: [{ k: 'chu', p: [cuoi[0] + 0.12 * lon, cuoi[1] - 0.05 * lon], s: P + "'", nghieng: true, mau: '--a', hien: [0.9, 1] }],
         loiCuoi: [{ s: 'O' + P + "' = " + (hoiK ? nh(oa1) + ' cm' : '?'), hien: [0.9, 1] }] } });

@@ -9,7 +9,13 @@
   var BANG = 'Có hạng tử âm nên vẽ thành bảng nhân, ô không theo tỉ lệ.', TRUOC_TONG = 0.85;
   function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
 
-TOAN8.bai({
+// Dùng và Suy ra: kết quả trên hình chỉ hiện khi em đã giải (nút chạy hình không được lộ đáp án)
+  function anKetQua(L) {
+    [L.nhin.dung].concat(L.nhin.suyRa.baDe).forEach(function (d) { d.canh.tuyChon = Object.assign({}, d.canh.tuyChon, { anNhan: true }); });
+    return L;
+  }
+
+TOAN8.bai(anKetQua({
   id: 4, ten: 'Phép nhân đa thức', sgk: { tap: 1, trang: 19 },
   nhin: {
     tieuDe: 'Nhân hai đa thức là tính diện tích hình chữ nhật', loai: 'chungMinh',
@@ -30,10 +36,10 @@ TOAN8.bai({
       moiThu: 'Tính diện tích từng mảnh rồi cộng lại. Nếu gõ sai, hình sẽ chỉ mảnh em tính sai hoặc bỏ sót.',
       phanUng: [
         { gt: 'x^2+8', trangThai: 'thieuHai', t: 1, loi: 'Còn trống hai mảnh (viền đỏ): $x \\cdot 4$ và $2 \\cdot x$. Có $4$ mảnh nên phải có $4$ tích.' },
-        { gt: 'x^2+4x+8', trangThai: 'thieuDuoi', t: 1, loi: 'Còn trống mảnh $2 \\cdot x$ ở góc dưới.' },
-        { gt: 'x^2+2x+8', trangThai: 'thieuTren', t: 1, loi: 'Còn trống mảnh $x \\cdot 4$ ở góc trên.' },
-        { gt: '2x+6x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$. Còn $2x$ là $x + x$.' },
-        { gt: '8x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$, không phải $2x$.' }
+        { gt: 'x^2+4x+8', trangThai: 'thieuDuoi', t: 1, loi: 'Còn trống mảnh $2 \\cdot x$ ở góc dưới bên trái.' },
+        { gt: 'x^2+2x+8', trangThai: 'thieuTren', t: 1, loi: 'Còn trống mảnh $x \\cdot 4$ ở góc trên bên phải.' },
+        { gt: '2x+6x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên bên trái là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$. Còn $2x$ là $x + x$.' },
+        { gt: '8x+8', trangThai: 'xx', t: TRUOC_TONG, loi: 'Mảnh góc trên bên trái là hình vuông cạnh $x$: diện tích $x \\cdot x = x^2$, không phải $2x$.' }
       ],
       saiT: TRUOC_TONG,
       dungChu: 'Bốn mảnh $x^2$, $4x$, $2x$, $8$; gộp hai mảnh cùng màu: $x^2 + 6x + 8$.',
@@ -48,7 +54,7 @@ TOAN8.bai({
           dungChu: 'Còn ba mảnh: $5x + 2x + 10 = 7x + 10$.', saiChu: 'Bấm "Chia mảnh": tấm bìa còn lại những mảnh nào?' },
         { tuBai: '4.4', canh: bang('2x-3', 'x+5', { sai: { thieuHai: { an: [[0, 1], [1, 0]] } } }), tenNut: 'Kẻ bảng', saiT: TRUOC_TONG,
           phanUng: [{ gt: '2x^2-15', trangThai: 'thieuHai', t: 1, loi: 'Còn trống hai ô: $2x \\cdot 5$ và $(-3) \\cdot x$. Bảng $2 \\times 2$ có $4$ ô.' },
-            { gt: '2x^2+7x+15', t: TRUOC_TONG, loi: 'Ô góc dưới là $(-3) \\cdot 5$: âm nhân dương ra âm.' }],
+            { gt: '2x^2+7x+15', t: TRUOC_TONG, loi: 'Ô góc dưới bên phải là $(-3) \\cdot 5$: âm nhân dương ra âm.' }],
           dungChu: 'Bốn ô $2x^2$, $10x$, $-3x$, $-15$; gộp hai ô cùng màu: $2x^2 + 7x - 15$.', saiChu: 'Bấm "Kẻ bảng", đọc bốn ô rồi gộp hai ô cùng màu.' },
         { tuBai: '4.5', canh: bang('x-y', 'x^2+xy+y^2', { sai: { thieuHai: { an: [[1, 0], [1, 1]] } } }), tenNut: 'Kẻ bảng', saiT: TRUOC_TONG,
           phanUng: [{ gt: 'x^3+x^2y+xy^2-y^3', trangThai: 'thieuHai', t: 1, loi: 'Hàng $-y$ còn trống hai ô: $-y$ phải nhân với **cả** $x^2$ và $xy$.' }],
@@ -116,9 +122,9 @@ TOAN8.bai({
       { lam: '$= x^2 - 3xy + 2xy - 6y^2$', vi: 'Tính từng tích.', canh: { t: 0.8 } },
       { canh: { t: 1 }, lam: '$= x^2 - xy - 6y^2$', vi: 'Thu gọn: $-3xy + 2xy = -xy$.' } ] },
     { de: 'Chứng tỏ giá trị của biểu thức $(x - 3)(x + 2) - x(x - 1)$ không phụ thuộc vào giá trị của $x$.', canh: bang('x-3', 'x+2'), buoc: [
-      { canh: { t: 1 }, lam: '$(x - 3)(x + 2) = x^2 + 2x - 3x - 6 = x^2 - x - 6$', vi: 'Nhân hai đa thức.' },
-      { lam: '$x(x - 1) = x^2 - x$', vi: 'Nhân đơn thức với đa thức.' },
-      { lam: '$(x^2 - x - 6) - (x^2 - x) = x^2 - x - 6 - x^2 + x = -6$', vi: 'Bỏ ngoặc sau dấu trừ, đổi dấu. Kết quả là số $-6$, không còn $x$, nên giá trị không phụ thuộc vào $x$.' } ] }
+      { canh: { t: 1 }, lam: '$(x - 3)(x + 2) = x^2 + 2x - 3x - 6 = x^2 - x - 6$', vi: 'Nhân hai đa thức. Bảng trên hình chỉ vẽ tích đầu $(x - 3)(x + 2)$.' },
+      { canh: { t: 1 }, lam: '$x(x - 1) = x^2 - x$', vi: 'Nhân đơn thức với đa thức (tích thứ hai, không vẽ trên hình).' },
+      { canh: { t: 1 }, lam: '$(x^2 - x - 6) - (x^2 - x) = x^2 - x - 6 - x^2 + x = -6$', vi: 'Bỏ ngoặc sau dấu trừ, đổi dấu. Kết quả là số $-6$, không còn $x$, nên giá trị không phụ thuộc vào $x$.' } ] }
   ],
   viDuMo: [
     { de: 'Tính $(2x - 1)(x^2 + 3x - 2)$.', buoc: [
@@ -210,5 +216,5 @@ TOAN8.bai({
       giaiThich: 'Bạn Nam quên nhân $2x$ với hạng tử cuối $1$. Phải nhân đơn thức với **từng** hạng tử: $2x \\cdot 1 = 2x$.',
       sua: '$= 2x \\cdot x^2 - 2x \\cdot 3x + 2x \\cdot 1 = 2x^3 - 6x^2 + 2x$' }
   ]
-});
+}));
 })();

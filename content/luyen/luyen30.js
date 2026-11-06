@@ -7,7 +7,8 @@
   function laCP(n) { var s = Math.round(Math.sqrt(n)); return s * s === n; }
   function ds(m) { return m.join(';\\ '); }
   // Hình lời giải: lưới kết quả, mỗi kết quả là một chấm, chấm thuận lợi sáng lên
-  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'luoiKetQua', tuyChon: tuyChon, chiXem: true, t: 1 } }; }
+  // Số đáp án chỉ hiện khi em đã xem lời giải (cảnh sang trạng thái giai)
+  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'luoiKetQua', tuyChon: Object.assign({ anSo: true }, tuyChon), chiXem: true, t: 1 } }; }
   // Màu vẽ đúng tên màu của bi, bóng; loại khác thì lấy theo thứ tự
   var MAU_TEN = { 'đỏ': '#e03131', 'xanh': '#1971c2', 'vàng': '#f08c00', 'trắng': '#868e96', 'tím': '#9c36b5', 'cam': '#e8590c' };
   function hoa(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
