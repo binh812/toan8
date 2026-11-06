@@ -80,16 +80,18 @@
       updateHintBtn();
     }
     // Hình của lời giải hiện từ gợi ý cuối (sớm hơn thì lộ đáp án) hoặc khi xem lời giải, chỉ gắn một lần
-    var daCoHinhGiai = false;
+    var daCoHinhGiai = false, hinhGiaiW = null;
     function moHinhGiai() {
       if (daCoHinhGiai || !q.hinhGiai) return;
       daCoHinhGiai = true;
       var o = el('div', { class: 'q-hinh hinh-giai' });
       hintBox.insertBefore(o, hintBox.firstChild);
-      T.mountWidget(o, q.hinhGiai.widget, q.hinhGiai.config);
+      hinhGiaiW = T.mountWidget(o, q.hinhGiai.widget, q.hinhGiai.config);
     }
     function solution() {
       moHinhGiai();
+      // Xem lời giải rồi thì hình mới được hiện đáp số (trạng thái giai của cảnh)
+      if (hinhGiaiW && hinhGiaiW.datTrangThai) hinhGiaiW.datTrangThai('giai');
       var s = el('div', { class: 'loigiai' }, el('h4', null, 'Lời giải'));
       (q.loiGiai || []).forEach(function (b) { s.appendChild(el('div', { class: 'buoc', html: T.md(b) })); });
       return s;
