@@ -105,8 +105,68 @@
     canh: [['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'A'], ['A', 'C', { mau: '#adb5bd', net: 2 }], ['E', 'K', { mau: TIM, day: 4 }], ['K', 'F', { mau: CAM, day: 4 }]],
     nhan: [['A', 'B', '6'], ['D', 'C', '10']], lechTen: { K: [0, -16] } });
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  // Đường trung bình: cắt theo MN, quay mảnh trên nửa vòng quanh N thành hình bình hành
+  function tb(tuyChon, them) { return Object.assign({ ten: 'thalesTrungBinh', tuyChon: tuyChon || {} }, them || {}); }
+  function hg(c, giai) {
+    var cf = Object.assign({ chiXem: true, t: 1 }, c);
+    if (giai) cf.thamSo = Object.assign({}, cf.thamSo, { trangThai: 'giai' });
+    return { widget: 'canh', config: cf };
+  }
+  function soVN(x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); }
+
   TOAN8.bai({
     id: 16, ten: 'Đường trung bình của tam giác', sgk: { tap: 1, trang: 81 },
+    nhin: {
+      tieuDe: 'Cắt theo đường trung bình, quay nửa vòng: thành hình bình hành', loai: 'chungMinh',
+      luuY: 'Lập luận dùng hai tam giác bằng nhau (c.g.c) và dấu hiệu hình bình hành, nên đúng với mọi tam giác. Kéo đỉnh $A$ và đổi cạnh $BC$ để thử.',
+      canh: { ten: 'thalesTrungBinh', moTa: 'Tam giác ABC, M và N là trung điểm AB, AC. Mảnh tam giác AMN quay nửa vòng quanh N, ghép với phần còn lại thành hình bình hành MBCM phẩy.',
+        dongSo: function (p, f) { return '$BC = ' + f(p.bc).replace(',', '{,}') + '$. Hình bình hành cho $MM\' = BC$, nên $MN = ' + f(p.bc / 2).replace(',', '{,}') + '$.'; } },
+      buoc: [
+        { t: 0, chu: '$M$, $N$ là trung điểm của $AB$, $AC$. Cắt tam giác theo $MN$.' },
+        { t: 0.2, chu: 'Quay mảnh $AMN$ nửa vòng quanh $N$. Vì $NA = NC$ nên $A$ rơi đúng vào $C$; $M$ rơi tới $M\'$, với $N$ là trung điểm của $MM\'$.' },
+        { t: 0.72, chu: 'Hai tam giác $AMN$ và $CM\'N$ bằng nhau (c.g.c), nên $CM\' = AM = MB$ và $\\angle NCM\' = \\angle NAM$ (so le trong), tức $CM\' \\parallel MB$. Tứ giác $MBCM\'$ có hai cạnh đối song song và bằng nhau: hình bình hành.' },
+        { t: 0.9, chu: 'Vậy $MM\'$ song song và bằng $BC$, mà $MN$ chỉ là một nửa của $MM\'$.' }
+      ],
+      ketLuan: 'Đường trung bình song song với cạnh thứ ba và bằng nửa cạnh đó: $$MN \\parallel BC, \\qquad MN = \\frac{1}{2}BC.$$',
+      dung: {
+        tieuDe: 'Hai đường trung bình nối nhau dài bằng cạnh đáy', tuBai: '16.1',
+        canh: tb({ AB: 9, AC: 10, BC: 12, nhan: { BC: '12', MN: 'x' }, giai: { MN: '6' }, thu: { tu: 'M', den: 'N' } },
+          { moTa: 'Tam giác ABC có BC bằng 12, M và N là trung điểm AB, AC, cần tìm MN.' }),
+        loiThuongGap: [],
+        moiThu: 'Gõ độ dài $MN$. Nếu sai, hình sẽ vẽ một đoạn đỏ dài đúng số em gõ, và cho mảnh tam giác quay để em so.',
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 0, loi: 'Độ dài phải lớn hơn $0$.' };
+          var loi;
+          if (v === 24) loi = 'Em nhân đôi rồi. Nhìn hình: $MN$ chỉ là **nửa** của $MM\'$, mà $MM\' = BC = 12$.';
+          else if (v === 12) loi = '$12$ là cả $MM\'$, tức cả cạnh $BC$. $MN$ chỉ là một nửa của nó.';
+          else loi = 'Đoạn đỏ dài $' + soVN(v) + '$. Hai đoạn như thế nối nhau dài $' + soVN(2 * v) + '$, nhưng $MM\'$ phải dài bằng $BC = 12$.';
+          return { thamSo: { thu: v }, t: 1, loi: loi };
+        },
+        dungChu: 'Hai đoạn $MN$ nối nhau thành $MM\' = BC = 12$, nên $MN = 6$.'
+      },
+      suyRa: {
+        tieuDe: 'Tính ngược, đo qua hồ, chu vi: vẫn là "gấp đôi thì vừa cạnh"',
+        baDe: [
+          { tuBai: '16.2', canh: tb({ ten: ['A', 'B', 'C', 'D', 'E'], AB: 9, AC: 8, BC: 11, nhan: { MN: '5,5', BC: '?' }, giai: { BC: '11' } }), tenNut: 'Quay mảnh tam giác',
+            loiThuongGap: [],
+            phanUng: [{ gt: 2.75, loi: 'Em chia đôi $DE$. Nhìn hình: $BC$ dài bằng **hai** đoạn $DE$ nối nhau.' }],
+            dungChu: '$BC$ dài bằng hai đoạn $DE$: $2 \\cdot 5{,}5 = 11$.', saiChu: 'Quay mảnh $ADE$ nửa vòng quanh $E$: $BC$ dài bằng mấy đoạn $DE$?' },
+          { tuBai: '16.7', canh: tb({ ten: ['A', 'B', 'C', 'P', 'Q'], AB: 240, AC: 360, BC: 260, ho: true, nhan: { BC: '260 m', MN: '?' }, giai: { MN: '130 m' } },
+            { ghiChu: 'AP = PB = 120 m, AQ = QC = 180 m.' }), tenNut: 'Quay mảnh tam giác',
+            loiThuongGap: [],
+            phanUng: [{ gt: 520, loi: 'Em nhân đôi rồi. $PQ$ là đường trung bình, chỉ bằng **nửa** $BC$.' },
+              { gt: 150, loi: 'Lấy trung bình cộng $120$ và $180$ không cho độ dài $PQ$. $P$, $Q$ là hai trung điểm: so $PQ$ với $BC$.' }],
+            dungChu: '$P$, $Q$ là trung điểm của $AB$, $AC$, nên $PQ = \\frac{1}{2}BC = 130$ m. Không cần lội qua hồ!', saiChu: '$P$, $Q$ là hai trung điểm. Hai đoạn $PQ$ nối nhau dài bằng cạnh nào?' },
+          { tuBai: '16.5', canh: tb({ dang: 'ba', ten: ['A', 'B', 'C', 'M', 'N', 'P'], AB: 8, AC: 12, BC: 10, nhan: { AB: '8', AC: '12', BC: '10' }, giai: { MN: '5', NP: '4', MP: '6' } }), tenNut: 'Đặt các cạnh vào',
+            loiThuongGap: [],
+            phanUng: [{ gt: 30, loi: '$30$ là chu vi tam giác $ABC$. Mỗi cạnh của $MNP$ chỉ bằng nửa một cạnh của $ABC$.' },
+              { gt: 60, loi: 'Mỗi đường trung bình bằng **nửa** cạnh song song với nó, không phải gấp đôi.' }],
+            dungChu: 'Mỗi cạnh của $ABC$ dài bằng hai cạnh cùng màu của $MNP$, nên chu vi $MNP$ bằng nửa: $30 : 2 = 15$.', saiChu: 'Mỗi đoạn màu đặt hai lần thì vừa khít cạnh song song với nó. Chu vi $MNP$ so với chu vi $ABC$ thế nào?' }
+        ],
+        cachNhan: 'Thấy hai trung điểm trên hai cạnh: nối lại là đường trung bình. Hai đoạn như thế nối nhau vừa khít cạnh còn lại, nên nó bằng nửa cạnh đó.'
+      }
+    },
     khamPha: {
       nhiemVu: '$M$ là trung điểm của $AB$, $N$ là trung điểm của $AC$. Đoạn tím $MN$ nối hai trung điểm đó.\n\nEm hãy **kéo các đỉnh** $A$, $B$, $C$ và quan sát: độ dài $MN$ so với $BC$ thế nào? Hai góc tô màu $\\angle AMN$ và $\\angle ABC$ thì sao?',
       widget: 'geo',
@@ -133,14 +193,14 @@
       { loai: 'chuY', noiDung: '**Hay nhầm 1:** đường trung bình bằng **nửa** cạnh thứ ba, không phải gấp đôi: $MN = \\frac{1}{2}BC$, tức $BC = 2MN$.\n\n**Hay nhầm 2:** đường trung bình nối trung điểm **hai cạnh**. Đoạn nối **một đỉnh** với trung điểm cạnh đối diện là **đường trung tuyến**, không phải đường trung bình.\n\n**Mẹo:** ba đường trung bình tạo thành một tam giác có chu vi bằng **nửa** chu vi tam giác ban đầu.' }
     ],
     viDu: [
-      { de: 'Cho tam giác $ABC$ với $M$, $N$ lần lượt là trung điểm của $AB$, $AC$ và $BC = 14$ cm. Tính $MN$.', buoc: [
-        { lam: '$MN$ là đường trung bình của $\\triangle ABC$', vi: '$MN$ nối trung điểm hai cạnh $AB$ và $AC$.' },
-        { lam: '$MN = \\frac{1}{2}BC = \\frac{1}{2} \\cdot 14 = 7$ (cm)', vi: 'Đường trung bình bằng nửa cạnh thứ ba.' } ] },
-      { de: 'Cho tam giác $ABC$, $D$ và $E$ lần lượt là trung điểm của $AB$, $AC$, biết $DE = 4{,}5$ cm. Tính $BC$.', buoc: [
-        { lam: '$DE$ là đường trung bình nên $DE = \\frac{1}{2}BC$', vi: 'Tính chất đường trung bình.' },
-        { lam: '$BC = 2 \\cdot DE = 2 \\cdot 4{,}5 = 9$ (cm)', vi: 'Cạnh thứ ba gấp đôi đường trung bình.' } ] },
-      { de: 'Tam giác $ABC$ có $AB = 6$ cm, $BC = 8$ cm, $CA = 10$ cm. Gọi $M$, $N$, $P$ là trung điểm của $AB$, $AC$, $BC$. Tính chu vi tam giác $MNP$.', buoc: [
-        { lam: '$MN = \\frac{1}{2}BC = 4$; $NP = \\frac{1}{2}AB = 3$; $MP = \\frac{1}{2}AC = 5$', vi: 'Mỗi cạnh của $\\triangle MNP$ là một đường trung bình, bằng nửa cạnh **song song** với nó.' },
+      { de: 'Cho tam giác $ABC$ với $M$, $N$ lần lượt là trung điểm của $AB$, $AC$ và $BC = 14$ cm. Tính $MN$.', canh: tb({ AB: 11, AC: 12, BC: 14, nhan: { BC: '14', MN: '?' }, giai: { MN: '7' } }), buoc: [
+        { canh: { t: 0 }, lam: '$MN$ là đường trung bình của $\\triangle ABC$', vi: '$MN$ nối trung điểm hai cạnh $AB$ và $AC$.' },
+        { canh: { t: 1, trangThai: 'giai' }, lam: '$MN = \\frac{1}{2}BC = \\frac{1}{2} \\cdot 14 = 7$ (cm)', vi: 'Đường trung bình bằng nửa cạnh thứ ba: quay mảnh $AMN$ nửa vòng, hai đoạn $MN$ nối nhau dài bằng $BC$.' } ] },
+      { de: 'Cho tam giác $ABC$, $D$ và $E$ lần lượt là trung điểm của $AB$, $AC$, biết $DE = 4{,}5$ cm. Tính $BC$.', canh: tb({ ten: ['A', 'B', 'C', 'D', 'E'], AB: 7, AC: 8, BC: 9, nhan: { MN: '4,5', BC: '?' }, giai: { BC: '9' } }), buoc: [
+        { canh: { t: 0.6 }, lam: '$DE$ là đường trung bình nên $DE = \\frac{1}{2}BC$', vi: 'Tính chất đường trung bình.' },
+        { canh: { t: 1, trangThai: 'giai' }, lam: '$BC = 2 \\cdot DE = 2 \\cdot 4{,}5 = 9$ (cm)', vi: 'Cạnh thứ ba gấp đôi đường trung bình: hai đoạn $DE$ nối nhau vừa khít $BC$.' } ] },
+      { de: 'Tam giác $ABC$ có $AB = 6$ cm, $BC = 8$ cm, $CA = 10$ cm. Gọi $M$, $N$, $P$ là trung điểm của $AB$, $AC$, $BC$. Tính chu vi tam giác $MNP$.', canh: tb({ dang: 'ba', ten: ['A', 'B', 'C', 'M', 'N', 'P'], AB: 6, AC: 10, BC: 8, nhan: { AB: '6', AC: '10', BC: '8' }, giai: { MN: '4', NP: '3', MP: '5' } }), buoc: [
+        { canh: { t: 1, trangThai: 'giai' }, lam: '$MN = \\frac{1}{2}BC = 4$; $NP = \\frac{1}{2}AB = 3$; $MP = \\frac{1}{2}AC = 5$', vi: 'Mỗi cạnh của $\\triangle MNP$ là một đường trung bình, bằng nửa cạnh **song song** với nó.' },
         { lam: 'Chu vi $\\triangle MNP = 4 + 3 + 5 = 12$ (cm)', vi: 'Bằng nửa chu vi $\\triangle ABC$ ($24 : 2 = 12$).' } ] }
     ],
     viDuMo: [
@@ -159,8 +219,9 @@
         dapAn: { kieu: 'so', gt: 6 },
         goiY: ['$MN$ nối trung điểm hai cạnh, là đường trung bình.', 'Đường trung bình bằng nửa cạnh thứ ba: $MN = \\frac{1}{2}BC$.'],
         loiGiai: ['$MN$ là đường trung bình của $\\triangle ABC$.', '$x = \\frac{1}{2} \\cdot 12 = 6$'],
-        loiThuongGap: [{ gt: 24, giaiThich: 'Em nhân đôi rồi. Đường trung bình **bằng nửa** cạnh thứ ba: $MN = \\frac{1}{2}BC$.' }] },
-      { id: '16.2', muc: 1, de: 'Cho tam giác $ABC$, $D$ và $E$ là trung điểm của $AB$ và $AC$, $DE = 5{,}5$ cm. Tính $BC$ (cm).',
+        loiThuongGap: [{ gt: 24, hinh: hg(tb({ AB: 9, AC: 10, BC: 12, nhan: { BC: '12' }, thu: { tu: 'M', den: 'N' } }, { thamSo: { thu: 24 }, ghiChu: 'Đoạn đỏ dài 24: còn dài hơn cả BC = 12, mà MM′ = BC.' })),
+          giaiThich: 'Em nhân đôi rồi. Đường trung bình **bằng nửa** cạnh thứ ba: $MN = \\frac{1}{2}BC$.' }] },
+      { id: '16.2', hinhGiai: hg(tb({ ten: ['A', 'B', 'C', 'D', 'E'], AB: 9, AC: 8, BC: 11, nhan: { MN: '5,5', BC: '11' } }, { ghiChu: 'Hình vẽ với AB = 9, AC = 8. Hai đoạn DE nối nhau vừa khít BC.' })), muc: 1, de: 'Cho tam giác $ABC$, $D$ và $E$ là trung điểm của $AB$ và $AC$, $DE = 5{,}5$ cm. Tính $BC$ (cm).',
         dapAn: { kieu: 'so', gt: 11 },
         goiY: ['$DE$ là đường trung bình: $DE = \\frac{1}{2}BC$.', 'Vậy $BC = 2 \\cdot DE$.'],
         loiGiai: ['$DE = \\frac{1}{2}BC$ nên $BC = 2 \\cdot DE$', '$BC = 2 \\cdot 5{,}5 = 11$'],
@@ -170,7 +231,7 @@
         dapAn: { kieu: 'chon', gt: 3, luaChon: ['$DE$', '$EF$', '$DF$', '$AF$'] },
         goiY: ['Đường trung bình nối trung điểm của **hai cạnh**.', '$AF$ nối đỉnh $A$ với trung điểm $F$: đó là loại đường gì?'],
         loiGiai: ['$DE$, $EF$, $DF$ đều nối trung điểm hai cạnh nên là đường trung bình.', '$AF$ nối đỉnh $A$ với trung điểm cạnh đối diện, là **đường trung tuyến**, không phải đường trung bình.'] },
-      { id: '16.4', muc: 1, de: 'Cho $MN$ là đường trung bình của tam giác $ABC$ ($M \\in AB$, $N \\in AC$). Khẳng định "$MN \\parallel BC$ và $MN = 2BC$" đúng hay sai?',
+      { id: '16.4', hinhGiai: hg(tb({}, { thamSo: { ax: 3, bc: 10 } })), muc: 1, de: 'Cho $MN$ là đường trung bình của tam giác $ABC$ ($M \\in AB$, $N \\in AC$). Khẳng định "$MN \\parallel BC$ và $MN = 2BC$" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Nhớ lại tính chất: song song với cạnh thứ ba và bằng ... cạnh đó.', 'Đường trung bình ngắn hơn hay dài hơn cạnh thứ ba?'],
         loiGiai: ['$MN \\parallel BC$ là đúng, nhưng $MN = \\frac{1}{2}BC$ chứ không phải $2BC$.', 'Vậy khẳng định **sai**.'] },

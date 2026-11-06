@@ -13,6 +13,13 @@
     return TOAN8.hinhGeo(o);
   }
   function fr(a, b) { return '\\frac{' + a + '}{' + b + '}'; }
+  function ucln(a, b) { while (b) { var x = a % b; a = b; b = x; } return a; }
+  function chuSo(x) { return String(Math.round(x * 1e6) / 1e6).replace('.', ','); }
+  // Hình lời giải: lưới Thalès theo chính số của đề. AB chia (AM : MB rút gọn) phần bằng nhau, giai: số cần tìm hiện màu xanh
+  function hinhLuoi(AM, MB, tuyChon) {
+    var g = ucln(AM, MB);
+    return { widget: 'canh', config: { ten: 'thalesLuoi', thamSo: { m: AM / g, k: MB / g, trangThai: 'giai' }, tuyChon: tuyChon, chiXem: true, t: 1 } };
+  }
   function lech(a, b) { return Math.abs(a - b) > 1e-9; }
   // Hai cạnh AB, AC không chênh nhau quá 2 lần để hình đẹp.
   function boSo(r) {
@@ -37,8 +44,11 @@
       var ltg = [];
       if (dv.he > 1 && lech(chuaDoi.tu / chuaDoi.mau, kq.tu / kq.mau)) ltg.push({ gt: chuaDoi.ascii, giaiThich: 'Em chưa đổi đơn vị: $' + a + '$ là cm còn $' + b + '$ là ' + dv.ten + '. Đổi $' + b + '$ ' + dv.ten + ' $= ' + b * dv.he + '$ cm trước.' });
       if (lech(nguoc.tu / nguoc.mau, kq.tu / kq.mau)) ltg.push({ gt: nguoc.ascii, giaiThich: 'Em lấy ngược $\\frac{' + ten[1] + '}{' + ten[0] + '}$. Tỉ số $\\frac{' + ten[0] + '}{' + ten[1] + '}$ thì $' + ten[0] + '$ ở trên.' });
+      var u = ucln(a, b * dv.he);
       return {
         de: 'Cho $' + ten[0] + ' = ' + a + '$ cm và $' + ten[1] + ' = ' + b + '$ ' + dv.ten + '. Tìm tỉ số $\\frac{' + ten[0] + '}{' + ten[1] + '}$ (viết dạng phân số tối giản, ví dụ 3/4).',
+        hinhGiai: { widget: 'canh', config: { ten: 'thalesDoan', tuyChon: { a: a, b: b * dv.he, u: u, tenA: ten[0], tenB: ten[1] }, chiXem: true, t: 1,
+          ghiChu: (dv.he > 1 ? 'Đổi ' + b + ' ' + dv.ten + ' = ' + b * dv.he + ' cm. ' : '') + 'Đo cả hai bằng đoạn dài ' + u + ' cm.' } },
         dapAn: { kieu: 'so', gt: kq.ascii },
         goiY: ['Tỉ số của hai đoạn thẳng là tỉ số độ dài của chúng **theo cùng một đơn vị đo**.',
           dv.he > 1 ? 'Đổi $' + b + '$ ' + dv.ten + ' ra cm rồi lập tỉ số, sau đó rút gọn.' : 'Lập tỉ số $\\frac{' + a + '}{' + b + '}$ rồi rút gọn.'],
@@ -75,6 +85,8 @@
       return {
         de: 'Trong hình, $MN \\parallel BC$, ' + biet + '. Tính $x = ' + hoi + '$.',
         hinh: hinhThales(d.AM, d.MB, d.AN, d.NC, goc, nhan),
+        hinhGiai: hinhLuoi(d.AM, d.MB, { AB: d.AM + d.MB, AC: d.AN + d.NC, gocA: goc,
+          nhan: { AM: nhan[0][2], MB: nhan[1][2], AN: nhan[2][2], NC: nhan[3][2] }, giai: (function () { var o = {}; o[hoi] = chuSo(kq); return o; })() }),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$MN \\parallel BC$ nên dùng định lí Thalès: $' + tl + '$.', 'Thay số: $' + thay + '$ rồi nhân chéo.'],
         loiGiai: ['Vì $MN \\parallel BC$, theo định lí Thalès: $' + tl + '$, tức $' + thay + '$', '$x = ' + cong + ' = ' + kq + '$'],
@@ -93,6 +105,8 @@
       return {
         de: 'Trong hình, $AM = ' + d.AM + '$, $MB = ' + d.MB + '$, $AN = ' + d.AN + '$, $NC = ' + d.NC + '$. Khẳng định "$MN \\parallel BC$" đúng hay sai?',
         hinh: hinhThales(d.AM, d.MB, d.AN, d.NC, goc, [['A', 'M', String(d.AM)], ['M', 'B', String(d.MB)], ['A', 'N', String(d.AN)], ['N', 'C', String(d.NC)]]),
+        hinhGiai: hinhLuoi(d.AM, d.MB, { AB: d.AM + d.MB, AC: d.AN + d.NC, gocA: goc, dao: { AN: d.AN, NC: d.NC },
+          nhan: { AM: String(d.AM), MB: String(d.MB), AN: String(d.AN), NC: String(d.NC) } }),
         dapAn: { kieu: 'dungSai', gt: bang },
         goiY: ['Đừng tin mắt: dùng định lí Thalès đảo, so sánh $\\frac{AM}{MB}$ và $\\frac{AN}{NC}$.',
           'Hai phân số $\\frac{' + d.AM + '}{' + d.MB + '}$ và $\\frac{' + d.AN + '}{' + d.NC + '}$ bằng nhau khi tích chéo bằng nhau: so $' + d.AM + ' \\cdot ' + d.NC + '$ với $' + d.MB + ' \\cdot ' + d.AN + '$.'],
@@ -112,12 +126,14 @@
       var tinhMN = r.dau() > 0, ltg = [];
       var nhan = [['A', 'M', String(p)], ['M', 'B', String(q)], tinhMN ? ['B', 'C', String(BC)] : ['B', 'C', 'x'], ['M', 'N', tinhMN ? 'x' : String(MN), true, 0.8]];
       var hinh = hinhThales(p, q, AC * p / AB, AC * q / AB, { bc: BC }, nhan);
+      var hinhGiai = hinhLuoi(p, q, { AB: AB, AC: AC, BC: BC, luoi: true,
+        nhan: { AM: String(p), MB: String(q), BC: tinhMN ? String(BC) : 'x', MN: tinhMN ? 'x' : String(MN) }, giai: tinhMN ? { MN: String(MN) } : { BC: String(BC) } });
       if (tinhMN) {
         var sai = BC * p / q;
         if (lech(sai, MN)) ltg.push({ gt: Math.round(sai * 1e6) / 1e6, giaiThich: 'Em dùng $\\frac{AM}{MB} = \\frac{MN}{BC}$. Với đoạn song song $MN$, phải so với **cả cạnh** $AB = ' + AB + '$.' });
         return {
           de: 'Trong hình, $MN \\parallel BC$, $AM = ' + p + '$, $MB = ' + q + '$, $BC = ' + BC + '$. Tính $x = MN$.',
-          hinh: hinh, dapAn: { kieu: 'so', gt: MN },
+          hinh: hinh, hinhGiai: hinhGiai, dapAn: { kieu: 'so', gt: MN },
           goiY: ['Hệ quả của định lí Thalès: $\\frac{AM}{AB} = \\frac{MN}{BC}$ (mẫu số là **cả cạnh**).', '$AB = ' + p + ' + ' + q + ' = ' + AB + '$, nên $' + fr(p, AB) + ' = ' + fr('x', BC) + '$.'],
           loiGiai: ['$AB = AM + MB = ' + AB + '$. Vì $MN \\parallel BC$: $\\frac{AM}{AB} = \\frac{MN}{BC}$, tức $' + fr(p, AB) + ' = ' + fr('x', BC) + '$', '$x = ' + fr(p + ' \\cdot ' + BC, AB) + ' = ' + MN + '$'],
           loiThuongGap: ltg
@@ -127,7 +143,7 @@
       if (lech(sai2, BC)) ltg.push({ gt: Math.round(sai2 * 1e6) / 1e6, giaiThich: 'Em dùng $\\frac{AM}{MB} = \\frac{MN}{BC}$. Phải là $\\frac{AM}{AB} = \\frac{MN}{BC}$ với $AB = ' + AB + '$.' });
       return {
         de: 'Trong hình, $MN \\parallel BC$, $AM = ' + p + '$, $MB = ' + q + '$, $MN = ' + MN + '$. Tính $x = BC$.',
-        hinh: hinh, dapAn: { kieu: 'so', gt: BC },
+        hinh: hinh, hinhGiai: hinhGiai, dapAn: { kieu: 'so', gt: BC },
         goiY: ['Hệ quả của định lí Thalès: $\\frac{AM}{AB} = \\frac{MN}{BC}$.', '$AB = ' + AB + '$, nên $' + fr(p, AB) + ' = ' + fr(MN, 'x') + '$.'],
         loiGiai: ['$AB = AM + MB = ' + AB + '$. Vì $MN \\parallel BC$: $\\frac{AM}{AB} = \\frac{MN}{BC}$, tức $' + fr(p, AB) + ' = ' + fr(MN, 'x') + '$', '$x = ' + fr(MN + ' \\cdot ' + AB, p) + ' = ' + BC + '$'],
         loiThuongGap: ltg
@@ -144,6 +160,7 @@
         return {
           de: 'Trong hình, $MN \\parallel BC$, $AM = ' + d.AM + '$, $MB = ' + d.MB + '$, $AN = ' + d.AN + '$. Tính độ dài **cả cạnh** $AC$.',
           hinh: hinhThales(d.AM, d.MB, d.AN, d.NC, goc, [['A', 'M', String(d.AM)], ['M', 'B', String(d.MB)], ['A', 'N', String(d.AN)]]),
+          hinhGiai: hinhLuoi(d.AM, d.MB, { AB: d.AM + d.MB, AC: AC, gocA: goc, nhan: { AM: String(d.AM), MB: String(d.MB), AN: String(d.AN) }, giai: { NC: String(d.NC) } }),
           dapAn: { kieu: 'so', gt: AC },
           goiY: ['Tính $NC$ trước bằng $\\frac{AM}{MB} = \\frac{AN}{NC}$, rồi $AC = AN + NC$.', 'Hoặc dùng luôn $\\frac{AM}{AB} = \\frac{AN}{AC}$ với $AB = ' + (d.AM + d.MB) + '$.'],
           loiGiai: ['Vì $MN \\parallel BC$: $\\frac{AM}{MB} = \\frac{AN}{NC}$, tức $' + fr(d.AM, d.MB) + ' = ' + fr(d.AN, 'NC') + '$, nên $NC = ' + fr(d.AN + ' \\cdot ' + d.MB, d.AM) + ' = ' + d.NC + '$.',
@@ -160,6 +177,7 @@
         de: 'Trong hình, $\\angle AMN = \\angle ABC$, $MB = ' + d.MB + '$, $AN = ' + d.AN + '$, $AC = ' + AC + '$. Tính $y = AM$.',
         hinh: hinhThales(d.AM, d.MB, d.AN, d.NC, goc, [['A', 'M', 'y'], ['M', 'B', String(d.MB)], ['A', 'N', String(d.AN)]],
           { goc: [['A', 'M', 'N'], ['A', 'B', 'C']] }),
+        hinhGiai: hinhLuoi(d.AM, d.MB, { AB: d.AM + d.MB, AC: AC, gocA: goc, goc: true, nhan: { AM: 'y', MB: String(d.MB), AN: String(d.AN), NC: String(d.NC) }, giai: { AM: String(d.AM) } }),
         dapAn: { kieu: 'so', gt: d.AM },
         goiY: ['$\\angle AMN$ và $\\angle ABC$ là hai góc đồng vị bằng nhau, nên $MN \\parallel BC$. Tính $NC = AC - AN$.',
           '$NC = ' + d.NC + '$. Rồi $\\frac{AM}{MB} = \\frac{AN}{NC}$: $' + fr('y', d.MB) + ' = ' + fr(d.AN, d.NC) + '$.'],

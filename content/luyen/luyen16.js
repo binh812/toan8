@@ -24,6 +24,11 @@
       canh: [[ten[0], ten[3], { vach: 1 }], [ten[3], ten[1], { vach: 1 }], [ten[0], ten[4], vachAN === false ? {} : { vach: 2 }], [ten[4], ten[2], vachAN === false ? {} : { vach: 2 }],
         [ten[1], ten[2]], [ten[3], ten[4], { mau: TIM, day: 4 }]], nhan: nhan, ghiChu: ghiChu });
   }
+  // Hình lời giải: cảnh đường trung bình theo chính số của đề (s.a = BC, s.b = CA, s.c = AB)
+  function hinhGiai(ten, s, tuyChon, ghiChu) {
+    return { widget: 'canh', config: { ten: 'thalesTrungBinh', thamSo: { trangThai: 'giai' }, chiXem: true, t: 1, ghiChu: ghiChu,
+      tuyChon: Object.assign({ ten: ten, AB: s.c, AC: s.b, BC: s.a }, tuyChon) } };
+  }
   var BO_TEN = [['A', 'B', 'C', 'M', 'N'], ['A', 'B', 'C', 'D', 'E'], ['D', 'E', 'F', 'M', 'N'], ['M', 'N', 'P', 'I', 'K'], ['P', 'Q', 'R', 'E', 'F']];
 
   TOAN8.luyen(16, [
@@ -45,13 +50,15 @@
       return {
         de: de,
         hinh: hinhTB(t, s, tinhTB ? [[B, C, chu(BC)], [M, N, 'x', true, 0.8]] : [[B, C, 'x'], [M, N, chu(MN), true, 0.8]]),
+        hinhGiai: hinhGiai(t, s, tinhTB ? { nhan: { BC: chu(BC), MN: 'x' }, giai: { MN: chu(MN) } } : { nhan: { BC: 'x', MN: chu(MN) }, giai: { BC: chu(BC) } },
+          'Quay mảnh tam giác trên nửa vòng: hai đoạn ' + M + N + ' nối nhau dài bằng ' + B + C + '.'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$' + tb + '$ nối trung điểm hai cạnh nên là **đường trung bình**.', 'Đường trung bình bằng nửa cạnh thứ ba: $' + tb + ' = \\frac{1}{2}' + canh + '$.'],
         loiGiai: lg, loiThuongGap: ltg
       };
     } },
 
-    { ten: 'Nhận dạng đường trung bình', muc: 1, sinh: function (r) {
+    { ten: 'Nhận dạng đường trung bình', muc: 1, khongHinh: 'Câu nhận dạng: hình của đề đã vẽ đủ các trung điểm và các đoạn, chỉ cần xem đoạn nối hai trung điểm hay nối đỉnh với trung điểm.', sinh: function (r) {
       var t = r.chon([['A', 'B', 'C', 'D', 'E', 'F'], ['M', 'N', 'P', 'D', 'E', 'F'], ['A', 'B', 'C', 'M', 'N', 'P']]);
       var A = t[0], B = t[1], C = t[2], D = t[3], E = t[4], F = t[5]; // D ∈ AB, E ∈ AC, F ∈ BC là trung điểm
       var s = baCanh(r, 7, 14), T = TOAN8.hh.tg(s.a, s.b, s.c), g = TOAN8.hh.giua, dd = {};
@@ -89,6 +96,8 @@
         return {
           de: 'Tam giác $ABC$ có $AB = ' + AB + '$ cm, $BC = ' + BC + '$ cm, $CA = ' + CA + '$ cm. $M$, $N$, $P$ lần lượt là trung điểm của $AB$, $AC$, $BC$. Tính chu vi tam giác $MNP$ (cm).',
           hinh: hinh, dapAn: { kieu: 'so', gt: P / 2 },
+          hinhGiai: hinhGiai(['A', 'B', 'C', 'M', 'N', 'P'], s, { dang: 'ba', nhan: { AB: String(AB), AC: String(CA), BC: String(BC) }, giai: { MN: chu(BC / 2), NP: chu(AB / 2), MP: chu(CA / 2) } },
+            'Mỗi đoạn màu đặt hai lần thì vừa khít cạnh song song với nó.'),
           goiY: ['Mỗi cạnh của $\\triangle MNP$ là một đường trung bình, bằng nửa cạnh **song song** với nó.', '$MN = \\frac{1}{2}BC$, $NP = \\frac{1}{2}AB$, $MP = \\frac{1}{2}AC$.'],
           loiGiai: ['$MN = \\frac{1}{2}BC = ' + so(BC / 2) + '$; $NP = \\frac{1}{2}AB = ' + so(AB / 2) + '$; $MP = \\frac{1}{2}AC = ' + so(CA / 2) + '$.',
             'Chu vi $\\triangle MNP = ' + so(BC / 2) + ' + ' + so(AB / 2) + ' + ' + so(CA / 2) + ' = ' + so(P / 2) + '$'],
@@ -104,6 +113,8 @@
       return {
         de: 'Tam giác $ABC$ có $AB = ' + AB + '$ cm, $AC = ' + CA + '$ cm, $BC = ' + BC + '$ cm. $M$, $N$ lần lượt là trung điểm của $AB$, $AC$. Tính chu vi tứ giác $BMNC$ (cm).',
         hinh: hinhTB(['A', 'B', 'C', 'M', 'N'], s, [['B', 'C', String(BC)]], undefined, 'AB = ' + AB + ', AC = ' + CA),
+        hinhGiai: hinhGiai(['A', 'B', 'C', 'M', 'N'], s, { dang: 'quaM', nhan: { BC: String(BC), MB: chu(AB / 2), NC: chu(CA / 2) }, giai: { MN: chu(BC / 2) } },
+          'BM = AB : 2, NC = AC : 2, còn MN là đường trung bình nên bằng BC : 2.'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Chu vi $BMNC = BM + MN + NC + CB$.', '$BM = \\frac{1}{2}AB$, $NC = \\frac{1}{2}AC$, $MN = \\frac{1}{2}BC$.'],
         loiGiai: ['$BM = ' + so(AB / 2) + '$, $NC = ' + so(CA / 2) + '$, $MN = \\frac{1}{2}BC = ' + so(BC / 2) + '$.',
@@ -131,6 +142,8 @@
         de: de0 + 'Tính $' + hoi + '$ (cm).',
         // không vạch AN = NC: đó chính là điều em phải suy ra
         hinh: hinhTB(['A', 'B', 'C', 'M', 'N'], s, [['B', 'C', s.a + ' cm']], false, 'AC = ' + AC + ' cm'),
+        hinhGiai: hinhGiai(['A', 'B', 'C', 'M', 'N'], s, (function () { var gi = {}; gi[hoi] = chu(kq); return { dang: 'quaM', nhan: { BC: String(s.a) }, giai: gi }; })(),
+          'Đường trung bình nối M với trung điểm AC cũng song song với BC. Qua M chỉ có một đường song song với BC, nên N chính là trung điểm của AC.'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Đường thẳng đi qua trung điểm một cạnh và song song với cạnh thứ hai thì đi qua **trung điểm** của cạnh thứ ba.', 'Vậy $N$ là trung điểm của $AC$' + (hoi === 'MN' ? ' và $MN$ là đường trung bình.' : '.')],
         loiGiai: lg, loiThuongGap: ltg

@@ -62,8 +62,71 @@
   // ---------- Hình đề bài ----------
   var D4 = ['A', 'B', 'C', 'D'];
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  // Phân giác: hai tam giác ABD, ACD chung đường cao từ A, và D cách đều hai cạnh AB, AC
+  function pg(tuyChon, them) { return Object.assign({ ten: 'thalesPhanGiac', tuyChon: tuyChon || {} }, them || {}); }
+  function hg(c, giai) {
+    var cf = Object.assign({ chiXem: true, t: 1 }, c);
+    if (giai) cf.thamSo = Object.assign({}, cf.thamSo, { trangThai: 'giai' });
+    return { widget: 'canh', config: cf };
+  }
+  function soVN(x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); }
+
   TOAN8.bai({
     id: 17, ten: 'Tính chất đường phân giác của tam giác', sgk: { tap: 1, trang: 84 },
+    nhin: {
+      tieuDe: 'Hai mảnh tam giác, tính diện tích theo hai cách', loai: 'chungMinh',
+      luuY: 'Lập luận chỉ dùng công thức diện tích tam giác và tính chất điểm trên tia phân giác cách đều hai cạnh của góc (lớp 7), nên đúng với mọi tam giác. Đổi hai cạnh và góc $A$ để thử.',
+      canh: { ten: 'thalesPhanGiac', moTa: 'Tam giác ABC, đường phân giác AD chia tam giác thành hai mảnh ABD màu cam và ACD màu xanh. Hai mảnh chung đường cao AH; D cách đều hai cạnh AB và AC.',
+        dongSo: function (p, f) {
+          var g = TOAN8.canh.lay('thalesPhanGiac').tinh(p, 1, {}), so = function (x) { return f(x).replace(',', '{,}'); };
+          var tron = function (x) { return Math.abs(x * 100 - Math.round(x * 100)) > 1e-6 ? '\\approx' : '='; };
+          return '$\\ca{DB} ' + tron(g.DB) + ' ' + so(g.DB) + '$, $\\cb{DC} ' + tron(g.DC) + ' ' + so(g.DC) + '$; $\\frac{\\ca{DB}}{\\cb{DC}} ' + tron(g.DB / g.DC) + ' ' + so(g.DB / g.DC) +
+            '$ và $\\frac{\\ca{AB}}{\\cb{AC}} ' + tron(p.ab / p.ac) + ' ' + so(p.ab / p.ac) + '$.';
+        } },
+      buoc: [
+        { t: 0, chu: '$AD$ chia đôi góc $A$, cắt tam giác thành hai mảnh: $\\ca{ABD}$ và $\\cb{ACD}$.' },
+        { t: 0.1, chu: 'Hai mảnh có **chung đường cao** $AH$ kẻ từ $A$. Diện tích tỉ lệ với đáy: $S_{\\ca{ABD}} : S_{\\cb{ACD}} = \\ca{DB} : \\cb{DC}$.' },
+        { t: 0.45, chu: 'Mặt khác, $D$ nằm trên tia phân giác nên cách đều hai cạnh: hai đoạn vuông góc xanh lá dài bằng nhau. Lấy $\\ca{AB}$, $\\cb{AC}$ làm đáy: $S_{\\ca{ABD}} : S_{\\cb{ACD}} = \\ca{AB} : \\cb{AC}$.' },
+        { t: 0.85, chu: 'Cùng một tỉ số diện tích, tính hai cách, nên hai tỉ số bằng nhau.' }
+      ],
+      ketLuan: 'Đường phân giác chia cạnh đối diện theo tỉ số hai cạnh kề: $$\\frac{\\ca{DB}}{\\cb{DC}} = \\frac{\\ca{AB}}{\\cb{AC}}$$',
+      dung: {
+        tieuDe: 'Đoạn nào kề cạnh nào', tuBai: '17.1',
+        canh: pg({ AB: 6, AC: 8, BC: 7, nhan: { AB: '6', AC: '8', DB: '3', DC: 'x' }, giai: { DC: '4' }, thu: { tu: 'D', den: 'C' } },
+          { moTa: 'Tam giác ABC có AB bằng 6, AC bằng 8, phân giác AD, DB bằng 3, cần tìm DC.' }),
+        loiThuongGap: [],
+        moiThu: 'Gõ độ dài $DC$. Nếu sai, hình sẽ vẽ một đoạn đỏ dài đúng số em gõ, tính từ $D$.',
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 0, loi: 'Độ dài phải lớn hơn $0$.' };
+          var loi;
+          if (v === 2.25) loi = 'Em ghép ngược. Đoạn đỏ $2{,}25$ ngắn hơn $DB = 3$, nhưng $DC$ kề cạnh dài hơn $AC = 8$ nên phải dài hơn $DB$.';
+          else loi = 'Đoạn đỏ dài $' + soVN(v) + '$: tỉ số $\\frac{3}{' + soVN(v) + '}$ ' + (v > 4 ? 'nhỏ hơn' : 'lớn hơn') + ' $\\frac{AB}{AC} = \\frac{6}{8}$. Đoạn kề cạnh nào thì đi với cạnh đó.';
+          return { thamSo: { thu: v }, t: 1, loi: loi };
+        },
+        dungChu: '$\\frac{DB}{DC} = \\frac{AB}{AC} = \\frac{6}{8}$, nên $DC = \\frac{3 \\cdot 8}{6} = 4$. Đoạn đỏ trùng đúng $DC$.'
+      },
+      suyRa: {
+        tieuDe: 'Tỉ số diện tích, phân giác góc khác, mảnh vườn: vẫn hai mảnh đó',
+        baDe: [
+          { tuBai: '17.9', canh: pg({ AB: 9, AC: 12, BC: 14, nhan: { AB: '9', AC: '12' } }, { ghiChu: 'BC = 14' }), tenNut: 'Kẻ đường cao',
+            loiThuongGap: [],
+            phanUng: [{ gt: '4/3', loi: 'Đảo ngược rồi. Tam giác $ABD$ (cam) có đáy $DB$, kề cạnh ngắn $AB = 9$.' }],
+            dungChu: 'Hai mảnh chung đường cao $AH$, nên tỉ số diện tích bằng $\\frac{DB}{DC} = \\frac{AB}{AC} = \\frac{9}{12} = \\frac{3}{4}$.', saiChu: 'Hai mảnh chung đường cao từ $A$: tỉ số diện tích bằng tỉ số hai đáy $DB$, $DC$.' },
+          { tuBai: '17.10', canh: pg({ ten: ['B', 'A', 'C', 'D'], AB: 12, AC: 8, BC: 12, nhan: { AB: '12', AC: '8' }, giai: { DB: '7,2' } }, { ghiChu: 'AC = 12. Phân giác của góc B.' }), tenNut: 'Kẻ đường cao',
+            loiThuongGap: [],
+            phanUng: [{ gt: 4.8, loi: '$4{,}8$ là $DC$. $DA$ kề cạnh dài hơn $BA = 12$ nên $DA$ dài hơn.' },
+              { gt: 6, loi: '$D$ không phải trung điểm của $AC$, vì $BA \\ne BC$: mảnh cam to hơn mảnh xanh.' }],
+            dungChu: '$\\frac{DA}{DC} = \\frac{BA}{BC} = \\frac{12}{8}$, tức $\\frac{DA}{12} = \\frac{DC}{8} = \\frac{12}{20}$, nên $AD = 7{,}2$.', saiChu: 'Phân giác góc $B$ chia cạnh đối diện $AC$. Đoạn $DA$ kề cạnh $BA$, đoạn $DC$ kề cạnh $BC$.' },
+          { tuBai: '17.11', canh: pg({ AB: 30, AC: 45, BC: 40, nhan: { AB: '30 m', AC: '45 m' }, giai: { DB: '16 m' } }, { ghiChu: 'BC = 40 m. Lối đi AD là phân giác.' }), tenNut: 'Kẻ đường cao',
+            loiThuongGap: [],
+            phanUng: [{ gt: 24, loi: '$24$ m là $DC$. $DB$ kề cạnh ngắn $AB = 30$ m nên ngắn hơn.' },
+              { gt: 20, loi: 'Lối đi không chia đôi $BC$ vì $AB \\ne AC$: mảnh cam nhỏ hơn mảnh xanh.' }],
+            dungChu: '$\\frac{DB}{30} = \\frac{DC}{45} = \\frac{40}{75}$, nên $DB = 16$ m.', saiChu: '$DB : DC = 30 : 45$ và $DB + DC = 40$.' }
+        ],
+        cachNhan: 'Thấy đường phân giác của một góc: nó cắt tam giác thành hai mảnh chung đỉnh. Đoạn nào trên cạnh đối diện kề cạnh nào thì đi với cạnh đó.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Đoạn tím $AD$ là **đường phân giác** của góc $A$: nó chia góc $A$ thành hai góc bằng nhau (cam và xanh), $D$ nằm trên cạnh $BC$.\n\nEm hãy **kéo các đỉnh** $A$, $B$, $C$ và so sánh hai tỉ số $\\frac{DB}{DC}$ và $\\frac{AB}{AC}$ ở cột bên phải.',
       widget: 'geo',
@@ -86,14 +149,14 @@
       { loai: 'chuY', noiDung: '**Chú ý (đảo lại):** trong tam giác $ABC$, nếu $D$ thuộc đoạn $BC$ và $\\frac{DB}{DC} = \\frac{AB}{AC}$ thì $AD$ là đường phân giác của góc $A$.\n\n**Em có biết?** Đường phân giác **ngoài** tại $A$ (cắt đường thẳng $BC$ tại $D\'$, khi $AB \\ne AC$) cũng có tính chất $\\frac{D\'B}{D\'C} = \\frac{AB}{AC}$.' }
     ],
     viDu: [
-      { de: 'Cho tam giác $ABC$ có $AB = 6$ cm, $AC = 9$ cm, $AD$ là phân giác của góc $A$ ($D \\in BC$) và $DB = 4$ cm. Tính $DC$.', buoc: [
-        { lam: '$\\frac{DB}{DC} = \\frac{AB}{AC}$', vi: 'Tính chất đường phân giác: $DB$ kề $AB$, $DC$ kề $AC$.' },
-        { lam: '$\\frac{4}{DC} = \\frac{6}{9}$', vi: 'Thay số.' },
-        { lam: '$DC = \\frac{4 \\cdot 9}{6} = 6$ (cm)', vi: 'Nhân chéo rồi chia.' } ] },
-      { de: 'Cho tam giác $ABC$ có $AB = 5$ cm, $AC = 7$ cm, $BC = 6$ cm, $AD$ là phân giác của góc $A$. Tính $DB$ và $DC$.', buoc: [
-        { lam: '$\\frac{DB}{AB} = \\frac{DC}{AC}$, tức $\\frac{DB}{5} = \\frac{DC}{7}$', vi: 'Viết lại tính chất phân giác.' },
-        { lam: '$\\frac{DB}{5} = \\frac{DC}{7} = \\frac{DB + DC}{5 + 7} = \\frac{6}{12} = \\frac{1}{2}$', vi: 'Dãy tỉ số bằng nhau, và $DB + DC = BC = 6$.' },
-        { lam: '$DB = \\frac{5}{2} = 2{,}5$ (cm); $DC = \\frac{7}{2} = 3{,}5$ (cm)', vi: 'Kiểm tra: $2{,}5 + 3{,}5 = 6$. Đúng!' } ] }
+      { de: 'Cho tam giác $ABC$ có $AB = 6$ cm, $AC = 9$ cm, $AD$ là phân giác của góc $A$ ($D \\in BC$) và $DB = 4$ cm. Tính $DC$.', canh: pg({ AB: 6, AC: 9, BC: 10, nhan: { AB: '6', AC: '9', DB: '4', DC: '?' }, giai: { DC: '6' } }), buoc: [
+        { canh: { t: 1 }, lam: '$\\frac{DB}{DC} = \\frac{AB}{AC}$', vi: 'Tính chất đường phân giác: $DB$ kề $AB$ (cùng màu cam), $DC$ kề $AC$ (cùng màu xanh).' },
+        { canh: { t: 1 }, lam: '$\\frac{4}{DC} = \\frac{6}{9}$', vi: 'Thay số.' },
+        { canh: { t: 1, trangThai: 'giai' }, lam: '$DC = \\frac{4 \\cdot 9}{6} = 6$ (cm)', vi: 'Nhân chéo rồi chia.' } ] },
+      { de: 'Cho tam giác $ABC$ có $AB = 5$ cm, $AC = 7$ cm, $BC = 6$ cm, $AD$ là phân giác của góc $A$. Tính $DB$ và $DC$.', canh: pg({ AB: 5, AC: 7, BC: 6, nhan: { AB: '5', AC: '7', DB: '?', DC: '?' }, giai: { DB: '2,5', DC: '3,5' } }, { ghiChu: 'BC = 6' }), buoc: [
+        { canh: { t: 1 }, lam: '$\\frac{DB}{AB} = \\frac{DC}{AC}$, tức $\\frac{DB}{5} = \\frac{DC}{7}$', vi: 'Viết lại tính chất phân giác.' },
+        { canh: { t: 1 }, lam: '$\\frac{DB}{5} = \\frac{DC}{7} = \\frac{DB + DC}{5 + 7} = \\frac{6}{12} = \\frac{1}{2}$', vi: 'Dãy tỉ số bằng nhau, và $DB + DC = BC = 6$.' },
+        { canh: { t: 1, trangThai: 'giai' }, lam: '$DB = \\frac{5}{2} = 2{,}5$ (cm); $DC = \\frac{7}{2} = 3{,}5$ (cm)', vi: 'Kiểm tra: $2{,}5 + 3{,}5 = 6$. Đúng!' } ] }
     ],
     viDuMo: [
       { de: 'Cho tam giác $ABC$ có $AB = 8$ cm, $AC = 12$ cm, $BC = 10$ cm, $AD$ là phân giác của góc $A$. Tính $DB$ và $DC$.', buoc: [
@@ -121,7 +184,7 @@
         goiY: ['Trong $\\triangle MNP$, phân giác $MI$: $\\frac{IN}{IP} = \\frac{MN}{MP}$.', '$\\frac{6}{x} = \\frac{15}{20}$.'],
         loiGiai: ['$\\frac{IN}{IP} = \\frac{MN}{MP}$, tức $\\frac{6}{x} = \\frac{15}{20}$', '$x = \\frac{6 \\cdot 20}{15} = 8$'],
         loiThuongGap: [{ gt: 4.5, giaiThich: 'Em ghép ngược. $IN$ kề cạnh $MN$, $IP$ kề cạnh $MP$: $\\frac{IN}{IP} = \\frac{MN}{MP}$.' }] },
-      { id: '17.4', muc: 1, de: 'Tam giác $ABC$ có $AB = 4$ cm, $AC = 6$ cm, $AD$ là phân giác của góc $A$. Khẳng định "$\\frac{DB}{DC} = \\frac{6}{4}$" đúng hay sai?',
+      { id: '17.4', hinhGiai: hg(pg({ AB: 4, AC: 6, BC: 5, nhan: { AB: '4', AC: '6' } }, { ghiChu: 'Hình vẽ với BC = 5 cm. DB kề cạnh ngắn AB nên DB ngắn hơn DC.' })), muc: 1, de: 'Tam giác $ABC$ có $AB = 4$ cm, $AC = 6$ cm, $AD$ là phân giác của góc $A$. Khẳng định "$\\frac{DB}{DC} = \\frac{6}{4}$" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['$\\frac{DB}{DC} = \\frac{AB}{AC}$: cạnh nào ở trên?', '$AB = 4$ ở trên, $AC = 6$ ở dưới.'],
         loiGiai: ['$\\frac{DB}{DC} = \\frac{AB}{AC} = \\frac{4}{6} = \\frac{2}{3}$, không phải $\\frac{6}{4}$.', 'Khẳng định **sai** (bị đảo ngược tỉ số).'] },

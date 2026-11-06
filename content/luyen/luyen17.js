@@ -31,6 +31,12 @@
     return { p: p, q: q, AB: p * k, AC: q * k, DB: p * t, DC: q * t, BC: (p + q) * t };
   }
   function cc_ucln(a, b) { while (b) { var x = a % b; a = b; b = x; } return a; }
+  // Hình lời giải: hai mảnh tam giác chung đường cao, D cách đều hai cạnh; số theo chính đề
+  function hinhGiai(ten, ab, ac, bc, nhan, giai, ghiChu) {
+    return { widget: 'canh', config: { ten: 'thalesPhanGiac', thamSo: { trangThai: 'giai' }, chiXem: true, t: 1, ghiChu: ghiChu,
+      tuyChon: { ten: ten, AB: ab, AC: ac, BC: bc, nhan: nhan, giai: giai } } };
+  }
+  function chuSo(x) { return String(tron(x)).replace('.', ','); }
   var BO_TEN = [['A', 'B', 'C', 'D'], ['A', 'B', 'C', 'E'], ['M', 'N', 'P', 'I'], ['D', 'E', 'F', 'K'], ['P', 'Q', 'R', 'S']];
 
   TOAN8.luyen(17, [
@@ -47,6 +53,8 @@
         de: 'Trong hình, $' + A + D + '$ là đường phân giác của góc $' + A + '$, $' + A + B + ' = ' + d.AB + '$, $' + A + C + ' = ' + d.AC + '$, ' +
           (hoiDC ? '$' + D + B + ' = ' + d.DB + '$. Tính $x = ' + D + C + '$.' : '$' + D + C + ' = ' + d.DC + '$. Tính $x = ' + D + B + '$.'),
         hinh: hinhPG(t, d.AB, d.AC, d.BC, [[A, B, String(d.AB)], [A, C, String(d.AC)], [B, D, hoiDC ? String(d.DB) : 'x'], [D, C, hoiDC ? 'x' : String(d.DC)]]),
+        hinhGiai: hinhGiai(t, d.AB, d.AC, d.BC, { AB: String(d.AB), AC: String(d.AC), DB: hoiDC ? String(d.DB) : 'x', DC: hoiDC ? 'x' : String(d.DC) },
+          hoiDC ? { DC: String(d.DC) } : { DB: String(d.DB) }, 'Đoạn ' + D + B + ' kề cạnh ' + A + B + ' (cùng màu cam), đoạn ' + D + C + ' kề cạnh ' + A + C + ' (cùng màu xanh).'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tính chất đường phân giác: $' + tl + '$ (đoạn nào kề cạnh nào thì đi với cạnh đó).', 'Thay số: $' + thay + '$ rồi nhân chéo.'],
         loiGiai: ['$' + A + D + '$ là phân giác nên $' + tl + '$, tức $' + thay + '$', '$x = ' + cong + ' = ' + kq + '$'],
@@ -63,6 +71,8 @@
       return {
         de: 'Trong hình, $' + A + D + '$ là đường phân giác của góc $' + A + '$, $' + A + B + ' = ' + AB + '$, $' + A + C + ' = ' + AC + '$. Tìm tỉ số $' + fr(D + B, D + C) + '$ (viết dạng phân số tối giản, ví dụ 3/4).',
         hinh: hinhPG(t, AB, AC, BC, [[A, B, String(AB)], [A, C, String(AC)]]),
+        hinhGiai: hinhGiai(t, AB, AC, BC, { AB: String(AB), AC: String(AC) }, null,
+          'Hai mảnh chung đường cao từ ' + A + ', và ' + D + ' cách đều hai cạnh: ' + D + B + ' : ' + D + C + ' = ' + AB + ' : ' + AC + '.'),
         dapAn: { kieu: 'so', gt: kq.ascii },
         goiY: ['$' + fr(D + B, D + C) + ' = ' + fr(A + B, A + C) + '$.', 'Rút gọn $' + fr(AB, AC) + '$.'],
         loiGiai: ['$' + fr(D + B, D + C) + ' = ' + fr(A + B, A + C) + ' = ' + fr(AB, AC) + '$', '$= ' + kq.tex + '$'],
@@ -80,6 +90,8 @@
       return {
         de: 'Tam giác $ABC$ có $AB = ' + d.AB + '$ ' + dv + ', $AC = ' + d.AC + '$ ' + dv + ', $BC = ' + d.BC + '$ ' + dv + '. Đường phân giác của góc $A$ cắt $BC$ tại $D$. Tính $DB$ và $DC$ (' + dv + ').',
         hinh: hinhPG(['A', 'B', 'C', 'D'], d.AB, d.AC, d.BC, [['A', 'B', String(d.AB)], ['A', 'C', String(d.AC)]], 'BC = ' + d.BC + ' ' + dv),
+        hinhGiai: hinhGiai(['A', 'B', 'C', 'D'], d.AB, d.AC, d.BC, { AB: String(d.AB), AC: String(d.AC) }, { DB: chuSo(d.DB), DC: chuSo(d.DC) },
+          'BC = ' + d.BC + ' ' + dv + ' chia theo tỉ số ' + d.AB + ' : ' + d.AC + '.'),
         dapAn: { kieu: 'nhieuO', o: [
           { kieu: 'so', gt: d.DB, nhan: '$DB =$', loiThuongGap: ltgB },
           { kieu: 'so', gt: d.DC, nhan: '$DC =$', loiThuongGap: ltgC }] },
@@ -103,6 +115,8 @@
         de: 'Trong hình, $' + A + D + '$ là đường phân giác của góc $' + A + '$, ' + (hoiAC ? '$' + A + B + ' = ' + d.AB + '$' : '$' + A + C + ' = ' + d.AC + '$') +
           ', $' + D + B + ' = ' + d.DB + '$, $' + D + C + ' = ' + d.DC + '$. Tính $x = ' + (hoiAC ? A + C : A + B) + '$.',
         hinh: hinhPG(t, d.AB, d.AC, d.BC, [[A, B, hoiAC ? String(d.AB) : 'x'], [A, C, hoiAC ? 'x' : String(d.AC)], [B, D, String(d.DB)], [D, C, String(d.DC)]]),
+        hinhGiai: hinhGiai(t, d.AB, d.AC, d.BC, { AB: hoiAC ? String(d.AB) : 'x', AC: hoiAC ? 'x' : String(d.AC), DB: String(d.DB), DC: String(d.DC) },
+          hoiAC ? { AC: String(d.AC) } : { AB: String(d.AB) }, 'Đoạn dài hơn trên ' + B + C + ' đi với cạnh dài hơn.'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$' + tl + '$.', '$' + thay + '$, nhân chéo.'],
         loiGiai: ['$' + tl + '$, tức $' + thay + '$', '$x = ' + cong + ' = ' + kq + '$'],
