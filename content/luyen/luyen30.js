@@ -6,6 +6,11 @@
   function laNT(n) { if (n < 2) return false; for (var d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; }
   function laCP(n) { var s = Math.round(Math.sqrt(n)); return s * s === n; }
   function ds(m) { return m.join(';\\ '); }
+  // Hình lời giải: lưới kết quả, mỗi kết quả là một chấm, chấm thuận lợi sáng lên
+  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'luoiKetQua', tuyChon: tuyChon, chiXem: true, t: 1 } }; }
+  // Màu vẽ đúng tên màu của bi, bóng; loại khác thì lấy theo thứ tự
+  var MAU_TEN = { 'đỏ': '#e03131', 'xanh': '#1971c2', 'vàng': '#f08c00', 'trắng': '#868e96', 'tím': '#9c36b5', 'cam': '#e8590c' };
+  function hoa(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function day(a, b) { var m = []; for (var k = a; k <= b; k++) m.push(k); return m; }
   // bỏ lỗi trùng đáp án hoặc trùng nhau, bỏ giá trị âm
   function locLoi(dung, m) {
@@ -43,6 +48,7 @@
         return {
           de: 'Một hộp có các ' + vat + ' giống nhau, ghi các số $' + a + ';\\ ' + (a + 1) + ';\\ \\dots;\\ ' + b + '$ (mỗi số một ' + vat + '). Lấy ngẫu nhiên một ' + vat + '. Có bao nhiêu kết quả có thể?',
           dapAn: { kieu: 'so', gt: n },
+          hinhGiai: hg({ loai: 'theSo', tu: a, den: b }),
           goiY: ['Mỗi ' + vat + ' lấy ra là một kết quả có thể.', 'Từ $a$ đến $b$ có $b - a + 1$ số.'],
           loiGiai: ['Các kết quả có thể là $' + a + ';\\ ' + (a + 1) + ';\\ \\dots;\\ ' + b + '$.', 'Số kết quả có thể $= ' + b + ' - ' + a + ' + 1 = ' + n + '$'],
           loiThuongGap: [{ gt: n - 1, giaiThich: 'Em quên **cộng 1**: từ ' + a + ' đến ' + b + ' có $' + b + ' - ' + a + ' + 1$ số.' }]
@@ -57,6 +63,7 @@
       return {
         de: 'Một hộp có ' + cau.join(', ') + (loai.vat === 'chiếc bút' ? '. ' : '; các ' + loai.vat + ' có cùng kích thước. ') + 'Lấy ngẫu nhiên một ' + loai.vat + '. Có bao nhiêu kết quả có thể?',
         dapAn: { kieu: 'so', gt: tong },
+        hinhGiai: hg({ gom: true, nhom: so.map(function (x, i) { return { ten: hoa(loai.nhom[i]), so: x, mau: MAU_TEN[loai.nhom[i]] || MAU[i] }; }) }),
         goiY: ['Mỗi **' + loai.vat + '** là một kết quả có thể, không phải mỗi loại.', 'Cộng số ' + loai.vat + ' của tất cả các loại.'],
         loiGiai: ['Đặt kí hiệu riêng cho từng ' + loai.vat + ': mỗi cái là một kết quả có thể.', 'Số kết quả có thể $= ' + so.join(' + ') + ' = ' + tong + '$'],
         loiThuongGap: locLoi(tong, [{ gt: k, giaiThich: 'Có ' + k + ' **loại**, nhưng mỗi ' + loai.vat + ' mới là một kết quả có thể.' }])
@@ -74,6 +81,7 @@
         return {
           de: 'Tung cùng lúc hai đồng xu: đồng thứ nhất và đồng thứ hai. Mỗi đồng ra mặt sấp (S) hoặc ngửa (N). Có bao nhiêu kết quả thuận lợi cho biến cố "' + bc.ten + '"?',
           dapAn: { kieu: 'so', gt: m },
+          hinhGiai: hg({ loai: 'haiDongXu', thuanLoi: bc.tl, tenBienCo: bc.ten }),
           goiY: ['Viết kết quả thành cặp: mặt đồng thứ nhất trước, mặt đồng thứ hai sau. Có 4 kết quả: SS, SN, NS, NN.', 'Chọn trong 4 kết quả đó những kết quả làm biến cố xảy ra.'],
           loiGiai: ['Các kết quả có thể: SS, SN, NS, NN.', 'Kết quả thuận lợi: ' + bc.tl.join(', ') + '.', 'Số kết quả thuận lợi $= ' + m + '$'],
           loiThuongGap: locLoi(m, bc.loi)
@@ -83,6 +91,7 @@
       return {
         de: 'Gieo một con xúc xắc. Có bao nhiêu kết quả thuận lợi cho biến cố "' + b2.ten + '"?',
         dapAn: { kieu: 'so', gt: m2 },
+        hinhGiai: hg({ loai: 'xucXac', thuanLoi: tl, tenBienCo: b2.ten }),
         goiY: ['Các kết quả có thể: $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6$.', 'Thử từng số xem biến cố có xảy ra không. Chú ý số ở "biên".'],
         loiGiai: ['Các kết quả có thể: $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6$.', 'Kết quả thuận lợi: $' + ds(tl) + '$.', 'Số kết quả thuận lợi $= ' + m2 + '$'],
         loiThuongGap: locLoi(m2, b2.loi(m2))
@@ -112,24 +121,25 @@
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: n, loiThuongGap: [{ gt: n - 1, giaiThich: 'Từ ' + a + ' đến ' + b + ' có $' + b + ' - ' + a + ' + 1 = ' + n + '$ số. Em quên cộng 1.' }] },
           { nhan: 'Số kết quả thuận lợi cho "Rút được thẻ ghi số ' + bc.ten + '"', kieu: 'so', gt: m, loiThuongGap: locLoi(m, bc.loi(m)) }] },
+        hinhGiai: hg({ loai: 'theSo', tu: a, den: b, thuanLoi: tl, tenBienCo: 'Số ' + bc.ten }),
         goiY: ['Mỗi tấm thẻ là một kết quả có thể; nhớ cộng 1 khi đếm các số liên tiếp.', 'Liệt kê các số từ ' + a + ' đến ' + b + ' mà ' + bc.ten + ' rồi đếm.'],
         loiGiai: ['Số kết quả có thể: $' + b + ' - ' + a + ' + 1 = ' + n + '$.', 'Các kết quả thuận lợi: $' + ds(tl) + '$, có $' + m + '$ kết quả.']
       };
     } },
 
     { ten: 'Túi bóng, đội văn nghệ: "hoặc", "không"', muc: 2, sinh: function (r) {
-      var doi = r.dau() > 0, nhom, tl, ten, loi, giai;
+      var doi = r.dau() > 0, nhom, tl, ten, loi, giai, tlNhom;
       if (doi) {
         var lop = ['8A', '8B', '8C', '8D'], gioi = r.chon([['nam', 'nữ', 'nam', 'nữ'], ['nữ', 'nam', 'nữ', 'nam']]);
         nhom = lop.map(function (l, i) { return { ten: 'bạn ' + gioi[i] + ' lớp ' + l, chu: String.fromCharCode(65 + i), so: r.so(2, 6), gioi: gioi[i] }; });
         var g = r.chon(['nam', 'nữ']), cap = r.khacNhau(2, 0, 3).sort(), i1 = cap[0], i2 = cap[1];
         if (r.dau() > 0) {
           var co = nhom.filter(function (x) { return x.gioi === g; });
-          ten = 'Chọn được một bạn ' + g; tl = co[0].so + co[1].so;
+          ten = 'Chọn được một bạn ' + g; tl = co[0].so + co[1].so; tlNhom = [co[0], co[1]];
           loi = [{ gt: co[0].so, giaiThich: 'Bạn ' + g + ' có ở **hai** lớp: ' + co[0].ten.split('lớp ')[1] + ' và ' + co[1].ten.split('lớp ')[1] + '.' }];
           giai = 'Bạn ' + g + ': $' + co[0].so + ' + ' + co[1].so + ' = ' + tl + '$ kết quả thuận lợi.';
         } else {
-          ten = 'Chọn được một bạn lớp ' + lop[i1] + ' hoặc ' + lop[i2]; tl = nhom[i1].so + nhom[i2].so;
+          ten = 'Chọn được một bạn lớp ' + lop[i1] + ' hoặc ' + lop[i2]; tl = nhom[i1].so + nhom[i2].so; tlNhom = [nhom[i1], nhom[i2]];
           loi = [{ gt: nhom[i1].so, giaiThich: '"Hoặc" gồm cả bạn lớp ' + lop[i1] + ' **và** bạn lớp ' + lop[i2] + '.' }];
           giai = 'Bạn lớp ' + lop[i1] + ' hoặc ' + lop[i2] + ': $' + nhom[i1].so + ' + ' + nhom[i2].so + ' = ' + tl + '$ kết quả thuận lợi.';
         }
@@ -138,12 +148,12 @@
         nhom = mau.map(function (m) { return { ten: 'bóng ' + m[0], so: r.so(2, 8), mau: m[1] }; });
         var j = r.so(0, nhom.length - 1), tong0 = nhom.reduce(function (s, x) { return s + x.so; }, 0);
         if (r.dau() > 0) {
-          ten = 'Không lấy được ' + nhom[j].ten; tl = tong0 - nhom[j].so;
+          ten = 'Không lấy được ' + nhom[j].ten; tl = tong0 - nhom[j].so; tlNhom = nhom.filter(function (x) { return x !== nhom[j]; });
           loi = [{ gt: nhom[j].so, giaiThich: 'Đó là số ' + nhom[j].ten + '. Biến cố là **không** lấy được ' + nhom[j].ten + '.' }];
           giai = 'Không phải ' + nhom[j].ten + ': $' + tong0 + ' - ' + nhom[j].so + ' = ' + tl + '$ kết quả thuận lợi.';
         } else {
           var j2 = (j + 1) % nhom.length;
-          ten = 'Lấy được ' + nhom[j].ten + ' hoặc ' + nhom[j2].ten; tl = nhom[j].so + nhom[j2].so;
+          ten = 'Lấy được ' + nhom[j].ten + ' hoặc ' + nhom[j2].ten; tl = nhom[j].so + nhom[j2].so; tlNhom = [nhom[j], nhom[j2]];
           loi = [{ gt: nhom[j].so, giaiThich: '"Hoặc" gồm cả ' + nhom[j].ten + ' **và** ' + nhom[j2].ten + '.' }];
           giai = nhom[j].ten.charAt(0).toUpperCase() + nhom[j].ten.slice(1) + ' hoặc ' + nhom[j2].ten + ': $' + nhom[j].so + ' + ' + nhom[j2].so + ' = ' + tl + '$ kết quả thuận lợi.';
         }
@@ -157,6 +167,8 @@
         de: doi ? 'Đội văn nghệ khối 8 có ' + moTa + '. Chọn ngẫu nhiên một bạn. Hãy đếm:'
           : 'Một túi có ' + moTa + ', các quả bóng có cùng kích thước. Lấy ngẫu nhiên một quả bóng. Hãy đếm:',
         hinh: { widget: 'xacSuat', config: { loai: 'tui', tui: tui } },
+        hinhGiai: hg({ tenBienCo: ten, nhom: nhom.map(function (x, i) { return { ten: hoa(x.ten), so: x.so, chu: x.chu, mau: doi ? MAU[i + 1] : x.mau === '#adb5bd' ? '#868e96' : x.mau }; }),
+          nhomThuan: tlNhom.map(function (x) { return hoa(x.ten); }) }),
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: tong, loiThuongGap: locLoi(tong, [{ gt: nhom.length, giaiThich: 'Mỗi ' + (doi ? '**bạn**' : '**quả bóng**') + ' là một kết quả có thể, không phải mỗi nhóm.' }]) },
           { nhan: 'Số kết quả thuận lợi cho "' + ten + '"', kieu: 'so', gt: tl, loiThuongGap: locLoi(tl, loi) }] },

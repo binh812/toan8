@@ -18,8 +18,73 @@
     anLiThuyet: true
   };
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu": lưới kết quả, mỗi kết quả là một chấm ----------
+  function lk(tuyChon, them) { return Object.assign({ ten: 'luoiKetQua', tuyChon: tuyChon }, them); }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  function g(ten, so, mau, chu) { return { ten: ten, so: so, mau: mau, chu: chu }; }
+  var DOI_SGK = [g('8A nam', 4, '#1971c2', 'A'), g('8B nữ', 5, '#c2255c', 'B'), g('8C nam', 3, '#0c8599', 'C'), g('8D nữ', 2, '#9c36b5', 'D')];
+  var DOI_BT = [g('8A nam', 3, '#1971c2', 'A'), g('8B nữ', 4, '#c2255c', 'B'), g('8C nam', 2, '#0c8599', 'C'), g('8D nữ', 5, '#9c36b5', 'D')];
+  var SACH = [g('Tiểu thuyết', 5, '#1971c2'), g('Lịch sử', 6, '#e8590c'), g('KHTN', 2, '#9c36b5'), g('Toán', 3, '#0c8599')];
+  var LOP_CLB = [g('Nữ, có CLB', 5, '#c2255c'), g('Nữ, không CLB', 11, '#e8590c'), g('Nam, có CLB', 13, '#1971c2'), g('Nam, không CLB', 7, '#0c8599')];
+  var THE = function (a, b, bienCo, them) { return lk(Object.assign({ loai: 'theSo', tu: a, den: b, bienCo: bienCo }, them)); };
+
   TOAN8.bai({
     id: 30, ten: 'Kết quả có thể và kết quả thuận lợi', sgk: { tap: 2, trang: 59 },
+
+    nhin: {
+      tieuDe: 'Mỗi vật là một chấm, chấm thuận lợi sáng lên', loai: 'minhHoa',
+      luuY: 'Bài này không có định lí phải chứng minh, chỉ có một cách đếm. Túi, hộp hay đội nào cũng đếm như vậy: tách mỗi vật thành một chấm, rồi đếm các chấm sáng.',
+      canh: lk({ nhom: DOI_SGK, nhomThuan: ['8B nữ', '8D nữ'], tenBienCo: 'F: Chọn được một bạn nữ', gom: true },
+        { giay: 12, moTa: 'Đội văn nghệ 14 bạn. Lúc đầu gộp theo lớp thành 4 nhóm, sau đó tách ra mỗi bạn một chấm. Các bạn nữ sáng lên.' }),
+      buoc: [
+        { t: 0, chu: 'Đội văn nghệ có $4$ bạn nam lớp 8A, $5$ bạn nữ 8B, $3$ bạn nam 8C và $2$ bạn nữ 8D. Gộp theo lớp thì chỉ thấy **4 nhóm**.' },
+        { t: 0.08, chu: 'Nhưng chọn một bạn thì kết quả là **một bạn cụ thể**, không phải một lớp. Tách ra: mỗi bạn là một chấm $A1, A2, \\dots$ Có $\\cb{14}$ kết quả có thể.' },
+        { t: 0.45, chu: 'Biến cố $F$: "Chọn được một bạn nữ". Chấm nào làm $F$ xảy ra thì sáng lên. Đó là các **kết quả thuận lợi** cho $F$.' },
+        { t: 0.85, chu: 'Đếm chấm sáng: $5 + 2 = \\cc{7}$ kết quả thuận lợi.' }
+      ],
+      ketLuan: 'Kết quả có thể là **mọi chấm**: $\\cb{14}$. Kết quả thuận lợi cho $F$ là **các chấm sáng**: $\\cc{7}$. Mỗi vật là một chấm, kể cả khi nhiều vật cùng loại.',
+      dung: {
+        tieuDe: 'Bao nhiêu cuốn không phải sách Lịch sử?', tuBai: '30.6',
+        de: 'Tủ sách của Hà có 16 cuốn sách khác nhau: 5 cuốn tiểu thuyết, 6 cuốn Lịch sử, 2 cuốn Khoa học tự nhiên (KHTN) và 3 cuốn Toán. Bạn Minh lấy ngẫu nhiên một cuốn. Có bao nhiêu kết quả thuận lợi cho biến cố "Lấy được cuốn không phải sách Lịch sử"?',
+        dapAn: { kieu: 'so', gt: 10 },
+        goiY: ['Mỗi **cuốn sách** là một kết quả có thể.', 'Cuốn không phải Lịch sử là tiểu thuyết, KHTN hoặc Toán.'],
+        loiGiai: ['Kết quả thuận lợi là các cuốn tiểu thuyết, KHTN và Toán.', 'Có $5 + 2 + 3 = 10$ kết quả thuận lợi (hay $16 - 6 = 10$).'],
+        loiThuongGap: [],
+        canh: lk({ nhom: SACH, nhomThuan: ['Tiểu thuyết', 'KHTN', 'Toán'], tenBienCo: 'Không phải sách Lịch sử', gom: true, anSo: true },
+          { t: 0.4, moTa: 'Mười sáu cuốn sách, mỗi cuốn một chấm, xếp theo bốn loại sách.' }),
+        moiThu: 'Mỗi cuốn là một chấm. Có bao nhiêu chấm làm biến cố xảy ra? Gõ sai thì hình sẽ cho thấy em vừa đếm những chấm nào.',
+        phanUng: [
+          { gt: 6, trangThai: 'nguoc', t: 1, loi: '$6$ là số sách **Lịch sử** (các chấm đỏ). Biến cố hỏi cuốn **không phải** sách Lịch sử: đếm các chấm còn lại.' },
+          { gt: 3, trangThai: 'theoLoai', t: 1, loi: '$3$ là số **loại** sách không phải Lịch sử. Mỗi **cuốn** mới là một kết quả: đếm chấm, đừng đếm loại.' },
+          { gt: 5, t: 1, loi: 'Em mới đếm KHTN và Toán ($2 + 3$). Tiểu thuyết cũng không phải sách Lịch sử, các chấm tiểu thuyết cũng sáng.' },
+          { gt: 16, t: 1, loi: '$16$ là **tất cả** các cuốn. Các cuốn Lịch sử không làm biến cố xảy ra, nên chúng không sáng.' }
+        ],
+        soBatKi: function () { return { t: 1, loi: 'Hình đã sáng các cuốn không phải sách Lịch sử. Em đếm lại các chấm sáng nhé.' }; },
+        dungChu: '$5 + 2 + 3 = 10$ chấm sáng, cũng là $16 - 6 = 10$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng vẫn là đếm chấm sáng',
+        baDe: [
+          { tuBai: '30.7', canh: lk({ nhom: DOI_BT, nhomThuan: ['8A nam', '8C nam'], tenBienCo: 'Chọn được một bạn nam', gom: true, anSo: true }, { moTa: 'Đội văn nghệ 14 bạn gộp theo lớp.' }), tenNut: 'Tách thành từng chấm',
+            de: 'Một đội văn nghệ có 3 bạn nam lớp 8A, 4 bạn nữ lớp 8B, 2 bạn nam lớp 8C và 5 bạn nữ lớp 8D. Chọn ngẫu nhiên một bạn. Có bao nhiêu kết quả thuận lợi cho biến cố "Chọn được một bạn nam"?',
+            dapAn: { kieu: 'so', gt: 5 }, goiY: ['Bạn nam học ở những lớp nào?'], loiGiai: ['Bạn nam: $A1, A2, A3$ (lớp 8A) và $C1, C2$ (lớp 8C).', 'Có $3 + 2 = 5$ kết quả thuận lợi.'],
+            loiThuongGap: [{ gt: 3, giaiThich: 'Bạn nam có ở **cả** lớp 8A và lớp 8C.' }],
+            phanUng: [{ gt: 2, trangThai: 'theoLoai', loi: '$2$ là số **lớp** có bạn nam. Mỗi **bạn** mới là một kết quả.' }],
+            dungChu: '$3 + 2 = 5$ chấm sáng: $A1, A2, A3, C1, C2$.', saiChu: 'Bạn nam có ở cả lớp 8A và lớp 8C. Đếm các chấm sáng.' },
+          { tuBai: '30.9', canh: lk({ loai: 'xucXac', thuanLoi: [1, 2, 4, 5], tenBienCo: 'Không chia hết cho 3', anSo: true }, { moTa: 'Sáu mặt xúc xắc, mỗi mặt một chấm.' }), tenNut: 'Sáng các kết quả thuận lợi',
+            phanUng: [{ gt: 2, trangThai: 'nguoc', loi: '$2$ là số mặt **chia hết** cho 3 (mặt $3$ và $6$, tô đỏ). Đề hỏi **không** chia hết cho 3.' }],
+            dungChu: 'Các mặt $1, 2, 4, 5$: $4$ chấm sáng.', saiChu: 'Bỏ các mặt chia hết cho 3 (là $3$ và $6$), đếm các mặt còn lại.' },
+          { tuBai: '30.12', canh: lk({ loai: 'haiDongXu', gom: true, thuanLoi: ['SN', 'NS'], tenBienCo: 'Hai đồng xu ra hai mặt khác nhau', ten1: 'Đồng 500', ten2: 'Đồng 1 000', anSo: true },
+            { moTa: 'Lưới hai nhân hai: hàng là mặt của đồng 500, cột là mặt của đồng 1 000.' }), tenNut: 'Tách thành từng ô',
+            de: 'Tung cùng lúc hai đồng xu: một đồng 500 đồng và một đồng 1 000 đồng. Mỗi đồng có thể ra mặt sấp (S) hoặc ngửa (N). Có bao nhiêu kết quả thuận lợi cho biến cố "Hai đồng xu ra hai mặt khác nhau"?',
+            dapAn: { kieu: 'so', gt: 2 }, goiY: ['Viết kết quả thành cặp: mặt đồng 500 trước, mặt đồng 1 000 sau.'], loiGiai: ['Các kết quả có thể: $SS, SN, NS, NN$.', 'Hai mặt khác nhau: $SN$ và $NS$, có $2$ kết quả thuận lợi.'],
+            loiThuongGap: [],
+            phanUng: [{ gt: 1, trangThai: 'theoLoai', loi: 'Em đã gộp $SN$ và $NS$ làm một. Đồng 500 sấp, đồng 1 000 ngửa khác với đồng 500 ngửa, đồng 1 000 sấp: đó là **hai** ô.' }],
+            dungChu: '$SN$ và $NS$ là hai ô khác nhau: $2$ kết quả thuận lợi.', saiChu: 'Tách lưới ra: mỗi ô là một cặp (mặt đồng 500; mặt đồng 1 000).' }
+        ],
+        cachNhan: 'Ba đề khác nhau, một cách làm: tách mỗi vật (mỗi bạn, mỗi mặt xúc xắc, mỗi cặp mặt của hai đồng xu) thành một chấm, rồi đếm chấm sáng. Đếm từng vật, đừng đếm loại.'
+      }
+    },
 
     khamPha: {
       nhiemVu: 'Hộp có **20 phiếu câu hỏi** đánh số từ 1 đến 20. Phiếu số 1 đến 4 thuộc lĩnh vực **Lịch sử – Địa lí**. Bạn Sơn mong rút được câu Lịch sử – Địa lí. Em bấm **Thử 1 lần** vài lần: Sơn có **chắc chắn** rút được phiếu mình muốn không? Các ô tô đậm là những phiếu làm Sơn vui.',
@@ -57,22 +122,22 @@
     ],
 
     viDu: [
-      { de: 'Một hộp có 5 quả cầu xanh đánh số 1 đến 5 và 4 quả cầu đỏ đánh số 1 đến 4. Lấy ngẫu nhiên một quả cầu. Liệt kê các kết quả có thể. Có bao nhiêu kết quả có thể?', buoc: [
-        { lam: 'Kí hiệu quả xanh là $X1, X2, X3, X4, X5$; quả đỏ là $D1, D2, D3, D4$.', vi: 'Hai quả cùng ghi số 1 vẫn là **hai quả khác nhau** (một xanh, một đỏ), nên cần kí hiệu riêng để không đếm trùng.' },
-        { lam: 'Các kết quả có thể: $X1, X2, X3, X4, X5, D1, D2, D3, D4$.', vi: 'Lấy được quả nào thì kết quả là quả đó.' },
-        { lam: 'Có $5 + 4 = 9$ kết quả có thể.', vi: 'Đếm theo từng nhóm màu rồi cộng lại, nhanh và không sót.' } ] },
-      { de: 'Đội văn nghệ có 4 bạn nam lớp 8A, 5 bạn nữ lớp 8B, 3 bạn nam lớp 8C và 2 bạn nữ lớp 8D. Chọn ngẫu nhiên một bạn. Liệt kê các kết quả thuận lợi cho biến cố $E$: "Chọn được một bạn lớp 8A" và $F$: "Chọn được một bạn nữ".', buoc: [
-        { lam: 'Kí hiệu: $A1$–$A4$ (8A), $B1$–$B5$ (8B), $C1$–$C3$ (8C), $D1, D2$ (8D). Có $14$ kết quả có thể.', vi: 'Mỗi bạn là một kết quả có thể.' },
-        { lam: 'Kết quả thuận lợi cho $E$: $A1, A2, A3, A4$.', vi: '$E$ xảy ra khi bạn được chọn học lớp 8A, tức là một trong 4 bạn $A$.' },
-        { lam: 'Kết quả thuận lợi cho $F$: $B1, B2, B3, B4, B5, D1, D2$.', vi: 'Bạn nữ gồm 5 bạn lớp 8B **và** 2 bạn lớp 8D. Em đừng quên nhóm 8D.' } ] },
-      { de: 'Gieo một con xúc xắc. Liệt kê các kết quả thuận lợi cho biến cố $A$: "Số chấm xuất hiện là hợp số" và $B$: "Số chấm nhỏ hơn 5".', buoc: [
-        { lam: 'Các kết quả có thể: $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6$.', vi: 'Xúc xắc có 6 mặt, từ 1 đến 6 chấm.' },
-        { lam: 'Kết quả thuận lợi cho $A$: $4;\\ 6$.', vi: 'Hợp số là số lớn hơn 1 có **nhiều hơn hai** ước. $1$ không phải hợp số; $2, 3, 5$ là số nguyên tố.' },
-        { lam: 'Kết quả thuận lợi cho $B$: $1;\\ 2;\\ 3;\\ 4$.', vi: '"Nhỏ hơn 5" không lấy số 5.' } ] },
-      { de: 'Hộp có 10 tấm thẻ ghi số $11;\\ 12;\\ \\dots;\\ 20$. Rút ngẫu nhiên một thẻ. Liệt kê các kết quả thuận lợi cho $E$: "Rút được thẻ ghi số là bội của 3" và $F$: "Rút được thẻ ghi số nguyên tố".', buoc: [
-        { lam: 'Các kết quả có thể: $11;\\ 12;\\ \\dots;\\ 20$, có $20 - 11 + 1 = 10$ kết quả.', vi: 'Nhớ cộng 1 khi đếm các số liên tiếp.' },
-        { lam: 'Kết quả thuận lợi cho $E$: $12;\\ 15;\\ 18$.', vi: 'Bội của 3 có tổng các chữ số chia hết cho 3.' },
-        { lam: 'Kết quả thuận lợi cho $F$: $11;\\ 13;\\ 17;\\ 19$.', vi: '$15 = 3\\cdot 5$, $14 = 2 \\cdot 7$… không phải số nguyên tố. Còn $11, 13, 17, 19$ chỉ có hai ước là 1 và chính nó.' } ] }
+      { de: 'Một hộp có 5 quả cầu xanh đánh số 1 đến 5 và 4 quả cầu đỏ đánh số 1 đến 4. Lấy ngẫu nhiên một quả cầu. Liệt kê các kết quả có thể. Có bao nhiêu kết quả có thể?', canh: lk({ nhom: [g('Xanh', 5, '#1971c2', 'X'), g('Đỏ', 4, '#e03131', 'D')], gom: true }), buoc: [
+        { lam: 'Kí hiệu quả xanh là $X1, X2, X3, X4, X5$; quả đỏ là $D1, D2, D3, D4$.', vi: 'Hai quả cùng ghi số 1 vẫn là **hai quả khác nhau** (một xanh, một đỏ), nên cần kí hiệu riêng để không đếm trùng.', canh: { t: 0.32 } },
+        { lam: 'Các kết quả có thể: $X1, X2, X3, X4, X5, D1, D2, D3, D4$.', vi: 'Lấy được quả nào thì kết quả là quả đó.', canh: { t: 0.6 } },
+        { lam: 'Có $5 + 4 = 9$ kết quả có thể.', vi: 'Đếm theo từng nhóm màu rồi cộng lại, nhanh và không sót.', canh: { t: 1 } } ] },
+      { de: 'Đội văn nghệ có 4 bạn nam lớp 8A, 5 bạn nữ lớp 8B, 3 bạn nam lớp 8C và 2 bạn nữ lớp 8D. Chọn ngẫu nhiên một bạn. Liệt kê các kết quả thuận lợi cho biến cố $E$: "Chọn được một bạn lớp 8A" và $F$: "Chọn được một bạn nữ".', canh: lk({ nhom: DOI_SGK, gom: true, bienCo: [{ ten: 'E: Chọn được một bạn lớp 8A', nhom: ['8A nam'] }, { ten: 'F: Chọn được một bạn nữ', nhom: ['8B nữ', '8D nữ'] }] }), buoc: [
+        { lam: 'Kí hiệu: $A1$–$A4$ (8A), $B1$–$B5$ (8B), $C1$–$C3$ (8C), $D1, D2$ (8D). Có $14$ kết quả có thể.', vi: 'Mỗi bạn là một kết quả có thể.', canh: { t: 0.35 } },
+        { lam: 'Kết quả thuận lợi cho $E$: $A1, A2, A3, A4$.', vi: '$E$ xảy ra khi bạn được chọn học lớp 8A, tức là một trong 4 bạn $A$.', canh: { t: 1, thamSo: { chon: 0 } } },
+        { lam: 'Kết quả thuận lợi cho $F$: $B1, B2, B3, B4, B5, D1, D2$.', vi: 'Bạn nữ gồm 5 bạn lớp 8B **và** 2 bạn lớp 8D. Em đừng quên nhóm 8D.', canh: { t: 1, thamSo: { chon: 1 } } } ] },
+      { de: 'Gieo một con xúc xắc. Liệt kê các kết quả thuận lợi cho biến cố $A$: "Số chấm xuất hiện là hợp số" và $B$: "Số chấm nhỏ hơn 5".', canh: lk({ loai: 'xucXac', bienCo: [{ ten: 'A: Số chấm là hợp số', thuanLoi: [4, 6] }, { ten: 'B: Số chấm nhỏ hơn 5', thuanLoi: [1, 2, 3, 4] }] }), buoc: [
+        { lam: 'Các kết quả có thể: $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6$.', vi: 'Xúc xắc có 6 mặt, từ 1 đến 6 chấm.', canh: { t: 0.05 } },
+        { lam: 'Kết quả thuận lợi cho $A$: $4;\\ 6$.', vi: 'Hợp số là số lớn hơn 1 có **nhiều hơn hai** ước. $1$ không phải hợp số; $2, 3, 5$ là số nguyên tố.', canh: { t: 1, thamSo: { chon: 0 } } },
+        { lam: 'Kết quả thuận lợi cho $B$: $1;\\ 2;\\ 3;\\ 4$.', vi: '"Nhỏ hơn 5" không lấy số 5.', canh: { t: 1, thamSo: { chon: 1 } } } ] },
+      { de: 'Hộp có 10 tấm thẻ ghi số $11;\\ 12;\\ \\dots;\\ 20$. Rút ngẫu nhiên một thẻ. Liệt kê các kết quả thuận lợi cho $E$: "Rút được thẻ ghi số là bội của 3" và $F$: "Rút được thẻ ghi số nguyên tố".', canh: THE(11, 20, [{ ten: 'E: Bội của 3', thuanLoi: [12, 15, 18] }, { ten: 'F: Số nguyên tố', thuanLoi: [11, 13, 17, 19] }], { cot: 5 }), buoc: [
+        { lam: 'Các kết quả có thể: $11;\\ 12;\\ \\dots;\\ 20$, có $20 - 11 + 1 = 10$ kết quả.', vi: 'Nhớ cộng 1 khi đếm các số liên tiếp.', canh: { t: 0.05 } },
+        { lam: 'Kết quả thuận lợi cho $E$: $12;\\ 15;\\ 18$.', vi: 'Bội của 3 có tổng các chữ số chia hết cho 3.', canh: { t: 1, thamSo: { chon: 0 } } },
+        { lam: 'Kết quả thuận lợi cho $F$: $11;\\ 13;\\ 17;\\ 19$.', vi: '$15 = 3\\cdot 5$, $14 = 2 \\cdot 7$… không phải số nguyên tố. Còn $11, 13, 17, 19$ chỉ có hai ước là 1 và chính nó.', canh: { t: 1, thamSo: { chon: 1 } } } ] }
     ],
 
     viDuMo: [
@@ -89,29 +154,29 @@
     ],
 
     baiTap: [
-      { id: '30.1', muc: 1, de: 'Hộp có các tấm thẻ ghi số $1;\\ 2;\\ 3;\\ \\dots;\\ 15$. Rút ngẫu nhiên một thẻ. Có bao nhiêu kết quả có thể?',
+      { id: '30.1', hinhGiai: hg(THE(1, 15, null, { cot: 5 })), muc: 1, de: 'Hộp có các tấm thẻ ghi số $1;\\ 2;\\ 3;\\ \\dots;\\ 15$. Rút ngẫu nhiên một thẻ. Có bao nhiêu kết quả có thể?',
         dapAn: { kieu: 'so', gt: 15 },
         goiY: ['Mỗi tấm thẻ là một kết quả có thể.', 'Từ 1 đến 15 có bao nhiêu số?'],
         loiGiai: ['Các kết quả có thể là $1;\\ 2;\\ \\dots;\\ 15$.', 'Số kết quả có thể $= 15$'],
         loiThuongGap: [{ gt: 14, giaiThich: 'Từ 1 đến 15 có $15 - 1 + 1 = 15$ số. Em quên cộng 1 rồi.' }] },
 
-      { id: '30.2', muc: 1, de: 'Gieo một con xúc xắc. Có bao nhiêu kết quả thuận lợi cho biến cố "Số chấm xuất hiện lớn hơn 4"?',
+      { id: '30.2', hinhGiai: hg(lk({ loai: 'xucXac', thuanLoi: [5, 6], tenBienCo: 'Số chấm lớn hơn 4' })), muc: 1, de: 'Gieo một con xúc xắc. Có bao nhiêu kết quả thuận lợi cho biến cố "Số chấm xuất hiện lớn hơn 4"?',
         dapAn: { kieu: 'so', gt: 2 },
         goiY: ['Liệt kê 6 kết quả có thể: $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6$.', 'Số nào **lớn hơn** 4? Số 4 có được tính không?'],
         loiGiai: ['Các kết quả thuận lợi là $5;\\ 6$.', 'Số kết quả thuận lợi $= 2$'],
         loiThuongGap: [{ gt: 3, giaiThich: '"Lớn hơn 4" không lấy số 4. Chỉ có 5 và 6.' }] },
 
-      { id: '30.3', muc: 1, de: 'Gieo một con xúc xắc. Các kết quả thuận lợi cho biến cố "Số chấm xuất hiện là số nguyên tố" là:',
+      { id: '30.3', hinhGiai: hg(lk({ loai: 'xucXac', thuanLoi: [2, 3, 5], tenBienCo: 'Số chấm là số nguyên tố' })), muc: 1, de: 'Gieo một con xúc xắc. Các kết quả thuận lợi cho biến cố "Số chấm xuất hiện là số nguyên tố" là:',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['$2;\\ 3;\\ 5$', '$1;\\ 2;\\ 3;\\ 5$', '$2;\\ 4;\\ 6$', '$1;\\ 3;\\ 5$'] },
         goiY: ['Số nguyên tố là số lớn hơn 1, chỉ có hai ước là 1 và chính nó.', 'Số 1 có phải số nguyên tố không?'],
         loiGiai: ['Trong các số $1, \\dots, 6$: số nguyên tố là $2;\\ 3;\\ 5$.', '$1$ không phải số nguyên tố; $4 = 2\\cdot 2$ và $6 = 2\\cdot 3$ là hợp số.', 'Đáp án: $2;\\ 3;\\ 5$.'] },
 
-      { id: '30.4', muc: 1, de: 'Rút ngẫu nhiên một thẻ từ hộp có các thẻ ghi số $1;\\ 2;\\ \\dots;\\ 10$. Khẳng định sau đúng hay sai: "Các kết quả thuận lợi cho biến cố ‘Rút được thẻ ghi số chẵn’ là $2;\\ 4;\\ 6;\\ 8;\\ 10$."',
+      { id: '30.4', hinhGiai: hg(THE(1, 10, [{ ten: 'Rút được thẻ ghi số chẵn', thuanLoi: [2, 4, 6, 8, 10] }], { cot: 5 })), muc: 1, de: 'Rút ngẫu nhiên một thẻ từ hộp có các thẻ ghi số $1;\\ 2;\\ \\dots;\\ 10$. Khẳng định sau đúng hay sai: "Các kết quả thuận lợi cho biến cố ‘Rút được thẻ ghi số chẵn’ là $2;\\ 4;\\ 6;\\ 8;\\ 10$."',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Liệt kê các số chẵn từ 1 đến 10.', 'Số 10 có phải số chẵn không?'],
         loiGiai: ['Các số chẵn từ 1 đến 10 là $2;\\ 4;\\ 6;\\ 8;\\ 10$ (5 số).', 'Vậy khẳng định **đúng**.'] },
 
-      { id: '30.5', muc: 2, de: 'Hộp có 15 tấm thẻ ghi số $1;\\ 2;\\ \\dots;\\ 15$. Rút ngẫu nhiên một thẻ. Đếm số kết quả thuận lợi cho mỗi biến cố:\n\n$A$: "Rút được thẻ ghi số chẵn"; $B$: "Rút được thẻ ghi số nguyên tố"; $C$: "Rút được thẻ ghi số chính phương".',
+      { id: '30.5', hinhGiai: hg(Object.assign(THE(1, 15, [{ ten: 'A: Số chẵn', thuanLoi: [2, 4, 6, 8, 10, 12, 14] }, { ten: 'B: Số nguyên tố (số 1 không sáng)', thuanLoi: [2, 3, 5, 7, 11, 13] }, { ten: 'C: Số chính phương', thuanLoi: [1, 4, 9] }], { cot: 5 }), { thamSo: { chon: 1 } })), muc: 2, de: 'Hộp có 15 tấm thẻ ghi số $1;\\ 2;\\ \\dots;\\ 15$. Rút ngẫu nhiên một thẻ. Đếm số kết quả thuận lợi cho mỗi biến cố:\n\n$A$: "Rút được thẻ ghi số chẵn"; $B$: "Rút được thẻ ghi số nguyên tố"; $C$: "Rút được thẻ ghi số chính phương".',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Biến cố $A$', kieu: 'so', gt: 7,
             loiThuongGap: [{ gt: 8, giaiThich: 'Từ 1 đến 15, số chẵn là $2, 4, \\dots, 14$: chỉ có 7 số (15 là số lẻ).' }] },
@@ -122,7 +187,7 @@
         goiY: ['Liệt kê từng nhóm số rồi đếm.', 'Nhớ: 1 không phải số nguyên tố, nhưng 1 là số chính phương.'],
         loiGiai: ['$A$: $2;\\ 4;\\ 6;\\ 8;\\ 10;\\ 12;\\ 14$ → 7 kết quả thuận lợi.', '$B$: $2;\\ 3;\\ 5;\\ 7;\\ 11;\\ 13$ → 6 kết quả thuận lợi.', '$C$: $1;\\ 4;\\ 9$ → 3 kết quả thuận lợi.'] },
 
-      { id: '30.6', muc: 2, de: 'Tủ sách của Hà có 16 cuốn sách khác nhau: 5 cuốn tiểu thuyết, 6 cuốn Lịch sử, 2 cuốn Khoa học tự nhiên và 3 cuốn Toán. Bạn Minh lấy ngẫu nhiên một cuốn. Hãy đếm:',
+      { id: '30.6', hinhGiai: hg(lk({ nhom: SACH, nhomThuan: ['KHTN', 'Toán'], tenBienCo: 'Sách KHTN hoặc sách Toán' })), muc: 2, de: 'Tủ sách của Hà có 16 cuốn sách khác nhau: 5 cuốn tiểu thuyết, 6 cuốn Lịch sử, 2 cuốn Khoa học tự nhiên và 3 cuốn Toán. Bạn Minh lấy ngẫu nhiên một cuốn. Hãy đếm:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: 16,
             loiThuongGap: [{ gt: 4, giaiThich: 'Mỗi **cuốn sách** là một kết quả có thể (16 cuốn khác nhau), không phải mỗi loại sách.' }] },
@@ -143,7 +208,7 @@
         goiY: ['Kí hiệu $A1$–$A3$, $B1$–$B4$, $C1, C2$, $D1$–$D5$.', 'Bạn nam ở những lớp nào? Bạn lớp 8C hoặc 8D gồm những ai?'],
         loiGiai: ['$G$: các bạn $A1, A2, A3, C1, C2$ → 5 kết quả thuận lợi.', '$H$: các bạn $C1, C2, D1, D2, D3, D4, D5$ → 7 kết quả thuận lợi.'] },
 
-      { id: '30.8', muc: 2, de: 'Hộp có 10 tấm thẻ ghi số $21;\\ 22;\\ \\dots;\\ 30$. Rút ngẫu nhiên một thẻ. Đếm số kết quả thuận lợi cho $E$: "Rút được thẻ ghi số là bội của 3" và $F$: "Rút được thẻ ghi số nguyên tố".',
+      { id: '30.8', hinhGiai: hg(THE(21, 30, [{ ten: 'E: Bội của 3', thuanLoi: [21, 24, 27, 30] }, { ten: 'F: Số nguyên tố', thuanLoi: [23, 29] }], { cot: 5 })), muc: 2, de: 'Hộp có 10 tấm thẻ ghi số $21;\\ 22;\\ \\dots;\\ 30$. Rút ngẫu nhiên một thẻ. Đếm số kết quả thuận lợi cho $E$: "Rút được thẻ ghi số là bội của 3" và $F$: "Rút được thẻ ghi số nguyên tố".',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Biến cố $E$', kieu: 'so', gt: 4,
             loiThuongGap: [{ gt: 3, giaiThich: 'Bội của 3 từ 21 đến 30 là $21, 24, 27, 30$: có 4 số (đừng bỏ sót 21 và 30).' }] },
@@ -152,13 +217,13 @@
         goiY: ['Bội của 3 có tổng các chữ số chia hết cho 3.', 'Thử chia từng số lẻ cho 3, 5, 7 để biết có phải số nguyên tố không.'],
         loiGiai: ['$E$: $21;\\ 24;\\ 27;\\ 30$ → 4 kết quả thuận lợi.', '$F$: $23;\\ 29$ → 2 kết quả thuận lợi ($21 = 3\\cdot 7$, $25 = 5\\cdot 5$, $27 = 3\\cdot 9$ là hợp số).'] },
 
-      { id: '30.9', muc: 2, de: 'Gieo một con xúc xắc. Có bao nhiêu kết quả thuận lợi cho biến cố "Số chấm xuất hiện **không** chia hết cho 3"?',
+      { id: '30.9', hinhGiai: hg(lk({ loai: 'xucXac', thuanLoi: [1, 2, 4, 5], tenBienCo: 'Không chia hết cho 3' })), muc: 2, de: 'Gieo một con xúc xắc. Có bao nhiêu kết quả thuận lợi cho biến cố "Số chấm xuất hiện **không** chia hết cho 3"?',
         dapAn: { kieu: 'so', gt: 4 },
         goiY: ['Số chấm nào chia hết cho 3?', 'Lấy 6 kết quả có thể bỏ đi các số chia hết cho 3.'],
         loiGiai: ['Số chấm chia hết cho 3: $3;\\ 6$.', 'Không chia hết cho 3: $1;\\ 2;\\ 4;\\ 5$.', 'Số kết quả thuận lợi $= 4$'],
         loiThuongGap: [{ gt: 2, giaiThich: '2 là số kết quả **chia hết** cho 3 (3 và 6). Đề hỏi **không** chia hết cho 3: $6 - 2 = 4$.' }] },
 
-      { id: '30.10', muc: 3, de: 'Chọn ngẫu nhiên một số tự nhiên có hai chữ số. Hãy đếm:',
+      { id: '30.10', hinhGiai: hg(THE(10, 99, [{ ten: 'Số chính phương có hai chữ số', thuanLoi: [16, 25, 36, 49, 64, 81] }])), muc: 3, de: 'Chọn ngẫu nhiên một số tự nhiên có hai chữ số. Hãy đếm:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: 90,
             loiThuongGap: [{ gt: 99, giaiThich: 'Số có hai chữ số bắt đầu từ **10** (không phải từ 1): $99 - 10 + 1 = 90$.' },
@@ -170,7 +235,7 @@
         goiY: ['Số nhỏ nhất có hai chữ số là 10, lớn nhất là 99.', 'Số chính phương có hai chữ số là $4^2, 5^2, \\dots$ Dừng khi bình phương vượt quá 99.'],
         loiGiai: ['Kết quả có thể: $10;\\ 11;\\ \\dots;\\ 99$, có $99 - 10 + 1 = 90$ kết quả.', 'Nhỏ hơn 20: $10;\\ 11;\\ \\dots;\\ 19$ → 10 kết quả thuận lợi.', 'Số chính phương: $16;\\ 25;\\ 36;\\ 49;\\ 64;\\ 81$ → 6 kết quả thuận lợi ($10^2 = 100$ đã có ba chữ số).'] },
 
-      { id: '30.11', muc: 3, de: 'Lớp 8B có 36 học sinh, trong đó có 16 bạn nữ. Có 5 bạn nữ tham gia câu lạc bộ bóng đá và 7 bạn nam **không** tham gia câu lạc bộ này. Chọn ngẫu nhiên một học sinh. Có bao nhiêu kết quả thuận lợi cho biến cố "Chọn được một bạn nam có tham gia câu lạc bộ bóng đá"?',
+      { id: '30.11', hinhGiai: hg(lk({ nhom: LOP_CLB, nhomThuan: ['Nam, có CLB'], tenBienCo: 'Bạn nam có tham gia câu lạc bộ', gom: true }, { ghiChu: 'Số bạn nam có CLB: 36 − 16 − 7 = 13.' })), muc: 3, de: 'Lớp 8B có 36 học sinh, trong đó có 16 bạn nữ. Có 5 bạn nữ tham gia câu lạc bộ bóng đá và 7 bạn nam **không** tham gia câu lạc bộ này. Chọn ngẫu nhiên một học sinh. Có bao nhiêu kết quả thuận lợi cho biến cố "Chọn được một bạn nam có tham gia câu lạc bộ bóng đá"?',
         dapAn: { kieu: 'so', gt: 13 },
         goiY: ['Trước hết tính số bạn nam của lớp.', 'Số bạn nam tham gia = số bạn nam − số bạn nam không tham gia.'],
         loiGiai: ['Số bạn nam: $36 - 16 = 20$.', 'Số bạn nam tham gia câu lạc bộ: $20 - 7 = 13$.', 'Số kết quả thuận lợi $= 13$'],
@@ -178,7 +243,7 @@
           { gt: 7, giaiThich: '7 là số bạn nam **không** tham gia. Số bạn nam tham gia là $20 - 7 = 13$.' },
           { gt: 18, giaiThich: '5 bạn nữ tham gia không được tính: biến cố chỉ nói về **bạn nam**.' }] },
 
-      { id: '30.12', muc: 3, de: 'Tung cùng lúc hai đồng xu: một đồng 500 đồng và một đồng 1 000 đồng. Mỗi đồng có thể ra mặt sấp (S) hoặc ngửa (N). Hãy đếm:',
+      { id: '30.12', hinhGiai: hg(lk({ loai: 'haiDongXu', thuanLoi: ['SN', 'NS'], tenBienCo: 'Hai mặt khác nhau', ten1: 'Đồng 500', ten2: 'Đồng 1 000' })), muc: 3, de: 'Tung cùng lúc hai đồng xu: một đồng 500 đồng và một đồng 1 000 đồng. Mỗi đồng có thể ra mặt sấp (S) hoặc ngửa (N). Hãy đếm:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Số kết quả có thể', kieu: 'so', gt: 4,
             loiThuongGap: [{ gt: 3, giaiThich: '"Đồng 500 sấp, đồng 1 000 ngửa" (SN) khác với "đồng 500 ngửa, đồng 1 000 sấp" (NS). Có 4 kết quả: SS, SN, NS, NN.' }] },

@@ -16,6 +16,9 @@
     var hop = ds.filter(function (M) { return M % mau === 0 && M > tranh; });
     return hop.length ? r.chon(hop) : tranh * r.chon([2, 3, 4, 5, 10]);
   }
+  // Hình lời giải: mỗi lần thử là một ô, ô sáng là lần biến cố xảy ra (nhiều lần quá thì vẽ thanh theo tỉ lệ)
+  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'lanThu', tuyChon: tuyChon, chiXem: true, t: 1 } }; }
+  function hoa(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function tong(m) { return m.reduce(function (s, x) { return s + x; }, 0); }
   // lỗi dạng phân số: bỏ nếu mẫu ≤ 0, trùng đáp án hoặc trùng nhau
   function locPS(cc, dung, m) {
@@ -48,14 +51,15 @@
       { cum: 'nhiều nhất ' + v, loc: function (x) { return x <= v; }, sai: function (x) { return x < v; }, vi: '"Nhiều nhất ' + v + '" là từ 0 đến ' + v + ', **có** lấy ' + v + '.' },
       { cum: 'nhiều hơn ' + v, loc: function (x) { return x > v; }, sai: function (x) { return x >= v; }, vi: '"Nhiều hơn ' + v + '" **không** lấy ' + v + '.' },
       { cum: 'ít hơn ' + v, loc: function (x) { return x < v; }, sai: function (x) { return x <= v; }, vi: '"Ít hơn ' + v + '" **không** lấy ' + v + '.' }]);
-    var chon = [], s = 0, sSai = 0;
-    f.forEach(function (k, x) { if (loai.loc(x)) { chon.push(k); s += k; } if (loai.sai(x)) sSai += k; });
+    var chon = [], s = 0, sSai = 0, thuanTen = [];
+    f.forEach(function (k, x) { if (loai.loc(x)) { chon.push(k); s += k; thuanTen.push(String(x)); } if (loai.sai(x)) sSai += k; });
     var nhan = f.map(function (_, x) { return String(x); });
     var thay = function (t) { return t.replace('{T}', T); };
     return {
       boi: thay(b.boi) + '. Kết quả cho trong bảng và biểu đồ dưới đây.',
       hinh: { widget: 'bieuDo', config: { loai: 'cot', tieuDe: thay(b.tieuDe), tenNhan: b.tenNhan, nhan: nhan, chuoi: [{ ten: b.tenSo, so: f }], hienBang: true } },
       N: N, s: s, sSai: sSai, dt: b.dt, vi: loai.vi,
+      hinhGiai: hg({ nhom: f.map(function (k, x) { return { ten: String(x), so: k }; }), nhomThuan: thuanTen, tieuDe: hoa(loai.cum) + ' ' + b.dv }),
       bc: thay(b.mo) + ' ' + loai.cum + ' ' + b.dv,
       giai: ['Tổng số ' + b.dt + ' theo dõi: $' + f.join(' + ') + ' = ' + N + '$.',
         'Số ' + b.dt + ' ' + b.dong + ' ' + loai.cum + ' ' + b.dv + ': $' + (chon.length > 1 ? chon.join(' + ') + ' = ' : '') + s + '$.']
@@ -77,6 +81,7 @@
       return {
         de: ctx.de(n, k) + ' Tính xác suất thực nghiệm của biến cố "' + (hoiBu ? ctx.bu : ctx.bc) + '".',
         dapAn: { kieu: 'so', gt: kq.ascii },
+        hinhGiai: hg({ n: n, k: tu, hat: n + k, tieuDe: hoiBu ? ctx.bu : ctx.bc }),
         goiY: ['Xác suất thực nghiệm $= \\dfrac{k}{n}$: $k$ là số lần biến cố xảy ra, $n$ là ' + ctx.n + '.', hoiBu ? 'Biến cố xảy ra $' + n + ' - ' + k + '$ lần.' : 'Ở đây $n = ' + n + '$.'],
         loiGiai: (hoiBu ? ['Số lần biến cố "' + ctx.bu + '" xảy ra: $' + n + ' - ' + k + ' = ' + (n - k) + '$.'] : ['Biến cố xảy ra $k = ' + k + '$ lần trong $n = ' + n + '$ lần.'])
           .concat(['Xác suất thực nghiệm $= ' + pTex(cc, tu, n) + '$']),
@@ -100,6 +105,7 @@
       var kq = cc.phanSo(k, n);
       return {
         de: de + ' Tính xác suất thực nghiệm và xác suất của biến cố "' + ten + '".',
+        hinhGiai: hg({ n: n, k: k, hat: n + k, p: lt[0] / lt[1], pNhan: '1/' + lt[1], hienP: true, tieuDe: ten }),
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Xác suất thực nghiệm', kieu: 'so', gt: kq.ascii, loiThuongGap: [{ gt: lt[0] + '/' + lt[1], giaiThich: 'Đó là xác suất tính bằng công thức. Xác suất **thực nghiệm** dùng số liệu thực tế: $\\dfrac{' + k + '}{' + n + '}$.' }] },
           { nhan: 'Xác suất (tính bằng tỉ số)', kieu: 'so', gt: lt[0] + '/' + lt[1], loiThuongGap: locPS(cc, lt[0] / lt[1], [{ tu: k, mau: n, giaiThich: 'Đó là xác suất **thực nghiệm**. Xác suất tính theo các kết quả đồng khả năng: ' + (xx ? '1 trong 6 mặt.' : '1 trong 2 mặt.') }]) }] },
@@ -114,6 +120,7 @@
       return {
         de: b.boi + ' Tính xác suất thực nghiệm của biến cố "' + b.bc + '".',
         hinh: b.hinh,
+        hinhGiai: b.hinhGiai,
         dapAn: { kieu: 'so', gt: kq.ascii },
         goiY: ['Mẫu số là **tổng** số ' + b.dt + ' được theo dõi (cộng cả hàng số liệu).', 'Đọc kĩ điều kiện: ' + b.vi.replace(/\*\*/g, '')],
         loiGiai: b.giai.concat(['Xác suất thực nghiệm $= ' + pTex(cc, b.s, b.N) + '$']),
@@ -143,10 +150,12 @@
       }
       loi.push({ tu: s, mau: N - s, giaiThich: 'Mẫu số là **tổng** số ' + ctx.dt + ' (' + N + ').' });
       var kq = cc.phanSo(s, N);
+      var thuanLoai = khong ? ctx.loai.filter(function (x, h) { return h !== i; }) : [ctx.loai[i], ctx.loai[j]];
       return {
         de: ctx.boi + ' Tính xác suất thực nghiệm của biến cố "' + bc + '".',
         hinh: { widget: 'bieuDo', config: { loai: 'cot', tieuDe: ctx.tieuDe, tenNhan: ctx.tenNhan, nhan: ctx.loai, chuoi: [{ ten: ctx.tenSo, so: f }], hienBang: true } },
         dapAn: { kieu: 'so', gt: kq.ascii },
+        hinhGiai: hg({ nhom: ctx.loai.map(function (x, h) { return { ten: x, so: f[h] }; }), nhomThuan: thuanLoai, tieuDe: bc }),
         goiY: ['Tính tổng số ' + ctx.dt + ' (cộng cả hàng số liệu): đó là mẫu số.', khong ? 'Lấy tổng trừ đi số liệu của cột "' + ctx.loai[i] + '".' : 'Cộng số liệu của hai cột "' + ctx.loai[i] + '" và "' + ctx.loai[j] + '".'],
         loiGiai: ['Tổng số ' + ctx.dt + ': $' + f.join(' + ') + ' = ' + N + '$.', giai, 'Xác suất thực nghiệm $= ' + pTex(cc, s, N) + '$'],
         loiThuongGap: locPS(cc, kq.tu / kq.mau, loi)
@@ -165,6 +174,7 @@
       return {
         de: ctx.de(n, k, M),
         dapAn: { kieu: 'so', gt: kq },
+        hinhGiai: hg({ n: n, k: k, duBao: M, tieuDe: hoa(ctx.bc), nhan1: n + ' ' + ctx.dt + ' đã biết', nhan2: M + ' ' + ctx.dt + ' cần dự đoán', tenCo: 'Sáng' }),
         goiY: ['Ước lượng xác suất của biến cố "' + ctx.bc + '" bằng xác suất thực nghiệm $\\dfrac{' + k + '}{' + n + '}$.', 'Số lần dự đoán = số lượng mới $\\times$ xác suất.'],
         loiGiai: ['Xác suất của biến cố "' + ctx.bc + '" được ước lượng là $' + pTex(cc, k, n) + '$.', 'Số ' + ctx.dt + ' dự đoán $\\approx ' + so(M) + ' \\cdot ' + p.tex + ' = ' + so(kq) + '$'],
         loiThuongGap: locSo(kq, [{ gt: M - kq, giaiThich: 'Đó là số ' + ctx.dt + ' **' + ctx.bu + '**. Em xem lại đề hỏi biến cố nào.' }, { gt: Math.round(M * p.mau / p.tu), giaiThich: 'Dự đoán thì **nhân** với xác suất, không chia.' }])

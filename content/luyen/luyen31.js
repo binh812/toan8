@@ -9,6 +9,12 @@
   function laNT(n) { if (n < 2) return false; for (var d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; }
   function laCP(n) { var s = Math.round(Math.sqrt(n)); return s * s === n; }
   function ds(m) { return m.join(';\\ '); }
+  // Hình lời giải: mỗi kết quả là một chấm, thanh xác suất 1 chia đều cho các chấm, phần sáng là xác suất
+  function hg(tuyChon, cheDo) { return { widget: 'canh', config: { ten: 'luoiKetQua', tuyChon: Object.assign({ cheDo: cheDo || 'chia' }, tuyChon), chiXem: true, t: 1 } }; }
+  // Màu theo tên (kẹo đen, bóng tím…), không có tên màu thì lấy theo thứ tự
+  var MAU_CHU = { 'đỏ': '#e03131', 'xanh': '#1971c2', 'vàng': '#f08c00', 'trắng': '#868e96', 'đen': '#343a40', 'tím': '#9c36b5', 'cam': '#e8590c' };
+  function mauTen(ten, j) { return MAU_CHU[ten.split(' ').pop()] || MAU[j]; }
+  function hoa(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function day(a, b) { var m = []; for (var k = a; k <= b; k++) m.push(k); return m; }
   // "m/n = phân số tối giản" (bỏ vế sau nếu đã tối giản)
   function pTex(cc, m, n) { var p = cc.phanSo(m, n); return '\\dfrac{' + m + '}{' + n + '}' + (p.mau === n ? '' : ' = ' + p.tex); }
@@ -47,6 +53,7 @@
       return {
         de: 'Gieo một con xúc xắc cân đối. Tính xác suất của biến cố "' + bc.ten + '".',
         dapAn: { kieu: 'so', gt: kq.ascii },
+        hinhGiai: hg({ loai: 'xucXac', thuanLoi: tl, tenBienCo: bc.ten }),
         goiY: ['Xúc xắc cân đối nên 6 kết quả $1;\\ 2;\\ \\dots;\\ 6$ là đồng khả năng.', 'Đếm các kết quả thuận lợi rồi chia cho 6.'],
         loiGiai: ['Có 6 kết quả có thể, đồng khả năng.', 'Kết quả thuận lợi: $' + ds(tl) + '$ (' + m + ' kết quả).', '$P = ' + pTex(cc, m, 6) + '$'],
         loiThuongGap: locLoi(cc, kq, loi)
@@ -63,6 +70,7 @@
         de: 'Một túi có ' + so[0] + ' ' + ten(0) + ', ' + so[1] + ' ' + ten(1) + ' và ' + so[2] + ' ' + ten(2) + ', giống hệt nhau trừ ' + (loai.kieu ? 'vị' : 'màu') + '. Lấy ngẫu nhiên một ' + loai.vat + '. Tính xác suất lấy được ' + ten(j) + '.',
         hinh: { widget: 'xacSuat', config: { loai: 'tui', tui: [0, 1, 2].map(function (i) { return { ten: loai.mau[i].charAt(0).toUpperCase() + loai.mau[i].slice(1), so: so[i], mau: loai.kieu ? MAU[i] : MAU_TEN[loai.mau[i]] }; }) } },
         dapAn: { kieu: 'so', gt: kq.ascii },
+        hinhGiai: hg({ tenBienCo: 'Lấy được ' + ten(j), nhom: [0, 1, 2].map(function (i) { return { ten: hoa(loai.mau[i]), so: so[i], mau: loai.kieu ? MAU[i] : MAU_TEN[loai.mau[i]] === '#adb5bd' ? '#868e96' : MAU_TEN[loai.mau[i]] }; }), nhomThuan: [hoa(loai.mau[j])] }),
         goiY: ['Mỗi ' + loai.vat + ' là một kết quả có thể, các kết quả đồng khả năng.', 'Số kết quả thuận lợi là số ' + ten(j) + '; chia cho **tổng** số ' + loai.vat + '.'],
         loiGiai: ['Có $' + so.join(' + ') + ' = ' + tong + '$ kết quả có thể, đồng khả năng.', 'Có ' + so[j] + ' kết quả thuận lợi (' + so[j] + ' ' + ten(j) + ').', '$P = ' + pTex(cc, so[j], tong) + '$'],
         loiThuongGap: locLoi(cc, kq, loi)
@@ -75,19 +83,23 @@
         { boi: 'Hộp có ' + x + ' viên bi đỏ và ' + y + ' viên bi xanh. Lấy ngẫu nhiên một viên bi.',
           bc: ['Lấy được viên bi đỏ hoặc xanh', 'Lấy được viên bi màu vàng', 'Lấy được viên bi đỏ'],
           vi: ['Viên bi nào trong hộp cũng là đỏ hoặc xanh.', 'Trong hộp không có viên bi vàng nào.', 'Có thể lấy được bi đỏ, cũng có thể lấy được bi xanh.'],
-          tl: [x + y, 0, x], tong: x + y },
+          tl: [x + y, 0, x], tong: x + y,
+          hinh: function (i) { return { nhom: [{ ten: 'Đỏ', so: x, mau: MAU_TEN['đỏ'] }, { ten: 'Xanh', so: y, mau: MAU_TEN['xanh'] }], nhomThuan: [['Đỏ', 'Xanh'], [], ['Đỏ']][i] }; } },
         { boi: 'Hộp có các thẻ ghi số $1;\\ 2;\\ \\dots;\\ ' + n + '$. Rút ngẫu nhiên một thẻ.',
           bc: ['Rút được thẻ ghi số không vượt quá ' + n, 'Rút được thẻ ghi số lớn hơn ' + n, 'Rút được thẻ ghi số chẵn'],
           vi: ['Mọi thẻ đều ghi số từ 1 đến ' + n + '.', 'Không có thẻ nào ghi số lớn hơn ' + n + '.', 'Có thể rút được thẻ chẵn, cũng có thể rút được thẻ lẻ.'],
-          tl: [n, 0, Math.floor(n / 2)], tong: n },
+          tl: [n, 0, Math.floor(n / 2)], tong: n,
+          hinh: function (i) { return { loai: 'theSo', tu: 1, den: n, loc: [function () { return true; }, function () { return false; }, function (v) { return v % 2 === 0; }][i] }; } },
         { boi: 'Gieo một con xúc xắc cân đối.',
           bc: ['Số chấm xuất hiện nhỏ hơn 7', 'Số chấm xuất hiện bằng 7', 'Số chấm xuất hiện lớn hơn ' + (x % 4 + 2)],
           vi: ['Số chấm luôn là một trong các số từ 1 đến 6, đều nhỏ hơn 7.', 'Xúc xắc không có mặt 7 chấm.', 'Biến cố có thể xảy ra, cũng có thể không.'],
-          tl: [6, 0, 6 - (x % 4 + 2)], tong: 6 }]);
+          tl: [6, 0, 6 - (x % 4 + 2)], tong: 6,
+          hinh: function (i) { var h = x % 4 + 2; return { loai: 'xucXac', loc: [function () { return true; }, function () { return false; }, function (v) { return v > h; }][i] }; } }]);
       var LUA = ['Biến cố chắc chắn, xác suất bằng $1$', 'Biến cố không thể, xác suất bằng $0$', 'Biến cố có thể xảy ra hoặc không, xác suất lớn hơn $0$ và nhỏ hơn $1$'];
       return {
         de: ngu.boi + ' Biến cố "' + ngu.bc[loai] + '" là:',
         dapAn: { kieu: 'chon', gt: loai, luaChon: LUA },
+        hinhGiai: hg(Object.assign({ tenBienCo: ngu.bc[loai] }, ngu.hinh(loai)), 'dem'),
         goiY: ['Biến cố chắc chắn luôn xảy ra; biến cố không thể không bao giờ xảy ra.', 'Đếm số kết quả thuận lợi: bằng tất cả, bằng 0, hay ở giữa?'],
         loiGiai: [ngu.vi[loai] + ' Có ' + ngu.tl[loai] + ' trên ' + ngu.tong + ' kết quả thuận lợi.', 'Đáp án: ' + LUA[loai] + '.']
       };
@@ -118,6 +130,7 @@
         de: vong ? 'Tấm bìa tròn được chia thành ' + n + ' hình quạt như nhau, đánh số $1;\\ 2;\\ \\dots;\\ ' + b + '$, gắn vào trục quay có mũi tên cố định. Quay tấm bìa. Tính xác suất để mũi tên chỉ vào ' + bc.ten + '.'
           : 'Hộp có các tấm thẻ giống nhau ghi số $' + a + ';\\ ' + (a + 1) + ';\\ \\dots;\\ ' + b + '$. Rút ngẫu nhiên một thẻ. Tính xác suất rút được thẻ ghi ' + bc.ten + '.',
         hinh: hinh,
+        hinhGiai: hg({ loai: 'theSo', tu: a, den: b, thuanLoi: tl, tenBienCo: hoa(bc.ten.replace(/\*\*/g, '')) }),
         dapAn: { kieu: 'so', gt: kq.ascii },
         goiY: [(vong ? 'Các hình quạt như nhau' : 'Các thẻ giống nhau') + ' nên các kết quả đồng khả năng. Đếm số kết quả có thể (nhớ cộng 1).', 'Liệt kê các kết quả thuận lợi rồi lập tỉ số.'],
         loiGiai: ['Có $' + b + ' - ' + a + ' + 1 = ' + n + '$ kết quả có thể, đồng khả năng.', 'Kết quả thuận lợi: $' + ds(tl) + '$ (' + m + ' kết quả).', '$P = ' + pTex(cc, m, n) + '$'],
@@ -133,12 +146,12 @@
       var k = r.so(3, 4), so = day(1, k).map(function () { return r.so(2, 10); }), tong = so.reduce(function (s, x) { return s + x; }, 0);
       var i = r.so(0, k - 1), i2 = (i + 1 + r.so(0, k - 2)) % k, khong = r.dau() > 0, tl, hoi, giai, loi;
       if (khong) {
-        tl = tong - so[i]; hoi = '**không** lấy được ' + bt.ten[i];
+        tl = tong - so[i]; hoi = '**không** lấy được ' + bt.ten[i]; var tlTen = bt.ten.slice(0, k).filter(function (x, j) { return j !== i; });
         giai = 'Số kết quả thuận lợi: $' + tong + ' - ' + so[i] + ' = ' + tl + '$.';
         loi = [{ tu: so[i], mau: tong, giaiThich: 'Đó là xác suất **lấy được** ' + bt.ten[i] + '. Đề hỏi **không** lấy được.' }];
       } else {
         if (i2 < i) { var t = i; i = i2; i2 = t; }
-        tl = so[i] + so[i2]; hoi = 'lấy được ' + bt.ten[i] + ' hoặc ' + bt.ten[i2];
+        tl = so[i] + so[i2]; hoi = 'lấy được ' + bt.ten[i] + ' hoặc ' + bt.ten[i2]; tlTen = [bt.ten[i], bt.ten[i2]];
         giai = 'Số kết quả thuận lợi: $' + so[i] + ' + ' + so[i2] + ' = ' + tl + '$.';
         loi = [{ tu: so[i], mau: tong, giaiThich: '"Hoặc" gồm cả ' + bt.ten[i] + ' **và** ' + bt.ten[i2] + '.' }];
       }
@@ -147,6 +160,7 @@
       return {
         de: bt.boi + ' ' + so.map(function (s, j) { return s + ' ' + bt.noi + bt.ten[j]; }).join(', ') + (bt.them || '') + '. ' + bt.dong + '. Tính xác suất của biến cố "' + hoi.replace(/\*\*/g, '') + '".',
         dapAn: { kieu: 'so', gt: kq.ascii },
+        hinhGiai: hg({ tenBienCo: hoa(hoi.replace(/\*\*/g, '')), nhom: so.map(function (s, j) { return { ten: hoa(bt.ten[j]), so: s, mau: mauTen(bt.ten[j], j) }; }), nhomThuan: tlTen.map(hoa) }),
         goiY: ['Mỗi ' + bt.vat + ' là một kết quả có thể. Có tất cả bao nhiêu ' + bt.vat + '?', khong ? 'Không lấy được ' + bt.ten[i] + ' nghĩa là lấy được một trong các loại còn lại.' : 'Cộng số ' + bt.vat + ' của hai loại.'],
         loiGiai: ['Có $' + so.join(' + ') + ' = ' + tong + '$ kết quả có thể, đồng khả năng.', giai, '$P = ' + pTex(cc, tl, tong) + '$'],
         loiThuongGap: locLoi(cc, kq, loi)

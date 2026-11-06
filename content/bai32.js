@@ -11,8 +11,71 @@
   var diemThi = bang('Điểm kiểm tra của 100 học sinh', 'Điểm', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'Số học sinh', [2, 5, 8, 10, 15, 18, 17, 12, 8, 5]);
   var haiXucXac = bang('Kết quả 100 lần gieo hai xúc xắc của Mai', 'Tổng số chấm', ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'], 'Số lần', [3, 6, 8, 11, 13, 17, 14, 10, 8, 6, 4]);
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  // lanThu: mỗi lần thử là một ô, ô sáng là lần biến cố xảy ra. moPhong: rút bi có trả lại, tỉ lệ k/n theo số lần rút.
+  function lt(tuyChon, them) { return Object.assign({ ten: 'lanThu', tuyChon: tuyChon }, them); }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  function nh(ten, so, mau) { return { ten: ten, so: so, mau: mau }; }
+  var TUI = { nhom: [nh('Đỏ', 3, '#e03131'), nh('Xanh', 2, '#1971c2')], thuan: ['Đỏ'] };
+  var CUOC_GOI = ['0', '1', '2', '3', '4', '5', '6', '7', '8'].map(function (t, i) { return nh(t, [5, 9, 15, 10, 5, 6, 4, 2, 3][i]); });
+  var PHE_PHAM = [nh('0', 12), nh('1', 4), nh('2', 2), nh('3', 1), nh('≥4', 1)];
+  var THANH = 'Hình không vẽ từng lần: thanh tượng trưng cho tất cả, phần sáng theo đúng tỉ lệ.';
+  function soBatKi(v) {
+    if (v > 1) return { thamSo: { thu: v }, t: 1, loi: 'Tỉ lệ không lớn hơn $1$: số ô sáng không thể nhiều hơn tất cả các ô.' };
+    return { thamSo: { thu: v }, t: 1, loi: 'Vạch đỏ là số em gõ, chưa trùng chỗ phần sáng kết thúc. Đếm ô sáng rồi chia cho **tất cả** các ô.' };
+  }
+
   TOAN8.bai({
     id: 32, ten: 'Mối liên hệ giữa xác suất thực nghiệm với xác suất và ứng dụng', sgk: { tap: 2, trang: 67 },
+
+    nhin: {
+      tieuDe: 'Rút càng nhiều lần, tỉ lệ càng sát xác suất', loai: 'minhHoa',
+      luuY: 'Máy rút bi theo một **hạt giống** cố định, nên lần nào xem cũng ra đúng đường này. Kéo thanh **Lần chạy** để xem lần rút khác: đường lúc đầu khác hẳn, nhưng khi $n$ lớn thì đường nào cũng dồn về gần $0{,}6$. Ở lớp 8, điều này được thừa nhận qua thí nghiệm, chưa chứng minh.',
+      canh: { ten: 'moPhong', tuyChon: TUI, giay: 14, moTa: 'Đồ thị tỉ lệ số lần rút được bi đỏ theo số lần rút, từ 1 đến 1000 lần. Đường đứt nét là xác suất 0,6.' },
+      buoc: [
+        { t: 0, chu: 'Túi có $3$ bi đỏ và $2$ bi xanh. Theo bài 31, xác suất lấy được bi đỏ là $\\frac{3}{5} = 0{,}6$ (đường xanh lá đứt nét).' },
+        { t: 0.08, chu: 'Lấy một viên, ghi màu, trả lại túi, rồi lặp lại. Sau $\\cb{n}$ lần có $\\cc{k}$ lần ra đỏ. Tỉ lệ $\\ca{\\frac{k}{n}}$ là đường cam.' },
+        { t: 0.39, chu: 'Mới $10$ lần: tỉ lệ nhảy lên xuống, có lúc còn xa $0{,}6$.' },
+        { t: 0.7, chu: 'Khoảng $100$ lần: đường cam đã bám gần đường xanh lá.' },
+        { t: 1, chu: '$1000$ lần: tỉ lệ $\\frac{k}{n}$ gần như nằm trên $0{,}6$.' }
+      ],
+      ketLuan: 'Thử càng nhiều lần, xác suất thực nghiệm càng gần xác suất: $$\\ca{\\dfrac{\\cc{k}}{\\cb{n}}} \\approx P(E)$$ Khi không đếm được kết quả đồng khả năng, ta dùng $\\frac{k}{n}$ để **ước lượng** $P(E)$.',
+      dung: {
+        tieuDe: 'Xác suất thực nghiệm của mặt ngửa là bao nhiêu?', tuBai: '32.4',
+        canh: lt({ n: 50, k: 23, hat: 5, tenCo: 'N', tenKhong: 'S', p: 0.5, pNhan: '1/2', tieuDe: 'Mặt ngửa (N) trong 50 lần tung', anSo: true },
+          { t: 0.54, moTa: 'Năm mươi ô, mỗi ô là một lần tung. Ô sáng là lần ra mặt ngửa.' }),
+        moiThu: 'Mỗi ô là một lần tung, ô sáng là lần ra mặt ngửa. Gõ xác suất thực nghiệm. Nếu sai, hình vẽ đúng số em gõ.',
+        phanUng: [
+          { gt: '1/2', trangThai: 'lyThuyet', t: 1, loi: '$\\frac12$ là **xác suất** (đồng xu có hai mặt đồng khả năng), là vạch đứt nét. Đề hỏi xác suất **thực nghiệm**: phần sáng thật trong $50$ lần tung của Long.' },
+          { gt: '23/27', trangThai: 'chiaKhong', t: 1, loi: 'Em chia cho $27$ ô **tối** (số lần ra sấp, viền đỏ). Mẫu số là **tất cả** $50$ lần tung.' },
+          { gt: 23, thamSo: { thu: 23 }, t: 1, loi: '$23$ là **số** ô sáng. Xác suất thực nghiệm là **tỉ lệ**: số ô sáng chia cho tổng số ô.' }
+        ],
+        soBatKi: soBatKi,
+        dungChu: '$23$ ô sáng trong $50$ ô: $\\frac{23}{50} = 0{,}46$. Hơi khác xác suất $\\frac12$ vì Long mới tung $50$ lần.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng vẫn là ô sáng chia tất cả các ô',
+        baDe: [
+          { tuBai: '32.1', canh: lt({ n: 160, k: 120, hat: 11, tieuDe: 'Kẹp nằm trọn trong một viên gạch', anSo: true }, { moTa: 'Một trăm sáu mươi ô, mỗi ô là một lần tung kẹp.' }), tenNut: 'Xếp ô sáng lên đầu',
+            phanUng: [{ gt: 3, trangThai: 'chiaKhong', loi: 'Em chia $120$ cho $40$ ô **tối**. Mẫu số là **tất cả** $160$ lần tung.' }],
+            dungChu: '$\\frac{120}{160} = \\frac{3}{4}$.', saiChu: 'Ô sáng chia cho **tất cả** các ô: $120$ trên $160$.' },
+          { tuBai: '32.5', canh: lt({ nhom: PHE_PHAM, nhomThuan: ['2', '3', '≥4'], tieuDe: 'Ngày có ít nhất 2 phế phẩm', anSo: true }, { moTa: 'Hai mươi ô, mỗi ô là một ngày, ghi số phế phẩm của ngày đó.' }), tenNut: 'Sáng các ngày thuận lợi',
+            de: 'Một nhân viên ghi lại số phế phẩm của nhà máy mỗi ngày trong 20 ngày: 12 ngày không có phế phẩm, 4 ngày có 1 phế phẩm, 2 ngày có 2 phế phẩm, 1 ngày có 3 phế phẩm, 1 ngày có từ 4 phế phẩm trở lên. Tính xác suất thực nghiệm của biến cố "Trong một ngày có ít nhất 2 phế phẩm".',
+            dapAn: { kieu: 'so', gt: '1/5' }, goiY: ['"Ít nhất 2" gồm các ngày có 2, 3 và từ 4 phế phẩm trở lên.'], loiGiai: ['Số ngày có ít nhất 2 phế phẩm: $2 + 1 + 1 = 4$.', 'Xác suất thực nghiệm $= \\dfrac{4}{20} = \\dfrac{1}{5}$'],
+            loiThuongGap: [],
+            phanUng: [{ gt: '1/10', loi: '"Ít nhất 2" gồm cả ngày có $2$, $3$ và từ $4$ phế phẩm trở lên. Đếm mọi ô sáng.' }, { gt: '1/4', trangThai: 'chiaKhong', loi: 'Em chia $4$ cho $16$ ô **tối**. Mẫu số là **tất cả** $20$ ngày.' }],
+            dungChu: '$4$ ô sáng trong $20$ ô: $\\frac{4}{20} = \\frac15$.', saiChu: 'Đếm các ô ghi 2, 3, ≥4 rồi chia cho cả $20$ ngày.' },
+          { tuBai: '32.10', canh: lt({ n: 100, k: 40, duBao: 80, nhan1: '100 học sinh đã biết điểm', nhan2: '80 học sinh khác', tenCo: 'có điểm ≤ 5', anSo: true }, { moTa: 'Hai thanh: 100 học sinh đã biết điểm và 80 học sinh khác, phần sáng cùng một tỉ lệ.' }), tenNut: 'Giữ đúng tỉ lệ',
+            de: 'Trong 100 học sinh lớp 8 chọn ngẫu nhiên ở trường X, có 40 bạn được điểm kiểm tra không vượt quá 5. Trong một nhóm 80 học sinh lớp 8 khác của trường X, hãy dự đoán có khoảng bao nhiêu bạn được điểm không vượt quá 5.',
+            dapAn: { kieu: 'so', gt: 32 }, goiY: ['Xác suất được ước lượng là $\\frac{40}{100} = 0{,}4$. Giữ tỉ lệ đó cho nhóm $80$ bạn.'], loiGiai: ['$P \\approx \\dfrac{40}{100} = 0{,}4$.', 'Số học sinh dự đoán: $80 \\cdot 0{,}4 = 32$'],
+            loiThuongGap: [],
+            phanUng: [{ gt: 200, thamSo: { thu: 200 }, loi: 'Dự đoán phải **nhân**: $80 \\cdot 0{,}4$. Số em gõ còn nhiều hơn cả nhóm $80$ bạn!' }, { gt: 40, thamSo: { thu: 40 }, loi: '$40$ là số bạn trong **100** bạn đã biết điểm. Nhóm mới chỉ có $80$ bạn: giữ đúng tỉ lệ $0{,}4$.' }],
+            soBatKi: function (v) { return { thamSo: { thu: v }, t: 1, loi: 'Vạch đỏ là số em gõ. Phần sáng của thanh dưới phải chiếm đúng tỉ lệ như thanh trên: $80 \\cdot \\frac{40}{100}$.' }; },
+            dungChu: '$80 \\cdot 0{,}4 = 32$: phần sáng của thanh dưới cùng tỉ lệ với thanh trên.', saiChu: 'Giữ đúng tỉ lệ $\\frac{40}{100}$ cho $80$ bạn.' }
+        ],
+        cachNhan: 'Ba đề, một khuôn: mỗi lần thử (mỗi lần tung, mỗi ngày, mỗi học sinh) là một ô. Ô sáng chia cho **tất cả** các ô là xác suất thực nghiệm. Muốn dự đoán thì giữ nguyên tỉ lệ đó cho số lần mới.'
+      }
+    },
 
     khamPha: {
       nhiemVu: 'Túi có 5 viên bi cùng kích thước: **3 bi đỏ** và **2 bi xanh**. **Trước khi bấm**, em hãy đoán: nếu lấy bi (rồi trả lại) thật nhiều lần thì tỉ lệ số lần lấy được bi đỏ sẽ gần số nào? Sau đó bấm **Thử 10 lần**, rồi **Thử 100 lần**, **Thử 1000 lần** vài lượt. Đường đỏ lúc đầu nhảy lung tung, về sau thì sao?',
@@ -46,19 +109,19 @@
     ],
 
     viDu: [
-      { de: 'Dùng bảng số cuộc gọi của ông An trong 59 ngày (xem phần Lý thuyết: 0 cuộc: 5 ngày; 1: 9; 2: 15; 3: 10; 4: 5; 5: 6; 6: 4; 7: 2; 8: 3). Tính xác suất thực nghiệm của $E$: "Trong một ngày ông An nhận được ít nhất 5 cuộc gọi" và $F$: "… nhiều nhất 3 cuộc gọi".', buoc: [
-        { lam: 'Số ngày có ít nhất 5 cuộc gọi: $6 + 4 + 2 + 3 = 15$ ngày. Xác suất thực nghiệm của $E$ là $\\dfrac{15}{59}$.', vi: '"Ít nhất 5" là 5, 6, 7 hoặc 8 cuộc. Mẫu số là tổng số ngày theo dõi: 59.' },
-        { lam: 'Số ngày có nhiều nhất 3 cuộc gọi: $5 + 9 + 15 + 10 = 39$ ngày. Xác suất thực nghiệm của $F$ là $\\dfrac{39}{59}$.', vi: '"Nhiều nhất 3" là 0, 1, 2 hoặc 3 cuộc (có cả ngày không có cuộc nào).' } ] },
-      { de: 'Kiểm tra ngẫu nhiên 500 chiếc ti vi của nhà máy X thì có 4 chiếc không đạt chất lượng. Ước lượng xác suất để một ti vi của nhà máy X không đạt chất lượng.', buoc: [
-        { lam: 'Trong $n = 500$ lần quan sát, biến cố xảy ra $k = 4$ lần.', vi: 'Ti vi đạt hay không đạt **không** đồng khả năng, nên phải dùng số liệu thực tế.' },
-        { lam: '$\\dfrac{4}{500} = 0{,}008 = 0{,}8\\%$. Vậy xác suất được ước lượng là $0{,}8\\%$.', vi: 'Xác suất thực nghiệm $\\dfrac{k}{n}$ dùng để ước lượng xác suất.' } ] },
-      { de: 'Trong 240 000 trẻ sơ sinh có 123 120 bé trai. Ước lượng xác suất của biến cố "Trẻ sơ sinh là bé gái".', buoc: [
-        { lam: 'Số bé gái: $240\\,000 - 123\\,120 = 116\\,880$.', vi: 'Biến cố hỏi bé **gái**, không phải bé trai.' },
-        { lam: '$\\dfrac{116\\,880}{240\\,000} = 0{,}487$. Vậy xác suất được ước lượng là $0{,}487$ (khoảng $48{,}7\\%$).', vi: 'Chia số lần biến cố xảy ra cho tổng số trẻ được theo dõi.' } ] },
-      { de: 'Kiểm tra 100 linh kiện: 62 cái không lỗi, 35 cái có đúng 1 lỗi, 3 cái có nhiều hơn 1 lỗi. Nếu kiểm tra 120 linh kiện khác, dự đoán có bao nhiêu linh kiện có đúng 1 lỗi?', buoc: [
-        { lam: 'Xác suất linh kiện có đúng 1 lỗi được ước lượng: $P \\approx \\dfrac{35}{100} = 0{,}35$.', vi: 'Dùng số liệu 100 linh kiện đã kiểm tra.' },
-        { lam: 'Gọi $h$ là số linh kiện có đúng 1 lỗi trong 120 cái: $\\dfrac{h}{120} \\approx 0{,}35$.', vi: 'Tỉ lệ trong lần kiểm tra mới cũng xấp xỉ xác suất.' },
-        { lam: '$h \\approx 120 \\cdot 0{,}35 = 42$. Dự đoán có khoảng 42 linh kiện có đúng 1 lỗi.', vi: 'Dự báo = số lần $\\times$ xác suất.' } ] }
+      { de: 'Dùng bảng số cuộc gọi của ông An trong 59 ngày (xem phần Lý thuyết: 0 cuộc: 5 ngày; 1: 9; 2: 15; 3: 10; 4: 5; 5: 6; 6: 4; 7: 2; 8: 3). Tính xác suất thực nghiệm của $E$: "Trong một ngày ông An nhận được ít nhất 5 cuộc gọi" và $F$: "… nhiều nhất 3 cuộc gọi".', canh: lt({ nhom: CUOC_GOI, bienCo: [{ ten: 'E: Ít nhất 5 cuộc gọi', nhom: ['5', '6', '7', '8'] }, { ten: 'F: Nhiều nhất 3 cuộc gọi', nhom: ['0', '1', '2', '3'] }] }, { ghiChu: 'Mỗi ô là một ngày, số trong ô là số cuộc gọi của ngày đó.' }), buoc: [
+        { lam: 'Số ngày có ít nhất 5 cuộc gọi: $6 + 4 + 2 + 3 = 15$ ngày. Xác suất thực nghiệm của $E$ là $\\dfrac{15}{59}$.', vi: '"Ít nhất 5" là 5, 6, 7 hoặc 8 cuộc. Mẫu số là tổng số ngày theo dõi: 59.', canh: { t: 1, thamSo: { chon: 0 } } },
+        { lam: 'Số ngày có nhiều nhất 3 cuộc gọi: $5 + 9 + 15 + 10 = 39$ ngày. Xác suất thực nghiệm của $F$ là $\\dfrac{39}{59}$.', vi: '"Nhiều nhất 3" là 0, 1, 2 hoặc 3 cuộc (có cả ngày không có cuộc nào).', canh: { t: 1, thamSo: { chon: 1 } } } ] },
+      { de: 'Kiểm tra ngẫu nhiên 500 chiếc ti vi của nhà máy X thì có 4 chiếc không đạt chất lượng. Ước lượng xác suất để một ti vi của nhà máy X không đạt chất lượng.', canh: lt({ n: 500, k: 4, nhan1: '500 ti vi đã kiểm tra', tenCo: 'không đạt' }, { ghiChu: THANH }), buoc: [
+        { lam: 'Trong $n = 500$ lần quan sát, biến cố xảy ra $k = 4$ lần.', vi: 'Ti vi đạt hay không đạt **không** đồng khả năng, nên phải dùng số liệu thực tế.', canh: { t: 0.4 } },
+        { lam: '$\\dfrac{4}{500} = 0{,}008 = 0{,}8\\%$. Vậy xác suất được ước lượng là $0{,}8\\%$.', vi: 'Xác suất thực nghiệm $\\dfrac{k}{n}$ dùng để ước lượng xác suất.', canh: { t: 1 } } ] },
+      { de: 'Trong 240 000 trẻ sơ sinh có 123 120 bé trai. Ước lượng xác suất của biến cố "Trẻ sơ sinh là bé gái".', canh: lt({ nhom: [nh('Bé trai', 123120), nh('Bé gái', 116880)], nhomThuan: ['Bé gái'], nhan1: '240 000 trẻ sơ sinh', tenCo: 'bé gái' }, { ghiChu: THANH }), buoc: [
+        { lam: 'Số bé gái: $240\\,000 - 123\\,120 = 116\\,880$.', vi: 'Biến cố hỏi bé **gái**, không phải bé trai.', canh: { t: 0.7 } },
+        { lam: '$\\dfrac{116\\,880}{240\\,000} = 0{,}487$. Vậy xác suất được ước lượng là $0{,}487$ (khoảng $48{,}7\\%$).', vi: 'Chia số lần biến cố xảy ra cho tổng số trẻ được theo dõi.', canh: { t: 1 } } ] },
+      { de: 'Kiểm tra 100 linh kiện: 62 cái không lỗi, 35 cái có đúng 1 lỗi, 3 cái có nhiều hơn 1 lỗi. Nếu kiểm tra 120 linh kiện khác, dự đoán có bao nhiêu linh kiện có đúng 1 lỗi?', canh: lt({ n: 100, k: 35, duBao: 120, nhan1: '100 linh kiện đã kiểm tra', nhan2: '120 linh kiện khác', tenCo: 'có đúng 1 lỗi' }), buoc: [
+        { lam: 'Xác suất linh kiện có đúng 1 lỗi được ước lượng: $P \\approx \\dfrac{35}{100} = 0{,}35$.', vi: 'Dùng số liệu 100 linh kiện đã kiểm tra.', canh: { t: 0.6 } },
+        { lam: 'Gọi $h$ là số linh kiện có đúng 1 lỗi trong 120 cái: $\\dfrac{h}{120} \\approx 0{,}35$.', vi: 'Tỉ lệ trong lần kiểm tra mới cũng xấp xỉ xác suất.', canh: { t: 0.8 } },
+        { lam: '$h \\approx 120 \\cdot 0{,}35 = 42$. Dự đoán có khoảng 42 linh kiện có đúng 1 lỗi.', vi: 'Dự báo = số lần $\\times$ xác suất.', canh: { t: 1 } } ] }
     ],
 
     viDuMo: [
@@ -75,7 +138,7 @@
     ],
 
     baiTap: [
-      { id: '32.1', muc: 1, de: 'Tung một chiếc kẹp giấy 160 lần xuống sàn lát gạch hình vuông, thấy 120 lần chiếc kẹp nằm hoàn toàn bên trong một viên gạch. Tính xác suất thực nghiệm của biến cố "Chiếc kẹp nằm hoàn toàn trong viên gạch".',
+      { id: '32.1', hinhGiai: hg(lt({ n: 160, k: 120, hat: 11, tieuDe: 'Kẹp nằm trọn trong một viên gạch' })), muc: 1, de: 'Tung một chiếc kẹp giấy 160 lần xuống sàn lát gạch hình vuông, thấy 120 lần chiếc kẹp nằm hoàn toàn bên trong một viên gạch. Tính xác suất thực nghiệm của biến cố "Chiếc kẹp nằm hoàn toàn trong viên gạch".',
         dapAn: { kieu: 'so', gt: '3/4' },
         goiY: ['Xác suất thực nghiệm $= \\dfrac{k}{n}$: $k$ là số lần biến cố xảy ra, $n$ là tổng số lần tung.', '$k = 120$, $n = 160$.'],
         loiGiai: ['Tung $n = 160$ lần, biến cố xảy ra $k = 120$ lần.', 'Xác suất thực nghiệm $= \\dfrac{120}{160} = \\dfrac{3}{4}$'],
@@ -83,18 +146,18 @@
           { gt: 3, giaiThich: 'Em chia 120 cho 40 (số lần không xảy ra). Mẫu số phải là tổng số lần tung: 160.' },
           { gt: '1/4', giaiThich: '$\\frac{40}{160}$ là tỉ lệ số lần kẹp **không** nằm hoàn toàn trong viên gạch.' }] },
 
-      { id: '32.2', muc: 1, de: 'Kiểm tra ngẫu nhiên 400 bóng đèn của một nhà máy thấy có 6 bóng hỏng. Ước lượng xác suất để một bóng đèn của nhà máy bị hỏng (có thể ghi phân số, số thập phân hoặc phần trăm).',
+      { id: '32.2', hinhGiai: hg(lt({ n: 400, k: 6, thanh: true, nhan1: '400 bóng đèn đã kiểm tra', tenCo: 'hỏng' }, { ghiChu: THANH })), muc: 1, de: 'Kiểm tra ngẫu nhiên 400 bóng đèn của một nhà máy thấy có 6 bóng hỏng. Ước lượng xác suất để một bóng đèn của nhà máy bị hỏng (có thể ghi phân số, số thập phân hoặc phần trăm).',
         dapAn: { kieu: 'so', gt: '3/200' },
         goiY: ['$n = 400$ bóng được kiểm tra, $k = 6$ bóng hỏng.', '$P \\approx \\dfrac{6}{400}$. Đổi ra số thập phân hoặc phần trăm.'],
         loiGiai: ['$P \\approx \\dfrac{6}{400} = 0{,}015 = 1{,}5\\%$.', 'Vậy $P \\approx \\dfrac{6}{400} = \\dfrac{3}{200}$'],
         loiThuongGap: [{ gt: '6/394', giaiThich: 'Mẫu số là tổng số bóng được kiểm tra (400), không phải số bóng tốt (394).' }] },
 
-      { id: '32.3', muc: 1, de: 'Khi số lần thực nghiệm càng lớn thì xác suất thực nghiệm của một biến cố:',
+      { id: '32.3', hinhGiai: hg({ ten: 'moPhong', tuyChon: TUI }), muc: 1, de: 'Khi số lần thực nghiệm càng lớn thì xác suất thực nghiệm của một biến cố:',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['càng gần với xác suất của biến cố đó', 'luôn bằng $0{,}5$', 'càng xa xác suất của biến cố đó', 'càng gần $1$'] },
         goiY: ['Nhớ lại thí nghiệm tung đồng xu và rút bi ở phần Khám phá.', 'Đường đỏ (xác suất thực nghiệm) về sau nằm sát đường nào?'],
         loiGiai: ['Thử càng nhiều lần, xác suất thực nghiệm càng gần xác suất của biến cố. Vì vậy ta dùng nó để **ước lượng** xác suất.', 'Đáp án: càng gần với xác suất của biến cố đó.'] },
 
-      { id: '32.4', muc: 1, de: 'Bạn Long tung một đồng xu 50 lần thì thấy 23 lần xuất hiện mặt ngửa. Tính xác suất thực nghiệm của biến cố "Xuất hiện mặt ngửa".',
+      { id: '32.4', hinhGiai: hg(lt({ n: 50, k: 23, hat: 5, tenCo: 'N', tenKhong: 'S', p: 0.5, pNhan: '1/2', hienP: true, tieuDe: 'Mặt ngửa (N) trong 50 lần tung' })), muc: 1, de: 'Bạn Long tung một đồng xu 50 lần thì thấy 23 lần xuất hiện mặt ngửa. Tính xác suất thực nghiệm của biến cố "Xuất hiện mặt ngửa".',
         dapAn: { kieu: 'so', gt: '23/50' },
         goiY: ['Tung $n = 50$ lần, mặt ngửa xuất hiện $k = 23$ lần.', 'Lập tỉ số $\\dfrac{k}{n}$.'],
         loiGiai: ['Xác suất thực nghiệm $= \\dfrac{23}{50} = 0{,}46$.', 'Lưu ý: xác suất thực nghiệm ($0{,}46$) có thể khác xác suất $\\dfrac{1}{2}$, vì mới tung 50 lần.', 'Đáp số: $\\dfrac{23}{50}$.'],
@@ -113,7 +176,7 @@
         goiY: ['Mẫu số luôn là 20 (số ngày theo dõi).', '"Ít nhất 2 phế phẩm" gồm các cột 2, 3 và ≥ 4.'],
         loiGiai: ['$M$: $\\dfrac{12}{20} = \\dfrac{3}{5}$.', '$N$: $\\dfrac{4}{20} = \\dfrac{1}{5}$.', '$K$: $\\dfrac{2 + 1 + 1}{20} = \\dfrac{4}{20} = \\dfrac{1}{5}$.'] },
 
-      { id: '32.6', muc: 2, de: 'Thống kê thời lượng 80 chương trình quảng cáo trên một đài truyền hình: từ 0 đến 19 giây: 18 chương trình; từ 20 đến 39 giây: 36; từ 40 đến 59 giây: 20; trên 60 giây: 6. Tính xác suất thực nghiệm để một chương trình quảng cáo kéo dài:',
+      { id: '32.6', hinhGiai: hg(lt({ nhom: [nh('0–19 giây', 18), nh('20–39 giây', 36), nh('40–59 giây', 20), nh('trên 60 giây', 6)], nhomThuan: ['20–39 giây', '40–59 giây'], thanh: true, tieuDe: 'Từ 20 đến 59 giây', nhan1: '80 chương trình', tenCo: 'từ 20 đến 59 giây' })), muc: 2, de: 'Thống kê thời lượng 80 chương trình quảng cáo trên một đài truyền hình: từ 0 đến 19 giây: 18 chương trình; từ 20 đến 39 giây: 36; từ 40 đến 59 giây: 20; trên 60 giây: 6. Tính xác suất thực nghiệm để một chương trình quảng cáo kéo dài:',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'từ 20 đến 39 giây', kieu: 'so', gt: '9/20' },
           { nhan: 'trên 1 phút', kieu: 'so', gt: '3/40',
@@ -123,7 +186,7 @@
         goiY: ['Tổng số chương trình là 80: đó là mẫu số.', '"Từ 20 đến 59 giây" gồm hai nhóm 20–39 và 40–59.'],
         loiGiai: ['Từ 20 đến 39 giây: $\\dfrac{36}{80} = \\dfrac{9}{20}$.', 'Trên 1 phút: $\\dfrac{6}{80} = \\dfrac{3}{40}$.', 'Từ 20 đến 59 giây: $\\dfrac{36 + 20}{80} = \\dfrac{56}{80} = \\dfrac{7}{10}$.'] },
 
-      { id: '32.7', muc: 2, de: 'Một cửa hàng bán được trong năm qua: 600 điện thoại loại A, 900 chiếc loại B và 1 000 chiếc loại C. Tính xác suất thực nghiệm của biến cố "Chiếc điện thoại được bán ra là loại A".',
+      { id: '32.7', hinhGiai: hg(lt({ nhom: [nh('Loại A', 600), nh('Loại B', 900), nh('Loại C', 1000)], nhomThuan: ['Loại A'], nhan1: '2 500 điện thoại đã bán', tenCo: 'loại A' }, { ghiChu: THANH })), muc: 2, de: 'Một cửa hàng bán được trong năm qua: 600 điện thoại loại A, 900 chiếc loại B và 1 000 chiếc loại C. Tính xác suất thực nghiệm của biến cố "Chiếc điện thoại được bán ra là loại A".',
         dapAn: { kieu: 'so', gt: '6/25' },
         goiY: ['Tổng số điện thoại bán được là bao nhiêu?', 'Lấy số điện thoại loại A chia cho tổng.'],
         loiGiai: ['Tổng số điện thoại: $600 + 900 + 1000 = 2500$.', 'Xác suất thực nghiệm $= \\dfrac{600}{2500} = \\dfrac{6}{25}$'],
@@ -131,7 +194,7 @@
           { gt: '1/3', giaiThich: 'Ba loại điện thoại **không** bán được số lượng như nhau. Phải dùng số liệu: $\\frac{600}{2500}$.' },
           { gt: '6/19', giaiThich: 'Mẫu số là tổng số điện thoại (2 500), không phải số điện thoại không phải loại A (1 900).' }] },
 
-      { id: '32.8', muc: 2, de: 'Một trạm nông nghiệp gieo thử 1 200 hạt giống thì có 1 080 hạt nảy mầm. Ước lượng xác suất để một hạt giống loại này nảy mầm.',
+      { id: '32.8', hinhGiai: hg(lt({ n: 1200, k: 1080, nhan1: '1 200 hạt đã gieo', tenCo: 'nảy mầm' }, { ghiChu: THANH })), muc: 2, de: 'Một trạm nông nghiệp gieo thử 1 200 hạt giống thì có 1 080 hạt nảy mầm. Ước lượng xác suất để một hạt giống loại này nảy mầm.',
         dapAn: { kieu: 'so', gt: '9/10' },
         goiY: ['$n = 1200$ hạt được gieo, $k = 1080$ hạt nảy mầm.', 'Lập tỉ số $\\dfrac{k}{n}$ rồi rút gọn.'],
         loiGiai: ['$P \\approx \\dfrac{1080}{1200}$.', '$P \\approx \\dfrac{1080}{1200} = \\dfrac{9}{10}$'],
