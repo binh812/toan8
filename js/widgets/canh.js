@@ -58,7 +58,8 @@
       var dang = -1;
       (cfg.buoc || []).forEach(function (b, i) { if (t >= b.t - 1e-9) dang = i; });
       cacBuoc.forEach(function (li, i) { li.classList.toggle('dang', i === dang); });
-      Object.keys(nhanSo).forEach(function (k) { nhanSo[k].textContent = C.fmt(p[k]); inputSo[k].value = p[k]; });
+      // hienSo: cảnh tự định cách ghi số cạnh thanh (ví dụ giá trị 'không thử' của thanh Thử phá)
+      Object.keys(nhanSo).forEach(function (k) { var s = canh.thamSo[k]; nhanSo[k].textContent = s.hienSo ? s.hienSo(p[k], p) : C.fmt(p[k]); inputSo[k].value = p[k]; });
       if (dongSo) {
         var moi = cfg.dongSo(p, C.fmt);
         if (moi !== dongCu) { dongCu = moi; dongSo.innerHTML = T.md(moi); }

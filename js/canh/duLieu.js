@@ -9,6 +9,7 @@
   var TIM = '#9c36b5', VANG = '#f08c00', PI = Math.PI;
   var MAU = ['--b', '--a', '--cc', TIM, VANG, '#0c8599', '#c2255c', '#5c940d'];
   var TEN_LOAI = ['rời rạc', 'liên tục', 'không thể sắp thứ tự', 'có thể sắp thứ tự'];
+  var KHOA_LOAI = ['roiRac', 'lienTuc', 'khongThuTu', 'coThuTu'];
 
   /* ---------- Tiện ích ---------- */
   function mau(m) { return m && m.charAt(0) === '-' ? 'var(' + m + ')' : m; }
@@ -23,6 +24,8 @@
     var n = s[0].length >= 4 ? s[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : s[0];
     return (r < 0 ? '−' : '') + n + (s[1] ? ',' + s[1] : '');
   }
+  // Số đặt trong $…$ (thẻ soi): dấu phẩy thập phân {,}, khoảng nhóm \,
+  function soM(x) { return soDep(x).replace(/,/g, '{,}').replace(/ /g, '\\,').replace('−', '-'); }
   // Tỉ lệ phần trăm: chia hết thì ghi thẳng, lẻ thì ghi ≈ và làm tròn một chữ số thập phân
   function phanTram(a, b, chuSo) {
     var h = Math.pow(10, chuSo == null ? 1 : chuSo), p = 100 * a / b, r = Math.round(p * h) / h;
@@ -120,7 +123,7 @@
       var s = typeof v === 'number' ? soDep(v) : String(v);
       return { s: s, v: v, w: rongThe(s), vl: (h.vl || []).indexOf(i) >= 0, tang: 0, bac: 0 };
     });
-    var r = { loai: loai, ten: h.ten || '', mau: h.mau || '--b', the: ds, giua: null }, soTang = 1, bac = 0;
+    var r = { loai: loai, ten: h.ten || '', mau: h.mau || '--b', the: ds, giua: null, thuTu: h.thuTu }, soTang = 1, bac = 0;
     if (loai <= 1) {
       var hl = ds.filter(function (c) { return !c.vl; }), vl = ds.filter(function (c) { return c.vl; });
       var vs = hl.map(function (c) { return c.v; });
@@ -211,6 +214,9 @@
       viet(svg, 0.3, r.y0 + 0.65, r.ten, 0.8, { mau: m, neo: 'start' });
       viet(svg, W - 0.3, r.y0 + 0.65, TEN_LOAI[r.loai], 0.8, { mau: m, neo: 'end', op: opTen });
       var opG = hienGia < 1 ? { opacity: hienGia } : null;
+      // Soi chi tiết: bấm vào giá thì hiện loại dữ liệu (chưa cho biết loại thì không gắn, kẻo lộ đáp án)
+      var svg0 = svg;
+      svg = trung ? svg0 : C.mk('g', { 'data-soi': KHOA_LOAI[r.loai] }, svg0);
       if (r.loai <= 1 && hienGia > 0) {
         var tr = r.truc;
         if (trung || (r.loai === 0 && !tr.cham)) {
@@ -239,6 +245,7 @@
       } else if (r.loai === 2 && hienGia > 0) {
         hcn(svg, 0.45, day - 0.3 - TANG * r.soTang, W - 0.9, TANG * r.soTang + 0.25, { vien: m, day: 0.05, dut: '0.25 0.18', rx: 0.5, op: hienGia });
       }
+      svg = svg0;
     });
     // Túi chữ không thứ tự: đổi chỗ hai thẻ cạnh nhau vẫn thế
     g.hang.forEach(function (r, ih) {
@@ -250,24 +257,45 @@
         if (x1 - x0 > 0.8) muiTen2(svg, [x0, a[1]], [x1, a[1]], r.mau, hienGia * C.muot((xong - 0.9) / 0.1));
       }
     });
+    var anLoai = o.anTen && !kiem;
     g.the.forEach(function (c) {
-      var r = g.hang[c.hang];
-      veThe(svg, c, c.s, { vien: r.mau });
+      var r = g.hang[c.hang], cha = anLoai ? svg : C.mk('g', { 'data-soi': c.vl ? 'voLi' : KHOA_LOAI[r.loai] }, svg);
+      veThe(cha, c, c.s, { vien: r.mau });
       if (c.vl && opVl > 0) {
-        hcn(svg, c.x - c.w / 2, c.y - c.h / 2, c.w, c.h, { vien: '--sai', day: 0.14, rx: 0.18, op: opVl });
-        viet(svg, c.x, c.y + 0.04, c.s, c.co, { mau: '--sai', op: opVl });
-        if (c.dich[1] === r.day - 0.85) viet(svg, c.x, r.day + 0.72, 'vô lí', 0.7, { mau: '--sai', op: opVl });
+        hcn(cha, c.x - c.w / 2, c.y - c.h / 2, c.w, c.h, { vien: '--sai', day: 0.14, rx: 0.18, op: opVl });
+        viet(cha, c.x, c.y + 0.04, c.s, c.co, { mau: '--sai', op: opVl });
+        if (c.dich[1] === r.day - 0.85) viet(cha, c.x, r.day + 0.72, 'vô lí', 0.7, { mau: '--sai', op: opVl });
       }
     });
     // Thẻ thử ở giữa hai giá trị: có nghĩa không?
     g.hang.forEach(function (r) {
       var q = r.giua;
       if (!q || opGiua <= 0) return;
-      var ve = { x: q.x, y: q.y, w: q.w, h: CAO_THE, co: CO_THE }, dem = r.loai === 0;
-      net(svg, [q.x, q.y + CAO_THE / 2], [q.x, r.day - 0.2], '--nhat', 0.05, { 'stroke-dasharray': '0.15 0.12', opacity: opGiua < 1 ? opGiua : null });
-      veThe(svg, ve, q.s, { vien: xet ? (dem ? '--sai' : '--cc') : '--nhat', dut: xet && !dem ? null : '0.22 0.14', op: opGiua, chu: xet ? (dem ? '--sai' : '--cc') : null });
-      if (xet) { if (dem) dauX(svg, q.x, q.y, 0.55, '--sai', opGiua); else dauV(svg, q.x + q.w / 2 + 0.45, q.y, 0.35, '--cc', opGiua); }
+      var ve = { x: q.x, y: q.y, w: q.w, h: CAO_THE, co: CO_THE }, dem = r.loai === 0, cha = xet ? C.mk('g', { 'data-soi': 'giua' }, svg) : svg;
+      net(cha, [q.x, q.y + CAO_THE / 2], [q.x, r.day - 0.2], '--nhat', 0.05, { 'stroke-dasharray': '0.15 0.12', opacity: opGiua < 1 ? opGiua : null });
+      veThe(cha, ve, q.s, { vien: xet ? (dem ? '--sai' : '--cc') : '--nhat', dut: xet && !dem ? null : '0.22 0.14', op: opGiua, chu: xet ? (dem ? '--sai' : '--cc') : null });
+      if (xet) { if (dem) dauX(cha, q.x, q.y, 0.55, '--sai', opGiua); else dauV(cha, q.x + q.w / 2 + 0.45, q.y, 0.35, '--cc', opGiua); }
     });
+  };
+  // Soi chi tiết: loại dữ liệu của mỗi giá, thẻ vô lí, thẻ thử. Chưa cho biết loại (anTen, em chưa làm) thì không soi.
+  C.lay('theDuLieu').soi = function (g, p, o) {
+    if (o.anTen && p.trangThai !== 'giai' && p.trangThai !== 'kiem') return {};
+    var ra = {}, M = function (x) { return '$' + soM(x) + '$'; };
+    g.hang.forEach(function (r) {
+      var k = KHOA_LOAI[r.loai], hl = r.the.filter(function (c) { return !c.vl; }), vl = r.the.filter(function (c) { return c.vl; });
+      var ds = hl.map(function (c) { return typeof c.v === 'number' ? M(c.v) : c.s; }).join('; ');
+      if (!ra[k]) {
+        if (r.loai === 0) ra[k] = { tieuDe: 'Số liệu rời rạc', chu: '"' + r.ten + '": ' + ds + '. Có được nhờ **đếm**, nên chỉ đứng ở các chấm ' + M(r.truc.tu) + ', ' + M(r.truc.tu + 1) + ', ' + M(r.truc.tu + 2) + ',… Giữa hai chấm không có giá trị nào.' };
+        else if (r.loai === 1) ra[k] = { tieuDe: 'Số liệu liên tục', chu: '"' + r.ten + '": ' + ds + '. Có được nhờ **đo**, nên đứng được ở bất kì chỗ nào trên thước từ ' + M(r.truc.tu) + ' đến ' + M(r.truc.den) + '.' };
+        else if (r.loai === 3) ra[k] = { tieuDe: 'Có thể sắp thứ tự', chu: '"' + r.ten + '": là chữ, nhưng xếp được thành bậc ' + r.thuTu.join(' < ') + '. Nên đây là dữ liệu không là số, **có thể sắp thứ tự**.' };
+        else ra[k] = { tieuDe: 'Không thể sắp thứ tự', chu: '"' + r.ten + '": ' + ds + '. Đổi chỗ thế nào cũng được, không có bậc nào cao hơn: dữ liệu **không thể sắp thứ tự**.' };
+      }
+      if (vl.length && !ra.voLi) ra.voLi = { tieuDe: 'Giá trị không hợp lí', chu: 'Thẻ ' + M(vl[0].v) + ' ở câu "' + r.ten + '" không có chỗ trên giá: các giá trị hợp lí chỉ từ ' + M(r.truc.tu) + ' đến ' + M(r.truc.den) + '. Có lẽ ai đó ghi nhầm.' };
+      if (r.giua && !ra.giua) ra.giua = r.loai === 0
+        ? { tieuDe: 'Thẻ thử ' + r.giua.s, chu: 'Số liệu đếm được chỉ là số tự nhiên, nên ' + M(r.giua.v) + ' không thể là câu trả lời.' }
+        : { tieuDe: 'Thẻ thử ' + r.giua.s, chu: 'Số đo có thể nằm giữa hai vạch, nên ' + M(r.giua.v) + ' vẫn là một câu trả lời có thể có.' };
+    });
+    return ra;
   };
 
   /* ================= 2. Mỗi số đo thành một cột: cột lạc khỏi dải bình thường ================= */
@@ -499,12 +527,15 @@
       var ob = { opacity: opBang < 1 ? opBang : null };
       [tb[0], tb[1], tb[2]].forEach(function (y) { net(svg, [0.6, y], [13.4, y], '--nhat', 0.04, ob); });
       for (var i = 0; i <= n; i++) net(svg, [0.6 + slot * i, tb[0]], [0.6 + slot * i, tb[2]], '--nhat', 0.04, ob);
+      for (i = 0; i < n; i++) C.mk('rect', { x: 0.6 + slot * i, y: tb[0], width: slot, height: tb[2] - tb[0], fill: 'transparent', 'data-soi': 'muc' + i }, svg);
     }
     var trucOp = o.nguoc ? 0 : (g.den === 'tranh' ? 0 : s1 * (1 - s2 * (g.den === 'duong' ? 0 : 1)));
     if (trucOp > 0) net(svg, [0.4, base], [13.6, base], '--muc', 0.07, trucOp < 1 ? { opacity: trucOp } : null);
     var thuocOp = (g.den === 'bang' || g.den === 'tron') && o.thuoc ? s2 * C.kep(1 - 4 * s3, 0, 1) : 0;
     if (thuocOp > 0) {
       var y = BH.yo + g.th, ot = { opacity: thuocOp < 1 ? thuocOp : null }, x0 = BH.xs, L = g.L;
+      // Vùng bấm trong suốt phủ thước, để soi "cả băng"
+      C.mk('rect', { x: x0, y: y, width: L, height: 1.4, fill: 'transparent', 'data-soi': 'bang' }, svg);
       net(svg, [x0, y + 0.15], [x0 + L, y + 0.15], '--muc', 0.05, ot);
       for (var k = 0; k <= 10; k++) net(svg, [x0 + L * k / 10, y + 0.15], [x0 + L * k / 10, y + (k % 5 ? 0.4 : 0.55)], '--muc', 0.05, ot);
       if (o.thuoc === '%') [0, 50, 100].forEach(function (v) { viet(svg, x0 + L * v / 100, y + 1.15, v + '%', 0.7, { nhe: true, op: thuocOp }); });
@@ -516,10 +547,10 @@
       var mu = MAU[i % MAU.length], hoi = o.hoi === i;
       if (g.den === 'tranh') return;
       if (s2 > 0 && m.manh && g.den !== 'duong') {
-        da(svg, m.manh, mu, { vien: hoi ? '--muc' : '#fff', day: hoi ? 0.12 : 0.05 });
+        da(svg, m.manh, mu, { vien: hoi ? '--muc' : '#fff', day: hoi ? 0.12 : 0.05 }).setAttribute('data-soi', 'muc' + i);
       } else if (m.hb > 0) {
         var opCot = g.den === 'duong' ? 1 - 0.75 * s2 : 1;
-        hcn(svg, m.cx - m.bw / 2, base - m.hb, m.bw, m.hb, { nen: mu, rx: 0.05, op: opCot, vien: hoi ? '--muc' : null, day: 0.1 });
+        hcn(svg, m.cx - m.bw / 2, base - m.hb, m.bw, m.hb, { nen: mu, rx: 0.05, op: opCot, vien: hoi ? '--muc' : null, day: 0.1 }).setAttribute('data-soi', 'muc' + i);
       }
     });
     // Hiệu hai cột: phần chênh lệch
@@ -606,6 +637,30 @@
     }
     if (o.voTong && g.den === 'tron') viet(svg, W / 2, 1.2, o.voTong, 0.75, { mau: '--sai', op: nhip(s3, 0.5, 0.4) });
   };
+  // Soi chi tiết: mỗi mục là một ô bảng, một cột, một đoạn băng hay một hình quạt, tuỳ lúc.
+  // Đề còn giấu (anLucDau) thì chỉ nhắc lại số đã ghi trên hình, không tính sẵn phần trăm.
+  C.lay('bienHinh').soi = function (g, p, o) {
+    var an = o.anLucDau && p.trangThai !== 'giai', don = o.don ? ' ' + o.don : '', ra = {};
+    var M = function (x) { return '$' + soM(x) + '$'; };
+    // "= 40\%" hoặc "\approx 12{,}5\%" (dùng trong $…$)
+    var pt = function (a) { var s = phanTram(a, g.T); return (s.charAt(0) === '≈' ? '\\approx ' : '= ') + s.replace('≈ ', '').replace(/,/g, '{,}').replace('%', '\\%'); };
+    var PT = function (a) { return '$' + pt(a).replace(/^= /, '') + '$'; };
+    var dang = g.s3 > 0.5 ? 'Hình quạt' : g.s2 > 0.5 ? 'Đoạn băng' : g.s1 > 0.5 ? 'Cột' : 'Ô bảng';
+    g.muc.forEach(function (m, i) {
+      var chu;
+      if (o.nguoc) chu = 'Phần này chiếm ' + PT(m.v) + ' cả tổng thể.';
+      else if (an) chu = 'Số liệu: ' + M(m.v) + don + '.';
+      else {
+        chu = 'Số liệu: ' + M(m.v) + don + ' trong tổng ' + M(g.T) + don + '. Tỉ lệ $\\frac{' + soM(m.v) + '}{' + soM(g.T) + '} \\cdot 100\\% ' + pt(m.v) + '$.';
+        chu += g.s3 > 0.5 ? ' Hình quạt chiếm đúng phần ấy của hình tròn.' : g.s1 > 0.5 && g.s2 < 0.5 ? ' Cột cao theo số liệu, nên so các cột là so các số.' : '';
+      }
+      ra['muc' + i] = { tieuDe: dang + ': ' + o.nhan[i], chu: chu };
+    });
+    ra.bang = { tieuDe: 'Cả băng', chu: o.thuoc && o.thuoc !== '%'
+      ? 'Cả băng là tổng ' + M(o.thuoc.tong) + ' ' + (o.thuoc.don || o.don || '') + ', tức $100\\%$. Mỗi đoạn dài theo phần trăm của nó.'
+      : 'Các cột nối đuôi dài đúng bằng tổng ' + M(g.T) + don + ', tức $100\\%$. Vì thế băng cuộn được thành đúng một hình tròn.' };
+    return ra;
+  };
 
   /* ================= 7. Cắt trục đứng: số không đổi, cột thì đổi ================= */
   // tuyChon: { nhan, so, goc, dinh, don, mau: [...], nguoc (bắt đầu ở hình đã cắt), hoi: [i, j] so cột i với cột j, anLucDau }
@@ -642,21 +697,23 @@
       net(svg, [g.xa, v.y], [g.xb, v.y], k ? '--nhat' : '--muc', k ? 0.03 : 0.07, k ? { opacity: 0.5 } : null);
       viet(svg, g.xa - 0.2, v.y + 0.03, soDep(Math.round(v.v * 10) / 10), 0.7, { neo: 'end', nhe: true });
     });
+    // Vùng bấm trong suốt ở trục đứng và các số trên trục: soi "gốc trục"
+    C.mk('rect', { x: 0, y: base - g.Hc - 0.3, width: g.xa + 0.3, height: g.Hc + 0.9, fill: 'transparent', 'data-soi': 'goc' }, svg);
     net(svg, [g.xa, base], [g.xa, base - g.Hc - 0.3], '--muc', 0.07);
     // Trục đã cắt: kí hiệu gãy khúc ở chân trục
     if (g.sB > 0.5) C.mk('polyline', { points: C.diem([[g.xa, base - 0.15], [g.xa - 0.22, base - 0.3], [g.xa + 0.22, base - 0.5], [g.xa, base - 0.65]]), fill: 'none',
       stroke: mau('--sai'), 'stroke-width': 0.08, opacity: C.muot((g.sB - 0.5) / 0.3) }, svg);
     g.cot.forEach(function (c, i) {
-      var m = mauCot[i % mauCot.length];
-      if (c.yCat < base) hcn(svg, c.x - c.w / 2, c.yCat, c.w, base - c.yCat, { nen: m, dac: 0.18, vien: m, day: 0.04, dut: '0.15 0.12', rx: 0.04 });
-      hcn(svg, c.x - c.w / 2, c.yDinh, c.w, Math.max(0, Math.min(c.yCat, base) - c.yDinh), { nen: m, rx: 0.05 });
-      viet(svg, c.x, c.yDinh - 0.45, soDep(c.v), 0.85);
+      var m = mauCot[i % mauCot.length], cha = C.mk('g', { 'data-soi': 'cot' + i }, svg);
+      if (c.yCat < base) hcn(cha, c.x - c.w / 2, c.yCat, c.w, base - c.yCat, { nen: m, dac: 0.18, vien: m, day: 0.04, dut: '0.15 0.12', rx: 0.04 });
+      hcn(cha, c.x - c.w / 2, c.yDinh, c.w, Math.max(0, Math.min(c.yCat, base) - c.yDinh), { nen: m, rx: 0.05 });
+      viet(cha, c.x, c.yDinh - 0.45, soDep(c.v), 0.85);
       viet(svg, c.x, base + 0.65, o.nhan[i], Math.min(0.75, (g.cot.length > 1 ? g.cot[1].x - g.cot[0].x - 0.15 : 4) / (0.62 * String(o.nhan[i]).length)));
     });
     // Đường cắt đang nâng lên
     var opCat = g.sA > 0 && g.sB < 1 ? Math.min(1, g.sA * 4) * (1 - g.sB) : 0;
     if (opCat > 0) {
-      net(svg, [g.xa - 0.1, g.yCat], [g.xb, g.yCat], '--sai', 0.08, { 'stroke-dasharray': '0.3 0.18', opacity: opCat < 1 ? opCat : null });
+      net(svg, [g.xa - 0.1, g.yCat], [g.xb, g.yCat], '--sai', 0.08, { 'stroke-dasharray': '0.3 0.18', opacity: opCat < 1 ? opCat : null, 'data-soi': 'cat' });
       viet(svg, g.xb, g.yCat - 0.4, 'cắt ở ' + soDep(Math.round(g.cat)), 0.7, { neo: 'end', mau: '--sai', op: opCat });
     }
     if (!o.hoi) return;
@@ -676,6 +733,28 @@
     }
     if (p.trangThai === 'goc0' || (giai && o.nguoc) || (!o.anLucDau && !p.trangThai && g.e <= 0 && t > 0.9))
       vietDong(svg, g.W, base + 2.45, 'Số liệu: ' + soDep(o.so[o.hoi[0]]) + ' : ' + soDep(o.so[o.hoi[1]]) + ' ≈ ' + soDep(Math.round(g.tiSo * 100) / 100) + ' lần', 0.75, { mau: '--cc' });
+  };
+
+  // Soi chi tiết: cột (số liệu và chiều cao trên gốc), gốc trục, đường cắt.
+  // Đề còn giấu (anLucDau) thì không ghi chiều cao từng cột, vì tỉ số hai chiều cao là điều em cần tìm.
+  C.lay('catTruc').soi = function (g, p, o) {
+    var an = o.anLucDau && p.trangThai !== 'giai', don = o.don ? ' ' + o.don : '', ra = {};
+    var M = function (x) { return '$' + soM(x) + '$'; }, L = Math.round(g.L * 10) / 10, coGoc = L > 0.05;
+    g.cot.forEach(function (c, i) {
+      var chu = 'Số liệu ' + M(c.v) + don + ', ghi trên đầu cột, không đổi khi cắt trục.';
+      if (!an) chu += coGoc ? ' Gốc trục đang ở ' + M(L) + ' nên cột chỉ cao $' + soM(c.v) + ' - ' + soM(L) + ' = ' + soM(Math.round((c.v - L) * 10) / 10) + '$ phần.' : ' Trục bắt đầu từ $0$ nên cột cao đúng ' + M(c.v) + ' phần.';
+      else chu += ' Chiều cao cột chỉ ứng với phần nằm trên gốc trục.';
+      ra['cot' + i] = { tieuDe: 'Cột ' + o.nhan[i], chu: chu };
+    });
+    var goc = coGoc ? 'Trục đứng bắt đầu từ ' + M(L) + ', không phải từ $0$. Phần cột dưới mức này bị bỏ đi, nên tỉ số chiều cao hai cột không còn bằng tỉ số hai số liệu.'
+      : 'Trục đứng bắt đầu từ $0$: chiều cao mỗi cột tỉ lệ với số liệu.';
+    if (o.hoi && coGoc && !an && g.sB > 0.99) {
+      var lam = function (x) { var r = Math.round(x * 100) / 100; return (Math.abs(x - r) > 1e-9 ? '\\approx ' : '= ') + soM(r); };
+      goc += ' Ở đây chiều cao gấp $' + lam(g.tiCao).replace(/^= /, '') + '$ lần, còn số liệu chỉ gấp $\\frac{' + soM(o.so[o.hoi[0]]) + '}{' + soM(o.so[o.hoi[1]]) + '} ' + lam(g.tiSo) + '$ lần.';
+    }
+    ra.goc = { tieuDe: 'Gốc trục đứng', chu: goc };
+    ra.cat = { tieuDe: 'Đường cắt', chu: 'Đang nâng tới ' + M(Math.round(g.cat)) + '. Phần cột dưới đường này (nét đứt) sẽ bị bỏ đi, rồi phần còn lại được kéo giãn cho đầy khung.' };
+    return ra;
   };
 
   /* ================= 8. Trục ngang: chia đều từng mốc hay chia đúng khoảng năm ================= */

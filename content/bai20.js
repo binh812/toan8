@@ -189,6 +189,13 @@
       }
     },
 
+    mucTieu: [
+      'Nhận ra biểu đồ cột có gốc trục đứng khác $0$, và nói được vì sao khi đó chiều cao cột không cho đúng tỉ số hai số liệu.',
+      'Tính tỉ số chiều cao hai cột và so với tỉ số của hai số liệu.',
+      'Phát hiện trục ngang chia không đúng khoảng thời gian.',
+      'Tính tăng (giảm) bao nhiêu phần trăm, chia cho đúng giá trị cũ.',
+      'Rút ra kết luận từ biểu đồ: lớn nhất, nhỏ nhất, tăng hay giảm, chênh lệch bao nhiêu.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Lưu ý khi đọc biểu đồ cột',
         noiDung: 'Trong biểu đồ cột, khi **gốc của trục đứng khác 0** thì tỉ lệ chiều cao của các cột **không bằng** tỉ lệ số liệu mà chúng biểu diễn.\n\nCột cao hơn vẫn biểu diễn số liệu lớn hơn, nhưng **không** được kết luận "gấp bao nhiêu lần" chỉ bằng cách nhìn chiều cao cột.' },

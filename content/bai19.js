@@ -100,6 +100,12 @@
       }
     },
 
+    mucTieu: [
+      'Đọc số liệu từ bảng thống kê, biểu đồ cột, cột kép, đoạn thẳng, quạt tròn và biểu đồ tranh.',
+      'Chuyển dữ liệu từ bảng sang biểu đồ và từ biểu đồ về bảng.',
+      'Tính tỉ lệ phần trăm của một phần trong biểu đồ quạt tròn, và tính số lượng khi biết tổng và tỉ lệ.',
+      'Chọn dạng biểu đồ hợp với mục đích: so sánh các loại, phần trong tổng thể, hay thay đổi theo thời gian.'
+    ],
     lyThuyet: [
       { loai: 'text', tieuDe: 'Các dạng biểu diễn dữ liệu đã học',
         noiDung: 'Dữ liệu có thể biểu diễn bằng **bảng thống kê** hoặc bằng **biểu đồ**: biểu đồ tranh, biểu đồ cột, biểu đồ cột kép, biểu đồ đoạn thẳng, biểu đồ hình quạt tròn.\n\nTrong bài này em học cách **chuyển** dữ liệu từ dạng này sang dạng khác và **chọn biểu đồ phù hợp** với dữ liệu.' },

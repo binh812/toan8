@@ -94,8 +94,13 @@
       tieuDe: 'Muốn cộng phải đưa về cùng một lưới ô', loai: 'minhHoa',
       luuY: 'Hình đếm ô khi $x$ là số nguyên dương. Lập luận chung: theo tính chất cơ bản (bài 22), nhân cả tử và mẫu với nhân tử phụ không làm đổi phân thức; khi đã cùng mẫu $M$ thì $\\frac{A}{M} + \\frac{B}{M} = \\frac{A + B}{M}$, giống như dồn các ô cùng cỡ.',
       canh: lp({ dang: 'cong', p1: { tu: 1, mau: [0, 1] }, p2: { tu: 1, mau: [1, 1] }, mtc: [0, 1, 1] }, {
+        thuPha: true,
         moTa: 'Hình trái chia x cột, tô một cột. Hình phải chia x cộng 1 hàng, tô một hàng. Cắt thêm để hai hình cùng một lưới ô, rồi dồn các ô tô màu vào hình tổng.',
-        dongSo: function (p) { var x = p.x, m = x * (x + 1); return 'Tại $x = ' + x + '$: $\\frac{1}{\\ca{' + x + '}} + \\frac{1}{\\cb{' + (x + 1) + '}}$, mẫu chung $' + x + ' \\cdot ' + (x + 1) + ' = ' + m + '$'; } }),
+        // Thử phá: thanh xThu kéo dưới 1 thì x lấy giá trị đó (xem cảnh luoiPhanSo)
+        dongSo: function (p) {
+          var x = p.xThu != null && p.xThu < 1 ? p.xThu : p.x, m = x * (x + 1), ng = function (v) { return v < 0 ? '(' + v + ')' : String(v); };
+          return 'Tại $x = ' + x + '$: $\\frac{1}{\\ca{' + x + '}} + \\frac{1}{\\cb{' + (x + 1) + '}}$, mẫu chung $' + ng(x) + ' \\cdot ' + ng(x + 1) + ' = ' + m + '$';
+        } }),
       buoc: [
         { t: 0, chu: '$\\frac{1}{\\ca{x}}$: chia $\\ca{x}$ cột, tô một cột. $\\frac{1}{\\cb{x+1}}$: chia $\\cb{x+1}$ hàng, tô một hàng. Ô hai bên to nhỏ khác nhau, chưa cộng được.' },
         { t: 0.1, chu: 'Cắt hình trái thêm $\\cb{x+1}$ hàng, hình phải thêm $\\ca{x}$ cột. Cả hai thành $\\ca{x}(\\cb{x+1})$ ô bằng nhau. Đó là **quy đồng**; $\\cb{x+1}$ và $\\ca{x}$ là hai nhân tử phụ.' },
@@ -150,11 +155,31 @@
       }
     },
 
+    mucTieu: [
+      'Cộng, trừ hai phân thức cùng mẫu: cộng (trừ) các tử, giữ nguyên mẫu.',
+      'Quy đồng rồi cộng, trừ hai phân thức khác mẫu, và nói được vì sao không cộng mẫu với mẫu.',
+      'Viết phân thức đối và đổi phép trừ thành phép cộng với phân thức đối.',
+      'Nhận ra giá trị của $x$ làm một mẫu bằng $0$, nơi không cộng được.',
+      'Kiểm kết quả bằng cách thay cùng một số vào đề và vào đáp án.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: '1. Cộng hai phân thức cùng mẫu',
         noiDung: 'Muốn cộng hai phân thức có **cùng mẫu thức**, ta cộng các tử thức với nhau và **giữ nguyên** mẫu thức:\n\n$$\\frac{\\ca{A}}{M} + \\frac{\\cb{B}}{M} = \\frac{\\ca{A} + \\cb{B}}{M}.$$\n\nKết quả gọi là **tổng**; ta thường viết tổng dưới dạng **rút gọn**.\n\nVí dụ: $\\frac{5x^2}{x-1} + \\frac{5-10x}{x-1} = \\frac{5x^2-10x+5}{x-1} = \\frac{5(x-1)^2}{x-1} = 5(x-1)$.' },
       { loai: 'dinhLi', tieuDe: '2. Cộng hai phân thức khác mẫu',
         noiDung: 'Muốn cộng hai phân thức có mẫu thức khác nhau, ta **quy đồng mẫu thức** rồi cộng các phân thức có cùng mẫu vừa tìm được.\n\nVí dụ: $\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5(1-x)}{x(1-x)} + \\frac{3x}{x(1-x)} = \\frac{5 - 5x + 3x}{x(1-x)} = \\frac{5-2x}{x(1-x)}$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp lập luận: cộng $\\frac{5}{x} + \\frac{3}{1-x}$', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        buoc: [
+          { id: 'dk', chu: 'Hai phân thức chỉ có giá trị khi $x \\ne 0$ và $x \\ne 1$.' },
+          { id: 'mtc', chu: 'Mẫu thức chung là $x(1-x)$.' },
+          { id: 'phu1', chu: 'Nhân cả tử và mẫu của $\\frac{5}{x}$ với $1 - x$ (khác $0$ vì $x \\ne 1$): $\\frac{5(1-x)}{x(1-x)}$.', can: ['mtc', 'dk'] },
+          { id: 'phu2', chu: 'Nhân cả tử và mẫu của $\\frac{3}{1-x}$ với $x$ (khác $0$ vì $x \\ne 0$): $\\frac{3x}{x(1-x)}$.', can: ['mtc', 'dk'] },
+          { id: 'cong', chu: 'Cộng hai tử, giữ nguyên mẫu chung: $\\frac{5 - 5x + 3x}{x(1-x)}$.', can: ['phu1', 'phu2'] },
+          { id: 'gon', chu: 'Thu gọn tử: $5 - 5x + 3x = 5 - 2x$.', can: ['cong'] },
+          { id: 'kl', chu: 'Vậy $\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5-2x}{x(1-x)}$ với $x \\ne 0$, $x \\ne 1$.', can: ['gon'] }
+        ],
+        ketLuan: '$\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5-2x}{x(1-x)}$. Nhân tử phụ phải khác $0$, nên điều kiện $x \\ne 0$, $x \\ne 1$ đi theo suốt bài.'
+      } },
       { loai: 'hinh', widget: 'geo', config: hinhKiemTra,
         chuThich: '**Kiểm tra kết quả bằng số:** kéo điểm cam tới vài giá trị của $x$ (khác $0$ và $1$). Dòng xanh lá (cộng trực tiếp) luôn bằng dòng xanh dương (kết quả đã tính) – hai đường trùng nhau. Em có thể dùng mẹo này để tự kiểm tra bài làm: thay một số vào đề và vào đáp án.' },
       { loai: 'dinhLi', tieuDe: '3. Trừ hai phân thức',

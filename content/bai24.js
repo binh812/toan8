@@ -97,9 +97,13 @@
     nhin: {
       tieuDe: 'Tô chồng hai chiều: tử nhân tử, mẫu nhân mẫu', loai: 'minhHoa',
       luuY: 'Hình đếm ô khi $x$ là số nguyên dương, lúc hai phân thức có giá trị từ $0$ tới $1$. Với mọi $x$ làm các mẫu khác $0$ (ở đây $x \\ne 0$, $x \\ne -1$), tử và mẫu là những con số, và phép nhân phân thức làm đúng như nhân phân số; SGK lấy điều đó làm quy tắc nhân phân thức.',
-      canh: nh({ p1: { tu: [0, 1], mau: [1, 1] }, p2: { tu: [-1, 1], mau: [0, 1] } }, {
+      // gon: kết quả rút gọn, để thử phá cho thấy nó vẫn ra số ở chỗ tích ban đầu không tính được
+      canh: nh({ p1: { tu: [0, 1], mau: [1, 1] }, p2: { tu: [-1, 1], mau: [0, 1] },
+        gon: { tu: [-1, 1], mau: [1, 1], ten: '\\frac{x-1}{x+1}', dk: 'x \\ne 0,\\ x \\ne -1' } }, {
+        thuPha: true,
         moTa: 'Hình vuông đơn vị. Dải dọc màu cam chiếm x trên x cộng 1 cột, dải ngang màu xanh chiếm x trừ 1 trên x hàng. Phần chồng màu xanh lá là tích.',
-        dongSo: function (p) { var x = p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\ca{' + (x + 1) + '}} \\cdot \\frac{\\cb{' + (x - 1) + '}}{\\cb{' + x + '}}$'; } }),
+        // Thử phá: thanh xThu kéo dưới 1 thì x lấy giá trị đó (xem cảnh luoiPhanSo)
+        dongSo: function (p) { var x = p.xThu != null && p.xThu < 1 ? p.xThu : p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\ca{' + (x + 1) + '}} \\cdot \\frac{\\cb{' + (x - 1) + '}}{\\cb{' + x + '}}$'; } }),
       buoc: [
         { t: 0, chu: 'Hình vuông là $1$. Cần tính $\\frac{\\ca{x}}{\\ca{x+1}} \\cdot \\frac{\\cb{x-1}}{\\cb{x}}$, tức lấy một phần của một phần.' },
         { t: 0.1, chu: 'Theo chiều dọc: chia $\\ca{x+1}$ cột, tô $\\ca{x}$ cột.' },
@@ -155,6 +159,12 @@
       }
     },
 
+    mucTieu: [
+      'Nhân hai phân thức: tử nhân tử, mẫu nhân mẫu, rồi rút gọn; nói được vì sao bằng hình tô chồng.',
+      'Tìm phân thức nghịch đảo và chia hai phân thức bằng cách nhân với nghịch đảo.',
+      'Nói được vì sao kết quả rút gọn vẫn phải giữ điều kiện xác định của phép tính ban đầu.',
+      'Dùng tính chất giao hoán, kết hợp, phân phối để tính nhanh.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: '1. Nhân hai phân thức',
         noiDung: 'Muốn nhân hai phân thức, ta **nhân các tử thức với nhau, nhân các mẫu thức với nhau**:\n\n$$\\frac{\\ca{A}}{\\cb{B}}\\cdot\\frac{\\ca{C}}{\\cb{D}} = \\frac{\\ca{A\\cdot C}}{\\cb{B\\cdot D}}.$$\n\nKết quả gọi là **tích**, ta thường viết dưới dạng rút gọn. Nhân phân thức **không cần quy đồng**.\n\n**Mẹo:** phân tích các tử, mẫu thành nhân tử **trước** rồi mới nhân, để thấy ngay nhân tử chung mà rút gọn:\n\n$\\frac{2x-1}{5x+1}\\cdot\\frac{5x+1}{4x^2-1} = \\frac{(2x-1)(5x+1)}{(5x+1)(2x-1)(2x+1)} = \\frac{1}{2x+1}$.' },
@@ -164,6 +174,19 @@
         noiDung: 'Vì $\\frac{C}{D}\\cdot\\frac{D}{C} = 1$ nên ta nói $\\frac{D}{C}$ là **phân thức nghịch đảo** của $\\frac{C}{D}$ (với $\\frac{C}{D} \\ne 0$): chỉ việc **lật ngược** tử và mẫu.\n\nVí dụ: nghịch đảo của $\\frac{x+2}{x-3}$ là $\\frac{x-3}{x+2}$. (Đừng nhầm với phân thức **đối** $\\frac{-(x+2)}{x-3}$.)' },
       { loai: 'dinhLi', tieuDe: '3. Chia hai phân thức',
         noiDung: 'Muốn chia phân thức $\\frac{A}{B}$ cho phân thức $\\frac{C}{D}$ khác $0$, ta nhân $\\frac{A}{B}$ với phân thức **nghịch đảo** của $\\frac{C}{D}$:\n\n$$\\frac{A}{B} : \\frac{\\cd{C}}{\\cd{D}} = \\frac{A}{B}\\cdot\\frac{\\cd{D}}{\\cd{C}}, \\quad \\frac{C}{D} \\ne 0.$$\n\nVí dụ: $\\frac{5}{x^2-1} : \\frac{3}{x^2-x} = \\frac{5}{x^2-1}\\cdot\\frac{x^2-x}{3} = \\frac{5x(x-1)}{3(x-1)(x+1)} = \\frac{5x}{3(x+1)}$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp lập luận: chia $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        buoc: [
+          { id: 'pt', chu: 'Phân tích hai mẫu: $x^2 - 1 = (x-1)(x+1)$ và $x^2 - x = x(x-1)$.' },
+          { id: 'dk', chu: 'Hai phân thức có giá trị khi $x \\ne 1$, $x \\ne -1$ và $x \\ne 0$.', can: ['pt'] },
+          { id: 'khac0', chu: 'Phân thức chia $\\frac{3}{x^2-x}$ có tử $3 \\ne 0$, nên nó khác $0$ và có nghịch đảo $\\frac{x^2-x}{3}$.' },
+          { id: 'lat', chu: 'Đổi phép chia thành phép nhân: $\\frac{5}{x^2-1} \\cdot \\frac{x^2-x}{3}$.', can: ['khac0'] },
+          { id: 'nhan', chu: 'Tử nhân tử, mẫu nhân mẫu: $\\frac{5(x^2-x)}{3(x^2-1)}$.', can: ['lat'] },
+          { id: 'gon', chu: 'Viết tử, mẫu thành $5x(x-1)$ và $3(x-1)(x+1)$, rồi chia cả hai cho $x - 1$: được $\\frac{5x}{3(x+1)}$.', can: ['nhan', 'pt'] },
+          { id: 'kl', chu: 'Vậy $\\frac{5}{x^2-1} : \\frac{3}{x^2-x} = \\frac{5x}{3(x+1)}$ với $x \\ne 0$, $x \\ne 1$, $x \\ne -1$.', can: ['gon', 'dk'] }
+        ],
+        ketLuan: 'Thương bằng $\\frac{5x}{3(x+1)}$. Kết quả này tính được cả tại $x = 0$ và $x = 1$, nhưng phép chia ban đầu thì không, nên phải ghi điều kiện $x \\ne 0$, $x \\ne 1$, $x \\ne -1$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: hinhChia,
         chuThich: 'Đồ thị của thương $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$. Nó gần giống đồ thị của $\\frac{5x}{3(x+1)}$ nhưng có **hai lỗ hổng**: tại $x = 1$ (mẫu $x^2 - 1 = 0$) và tại $x = 0$ (phân thức chia $\\frac{3}{x^2-x}$ không xác định). Kéo điểm cam tới $0$ và $1$ để xem.' },
       { loai: 'chuY', tieuDe: 'Hay nhầm',

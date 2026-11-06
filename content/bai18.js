@@ -135,6 +135,12 @@
       }
     },
 
+    mucTieu: [
+      'Phân loại được dữ liệu: số liệu rời rạc, số liệu liên tục, dữ liệu không là số có thể hay không thể sắp thứ tự.',
+      'Nói được vì sao một số liệu là rời rạc hay liên tục bằng câu hỏi "đếm hay đo?".',
+      'Chỉ ra một cách thu thập dữ liệu là trực tiếp hay gián tiếp.',
+      'Phát hiện giá trị không hợp lí trong một dãy dữ liệu và giải thích vì sao.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Thu thập dữ liệu',
         noiDung: 'Thu thập dữ liệu có thể là **trực tiếp** hoặc **gián tiếp**.\n\n• **Trực tiếp**: thu thập qua **quan sát, làm thí nghiệm, lập bảng hỏi, phỏng vấn**,… (em tự đi lấy dữ liệu).\n\n• **Gián tiếp**: thu thập từ **những nguồn có sẵn** như sách, báo, mạng Internet,…\n\nĐể đưa ra kết luận hợp lí, dữ liệu thu thập được phải **đảm bảo tính đại diện** cho toàn bộ đối tượng đang quan tâm.' },

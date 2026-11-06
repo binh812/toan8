@@ -76,7 +76,7 @@
       tieuDe: 'Đặt đoạn mẫu nối tiếp dọc đoạn tử: mẫu bằng 0 thì không đo được', loai: 'minhHoa',
       luuY: 'Hình vẽ $\\frac{x+1}{x-2}$ tại vài giá trị $x \\ge 2$, khi tử và mẫu không âm. Lập luận chung: $A : B$ là số nhân với $B$ thì được $A$. Khi $B = 0$, số nào nhân với $0$ cũng bằng $0$, nên không có số nào để làm giá trị của $\\frac{3}{0}$. Còn $\\frac{0}{0}$ thì số nào nhân với $0$ cũng ra $0$, không có một giá trị duy nhất, nên cũng không xác định. Vì thế mọi phân thức chỉ có giá trị khi mẫu khác $0$.',
       canh: dc({ tu: [1, 1], mau: [-2, 1], tenTu: 'x + 1', tenMau: 'x − 2', xs: [6, 4, 3, 2.5, 2] },
-        { moTa: 'Đoạn cam là tử x cộng 1, đoạn xanh là mẫu x trừ 2. Các bản của đoạn mẫu đặt nối tiếp dọc đoạn tử. Khi x giảm về 2, đoạn mẫu ngắn dần rồi bằng 0.' }),
+        { thuPha: true, moTa: 'Đoạn cam là tử x cộng 1, đoạn xanh là mẫu x trừ 2. Các bản của đoạn mẫu đặt nối tiếp dọc đoạn tử. Khi x giảm về 2, đoạn mẫu ngắn dần rồi bằng 0.' }),
       buoc: [
         { t: 0, chu: 'Tại $x = 6$: tử $\\ca{x + 1} = 7$, mẫu $\\cb{x - 2} = 4$. Đặt đoạn mẫu nối tiếp dọc đoạn tử: vừa $1{,}75$ lần. Vậy $\\frac{7}{4} = 1{,}75$.' },
         { t: 0.22, chu: '$x = 4$: mẫu còn $\\cb{2}$, phải đặt $5 : 2 = 2{,}5$ lần.' },
@@ -143,6 +143,13 @@
       }
     },
 
+    mucTieu: [
+      'Nhận ra một biểu thức có phải phân thức hay không, và chỉ ra tử, mẫu của nó.',
+      'Nói được vì sao phân thức không có giá trị khi mẫu bằng $0$, bằng cách đặt đoạn mẫu dọc đoạn tử.',
+      'Tìm điều kiện xác định của phân thức, kể cả khi mẫu là một tích.',
+      'Tính giá trị của phân thức tại một giá trị của biến.',
+      'Kiểm hai phân thức có bằng nhau không bằng cách nhân chéo.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Phân thức đại số',
         noiDung: 'Một **phân thức đại số** (gọi gọn là **phân thức**) là một biểu thức có dạng $\\frac{\\ca{A}}{\\cb{B}}$, trong đó $A$, $B$ là hai **đa thức** và $B$ **khác đa thức 0**.\n\n$\\ca{A}$ gọi là **tử thức** (tử), $\\cb{B}$ gọi là **mẫu thức** (mẫu).\n\nVí dụ: $\\frac{2x-1}{3x+1}$; $\\;\\frac{x^2-x+1}{2x+1}$; $\\;\\frac{x}{y}$ là các phân thức.' },
@@ -152,6 +159,18 @@
         noiDung: 'Hai phân thức $\\frac{A}{B}$ và $\\frac{C}{D}$ gọi là **bằng nhau** nếu $A\\cdot D = B\\cdot C$ ("nhân chéo bằng nhau"). Ta viết $\\frac{A}{B} = \\frac{C}{D}$ nếu $A\\cdot D = B\\cdot C$.\n\nVí dụ: $\\frac{1+x}{1-x^2} = \\frac{1}{1-x}$ vì $(1+x)(1-x) = (1-x^2)\\cdot 1$.' },
       { loai: 'dinhNghia', tieuDe: '3. Điều kiện xác định',
         noiDung: '**Điều kiện xác định** của phân thức $\\frac{A}{B}$ là điều kiện của biến để giá trị của **mẫu thức $B$ khác $0$**.\n\nCách tìm: cho mẫu bằng $0$, tìm $x$; các giá trị đó bị **loại ra**.\n\nVí dụ: $\\frac{x-3}{x+2}$ có điều kiện xác định $x + 2 \\ne 0$, tức $x \\ne -2$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp lập luận: điều kiện xác định của $\\frac{3}{x^2-4}$', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
+        buoc: [
+          { id: 'mau', chu: 'Phân thức có giá trị khi mẫu $x^2 - 4 \\ne 0$.' },
+          { id: 'pt', chu: 'Phân tích mẫu: $x^2 - 4 = (x-2)(x+2)$.' },
+          { id: 'tich', chu: 'Một tích bằng $0$ khi có một thừa số bằng $0$.' },
+          { id: 'a', chu: 'Thừa số $x - 2$ bằng $0$ khi $x = 2$.', can: ['pt', 'tich'] },
+          { id: 'b', chu: 'Thừa số $x + 2$ bằng $0$ khi $x = -2$.', can: ['pt', 'tich'] },
+          { id: 'kl', chu: 'Vậy điều kiện xác định là $x \\ne 2$ và $x \\ne -2$.', can: ['mau', 'a', 'b'] }
+        ],
+        ketLuan: 'Mẫu $(x-2)(x+2)$ bằng $0$ ở cả hai chỗ $x = 2$ và $x = -2$, nên phải loại cả hai: $x \\ne 2$ và $x \\ne -2$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: hinhHaiChoKhongXacDinh,
         chuThich: 'Phân thức $\\frac{3}{x^2-4}$ có mẫu $x^2 - 4 = (x-2)(x+2)$ bằng $0$ tại **hai** chỗ: $x = 2$ và $x = -2$ (hai đường đỏ nét đứt). Kéo điểm cam tới đó: phân thức không xác định. Điều kiện xác định là $x \\ne 2$ **và** $x \\ne -2$.' },
       { loai: 'dinhNghia', tieuDe: '4. Giá trị của phân thức',
