@@ -43,10 +43,13 @@
     { td: 'Môn thể thao yêu thích của học sinh khối 8', nhan: ['Bóng đá', 'Cầu lông', 'Bơi lội', 'Cờ vua'], tong: 'học sinh', vat: 'học sinh' }
   ];
 
+  // Hình lời giải: cảnh bienHinh theo chính số của đề, ở trạng thái đã giải
+  function hg(tc) { return { widget: 'canh', config: { ten: 'bienHinh', tuyChon: tc, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } }; }
+
   TOAN8.luyen(19, [
     { ten: 'Đọc biểu đồ cột', muc: 1, sinh: function (r) {
       var b = r.chon(COT), st = b.buoc || 1, so = b.nhan.map(function () { return st * r.so(Math.ceil(b.lo / st), Math.floor(b.hi / st)); });
-      var kieu = r.chon(['tong', 'hieu', 'hieu']), ltg = [], de, kq, lg, gy;
+      var kieu = r.chon(['tong', 'hieu', 'hieu']), ltg = [], de, kq, lg, gy, hinhGiai;
       if (kieu === 'tong') {
         kq = cong(so);
         var lonNhat = Math.max.apply(null, so);
@@ -54,6 +57,8 @@
         de = 'Biểu đồ cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Tính **tổng** số ' + b.dv + ' của tất cả các cột.';
         gy = ['Đọc số ghi trên đầu mỗi cột.', 'Cộng tất cả các số đó.'];
         lg = ['Đọc biểu đồ: ' + b.nhan.map(function (n, i) { return n + ': $' + so[i] + '$'; }).join('; ') + '.', 'Tổng: $' + so.join(' + ') + ' = ' + kq + '$'];
+        // Nối đuôi các cột thành một băng: cả băng là tổng
+        hinhGiai = hg({ nhan: b.nhan.slice(), so: so.slice(), don: b.dv, den: 'bang', giai: 'bang', thuoc: { tong: kq, don: b.dv }, tongChu: 'Nối đuôi các cột: ' + kq + ' ' + b.dv });
       } else {
         var ij = r.khacNhau(2, 0, so.length - 1), i = ij[0], j = ij[1];
         while (so[i] === so[j]) so[j] += st;
@@ -63,10 +68,12 @@
         de = 'Biểu đồ cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. **' + b.nhan[lon] + '** nhiều hơn **' + b.nhan[be] + '** bao nhiêu ' + b.dv + '?';
         gy = ['Đọc số trên hai cột ' + b.nhan[lon] + ' và ' + b.nhan[be] + '.', 'Nhiều hơn bao nhiêu → lấy số lớn trừ số nhỏ.'];
         lg = [b.nhan[lon] + ': $' + so[lon] + '$; ' + b.nhan[be] + ': $' + so[be] + '$.', '$' + so[lon] + ' - ' + so[be] + ' = ' + kq + '$'];
+        hinhGiai = hg({ nhan: b.nhan.slice(), so: so.slice(), don: b.dv, den: 'cot', hieu: [lon, be] });
       }
       return {
         de: de,
         hinh: { widget: 'bieuDo', config: { loai: 'cot', tieuDe: b.td, nhan: b.nhan.slice(), chuoi: [{ ten: 'Số ' + b.dv, so: so }], donVi: b.dv } },
+        hinhGiai: hinhGiai,
         dapAn: { kieu: 'so', gt: kq }, goiY: gy, loiGiai: lg, loiThuongGap: ltg
       };
     } },
@@ -80,6 +87,7 @@
       return {
         de: 'Biểu đồ tranh cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Hàng **' + b.nhan[i] + '** ứng với bao nhiêu ' + b.dv + '?',
         hinh: { widget: 'bieuDo', config: { loai: 'tranh', tieuDe: b.td, bieuTuong: b.bt, moiBieuTuong: moi, donVi: b.dv, nhan: b.nhan.slice(), chuoi: [{ ten: 'Số ' + b.dv, so: so }] } },
+        hinhGiai: hg({ nhan: b.nhan.slice(), so: so.slice(), don: b.dv, den: 'tranh', moi: moi, hoi: i }),
         dapAn: { kieu: 'so', gt: so[i] },
         goiY: ['Xem chú thích dưới biểu đồ: mỗi biểu tượng ứng với mấy ' + b.dv + '?', 'Đếm số biểu tượng ở hàng "' + b.nhan[i] + '" (nửa biểu tượng tính là $0{,}5$) rồi nhân.'],
         loiGiai: ['Mỗi biểu tượng ứng với $' + moi + '$ ' + b.dv + '; hàng "' + b.nhan[i] + '" có $' + cs(bt) + '$ biểu tượng.', '$' + cs(bt) + ' \\cdot ' + moi + ' = ' + so[i] + '$'],
@@ -100,6 +108,7 @@
       return {
         de: 'Biểu đồ hình quạt tròn: ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Tổng cộng là $' + ng(T) + '$ ' + b.tong + '. Phần **' + b.nhan[i] + '** là bao nhiêu ' + b.vat + '?',
         hinh: { widget: 'bieuDo', config: { loai: 'tron', tieuDe: b.td, nhan: b.nhan.slice(), chuoi: [{ so: p }] } },
+        hinhGiai: hg({ nhan: b.nhan.slice(), so: p.slice(), don: b.vat, nguoc: true, thuoc: { tong: T, don: b.vat }, hoi: i }),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Đọc tỉ lệ của ' + b.nhan[i] + ' trên biểu đồ.', 'Số lượng = tổng × tỉ lệ $= ' + ng(T) + ' \\cdot ' + p[i] + '\\%$.'],
         loiGiai: [b.nhan[i] + ' chiếm $' + p[i] + '\\%$.', '$' + ng(T) + ' \\cdot ' + p[i] + '\\% = ' + ng(T) + ' \\cdot \\frac{' + p[i] + '}{100} = ' + ng(kq) + '$'],
@@ -124,6 +133,7 @@
       return {
         de: 'Biểu đồ cột cho biết kết quả hỏi $' + N + '$ học sinh về ' + b.ten.charAt(0).toLowerCase() + b.ten.slice(1) + '. Nếu vẽ biểu đồ hình quạt tròn thì phần **' + b.nhan[i] + '** chiếm bao nhiêu phần trăm?',
         hinh: { widget: 'bieuDo', config: { loai: 'cot', tieuDe: b.ten, nhan: b.nhan.slice(), chuoi: [{ ten: 'Số bạn', so: so }], donVi: 'bạn' } },
+        hinhGiai: hg({ nhan: b.nhan.slice(), so: so.slice(), don: 'bạn', den: 'bang', giai: 'bang', thuoc: '%', hoi: i }),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tổng số học sinh là $' + N + '$ (kiểm tra: $' + so.join(' + ') + ' = ' + N + '$).', 'Tỉ lệ $= \\frac{' + so[i] + '}{' + N + '} \\cdot 100\\%$.'],
         loiGiai: ['Tổng: $' + so.join(' + ') + ' = ' + N + '$ học sinh.', 'Tỉ lệ ' + b.nhan[i] + ': $\\frac{' + so[i] + '}{' + N + '} \\cdot 100\\% = ' + cs(kq) + '\\%$.', 'Đáp số: $' + cs(kq) + '$.'],
@@ -144,6 +154,7 @@
       return {
         de: 'Biểu đồ cột kép cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Ở ' + b.o + '**' + b.nhan[i] + '**, ' + b.chuoi[lon] + ' nhiều hơn ' + b.chuoi[1 - lon] + ' bao nhiêu ' + b.dv + '?',
         hinh: { widget: 'bieuDo', config: { loai: 'cotKep', tieuDe: b.td, tenNhan: b.tenNhan, nhan: b.nhan.slice(), chuoi: [{ ten: b.chuoi[0], so: s1 }, { ten: b.chuoi[1], so: s2 }], donVi: b.dv } },
+        hinhGiai: { widget: 'canh', config: { ten: 'bienHinh', tuyChon: { nhan: b.chuoi.slice(), so: a.slice(), don: b.dv, den: 'cot', hieu: [lon, 1 - lon] }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1, ghiChu: 'Hai cột của ' + b.o + b.nhan[i] + '.' } },
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Tìm hai cột của ' + b.nhan[i] + ': cột xanh dương là ' + b.chuoi[0] + ', cột cam là ' + b.chuoi[1] + '.', 'Lấy số lớn trừ số nhỏ.'],
         loiGiai: [b.nhan[i] + ': ' + b.chuoi[0] + ' $' + s1[i] + '$, ' + b.chuoi[1] + ' $' + s2[i] + '$.', '$' + a[lon] + ' - ' + a[1 - lon] + ' = ' + kq + '$'],

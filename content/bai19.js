@@ -23,8 +23,68 @@
   var thaiNhi2 = { loai: 'duong', tieuDe: 'Cân nặng thai nhi từ tuần 24 đến tuần 40',
     nhan: ['24', '28', '32', '36', '40'], chuoi: [{ ten: 'Cân nặng (gam)', so: [600, 1000, 1700, 2600, 3500] }], donVi: 'gam' };
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  function hg(c, giai) {
+    var cf = Object.assign({ chiXem: true, t: 1 }, c);
+    if (giai) cf.thamSo = Object.assign({}, cf.thamSo, { trangThai: 'giai' });
+    return { widget: 'canh', config: cf };
+  }
+  function bh(tc, them) { return Object.assign({ ten: 'bienHinh', tuyChon: tc }, them || {}); }
+  var GIAY_VUN = { nhan: ['8A', '8B', '8C', '8D'], so: [12.7, 16.8, 15.5, 14.3], don: 'kg', den: 'cot', moi: 1, voNghia: true };
+  var KHACH_SAN = { nhan: ['Rất tốt', 'Tốt', 'Trung bình', 'Kém'], so: [6, 22, 8, 4], don: 'khách', den: 'bang', giai: 'bang', thuoc: '%', hoi: 1 };
+  var DU_DOAN_20 = 'A B A C A A B D A B A C A B A D A B C A'.split(' ');
+  function soVN(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
+
   TOAN8.bai({
     id: 19, ten: 'Biểu diễn dữ liệu bằng bảng, biểu đồ', sgk: { tap: 1, trang: 93 },
+    nhin: {
+      tieuDe: 'Dựng bảng thành cột, nối cột thành băng, cuộn băng thành quạt tròn', loai: 'minhHoa',
+      luuY: 'Băng chỉ cuộn được thành một hình tròn khi các phần cộng lại đúng bằng cả tổng thể. Nếu mỗi bạn được chọn nhiều môn thì các phần cộng lại quá $100\\%$, không vẽ được quạt tròn. Còn biểu đồ đoạn thẳng dùng khi các cột là những thời điểm nối tiếp nhau.',
+      canh: bh({ nhan: ['Bóng đá', 'Cầu lông', 'Bơi lội', 'Cờ vua'], so: [16, 10, 8, 6], don: 'bạn', den: 'tron', thuoc: '%' },
+        { moTa: 'Bảng số bạn thích mỗi môn dựng thành bốn cột, bốn cột nằm xuống nối đuôi thành một băng dài bằng cả lớp, rồi băng cuộn tròn thành biểu đồ quạt.' }),
+      buoc: [
+        { t: 0, chu: 'Bảng: $40$ bạn lớp 8A chọn môn thể thao yêu thích nhất.' },
+        { t: 0.1, chu: 'Dựng mỗi ô số thành một cột, cao theo số bạn. Nhìn cột là biết ngay môn nào nhiều, môn nào ít: biểu đồ **cột** để so sánh.' },
+        { t: 0.42, chu: 'Cho các cột nằm xuống, nối đuôi nhau: được một băng dài đúng bằng cả lớp, $40$ bạn, tức $100\\%$. Bóng đá chiếm $16$ trên $40$ phần của băng.' },
+        { t: 0.7, chu: 'Cuộn băng lại thành vòng tròn: mỗi đoạn thành một hình quạt. Biểu đồ **quạt tròn** cho biết mỗi phần chiếm bao nhiêu phần trăm cả lớp: $\\frac{16}{40} = 40\\%$.' }
+      ],
+      ketLuan: 'Cột: so sánh các loại với nhau. Quạt tròn: phần trong tổng thể, $$\\text{tỉ lệ} = \\frac{\\text{phần}}{\\text{tổng}} \\cdot 100\\%, \\qquad \\text{phần} = \\text{tổng} \\cdot \\text{tỉ lệ}.$$ Đoạn thẳng: một đại lượng thay đổi theo thời gian.',
+      dung: {
+        tieuDe: 'Giấy vụn của bốn lớp nên vẽ bằng biểu đồ nào?', tuBai: '19.8',
+        canh: bh(Object.assign({ anLucDau: true }, GIAY_VUN), { moTa: 'Bảng khối lượng giấy vụn bốn lớp thu được. Em chọn loại biểu đồ nào, hình sẽ vẽ loại đó.' }),
+        moiThu: 'Chọn một loại biểu đồ. Hình sẽ vẽ đúng loại em chọn bằng số liệu của đề, để em xem nó có giúp so các lớp không.',
+        phanUng: [
+          { gt: 0, trangThai: 'tranh', loi: 'Mỗi biểu tượng là $1$ kg thì phải vẽ $12{,}7$; $16{,}8$; $15{,}5$; $14{,}3$ biểu tượng: lẻ, bị cắt, khó vẽ và khó đọc.' },
+          { gt: 2, trangThai: 'duong', loi: 'Đoạn nối 8A với 8B có nghĩa gì? Các lớp không phải những thời điểm nối tiếp nhau, nên đường nối không nói lên điều gì.' },
+          { gt: 3, trangThai: 'tron', loi: 'Bốn hình quạt gần bằng nhau, khó thấy lớp nào thu nhiều hơn. Quạt tròn để xem phần trong tổng thể, còn đề muốn so các lớp với nhau.' }
+        ],
+        dungChu: 'Bốn cột đứng cạnh nhau trên cùng một đáy: nhìn là thấy 8B nhiều nhất, 8A ít nhất. Biểu đồ cột để so sánh.'
+      },
+      suyRa: {
+        tieuDe: 'Khách sạn, cửa hàng quả, dự đoán đội vô địch: một bộ số đổi dạng',
+        baDe: [
+          { tuBai: '19.7', canh: bh(Object.assign({ anLucDau: true }, KHACH_SAN), { moTa: 'Bảng đánh giá của 40 khách.' }), tenNut: 'Nối đuôi thành băng',
+            soBatKi: function (v) {
+              if (v <= 0 || v > 100) return { t: 1, loi: 'Tỉ lệ phần trăm phải lớn hơn $0$ và không quá $100$.' };
+              return { t: 1, loi: 'Nếu "Tốt" chiếm $' + soVN(v) + '\\%$ thì có $40 \\cdot ' + soVN(v) + '\\% = ' + soVN(0.4 * v) + '$ khách, mà đề cho $22$ khách.' };
+            },
+            dungChu: 'Đoạn "Tốt" dài $22$ trên $40$ phần của băng: $\\frac{22}{40} \\cdot 100\\% = 55\\%$.',
+            saiChu: 'Cả băng là $40$ khách, tức $100\\%$. Đoạn "Tốt" dài $22$ phần: chia $22$ cho $40$.' },
+          { tuBai: '19.6', canh: bh({ nhan: ['Cam', 'Xoài', 'Bưởi', 'Nho'], so: [100, 60, 50, 40], don: 'kg', nguoc: true, thuoc: { tong: 250, don: 'kg' }, hoi: 1, anLucDau: true },
+            { moTa: 'Biểu đồ quạt: cam 40%, xoài 24%, bưởi 20%, nho 16%.' }), tenNut: 'Trải quạt thành băng',
+            soBatKi: function (v) {
+              if (v <= 0 || v >= 250) return { t: 1, loi: 'Xoài là một phần của $250$ kg, nên phải lớn hơn $0$ và nhỏ hơn $250$ kg.' };
+              return { t: 1, loi: '$' + soVN(v) + '$ kg thì chiếm $' + soVN(v) + ' : 250 = ' + soVN(v / 2.5) + '\\%$ của băng, mà quạt Xoài ghi $24\\%$.' };
+            },
+            dungChu: 'Trải ra, cả băng dài $250$ kg. Đoạn Xoài chiếm $24\\%$ băng: $250 \\cdot 24\\% = 60$ kg.',
+            saiChu: 'Cả băng là $250$ kg. Đoạn Xoài chiếm $24\\%$ của băng: lấy $250 \\cdot 24\\%$.' },
+          { tuBai: '19.11', canh: { ten: 'chongThe', tuyChon: { the: DU_DOAN_20, nhom: ['A', 'B', 'C', 'D'], hoi: 'B', anLucDau: true }, moTa: 'Hai mươi thẻ dự đoán đội vô địch.' }, tenNut: 'Gom thành chồng',
+            dungChu: 'Chồng B có $5$ thẻ trong $20$ thẻ: $\\frac{5}{20} \\cdot 100\\% = 25\\%$.',
+            saiChu: 'Gom thẻ thành chồng, đếm chồng B rồi chia cho tổng $20$ thẻ.' }
+        ],
+        cachNhan: 'Cả ba đề là một bộ số đổi dạng: gom thẻ thành chồng (bảng, cột), nối đuôi các cột thành băng (cả băng là $100\\%$), cuộn băng thành quạt tròn. Tỉ lệ $=$ phần $:$ tổng $\\cdot 100\\%$; phần $=$ tổng $\\cdot$ tỉ lệ.'
+      }
+    },
 
     khamPha: {
       nhiemVu: 'Cùng một bảng số liệu có thể vẽ thành nhiều loại biểu đồ. Em bấm các nút **Biểu đồ cột**, **Biểu đồ hình quạt tròn**, **Biểu đồ đoạn thẳng** để so sánh. Loại nào giúp em thấy ngay môn nào được thích nhất? Loại nào cho biết mỗi môn chiếm **bao nhiêu phần trăm** cả lớp? Đường nối giữa "Bóng đá" và "Cầu lông" có ý nghĩa gì không?',
@@ -70,17 +130,18 @@
     ],
 
     viDu: [
-      { de: 'Một trận bóng đá bán được: vé loại $100\\,000$ đồng: $8\\,200$ vé; loại $150\\,000$ đồng: $15\\,600$ vé; loại $200\\,000$ đồng: $3\\,400$ vé. Nên dùng biểu đồ tranh hay biểu đồ cột? (Bấm hai nút dưới đây để so sánh.)',
-        hinh: { widget: 'bieuDo', config: { loai: 'tranh', doiLoai: ['tranh', 'cot'], tieuDe: 'Vé bán được của một trận bóng đá', bieuTuong: '🎫', moiBieuTuong: 1000, donVi: 'vé',
-          nhan: ['100 000 đ', '150 000 đ', '200 000 đ'], chuoi: [{ ten: 'Số vé', so: [8200, 15600, 3400] }] } },
+      { de: 'Một trận bóng đá bán được: vé loại $100\\,000$ đồng: $8\\,200$ vé; loại $150\\,000$ đồng: $15\\,600$ vé; loại $200\\,000$ đồng: $3\\,400$ vé. Nên dùng biểu đồ tranh hay biểu đồ cột?',
+        canh: bh({ nhan: ['100 000 đ', '150 000 đ', '200 000 đ'], so: [8200, 15600, 3400], moi: 1000, don: 'vé', den: 'cot' }),
         buoc: [
-        { lam: 'Thử biểu đồ tranh, mỗi biểu tượng ứng với $1\\,000$ vé: cần $8{,}2 + 15{,}6 + 3{,}4 = 27{,}2$ biểu tượng.', vi: 'Vừa phải vẽ **nhiều** biểu tượng, vừa có biểu tượng bị **cắt lẻ** ($0{,}2$; $0{,}6$; $0{,}4$ biểu tượng) – rất khó vẽ và khó đọc.' },
-        { lam: 'Vậy nên dùng **biểu đồ cột**.', vi: 'Biểu đồ cột biểu diễn được mọi số lượng một cách chính xác, chỉ cần chia trục đứng hợp lí.' } ] },
-      { de: 'Nhiệt độ trung bình tháng 6 ở bốn thành phố: Hà Nội $30{,}2$ °C, Huế $29{,}8$ °C, Đà Lạt $19{,}6$ °C, TP Hồ Chí Minh $28{,}1$ °C. Chọn biểu đồ phù hợp nhất và giải thích.', buoc: [
-        { lam: 'Không dùng biểu đồ tranh.', vi: 'Các số liệu là số thập phân, không biểu diễn được bằng một số nguyên biểu tượng.' },
-        { lam: 'Không dùng biểu đồ đoạn thẳng.', vi: 'Nhiệt độ ở đây thay đổi **theo thành phố**, không phải theo thời gian.' },
-        { lam: 'Không dùng biểu đồ hình quạt tròn.', vi: 'Cộng nhiệt độ của bốn thành phố lại không ra một "tổng thể" có ý nghĩa.' },
-        { lam: 'Nên dùng **biểu đồ cột**.', vi: 'Biểu đồ cột giúp so sánh nhiệt độ giữa các thành phố: Đà Lạt có cột thấp hẳn.' } ] },
+        { canh: { t: 1, trangThai: 'tranh' }, lam: 'Thử biểu đồ tranh, mỗi biểu tượng ứng với $1\\,000$ vé: cần $8{,}2 + 15{,}6 + 3{,}4 = 27{,}2$ biểu tượng.', vi: 'Vừa phải vẽ **nhiều** biểu tượng, vừa có biểu tượng bị **cắt lẻ** ($0{,}2$; $0{,}6$; $0{,}4$ biểu tượng) – rất khó vẽ và khó đọc.' },
+        { canh: { t: 1, trangThai: 'giai' }, lam: 'Vậy nên dùng **biểu đồ cột**.', vi: 'Biểu đồ cột biểu diễn được mọi số lượng một cách chính xác, chỉ cần chia trục đứng hợp lí.' } ] },
+      { de: 'Nhiệt độ trung bình tháng 6 ở bốn thành phố: Hà Nội $30{,}2$ °C, Huế $29{,}8$ °C, Đà Lạt $19{,}6$ °C, TP Hồ Chí Minh $28{,}1$ °C. Chọn biểu đồ phù hợp nhất và giải thích.',
+        canh: bh({ nhan: ['Hà Nội', 'Huế', 'Đà Lạt', 'TP HCM'], so: [30.2, 29.8, 19.6, 28.1], don: '°C', den: 'cot', moi: 1, voNghia: true, voTong: 'Cộng bốn nhiệt độ: 107,7 °C?' }),
+        buoc: [
+        { canh: { t: 1, trangThai: 'tranh' }, lam: 'Không dùng biểu đồ tranh.', vi: 'Các số liệu là số thập phân, không biểu diễn được bằng một số nguyên biểu tượng.' },
+        { canh: { t: 1, trangThai: 'duong' }, lam: 'Không dùng biểu đồ đoạn thẳng.', vi: 'Nhiệt độ ở đây thay đổi **theo thành phố**, không phải theo thời gian.' },
+        { canh: { t: 1, trangThai: 'tron' }, lam: 'Không dùng biểu đồ hình quạt tròn.', vi: 'Cộng nhiệt độ của bốn thành phố lại không ra một "tổng thể" có ý nghĩa.' },
+        { canh: { t: 1, trangThai: 'giai' }, lam: 'Nên dùng **biểu đồ cột**.', vi: 'Biểu đồ cột giúp so sánh nhiệt độ giữa các thành phố: Đà Lạt có cột thấp hẳn.' } ] },
       { de: 'Hỏi $400$ học sinh về phương tiện đến trường: đi bộ $80$ bạn, xe đạp $200$ bạn, xe buýt $40$ bạn, bố mẹ đưa đón $80$ bạn. Muốn thấy **tỉ lệ** học sinh theo từng phương tiện thì dùng biểu đồ nào? Tính các tỉ lệ đó.',
         hinh: { widget: 'bieuDo', config: { loai: 'tron', tieuDe: 'Phương tiện đến trường của 400 học sinh', nhan: ['Đi bộ', 'Xe đạp', 'Xe buýt', 'Bố mẹ đưa đón'], chuoi: [{ so: [80, 200, 40, 80] }] } },
         buoc: [
@@ -115,12 +176,12 @@
     ],
 
     baiTap: [
-      { id: '19.1', muc: 1, de: 'Để biểu diễn **sự thay đổi của một đại lượng theo thời gian**, ta nên dùng biểu đồ nào?',
+      { id: '19.1', hinhGiai: hg(bh({ nhan: ['24', '28', '32', '36', '40'], so: [600, 1000, 1700, 2600, 3500], don: 'gam', den: 'duong' }, { ghiChu: 'Cân nặng thai nhi theo tuần tuổi: nối đỉnh cột theo thứ tự thời gian.' })), muc: 1, de: 'Để biểu diễn **sự thay đổi của một đại lượng theo thời gian**, ta nên dùng biểu đồ nào?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['Biểu đồ cột kép', 'Biểu đồ tranh', 'Biểu đồ đoạn thẳng', 'Biểu đồ hình quạt tròn'] },
         goiY: ['Biểu đồ nào có các điểm nối với nhau theo thứ tự thời gian?', 'Đường gấp khúc đi lên là tăng, đi xuống là giảm.'],
         loiGiai: ['Biểu đồ **đoạn thẳng** nối các điểm theo thứ tự thời gian, nhìn là thấy tăng hay giảm.'] },
 
-      { id: '19.2', muc: 1, de: 'Để biểu diễn **tỉ lệ của các phần trong tổng thể**, ta dùng biểu đồ nào?',
+      { id: '19.2', hinhGiai: hg(bh({ nhan: ['Bóng đá', 'Cầu lông', 'Bơi lội', 'Cờ vua'], so: [16, 10, 8, 6], don: 'bạn', den: 'tron' })), muc: 1, de: 'Để biểu diễn **tỉ lệ của các phần trong tổng thể**, ta dùng biểu đồ nào?',
         dapAn: { kieu: 'chon', gt: 3, luaChon: ['Biểu đồ tranh', 'Biểu đồ cột', 'Biểu đồ đoạn thẳng', 'Biểu đồ hình quạt tròn'] },
         goiY: ['Tổng thể ứng với $100\\%$.', 'Biểu đồ nào chia một hình tròn thành các phần?'],
         loiGiai: ['Cả hình tròn là tổng thể ($100\\%$), mỗi hình quạt là một phần: biểu đồ **hình quạt tròn**.'] },
@@ -155,18 +216,18 @@
         loiGiai: ['Xoài chiếm $24\\%$.', 'Số xoài bán được: $250 \\cdot 24\\% = 250 \\cdot \\frac{24}{100} = 60$'],
         loiThuongGap: [{ gt: 24, giaiThich: '$24$ là **tỉ lệ phần trăm**. Muốn ra kilôgam phải nhân với tổng: $250 \\cdot 24\\%$.' }] },
 
-      { id: '19.7', muc: 2, de: 'Một khách sạn hỏi $40$ khách về chất lượng dịch vụ: Rất tốt $6$ người, Tốt $22$ người, Trung bình $8$ người, Kém $4$ người. Nếu vẽ biểu đồ hình quạt tròn thì phần "Tốt" chiếm bao nhiêu phần trăm?',
+      { id: '19.7', hinhGiai: hg(bh(KHACH_SAN), true), muc: 2, de: 'Một khách sạn hỏi $40$ khách về chất lượng dịch vụ: Rất tốt $6$ người, Tốt $22$ người, Trung bình $8$ người, Kém $4$ người. Nếu vẽ biểu đồ hình quạt tròn thì phần "Tốt" chiếm bao nhiêu phần trăm?',
         dapAn: { kieu: 'so', gt: 55 },
         goiY: ['Tổng số khách là $40$.', 'Tỉ lệ $= \\frac{22}{40} \\cdot 100\\%$.'],
         loiGiai: ['Tổng: $6 + 22 + 8 + 4 = 40$ khách.', 'Tỉ lệ "Tốt": $\\frac{22}{40} \\cdot 100\\% = 55\\%$'],
         loiThuongGap: [{ gt: 22, giaiThich: '$22$ là số khách. Tỉ lệ phần trăm là $\\frac{22}{40} \\cdot 100\\%$.' }] },
 
-      { id: '19.8', muc: 2, de: 'Khối lượng giấy vụn các lớp thu gom được: 8A $12{,}7$ kg; 8B $16{,}8$ kg; 8C $15{,}5$ kg; 8D $14{,}3$ kg. Nên chọn biểu đồ nào để biểu diễn bảng này?',
+      { id: '19.8', hinhGiai: hg(bh(GIAY_VUN), true), muc: 2, de: 'Khối lượng giấy vụn các lớp thu gom được: 8A $12{,}7$ kg; 8B $16{,}8$ kg; 8C $15{,}5$ kg; 8D $14{,}3$ kg. Nên chọn biểu đồ nào để biểu diễn bảng này?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Biểu đồ tranh', 'Biểu đồ cột', 'Biểu đồ đoạn thẳng', 'Biểu đồ hình quạt tròn'] },
         goiY: ['Số liệu là số thập phân – vẽ tranh được không?', 'Số liệu thay đổi theo lớp hay theo thời gian?'],
         loiGiai: ['Số thập phân nên biểu đồ tranh không phù hợp.', 'Dữ liệu thay đổi theo **lớp**, không theo thời gian → không dùng đoạn thẳng.', 'Ta muốn so sánh khối lượng giữa các lớp → **biểu đồ cột**.'] },
 
-      { id: '19.9', muc: 2, de: 'Doanh thu (tỉ đồng) của hai chi nhánh Hà Nội và TP Hồ Chí Minh trong năm 2021 và 2022 được cho trong bảng. Muốn **so sánh** doanh thu của hai chi nhánh trong từng năm, nên dùng biểu đồ nào?',
+      { id: '19.9', khongHinh: 'Đề không cho số liệu cụ thể; Ví dụ 5 đã có một biểu đồ cột kép như vậy.', muc: 2, de: 'Doanh thu (tỉ đồng) của hai chi nhánh Hà Nội và TP Hồ Chí Minh trong năm 2021 và 2022 được cho trong bảng. Muốn **so sánh** doanh thu của hai chi nhánh trong từng năm, nên dùng biểu đồ nào?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Biểu đồ cột kép', 'Biểu đồ hình quạt tròn', 'Biểu đồ tranh', 'Biểu đồ đoạn thẳng'] },
         goiY: ['Có mấy tập dữ liệu cần so sánh?', 'So sánh hai tập dữ liệu → biểu đồ …?'],
         loiGiai: ['Có hai tập dữ liệu (hai chi nhánh) cần đặt cạnh nhau trong mỗi năm.', 'Dùng **biểu đồ cột kép**.'] },
@@ -178,13 +239,13 @@
         loiGiai: ['Tuần 40: $3\\,500$ g; tuần 28: $1\\,000$ g.', '$3\\,500 : 1\\,000 = 3{,}5$'],
         loiThuongGap: [{ gt: 2500, giaiThich: '$3\\,500 - 1\\,000 = 2\\,500$ g là **nặng hơn bao nhiêu**. Đề hỏi **gấp bao nhiêu lần**: phép chia.' }] },
 
-      { id: '19.11', muc: 3, de: 'Bình hỏi $20$ bạn dự đoán đội vô địch giải bóng đá khối 8 và ghi được: A, B, A, C, A, A, B, D, A, B, A, C, A, B, A, D, A, B, C, A. Nếu vẽ biểu đồ hình quạt tròn thì phần ứng với **đội B** chiếm bao nhiêu phần trăm?',
+      { id: '19.11', hinhGiai: hg({ ten: 'chongThe', tuyChon: { the: DU_DOAN_20, nhom: ['A', 'B', 'C', 'D'], hoi: 'B' } }, true), muc: 3, de: 'Bình hỏi $20$ bạn dự đoán đội vô địch giải bóng đá khối 8 và ghi được: A, B, A, C, A, A, B, D, A, B, A, C, A, B, A, D, A, B, C, A. Nếu vẽ biểu đồ hình quạt tròn thì phần ứng với **đội B** chiếm bao nhiêu phần trăm?',
         dapAn: { kieu: 'so', gt: 25 },
         goiY: ['Lập bảng: đếm số lần mỗi chữ A, B, C, D xuất hiện.', 'Tỉ lệ đội B = (số lần B) : $20 \\cdot 100\\%$.'],
         loiGiai: ['Bảng thống kê: A: $10$; B: $5$; C: $3$; D: $2$ (tổng $20$).', 'Tỉ lệ dự đoán đội B: $\\frac{5}{20} \\cdot 100\\% = 25\\%$'],
         loiThuongGap: [{ gt: 5, giaiThich: '$5$ là số bạn chọn B. Tỉ lệ là $\\frac{5}{20} \\cdot 100\\%$.' }, { gt: 50, giaiThich: '$50\\%$ là tỉ lệ của **đội A** ($10$ bạn). Em đếm lại số chữ B.' }] },
 
-      { id: '19.12', muc: 3, de: 'Số học sinh ba trường đăng kí giải chạy việt dã: Đoàn Kết $13$, Bình Minh $47$, Hoà Bình $183$. Nếu vẽ biểu đồ tranh, mỗi biểu tượng ứng với $5$ học sinh (phần lẻ vẫn vẽ thêm một biểu tượng bị cắt) thì phải vẽ tất cả bao nhiêu biểu tượng?',
+      { id: '19.12', hinhGiai: hg(bh({ nhan: ['Đoàn Kết', 'Bình Minh', 'Hoà Bình'], so: [13, 47, 183], moi: 5, don: 'học sinh', den: 'tranh' })), muc: 3, de: 'Số học sinh ba trường đăng kí giải chạy việt dã: Đoàn Kết $13$, Bình Minh $47$, Hoà Bình $183$. Nếu vẽ biểu đồ tranh, mỗi biểu tượng ứng với $5$ học sinh (phần lẻ vẫn vẽ thêm một biểu tượng bị cắt) thì phải vẽ tất cả bao nhiêu biểu tượng?',
         dapAn: { kieu: 'so', gt: 50 },
         goiY: ['Đoàn Kết: $13 : 5 = 2{,}6$ → cần $3$ biểu tượng (2 nguyên + 1 bị cắt).', 'Làm tương tự với Bình Minh và Hoà Bình rồi cộng lại.'],
         loiGiai: ['Đoàn Kết: $13 : 5 = 2{,}6$ → $3$ biểu tượng.', 'Bình Minh: $47 : 5 = 9{,}4$ → $10$ biểu tượng.', 'Hoà Bình: $183 : 5 = 36{,}6$ → $37$ biểu tượng.', 'Tổng: $3 + 10 + 37 = 50$ biểu tượng. Quá nhiều và nhiều biểu tượng bị cắt → nên dùng **biểu đồ cột**.'],

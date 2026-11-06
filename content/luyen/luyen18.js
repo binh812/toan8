@@ -7,32 +7,58 @@
     'Các giá trị có được nhờ **phép đo**, có thể nhận mọi giá trị trong một khoảng → **số liệu liên tục**.',
     'Các giá trị là chữ (tên gọi) và không có cái nào "hơn" cái nào → dữ liệu không là số, **không thể sắp thứ tự**.',
     'Các giá trị là chữ nhưng **xếp được** theo thứ tự (cao – thấp, nhiều – ít) → dữ liệu không là số, **có thể sắp thứ tự**.'];
-  // Ngân hàng dãy dữ liệu: [mô tả, loại]; ví dụ giá trị do hàm sinh (dùng r).
+  // Ngân hàng dãy dữ liệu: { ten, gon (tên ngắn ghi trên hình), sinh(r) → các giá trị, loai, thuTu (chữ có thứ tự, thấp → cao), viet (chữ viết gọn trên hình) }
+  function so(r, ds) { return ds.map(function (d) { return d.length === 3 ? r.so(d[0], d[1]) / d[2] : r.so(d[0], d[1]); }); }
+  function chu(r, ds, k) { return r.xaoTron(ds).slice(0, k || ds.length); }
   var NGAN_HANG = [
-    [function (r) { return 'Số anh chị em ruột của mỗi bạn: $' + [r.so(0, 2), r.so(0, 3), r.so(1, 2), r.so(0, 1)].join('$; $') + '$'; }, 0],
-    [function (r) { return 'Số bàn thắng mỗi trận của một đội bóng: $' + [r.so(0, 3), r.so(0, 4), r.so(1, 2), r.so(0, 2)].join('$; $') + '$'; }, 0],
-    [function (r) { return 'Số học sinh vắng mặt mỗi ngày trong tuần: $' + [r.so(0, 3), r.so(0, 2), r.so(1, 4), r.so(0, 1)].join('$; $') + '$'; }, 0],
-    [function (r) { return 'Số quyển sách mỗi bạn đọc trong tháng: $' + [r.so(1, 4), r.so(0, 3), r.so(2, 5), r.so(1, 2)].join('$; $') + '$'; }, 0],
-    [function (r) { return 'Số xe máy của mỗi gia đình: $' + [r.so(1, 2), r.so(1, 3), r.so(0, 2), r.so(2, 3)].join('$; $') + '$'; }, 0],
-    [function (r) { return 'Số tin nhắn em nhận được mỗi ngày: $' + [r.so(5, 15), r.so(3, 20), r.so(8, 12)].join('$; $') + '$'; }, 0],
-    [function (r) { return 'Chiều cao (cm) của các bạn trong tổ: $' + [r.so(1450, 1600) / 10, r.so(140, 165), r.so(1480, 1620) / 10].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Cân nặng (kg) của các bạn: $' + [r.so(380, 520) / 10, r.so(40, 55), r.so(400, 500) / 10].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Nhiệt độ (°C) lúc 7 giờ sáng trong ba ngày: $' + [r.so(220, 300) / 10, r.so(23, 29), r.so(240, 310) / 10].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Thời gian (phút) đi từ nhà đến trường: $' + [r.so(50, 250) / 10, r.so(5, 25), r.so(80, 200) / 10].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Lượng mưa (mm) trong ba ngày: $' + [r.so(0, 400) / 10, r.so(5, 60), r.so(10, 300) / 10].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Thời gian ngủ mỗi đêm (giờ): $' + [r.so(14, 19) / 2, r.so(7, 9), r.so(14, 18) / 2].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Thời gian chạy $100$ m (giây): $' + [r.so(130, 170) / 10, r.so(140, 180) / 10, r.so(13, 17)].map(cs).join('$; $') + '$'; }, 1],
-    [function (r) { return 'Màu áo yêu thích: ' + r.xaoTron(['Xanh', 'Đỏ', 'Trắng', 'Vàng', 'Tím']).slice(0, 4).join('; '); }, 2],
-    [function (r) { return 'Môn thể thao yêu thích: ' + r.xaoTron(['Bóng đá', 'Cầu lông', 'Bơi lội', 'Cờ vua', 'Bóng rổ']).slice(0, 4).join('; '); }, 2],
-    [function (r) { return 'Tỉnh/thành phố nơi em sinh ra: ' + r.xaoTron(['Hải Phòng', 'Hà Nội', 'Nam Định', 'Thái Bình', 'Huế']).slice(0, 3).join('; '); }, 2],
-    [function (r) { return 'Phương tiện đến trường: ' + r.xaoTron(['Đi bộ', 'Xe đạp', 'Xe buýt', 'Bố mẹ đưa']).join('; '); }, 2],
-    [function (r) { return 'Loại quả yêu thích: ' + r.xaoTron(['Cam', 'Xoài', 'Nhãn', 'Bưởi', 'Ổi']).slice(0, 4).join('; '); }, 2],
-    [function (r) { return 'Xếp loại học tập: ' + r.xaoTron(['Tốt', 'Khá', 'Tốt', 'Đạt', 'Khá']).join('; '); }, 3],
-    [function (r) { return 'Mức độ hài lòng của khách: ' + r.xaoTron(['Rất hài lòng', 'Hài lòng', 'Bình thường', 'Không hài lòng']).join('; '); }, 3],
-    [function (r) { return 'Mức độ yêu thích môn Toán: ' + r.xaoTron(['Rất thích', 'Thích', 'Bình thường', 'Không thích']).join('; '); }, 3],
-    [function (r) { return 'Kết quả thi đấu: ' + r.xaoTron(['Huy chương vàng', 'Huy chương bạc', 'Huy chương đồng']).join('; '); }, 3],
-    [function (r) { return 'Đánh giá độ khó của đề: ' + r.xaoTron(['Rất khó', 'Khó', 'Trung bình', 'Dễ']).join('; '); }, 3]
+    { ten: 'Số anh chị em ruột của mỗi bạn', gon: 'Số anh chị em', loai: 0, sinh: function (r) { return so(r, [[0, 2], [0, 3], [1, 2], [0, 1]]); } },
+    { ten: 'Số bàn thắng mỗi trận của một đội bóng', gon: 'Số bàn thắng', loai: 0, sinh: function (r) { return so(r, [[0, 3], [0, 4], [1, 2], [0, 2]]); } },
+    { ten: 'Số học sinh vắng mặt mỗi ngày trong tuần', gon: 'Số bạn vắng', loai: 0, sinh: function (r) { return so(r, [[0, 3], [0, 2], [1, 4], [0, 1]]); } },
+    { ten: 'Số quyển sách mỗi bạn đọc trong tháng', gon: 'Số sách đã đọc', loai: 0, sinh: function (r) { return so(r, [[1, 4], [0, 3], [2, 5], [1, 2]]); } },
+    { ten: 'Số xe máy của mỗi gia đình', gon: 'Số xe máy', loai: 0, sinh: function (r) { return so(r, [[1, 2], [1, 3], [0, 2], [2, 3]]); } },
+    { ten: 'Số tin nhắn em nhận được mỗi ngày', gon: 'Số tin nhắn', loai: 0, sinh: function (r) { return so(r, [[5, 15], [3, 20], [8, 12]]); } },
+    { ten: 'Chiều cao (cm) của các bạn trong tổ', gon: 'Chiều cao (cm)', loai: 1, sinh: function (r) { return so(r, [[1450, 1600, 10], [140, 165], [1480, 1620, 10]]); } },
+    { ten: 'Cân nặng (kg) của các bạn', gon: 'Cân nặng (kg)', loai: 1, sinh: function (r) { return so(r, [[380, 520, 10], [40, 55], [400, 500, 10]]); } },
+    { ten: 'Nhiệt độ (°C) lúc 7 giờ sáng trong ba ngày', gon: 'Nhiệt độ (°C)', loai: 1, sinh: function (r) { return so(r, [[220, 300, 10], [23, 29], [240, 310, 10]]); } },
+    { ten: 'Thời gian (phút) đi từ nhà đến trường', gon: 'Số phút đi đường', loai: 1, sinh: function (r) { return so(r, [[50, 250, 10], [5, 25], [80, 200, 10]]); } },
+    { ten: 'Lượng mưa (mm) trong ba ngày', gon: 'Lượng mưa (mm)', loai: 1, sinh: function (r) { return so(r, [[0, 400, 10], [5, 60], [10, 300, 10]]); } },
+    { ten: 'Thời gian ngủ mỗi đêm (giờ)', gon: 'Giờ ngủ', loai: 1, sinh: function (r) { return so(r, [[14, 19, 2], [7, 9], [14, 18, 2]]); } },
+    { ten: 'Thời gian chạy $100$ m (giây)', gon: 'Giây chạy 100 m', loai: 1, sinh: function (r) { return so(r, [[130, 170, 10], [140, 180, 10], [13, 17]]); } },
+    { ten: 'Màu áo yêu thích', loai: 2, sinh: function (r) { return chu(r, ['Xanh', 'Đỏ', 'Trắng', 'Vàng', 'Tím'], 4); } },
+    { ten: 'Môn thể thao yêu thích', loai: 2, sinh: function (r) { return chu(r, ['Bóng đá', 'Cầu lông', 'Bơi lội', 'Cờ vua', 'Bóng rổ'], 4); } },
+    { ten: 'Tỉnh/thành phố nơi em sinh ra', gon: 'Nơi sinh', loai: 2, sinh: function (r) { return chu(r, ['Hải Phòng', 'Hà Nội', 'Nam Định', 'Thái Bình', 'Huế'], 3); } },
+    { ten: 'Phương tiện đến trường', loai: 2, sinh: function (r) { return chu(r, ['Đi bộ', 'Xe đạp', 'Xe buýt', 'Bố mẹ đưa']); } },
+    { ten: 'Loại quả yêu thích', loai: 2, sinh: function (r) { return chu(r, ['Cam', 'Xoài', 'Nhãn', 'Bưởi', 'Ổi'], 4); } },
+    { ten: 'Xếp loại học tập', loai: 3, thuTu: ['Đạt', 'Khá', 'Tốt'], sinh: function (r) { return chu(r, ['Tốt', 'Khá', 'Tốt', 'Đạt', 'Khá']); } },
+    { ten: 'Mức độ hài lòng của khách', gon: 'Mức hài lòng', loai: 3, thuTu: ['Không hài lòng', 'Bình thường', 'Hài lòng', 'Rất hài lòng'],
+      viet: { 'Rất hài lòng': 'Rất', 'Bình thường': 'Thường', 'Không hài lòng': 'Không' }, sinh: function (r) { return chu(r, ['Rất hài lòng', 'Hài lòng', 'Bình thường', 'Không hài lòng']); } },
+    { ten: 'Mức độ yêu thích môn Toán', gon: 'Yêu thích Toán', loai: 3, thuTu: ['Không thích', 'Bình thường', 'Thích', 'Rất thích'],
+      viet: { 'Rất thích': 'Rất', 'Bình thường': 'Thường', 'Không thích': 'Không' }, sinh: function (r) { return chu(r, ['Rất thích', 'Thích', 'Bình thường', 'Không thích']); } },
+    { ten: 'Kết quả thi đấu', loai: 3, thuTu: ['Huy chương đồng', 'Huy chương bạc', 'Huy chương vàng'],
+      viet: { 'Huy chương vàng': 'Vàng', 'Huy chương bạc': 'Bạc', 'Huy chương đồng': 'Đồng' }, sinh: function (r) { return chu(r, ['Huy chương vàng', 'Huy chương bạc', 'Huy chương đồng']); } },
+    { ten: 'Đánh giá độ khó của đề', gon: 'Độ khó của đề', loai: 3, thuTu: ['Dễ', 'Trung bình', 'Khó', 'Rất khó'],
+      viet: { 'Trung bình': 'Vừa', 'Rất khó': 'Rất' }, sinh: function (r) { return chu(r, ['Rất khó', 'Khó', 'Trung bình', 'Dễ']); } }
   ];
+  var MAU_LOAI = ['--a', '--b', '#9c36b5', '--cc'];
+  function moTa(m, ds) { return m.ten + ': ' + (m.loai < 2 ? '$' + ds.map(cs).join('$; $') + '$' : ds.join('; ')); }
+  // Một hàng thẻ của hình lời giải: số đếm đứng ở chấm, số đo đứng trên thước, chữ thì bậc thang hoặc túi
+  function hangHinh(m, ds) {
+    var v = m.viet || {}, gon = function (x) { return v[x] || x; };
+    var h = { loai: m.loai, ten: m.gon || m.ten, the: m.loai < 2 ? ds : ds.map(gon), mau: MAU_LOAI[m.loai] };
+    if (m.thuTu) h.thuTu = m.thuTu.map(gon);
+    return h;
+  }
+  function ghiChuViet(ms) {
+    var ds = [];
+    ms.forEach(function (m) { Object.keys(m.viet || {}).forEach(function (k) { ds.push('"' + m.viet[k] + '" là ' + k); }); });
+    return ds.length ? 'Viết gọn: ' + ds.join(', ') + '.' : null;
+  }
+  function hinhGia(cap) {
+    var cf = { ten: 'theDuLieu', tuyChon: { hang: cap.map(function (c) { return hangHinh(c[0], c[1]); }) }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 };
+    var gc = ghiChuViet(cap.map(function (c) { return c[0]; }));
+    if (gc) cf.ghiChu = gc;
+    return { widget: 'canh', config: cf };
+  }
   function cs(x) { return String(x).replace('.', '{,}'); }
 
   // Bối cảnh cho "giá trị không hợp lí": [câu hỏi, đơn vị, min, max, bước, giá trị vô lí (hàm)]
@@ -47,10 +73,11 @@
 
   TOAN8.luyen(18, [
     { ten: 'Phân loại một dãy dữ liệu', muc: 1, sinh: function (r) {
-      var m = r.chon(NGAN_HANG), loai = m[1], moTa = m[0](r);
+      var m = r.chon(NGAN_HANG), loai = m.loai, ds = m.sinh(r);
       var ltg = [];
       return {
-        de: 'Dãy dữ liệu sau thuộc loại nào?\n\n' + moTa + '.',
+        de: 'Dãy dữ liệu sau thuộc loại nào?\n\n' + moTa(m, ds) + '.',
+        hinhGiai: hinhGia([[m, ds]]),
         dapAn: { kieu: 'chon', gt: loai, luaChon: LOAI.slice() },
         goiY: ['Trước hết: các giá trị là **số** hay **chữ**?', loai < 2 ? 'Là số: có được bằng cách **đếm** hay bằng **phép đo**?' : 'Là chữ: có xếp được theo thứ tự (cao – thấp, nhiều – ít) không?'],
         loiGiai: [VI_SAO[loai]],
@@ -59,17 +86,20 @@
     } },
 
     { ten: 'Đếm số dãy rời rạc / liên tục', muc: 2, sinh: function (r) {
-      var so = NGAN_HANG.filter(function (m) { return m[1] < 2; });
-      var chon = r.xaoTron(so).slice(0, 5), hoiRoiRac = r.dau() > 0;
-      var dem = chon.filter(function (m) { return m[1] === (hoiRoiRac ? 0 : 1); }).length;
-      var ds = chon.map(function (m, i) { return '(' + (i + 1) + ') ' + m[0](r) + '.'; });
+      var laSo = NGAN_HANG.filter(function (m) { return m.loai < 2; });
+      var chon = r.xaoTron(laSo).slice(0, 5), hoiRoiRac = r.dau() > 0;
+      var dem = chon.filter(function (m) { return m.loai === (hoiRoiRac ? 0 : 1); }).length;
+      var giaTri = chon.map(function (m) { return m.sinh(r); });
+      var ds = chon.map(function (m, i) { return '(' + (i + 1) + ') ' + moTa(m, giaTri[i]) + '.'; });
       var dsRR = [], dsLT = [];
-      chon.forEach(function (m, i) { (m[1] === 0 ? dsRR : dsLT).push('(' + (i + 1) + ')'); });
+      chon.forEach(function (m, i) { (m.loai === 0 ? dsRR : dsLT).push('(' + (i + 1) + ')'); });
+      var hinh = hinhGia(chon.map(function (m, i) { return [Object.assign({}, m, { gon: '(' + (i + 1) + ') ' + (m.gon || m.ten) }), giaTri[i]]; }));
       var ltg = [];
       if (dem !== 5) ltg.push({ gt: 5, giaiThich: 'Không phải dãy số nào cũng ' + (hoiRoiRac ? 'rời rạc' : 'liên tục') + ': số **đếm** được là rời rạc, số **đo** được là liên tục.' });
       if (5 - dem !== dem && dem !== 0) ltg.push({ gt: 5 - dem, giaiThich: 'Em đếm nhầm sang loại kia. Đếm → rời rạc; đo → liên tục.' });
       return {
         de: 'Trong 5 dãy dữ liệu sau, có **bao nhiêu** dãy là số liệu ' + (hoiRoiRac ? '**rời rạc**' : '**liên tục**') + '?\n\n' + ds.join('\n\n'),
+        hinhGiai: hinh,
         dapAn: { kieu: 'so', gt: dem },
         goiY: ['Dãy nào có được bằng cách **đếm**? Dãy nào có được bằng **phép đo** (cân, thước, đồng hồ, nhiệt kế…)?', 'Đếm → rời rạc; đo → liên tục (dù số ghi ra có thể là số nguyên).'],
         loiGiai: ['Đếm (rời rạc): ' + (dsRR.join(', ') || 'không có') + '.', 'Đo (liên tục): ' + (dsLT.join(', ') || 'không có') + '.', 'Số dãy ' + (hoiRoiRac ? 'rời rạc' : 'liên tục') + ' là $' + dem + '$.'],
@@ -90,6 +120,7 @@
       var ltg = [{ gt: vl > b.hi ? lonNhatHopLi : nhoNhatHopLi, giaiThich: '$' + (vl > b.hi ? lonNhatHopLi : nhoNhatHopLi) + '$ ' + b.dv + ' vẫn là giá trị bình thường. Em tìm giá trị ' + (vl > b.hi ? '**lớn**' : '**nhỏ**') + ' đến mức vô lí.' }];
       return {
         de: ten + ' hỏi ' + ds.length + ' bạn lớp 8: "' + b.hoi + '" và ghi được: $' + ds.join('$; $') + '$. Giá trị nào **không hợp lí**?',
+        hinhGiai: { widget: 'canh', config: { ten: 'cotHopLi', tuyChon: { so: ds.slice(), don: b.dv, lo: b.lo, hi: b.hi, vl: [vt] }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } },
         dapAn: { kieu: 'so', gt: vl },
         goiY: ['Với học sinh lớp 8, câu trả lời thường nằm trong khoảng từ $' + b.lo + '$ đến $' + b.hi + '$ ' + b.dv + '.', 'Giá trị nào ' + (vl > b.hi ? 'lớn' : 'nhỏ') + ' đến mức không thể xảy ra (có thể do ghi nhầm)?'],
         loiGiai: ['Các giá trị khác đều bình thường với học sinh lớp 8.', 'Không thể có câu trả lời $' + vl + '$ ' + b.dv + ' (có thể ghi nhầm). Giá trị không hợp lí là $' + vl + '$.'],
@@ -130,6 +161,7 @@
       var chuDe = nhom[0] === 'A' ? 'dự đoán đội vô địch giải bóng đá khối 8 (các đội A, B, C, D)' : nhom[0] === 'Toán' ? 'chọn môn học yêu thích nhất' : 'chọn màu áo đồng phục thể thao';
       return {
         de: 'Bình hỏi $' + N + '$ bạn ' + chuDe + ' và ghi được:\n\n' + ds.join(', ') + '.\n\nCó bao nhiêu **phần trăm** số bạn được hỏi chọn **' + nhom[hoi] + '**?',
+        hinhGiai: { widget: 'canh', config: { ten: 'chongThe', tuyChon: { the: ds.slice(), nhom: nhom.slice(), hoi: nhom[hoi] }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } },
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Lập bảng: đếm số lần mỗi lựa chọn xuất hiện (tổng phải bằng $' + N + '$).', 'Tỉ lệ = (số lần ' + nhom[hoi] + ') : $' + N + ' \\cdot 100\\%$.'],
         loiGiai: ['Bảng thống kê: ' + nhom.map(function (x, i) { return x + ': $' + dem[i] + '$'; }).join('; ') + ' (tổng $' + N + '$).',

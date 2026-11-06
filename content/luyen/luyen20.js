@@ -26,7 +26,11 @@
     if (h2 % 1 || h2 * b.buoc + b.g >= (b.dv === '%' ? 100 : Infinity)) { h1 = 2; lan = 2; h2 = 4; }
     var nho = b.g + h1 * b.buoc, lon = b.g + h2 * b.buoc, dao = r.dau() > 0;
     var so = dao ? [lon, nho] : [nho, lon], iLon = dao ? 0 : 1;
-    return { b: b, nho: nho, lon: lon, lan: lan, so: so, iLon: iLon,
+    // Hình lời giải: cắt trục ở gốc g, đỉnh trục chia 4 khoảng đều theo bước của bối cảnh
+    var khoang = b.buoc * Math.ceil(h2 * 1.2 / 4), dinh = b.g + 4 * khoang;
+    var hinhGiai = { widget: 'canh', config: { ten: 'catTruc', tuyChon: { nhan: b.nhan.slice(), so: so.slice(), goc: b.g, dinh: dinh, don: b.dv, hoi: [iLon, 1 - iLon], nguoc: true },
+      thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } };
+    return { b: b, nho: nho, lon: lon, lan: lan, so: so, iLon: iLon, hinhGiai: hinhGiai,
       hinh: { widget: 'bieuDo', config: { loai: 'cot', gocTruc: b.g, tieuDe: b.td + ' (gốc ' + b.g + ')', nhan: b.nhan.slice(), chuoi: [{ ten: b.ten, so: so }], donVi: b.dv } } };
   }
 
@@ -38,6 +42,7 @@
       return {
         de: 'Biểu đồ cột có gốc trục đứng là $' + b.g + '$. Trên biểu đồ, cột **' + L + '** cao gấp bao nhiêu lần cột **' + N + '**?',
         hinh: d.hinh,
+        hinhGiai: d.hinhGiai,
         dapAn: { kieu: 'so', gt: d.lan },
         goiY: ['Chiều cao cột chỉ tính phần **trên gốc** $' + b.g + '$.', 'Cột ' + L + ' cao $' + d.lon + ' - ' + b.g + '$, cột ' + N + ' cao $' + d.nho + ' - ' + b.g + '$.'],
         loiGiai: ['Cột ' + L + ' cao $' + d.lon + ' - ' + b.g + ' = ' + (d.lon - b.g) + '$; cột ' + N + ' cao $' + d.nho + ' - ' + b.g + ' = ' + (d.nho - b.g) + '$ (theo cùng đơn vị của trục).',
@@ -67,6 +72,7 @@
       return {
         de: 'Biểu đồ cột có gốc trục đứng là $' + b.g + '$. Bạn ' + ten + ' nhận xét: ' + cau + ' Nhận xét đó đúng hay sai?',
         hinh: d.hinh,
+        hinhGiai: d.hinhGiai,
         dapAn: { kieu: 'dungSai', gt: gt },
         goiY: ['Gốc trục đứng của biểu đồ là bao nhiêu? Khi gốc khác $0$, chiều cao cột có tỉ lệ với số liệu không?', 'Đọc **con số** trên đầu mỗi cột rồi so sánh.'],
         loiGiai: lg
@@ -93,6 +99,7 @@
       return {
         de: 'Biểu đồ đoạn thẳng cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + '. Từ ' + b.nhan[i] + ' đến ' + b.nhan[j] + ', số liệu ' + (giam ? '**giảm**' : '**tăng**') + ' bao nhiêu phần trăm?',
         hinh: { widget: 'bieuDo', config: { loai: 'duong', tieuDe: b.td, nhan: b.nhan.slice(), chuoi: [{ ten: b.td, so: so }], donVi: b.dv } },
+        hinhGiai: { widget: 'canh', config: { ten: 'soVoiCu', tuyChon: { cu: a, moi: bb, nhanCu: b.nhan[i], nhanMoi: b.nhan[j], don: b.dv }, thamSo: { trangThai: 'giai' }, chiXem: true, t: 1 } },
         dapAn: { kieu: 'so', gt: pt },
         goiY: ['Đọc giá trị cũ (' + b.nhan[i] + ') và giá trị mới (' + b.nhan[j] + ').', 'Mức ' + (giam ? 'giảm' : 'tăng') + ' $= \\frac{\\text{chênh lệch}}{\\text{giá trị cũ}} \\cdot 100\\%$.'],
         loiGiai: [b.nhan[i] + ': $' + a + '$; ' + b.nhan[j] + ': $' + cs(bb) + '$ (' + b.dv + '). Chênh lệch: $' + cs(doi) + '$.',
@@ -133,6 +140,8 @@
       return {
         de: 'Biểu đồ cho biết ' + b.td.charAt(0).toLowerCase() + b.td.slice(1) + ' từ năm 2019 đến năm 2023. Nhận xét nào đúng về số liệu của **' + b.chuoi[ai] + '**?',
         hinh: { widget: 'bieuDo', config: { loai: 'duong', tieuDe: b.td, tenNhan: 'Năm', nhan: nhan, chuoi: chuoi, donVi: b.dv } },
+        hinhGiai: { widget: 'canh', config: { ten: 'trucNgang', tuyChon: { nam: nhan.map(Number), so: s.slice(), don: b.dv, deu: true, dauBuoc: true }, chiXem: true, t: 1,
+          ghiChu: 'Chỉ vẽ đường của ' + b.chuoi[ai] + ': xanh lá là tăng, đỏ là giảm.' } },
         dapAn: { kieu: 'chon', gt: kieu, luaChon: lc },
         goiY: ['Chỉ xem đường của ' + b.chuoi[ai] + ' (theo chú giải màu).', 'So từng năm với năm trước: lớn hơn là tăng, nhỏ hơn là giảm.'],
         loiGiai: [b.chuoi[ai] + ': $' + s.join(' \\to ') + '$.', kieu === 0 ? 'Năm sau luôn cao hơn năm trước → **tăng liên tục**.' : kieu === 1 ? 'Năm sau luôn thấp hơn năm trước → **giảm liên tục**.' : 'Có năm tăng, có năm giảm → **lúc tăng lúc giảm**.']

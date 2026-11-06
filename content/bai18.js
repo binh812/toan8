@@ -54,8 +54,73 @@
     muiTen(board, [11.5, 4.4], [10.4, 3]); muiTen(board, [12.5, 4.4], [13.6, 3]);
   };
 
+  // ---------- Cấu hình hình cho "Nhìn là hiểu" ----------
+  function hg(c, giai) {
+    var cf = Object.assign({ chiXem: true, t: 1 }, c);
+    if (giai) cf.thamSo = Object.assign({}, cf.thamSo, { trangThai: 'giai' });
+    return { widget: 'canh', config: cf };
+  }
+  // Các hàng thẻ dữ liệu trên giá của chúng; tc thêm vào tuyChon (anTen: giấu tên loại tới khi em làm đúng)
+  function gia(hang, tc, them) { return Object.assign({ ten: 'theDuLieu', tuyChon: Object.assign({ hang: hang }, tc || {}) }, them || {}); }
+  var CAO_AN = [152, 148.5, 160, 15.5, 155, 149];
+  var HOP_THU_THAP = [{ ten: 'Trực tiếp', phu: 'em tự quan sát, đo, hỏi' }, { ten: 'Gián tiếp', phu: 'sách, báo, Internet' }];
+  var DU_DOAN_12 = 'A B A C A B D A B A E A'.split(' ');
+
   TOAN8.bai({
     id: 18, ten: 'Thu thập và phân loại dữ liệu', sgk: { tap: 1, trang: 90 },
+    nhin: {
+      tieuDe: 'Mỗi thẻ dữ liệu về đúng giá của nó', loai: 'minhHoa',
+      luuY: 'Hình cho thấy cách nhận dạng hay gặp: đếm hay đo, chữ có xếp được thứ tự không. Định nghĩa trong SGK: số liệu liên tục là số liệu nhận giá trị tuỳ ý trong một khoảng; số liệu không như vậy là rời rạc.',
+      canh: { ten: 'theDuLieu', tuyChon: { tron: true }, moTa: 'Mười ba thẻ câu trả lời để lẫn lộn, rồi mỗi thẻ về một giá: số xe máy đứng ở các chấm 0, 1, 2, 3, 4; số phút đứng trên thước; xếp loại đứng thành bậc thang; màu áo nằm trong túi. Thẻ 30 xe máy không có chỗ.' },
+      buoc: [
+        { t: 0, chu: 'Mười ba thẻ ghi câu trả lời của các bạn, đang để lẫn lộn. Màu viền cho biết thẻ trả lời câu hỏi nào.' },
+        { t: 0.15, chu: 'Số xe máy có được nhờ **đếm**, nên thẻ chỉ đứng ở các chấm $0, 1, 2, \\ldots$ Không nhà nào có $1{,}5$ chiếc xe.' },
+        { t: 0.3, chu: 'Số phút đi đường có được nhờ **đo**, nên thẻ đứng được ở bất kì chỗ nào trên thước: $12{,}5$ phút, $12{,}55$ phút,…' },
+        { t: 0.45, chu: 'Xếp loại là chữ, nhưng xếp được thành bậc thang: Đạt, Khá, Tốt. Màu áo thì không có bậc nào: đổi chỗ thế nào cũng được.' },
+        { t: 0.75, chu: 'Thẻ $30$ chiếc xe máy không có chỗ trên giá: nhà nào có ngần ấy xe? Đó là giá trị **không hợp lí**, có lẽ ai đó ghi nhầm $3$ thành $30$.' },
+        { t: 0.88, chu: 'Mỗi giá là một loại dữ liệu.' }
+      ],
+      ketLuan: 'Đếm được: **số liệu rời rạc**. Đo được: **số liệu liên tục**.\n\nChữ xếp được thành bậc: **có thể sắp thứ tự**. Chữ không xếp được: **không thể sắp thứ tự**.\n\nThẻ không có chỗ trên giá: giá trị **không hợp lí**.',
+      dung: {
+        tieuDe: 'Số đo nào không thể có thật?', tuBai: '18.6',
+        canh: { ten: 'cotHopLi', tuyChon: { so: CAO_AN, don: 'cm', lo: 140, hi: 175, vl: [3], anLucDau: true, nhanDai: 'lớp 8 thường cao 140 – 175 cm' },
+          moTa: 'Sáu thẻ chiều cao An ghi được. Khi em trả lời, mỗi bạn thành một cột cao đúng số đo.' },
+        moiThu: 'Gõ giá trị em cho là không hợp lí. Hình sẽ dựng mỗi bạn thành một cột cao đúng số đo để em so.',
+        soBatKi: function (v) {
+          var so = String(v).replace('.', '{,}');
+          if (CAO_AN.indexOf(v) < 0) return { t: 0, loi: 'Dãy An ghi không có số $' + so + '$. Em chọn một số trong dãy.' };
+          return { thamSo: { thu: v }, t: 1, loi: 'Cột $' + so + '$ cm (viền đậm) nằm trong dải bình thường của học sinh lớp 8. Có cột nào thấp lạ thường so với các bạn?' };
+        },
+        dungChu: 'Cột $15{,}5$ cm chỉ cao bằng một cây bút chì, thấp hơn hẳn mọi bạn. Giá trị này không hợp lí (có lẽ An ghi nhầm $155$).'
+      },
+      suyRa: {
+        tieuDe: 'Đếm người, xếp loại, đoán đội vô địch: vẫn là đặt thẻ lên giá',
+        baDe: [
+          { tuBai: '18.4', canh: gia([{ loai: 0, ten: 'Số người mỗi nhà (ví dụ)', the: [4, 3, 5, 4, 6], tu: 2, den: 7, giua: { s: '4,5 người', v: 4.5 }, mau: '--a' }], { anTen: true }, { moTa: 'Năm thẻ số người mỗi nhà trên một trục số, và một thẻ thử 4,5 người.' }),
+            tenNut: 'Thử thẻ ở giữa',
+            phanUng: [{ gt: 1, trangThai: 'kiem', loi: 'Số liệu liên tục phải nhận được cả giá trị ở giữa như $4{,}5$. Có nhà nào $4{,}5$ người không?' },
+              { gt: 2, loi: 'Câu trả lời là số ($3$, $4$, $5$ người), không phải chữ.' }, { gt: 3, loi: 'Câu trả lời là số ($3$, $4$, $5$ người), không phải chữ.' }],
+            dungChu: 'Số người có được nhờ **đếm**: chỉ có $3, 4, 5, \\ldots$ người, không có nhà nào $4{,}5$ người. Đó là **số liệu rời rạc**.',
+            saiChu: 'Nhìn thẻ $4{,}5$ người: có nhà nào như thế không? Số người có được nhờ đếm hay nhờ đo?' },
+          { tuBai: '18.5', canh: gia([{ loai: 3, ten: 'Xếp loại tổ 1', the: ['Tốt', 'Khá', 'Tốt', 'Đạt', 'Khá'], thuTu: ['Đạt', 'Khá', 'Tốt'], mau: '--cc' }], { anTen: true }, { moTa: 'Năm thẻ xếp loại của tổ 1.' }),
+            tenNut: 'Thử xếp bậc thang',
+            phanUng: [{ gt: 2, loi: 'Thử xếp: Đạt, Khá, Tốt đứng thành bậc thang, bậc sau cao hơn bậc trước. Vậy xếp được thứ tự.' },
+              { gt: 0, loi: 'Tốt, Khá, Đạt là chữ, không phải số.' }, { gt: 1, loi: 'Tốt, Khá, Đạt là chữ, không phải số.' }],
+            dungChu: 'Đạt, Khá, Tốt xếp được thành bậc thang, nên đây là dữ liệu không là số, **có thể sắp thứ tự**.',
+            saiChu: 'Các giá trị là chữ. Thử xếp chúng thành bậc thang từ thấp lên cao xem có được không.' },
+          { tuBai: '18.12', canh: { ten: 'chongThe', tuyChon: { the: DU_DOAN_12, nhom: ['A', 'B', 'C', 'D', 'E'], hoi: 'A', anLucDau: true }, moTa: 'Mười hai thẻ dự đoán đội vô địch.' },
+            tenNut: 'Gom thành chồng',
+            soBatKi: function (v) {
+              if (v <= 0 || v > 100) return { t: 1, loi: 'Tỉ lệ phần trăm phải lớn hơn $0$ và không quá $100$.' };
+              var the = Math.round(12 * v) / 100;
+              return { t: 1, loi: 'Nếu là $' + String(v).replace('.', '{,}') + '\\%$ thì chồng A phải có $12 \\cdot ' + String(v).replace('.', '{,}') + '\\% = ' + String(the).replace('.', '{,}') + '$ thẻ. Đếm lại chồng A.' };
+            },
+            dungChu: 'Chồng A có $6$ thẻ, đúng một nửa của $12$ thẻ: $\\frac{6}{12} \\cdot 100\\% = 50\\%$.',
+            saiChu: 'Đếm số thẻ trong chồng A rồi so với tổng số thẻ $12$.' }
+        ],
+        cachNhan: 'Ba đề khác nhau, cùng một việc: đặt từng thẻ lên giá. Số đếm chỉ đứng ở chấm, số đo đứng đâu trên thước cũng được; chữ thì thử xếp bậc thang hoặc gom thành chồng. Thẻ không có chỗ đứng là giá trị không hợp lí.'
+      }
+    },
 
     khamPha: {
       nhiemVu: 'Kéo hai thanh trượt. **(A)** là chiều cao của một bạn (đo bằng thước), **(B)** là số môn thể thao bạn đó biết chơi (đếm). Em thấy $h$ dừng được ở $131{,}3$; $131{,}4$;… (đo bằng thước chính xác hơn thì còn được $131{,}35$ cm). Còn $n$ có dừng được ở giữa $3$ và $4$ không?',
@@ -88,20 +153,26 @@
     ],
 
     viDu: [
-      { de: 'Để thu thập mỗi dữ liệu sau, ta nên làm thế nào? Đó là cách thu thập trực tiếp hay gián tiếp?\n\na) Số dân của các tỉnh miền Trung năm 2023.\n\nb) Nhiệt độ ngoài sân trường lúc 7 giờ sáng mỗi ngày trong một tuần.', buoc: [
-        { lam: 'a) Vào website của Cục Thống kê (hoặc sách, báo) để tra số dân: thu thập **gián tiếp**.', vi: 'Số dân của cả một tỉnh thì em không tự đếm được; dữ liệu này **đã có sẵn** ở nguồn chính thức.' },
-        { lam: 'b) Đặt nhiệt kế ngoài sân, mỗi sáng lúc 7 giờ đọc và ghi lại: thu thập **trực tiếp**.', vi: 'Em tự **đo** (quan sát, làm thí nghiệm) nên đó là thu thập trực tiếp.' } ] },
-      { de: 'Quỳnh hỏi 4 bạn và ghi lại câu trả lời.\n\na) "Nhà bạn có mấy chiếc xe máy?" Kết quả: $2$; $1$; $30$; $3$.\n\nb) "Bạn đi từ nhà đến trường mất bao lâu (phút)?" Kết quả: $12{,}5$; $8$; $20{,}3$; $15$.\n\nMỗi dãy dữ liệu thuộc loại nào? Chỉ ra giá trị không hợp lí nếu có.', buoc: [
-        { lam: 'a) Số xe máy có được bằng cách **đếm** → **số liệu rời rạc**.', vi: 'Không có nhà nào có "$1{,}5$ chiếc xe máy": giá trị chỉ là số tự nhiên.' },
-        { lam: 'Giá trị $30$ (chiếc xe máy) **không hợp lí** với một gia đình.', vi: 'Có thể bạn ghi nhầm $3$ thành $30$.' },
-        { lam: 'b) Thời gian có được bằng **phép đo** (đồng hồ) → **số liệu liên tục**.', vi: 'Thời gian có thể nhận mọi giá trị trong một khoảng: $12{,}5$ phút, $12{,}55$ phút,…' } ] },
-      { de: 'Các dữ liệu sau thuộc loại nào?\n\na) Mức độ hài lòng của khách: Rất hài lòng; Hài lòng; Bình thường; Không hài lòng.\n\nb) Màu áo yêu thích của các bạn: Xanh; Đỏ; Trắng; Vàng.', buoc: [
-        { lam: 'Cả hai dãy đều là **dữ liệu không là số**.', vi: 'Các giá trị là chữ (tên mức, tên màu), không phải số.' },
-        { lam: 'a) Các mức hài lòng **sắp xếp được** từ cao xuống thấp → dữ liệu không là số, **có thể sắp thứ tự**.', vi: '"Rất hài lòng" rõ ràng cao hơn "Hài lòng", "Hài lòng" cao hơn "Bình thường",…' },
-        { lam: 'b) Các màu không có màu nào "lớn hơn" màu nào → dữ liệu không là số, **không thể sắp thứ tự**.', vi: 'Không có thứ tự tự nhiên nào giữa Xanh, Đỏ, Trắng, Vàng.' } ] },
-      { de: 'Em muốn ước lượng **thời gian tự học ở nhà** mỗi ngày (đơn vị: giờ) của các bạn trong lớp. Hãy đưa ra cách thu thập dữ liệu và cho biết dữ liệu thu được thuộc loại nào.', buoc: [
-        { lam: 'Lập phiếu hỏi "Mỗi ngày bạn tự học ở nhà khoảng bao nhiêu giờ?" và phát cho **tất cả** các bạn trong lớp.', vi: 'Hỏi cả lớp (không chỉ vài bạn thân) để dữ liệu **đại diện** cho cả lớp. Đây là thu thập **trực tiếp** (lập bảng hỏi).' },
-        { lam: 'Dữ liệu thu được (ví dụ $1{,}5$; $2$; $2{,}25$ giờ) là **số liệu liên tục**.', vi: 'Thời gian là đại lượng **đo** được, có thể nhận mọi giá trị trong một khoảng.' } ] }
+      { de: 'Để thu thập mỗi dữ liệu sau, ta nên làm thế nào? Đó là cách thu thập trực tiếp hay gián tiếp?\n\na) Số dân của các tỉnh miền Trung năm 2023.\n\nb) Nhiệt độ ngoài sân trường lúc 7 giờ sáng mỗi ngày trong một tuần.',
+        canh: { ten: 'xepHop', tuyChon: { hop: HOP_THU_THAP, the: [{ s: 'a) Số dân', h: 1 }, { s: 'b) Nhiệt độ', h: 0 }] } }, buoc: [
+        { canh: { t: 0.42 }, lam: 'a) Vào website của Cục Thống kê (hoặc sách, báo) để tra số dân: thu thập **gián tiếp**.', vi: 'Số dân của cả một tỉnh thì em không tự đếm được; dữ liệu này **đã có sẵn** ở nguồn chính thức.' },
+        { canh: { t: 1 }, lam: 'b) Đặt nhiệt kế ngoài sân, mỗi sáng lúc 7 giờ đọc và ghi lại: thu thập **trực tiếp**.', vi: 'Em tự **đo** (quan sát, làm thí nghiệm) nên đó là thu thập trực tiếp.' } ] },
+      { de: 'Quỳnh hỏi 4 bạn và ghi lại câu trả lời.\n\na) "Nhà bạn có mấy chiếc xe máy?" Kết quả: $2$; $1$; $30$; $3$.\n\nb) "Bạn đi từ nhà đến trường mất bao lâu (phút)?" Kết quả: $12{,}5$; $8$; $20{,}3$; $15$.\n\nMỗi dãy dữ liệu thuộc loại nào? Chỉ ra giá trị không hợp lí nếu có.',
+        canh: gia([{ loai: 0, ten: 'a) Số xe máy mỗi nhà', the: [2, 1, 30, 3], vl: [2], tu: 0, den: 4, mau: '--a' },
+          { loai: 1, ten: 'b) Số phút đến trường', the: [12.5, 8, 20.3, 15], tu: 0, den: 25, buoc: 5, mau: '--b' }]), buoc: [
+        { canh: { t: 0.45 }, lam: 'a) Số xe máy có được bằng cách **đếm** → **số liệu rời rạc**.', vi: 'Không có nhà nào có "$1{,}5$ chiếc xe máy": giá trị chỉ là số tự nhiên.' },
+        { canh: { t: 0.8 }, lam: 'Giá trị $30$ (chiếc xe máy) **không hợp lí** với một gia đình.', vi: 'Có thể bạn ghi nhầm $3$ thành $30$.' },
+        { canh: { t: 1 }, lam: 'b) Thời gian có được bằng **phép đo** (đồng hồ) → **số liệu liên tục**.', vi: 'Thời gian có thể nhận mọi giá trị trong một khoảng: $12{,}5$ phút, $12{,}55$ phút,…' } ] },
+      { de: 'Các dữ liệu sau thuộc loại nào?\n\na) Mức độ hài lòng của khách: Rất hài lòng; Hài lòng; Bình thường; Không hài lòng.\n\nb) Màu áo yêu thích của các bạn: Xanh; Đỏ; Trắng; Vàng.',
+        canh: gia([{ loai: 3, ten: 'a) Mức hài lòng', the: ['Hài lòng', 'Rất', 'Không', 'Thường'], thuTu: ['Không', 'Thường', 'Hài lòng', 'Rất'], mau: '--cc' },
+          { loai: 2, ten: 'b) Màu áo yêu thích', the: ['Xanh', 'Đỏ', 'Trắng', 'Vàng'], mau: '#9c36b5' }], null, { ghiChu: 'Viết gọn: "Rất" là Rất hài lòng, "Thường" là Bình thường, "Không" là Không hài lòng.' }), buoc: [
+        { canh: { t: 0.1 }, lam: 'Cả hai dãy đều là **dữ liệu không là số**.', vi: 'Các giá trị là chữ (tên mức, tên màu), không phải số.' },
+        { canh: { t: 0.6 }, lam: 'a) Các mức hài lòng **sắp xếp được** từ cao xuống thấp → dữ liệu không là số, **có thể sắp thứ tự**.', vi: '"Rất hài lòng" rõ ràng cao hơn "Hài lòng", "Hài lòng" cao hơn "Bình thường",…' },
+        { canh: { t: 1 }, lam: 'b) Các màu không có màu nào "lớn hơn" màu nào → dữ liệu không là số, **không thể sắp thứ tự**.', vi: 'Không có thứ tự tự nhiên nào giữa Xanh, Đỏ, Trắng, Vàng.' } ] },
+      { de: 'Em muốn ước lượng **thời gian tự học ở nhà** mỗi ngày (đơn vị: giờ) của các bạn trong lớp. Hãy đưa ra cách thu thập dữ liệu và cho biết dữ liệu thu được thuộc loại nào.',
+        canh: gia([{ loai: 1, ten: 'Giờ tự học mỗi ngày (ví dụ)', the: [1.5, 2, 2.75, 1], tu: 0, den: 4, buoc: 1, giua: { s: '2,25 giờ', v: 2.25 }, mau: '--b' }]), buoc: [
+        { canh: { t: 0.45 }, lam: 'Lập phiếu hỏi "Mỗi ngày bạn tự học ở nhà khoảng bao nhiêu giờ?" và phát cho **tất cả** các bạn trong lớp.', vi: 'Hỏi cả lớp (không chỉ vài bạn thân) để dữ liệu **đại diện** cho cả lớp. Đây là thu thập **trực tiếp** (lập bảng hỏi).' },
+        { canh: { t: 1 }, lam: 'Dữ liệu thu được (ví dụ $1{,}5$; $2$; $2{,}25$ giờ) là **số liệu liên tục**.', vi: 'Thời gian là đại lượng **đo** được, có thể nhận mọi giá trị trong một khoảng.' } ] }
     ],
 
     viDuMo: [
@@ -117,38 +188,45 @@
     ],
 
     baiTap: [
-      { id: '18.1', muc: 1, de: 'Dữ liệu nào sau đây là **số liệu liên tục**?',
+      { id: '18.1', hinhGiai: hg(gia([{ loai: 2, ten: 'Tên các bạn', the: ['Minh', 'Lan', 'Hà'], mau: '#9c36b5' },
+          { loai: 3, ten: 'Mức yêu thích Toán', the: ['Thích', 'Thường', 'Không'], thuTu: ['Không', 'Thường', 'Thích'], mau: '--cc' },
+          { loai: 1, ten: 'Giây chạy 100 m', the: [14.2, 15.8, 17.5], tu: 13, den: 19, buoc: 1, mau: '--b' },
+          { loai: 0, ten: 'Số bạn nữ mỗi tổ', the: [4, 6, 5], tu: 3, den: 7, mau: '--a' }], null, { ghiChu: 'Viết gọn: "Thường" là Bình thường, "Không" là Không thích.' })), muc: 1, de: 'Dữ liệu nào sau đây là **số liệu liên tục**?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['Tên các bạn trong đội tuyển cờ vua của trường.', 'Mức độ yêu thích môn Toán: Thích, Bình thường, Không thích.', 'Thời gian chạy $100$ m (giây) của các bạn lớp 8B.', 'Số bạn nữ trong mỗi tổ của lớp.'] },
         goiY: ['Số liệu liên tục thường có được từ **phép đo**.', 'Trong bốn dữ liệu, cái nào phải dùng đồng hồ, thước, cân… để đo?'],
         loiGiai: ['Tên các bạn và mức độ yêu thích là dữ liệu **không là số**.', 'Số bạn nữ có được bằng cách **đếm** → rời rạc.', 'Thời gian chạy đo bằng đồng hồ, có thể nhận mọi giá trị trong một khoảng ($14{,}2$ s; $14{,}25$ s;…) → **liên tục**.'] },
 
-      { id: '18.2', muc: 1, de: 'Minh đứng ở cổng trường và ghi lại những bạn đi xe đạp có đội mũ bảo hiểm. Minh thu thập dữ liệu bằng phương pháp nào?',
+      { id: '18.2', khongHinh: 'Câu hỏi về cách thu thập (quan sát), không có số liệu để vẽ.', muc: 1, de: 'Minh đứng ở cổng trường và ghi lại những bạn đi xe đạp có đội mũ bảo hiểm. Minh thu thập dữ liệu bằng phương pháp nào?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Từ nguồn có sẵn', 'Quan sát', 'Lập bảng hỏi', 'Phỏng vấn'] },
         goiY: ['Minh có hỏi ai, có phát phiếu cho ai không?', 'Minh chỉ **nhìn** và ghi lại.'],
         loiGiai: ['Minh không hỏi ai, không dùng phiếu, không tra sách báo: Minh chỉ nhìn và ghi lại.', 'Đó là phương pháp **quan sát** (thu thập trực tiếp).'] },
 
-      { id: '18.3', muc: 1, de: 'Lan lên mạng Internet tra số huy chương vàng của đoàn Việt Nam tại một kì SEA Games. Khẳng định "Lan thu thập dữ liệu **trực tiếp**" đúng hay sai?',
+      { id: '18.3', hinhGiai: hg({ ten: 'xepHop', tuyChon: { hop: HOP_THU_THAP, the: [{ s: 'Lan tra Internet', h: 1 }] } }), muc: 1, de: 'Lan lên mạng Internet tra số huy chương vàng của đoàn Việt Nam tại một kì SEA Games. Khẳng định "Lan thu thập dữ liệu **trực tiếp**" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Thu thập gián tiếp là lấy từ những nguồn **có sẵn** như sách, báo, Internet.', 'Dữ liệu Lan tra đã có sẵn trên mạng.'],
         loiGiai: ['Lan lấy dữ liệu từ nguồn có sẵn (Internet) → thu thập **gián tiếp**.', 'Khẳng định đã cho là **sai**.'] },
 
-      { id: '18.4', muc: 1, de: 'Câu hỏi "Gia đình bạn có bao nhiêu người?" cho ta dữ liệu thuộc loại nào?',
+      { id: '18.4', hinhGiai: hg(gia([{ loai: 0, ten: 'Số người mỗi nhà (ví dụ)', the: [4, 3, 5, 4, 6], tu: 2, den: 7, giua: { s: '4,5 người', v: 4.5 }, mau: '--a' }], { anTen: true }), true), muc: 1, de: 'Câu hỏi "Gia đình bạn có bao nhiêu người?" cho ta dữ liệu thuộc loại nào?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Số liệu rời rạc', 'Số liệu liên tục', 'Dữ liệu không là số, không thể sắp thứ tự', 'Dữ liệu không là số, có thể sắp thứ tự'] },
         goiY: ['Câu trả lời là số hay chữ?', 'Số người có được bằng cách đo hay đếm?'],
         loiGiai: ['Câu trả lời là số ($3$, $4$, $5$,…) nên là số liệu.', 'Số người có được bằng cách **đếm**, không thể là $4{,}5$ người → **số liệu rời rạc**.'] },
 
-      { id: '18.5', muc: 2, de: 'Xếp loại học tập của các bạn tổ 1: Tốt; Khá; Tốt; Đạt; Khá. Dữ liệu này thuộc loại nào?',
+      { id: '18.5', hinhGiai: hg(gia([{ loai: 3, ten: 'Xếp loại tổ 1', the: ['Tốt', 'Khá', 'Tốt', 'Đạt', 'Khá'], thuTu: ['Đạt', 'Khá', 'Tốt'], mau: '--cc' }], { anTen: true }), true), muc: 2, de: 'Xếp loại học tập của các bạn tổ 1: Tốt; Khá; Tốt; Đạt; Khá. Dữ liệu này thuộc loại nào?',
         dapAn: { kieu: 'chon', gt: 3, luaChon: ['Số liệu rời rạc', 'Số liệu liên tục', 'Dữ liệu không là số, không thể sắp thứ tự', 'Dữ liệu không là số, có thể sắp thứ tự'] },
         goiY: ['Các giá trị là chữ nên đây là dữ liệu không là số.', 'Có thể xếp "Tốt", "Khá", "Đạt" theo thứ tự cao – thấp không?'],
         loiGiai: ['Tốt, Khá, Đạt là chữ → dữ liệu **không là số**.', 'Ta xếp được: Tốt > Khá > Đạt → **có thể sắp thứ tự**.'] },
 
-      { id: '18.6', muc: 2, de: 'An hỏi 6 bạn lớp 8: "Bạn cao bao nhiêu xăng-ti-mét?" và ghi được: $152$; $148{,}5$; $160$; $15{,}5$; $155$; $149$. Giá trị nào **không hợp lí**?',
+      { id: '18.6', hinhGiai: hg({ ten: 'cotHopLi', tuyChon: { so: CAO_AN, don: 'cm', lo: 140, hi: 175, vl: [3], nhanDai: 'lớp 8 thường cao 140 – 175 cm' } }), muc: 2, de: 'An hỏi 6 bạn lớp 8: "Bạn cao bao nhiêu xăng-ti-mét?" và ghi được: $152$; $148{,}5$; $160$; $15{,}5$; $155$; $149$. Giá trị nào **không hợp lí**?',
         dapAn: { kieu: 'so', gt: 15.5 },
         goiY: ['Học sinh lớp 8 thường cao khoảng $140$ – $175$ cm.', 'Giá trị nào nhỏ đến mức vô lí?'],
         loiGiai: ['Các giá trị $148{,}5$; $149$; $152$; $155$; $160$ đều là chiều cao bình thường của học sinh lớp 8.', 'Không bạn lớp 8 nào cao $15{,}5$ cm (có thể An ghi nhầm $155$). Giá trị không hợp lí là $15{,}5$.'],
         loiThuongGap: [{ gt: 160, giaiThich: 'Cao $160$ cm vẫn rất bình thường với học sinh lớp 8. Em tìm giá trị **nhỏ** vô lí.' }] },
 
-      { id: '18.7', muc: 2, de: 'Trong 5 dãy dữ liệu sau, có **bao nhiêu** dãy là số liệu rời rạc?\n\n(1) Số bàn thắng mỗi trận của một đội bóng: $2$; $0$; $1$; $3$.\n\n(2) Nhiệt độ lúc 7 giờ sáng (°C) trong 3 ngày: $24{,}5$; $26{,}1$; $25$.\n\n(3) Số tin nhắn em nhận được mỗi ngày: $12$; $8$; $15$.\n\n(4) Thời gian ngủ mỗi đêm (giờ): $8$; $7{,}5$; $9$.\n\n(5) Số trang sách em đọc mỗi ngày: $20$; $35$; $18$.',
+      { id: '18.7', hinhGiai: hg(gia([{ loai: 0, ten: '(1) Bàn thắng', the: [2, 0, 1, 3], tu: 0, den: 4, mau: '--a' },
+          { loai: 1, ten: '(2) Nhiệt độ (°C)', the: [24.5, 26.1, 25], tu: 23, den: 27, buoc: 1, mau: '--b' },
+          { loai: 0, ten: '(3) Tin nhắn', the: [12, 8, 15], tu: 5, den: 16, buoc: 5, mau: '--a' },
+          { loai: 1, ten: '(4) Giờ ngủ', the: [8, 7.5, 9], tu: 6, den: 10, buoc: 1, mau: '--b' },
+          { loai: 0, ten: '(5) Trang sách', the: [20, 35, 18], tu: 15, den: 40, buoc: 5, mau: '--a' }])), muc: 2, de: 'Trong 5 dãy dữ liệu sau, có **bao nhiêu** dãy là số liệu rời rạc?\n\n(1) Số bàn thắng mỗi trận của một đội bóng: $2$; $0$; $1$; $3$.\n\n(2) Nhiệt độ lúc 7 giờ sáng (°C) trong 3 ngày: $24{,}5$; $26{,}1$; $25$.\n\n(3) Số tin nhắn em nhận được mỗi ngày: $12$; $8$; $15$.\n\n(4) Thời gian ngủ mỗi đêm (giờ): $8$; $7{,}5$; $9$.\n\n(5) Số trang sách em đọc mỗi ngày: $20$; $35$; $18$.',
         dapAn: { kieu: 'so', gt: 3 },
         goiY: ['Dãy nào có được bằng cách **đếm**? Dãy nào có được bằng **phép đo**?', 'Nhiệt độ và thời gian là đo; bàn thắng, tin nhắn, trang sách là đếm.'],
         loiGiai: ['Đếm (rời rạc): (1) số bàn thắng, (3) số tin nhắn, (5) số trang sách.', 'Đo (liên tục): (2) nhiệt độ, (4) thời gian ngủ.', 'Số dãy rời rạc là $3$.'],
@@ -156,17 +234,19 @@
           { gt: 5, giaiThich: 'Không phải dãy số nào cũng rời rạc: nhiệt độ và thời gian ngủ là số liệu **đo** → liên tục.' },
           { gt: 4, giaiThich: 'Thời gian ngủ $8$; $9$ giờ trông như số nguyên nhưng vẫn là đại lượng **đo** (có thể là $7{,}5$ giờ) → liên tục.' }] },
 
-      { id: '18.8', muc: 2, de: 'Để biết **tên 5 con sông dài nhất thế giới**, nên thu thập dữ liệu bằng cách nào?',
+      { id: '18.8', khongHinh: 'Câu hỏi về nguồn dữ liệu (sách, báo, Internet), không có số liệu để vẽ.', muc: 2, de: 'Để biết **tên 5 con sông dài nhất thế giới**, nên thu thập dữ liệu bằng cách nào?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['Làm thí nghiệm', 'Phỏng vấn các bạn trong lớp', 'Tìm trong sách, báo, Internet', 'Quan sát'] },
         goiY: ['Em có tự đi đo chiều dài các con sông được không?', 'Dữ liệu này đã được các nhà khoa học công bố sẵn.'],
         loiGiai: ['Không thể tự đo hay quan sát các con sông trên thế giới; hỏi các bạn thì dễ sai.', 'Nên tra từ **nguồn có sẵn**: sách, báo, Internet (thu thập gián tiếp).'] },
 
-      { id: '18.9', muc: 2, de: 'Nam muốn biết thời gian tự học trung bình của **học sinh cả khối 8** nên chỉ hỏi 5 bạn trong đội tuyển Toán. Khẳng định "Dữ liệu Nam thu được đại diện tốt cho cả khối 8" đúng hay sai?',
+      { id: '18.9', hinhGiai: hg({ ten: 'luoiPhieu', tuyChon: { n: 160, cot: 20, nhom: [{ so: 5, o: [0, 1, 2, 20, 21], mau: '--a', ten: 'bạn đội tuyển Toán được hỏi' }], conLai: 'bạn khác không được hỏi' },
+          ghiChu: 'Mỗi ô là một bạn, khối 8 giả sử có 160 bạn. Năm bạn được hỏi dồn vào một góc.' }), muc: 2, de: 'Nam muốn biết thời gian tự học trung bình của **học sinh cả khối 8** nên chỉ hỏi 5 bạn trong đội tuyển Toán. Khẳng định "Dữ liệu Nam thu được đại diện tốt cho cả khối 8" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Dữ liệu phải đảm bảo **tính đại diện** cho toàn bộ đối tượng quan tâm.', '5 bạn đội tuyển Toán có giống mọi bạn trong khối không?'],
         loiGiai: ['5 bạn đội tuyển thường học nhiều hơn hẳn các bạn khác, và 5 bạn là quá ít so với cả khối.', 'Dữ liệu **không** đại diện cho cả khối 8. Khẳng định **sai**.'] },
 
-      { id: '18.10', muc: 3, de: 'Lớp 8C có $40$ học sinh. Hoa phát phiếu hỏi "Mỗi tuần bạn đọc mấy cuốn sách?" cho cả lớp và thu về $38$ phiếu, trong đó có $3$ phiếu ghi giá trị không hợp lí (như $70$ cuốn). Số phiếu **dùng được** chiếm bao nhiêu phần trăm số học sinh của lớp?',
+      { id: '18.10', hinhGiai: hg({ ten: 'luoiPhieu', tuyChon: { n: 40, cot: 10, nhom: [{ so: 35, mau: '--cc', ten: 'phiếu dùng được' }, { so: 3, mau: '--sai', ten: 'phiếu ghi giá trị vô lí' }], conLai: 'bạn không nộp phiếu' },
+          ghiChu: 'Mỗi ô là một bạn của lớp 8C.' }), muc: 3, de: 'Lớp 8C có $40$ học sinh. Hoa phát phiếu hỏi "Mỗi tuần bạn đọc mấy cuốn sách?" cho cả lớp và thu về $38$ phiếu, trong đó có $3$ phiếu ghi giá trị không hợp lí (như $70$ cuốn). Số phiếu **dùng được** chiếm bao nhiêu phần trăm số học sinh của lớp?',
         dapAn: { kieu: 'so', gt: 87.5 },
         goiY: ['Phiếu dùng được = phiếu thu về − phiếu không hợp lí.', 'Tỉ lệ phần trăm = (số phiếu dùng được) : $40 \\cdot 100\\%$.'],
         loiGiai: ['Số phiếu dùng được: $38 - 3 = 35$.', 'Tỉ lệ: $\\frac{35}{40} \\cdot 100\\% = 87{,}5\\%$.', 'Đáp số: $87{,}5\\%$.'],
@@ -174,12 +254,12 @@
           { gt: 92.5, giaiThich: 'Em lấy $40 - 3 = 37$ phiếu? Chỉ thu về $38$ phiếu, nên số phiếu dùng được là $38 - 3 = 35$.' },
           { gt: 95, giaiThich: '$\\frac{38}{40} = 95\\%$ là tỉ lệ phiếu thu về; còn phải bỏ $3$ phiếu không hợp lí.' }] },
 
-      { id: '18.11', muc: 3, de: 'Em muốn ước lượng **thời gian dùng điện thoại mỗi ngày** (đơn vị: giờ) của các bạn trong lớp. Cách làm nào hợp lí nhất, và dữ liệu thu được thuộc loại nào?',
+      { id: '18.11', hinhGiai: hg(gia([{ loai: 1, ten: 'Giờ dùng điện thoại (ví dụ)', the: [1, 2.5, 1.5, 3], tu: 0, den: 4, buoc: 1, giua: { s: '2,25 giờ', v: 2.25 }, mau: '--b' }])), muc: 3, de: 'Em muốn ước lượng **thời gian dùng điện thoại mỗi ngày** (đơn vị: giờ) của các bạn trong lớp. Cách làm nào hợp lí nhất, và dữ liệu thu được thuộc loại nào?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Hỏi 3 bạn ngồi cạnh; số liệu rời rạc.', 'Phát phiếu hỏi cho cả lớp; số liệu liên tục.', 'Tìm trên Internet; số liệu liên tục.', 'Phát phiếu hỏi cho cả lớp; số liệu rời rạc.'] },
         goiY: ['Muốn biết về **các bạn trong lớp** thì phải hỏi ai? Hỏi mấy bạn mới đại diện?', 'Thời gian là đại lượng đếm hay đo?'],
         loiGiai: ['Hỏi 3 bạn thì không đại diện; Internet không có dữ liệu về lớp em → phát phiếu hỏi **cả lớp**.', 'Thời gian là đại lượng **đo** → **số liệu liên tục**.'] },
 
-      { id: '18.12', muc: 3, de: 'Khối 8 tổ chức giải bóng đá giữa 5 lớp A, B, C, D, E. Bình hỏi $12$ bạn dự đoán đội vô địch và ghi được: A, B, A, C, A, B, D, A, B, A, E, A. Có bao nhiêu **phần trăm** số bạn được hỏi dự đoán đội A vô địch?',
+      { id: '18.12', hinhGiai: hg({ ten: 'chongThe', tuyChon: { the: DU_DOAN_12, nhom: ['A', 'B', 'C', 'D', 'E'], hoi: 'A' } }, true), muc: 3, de: 'Khối 8 tổ chức giải bóng đá giữa 5 lớp A, B, C, D, E. Bình hỏi $12$ bạn dự đoán đội vô địch và ghi được: A, B, A, C, A, B, D, A, B, A, E, A. Có bao nhiêu **phần trăm** số bạn được hỏi dự đoán đội A vô địch?',
         dapAn: { kieu: 'so', gt: 50 },
         goiY: ['Đếm số lần chữ A xuất hiện.', 'Tỉ lệ phần trăm = (số lần A) : $12 \\cdot 100\\%$.'],
         loiGiai: ['(Dữ liệu Bình thu được là dữ liệu **không là số**, không thể sắp thứ tự.)', 'Chữ A xuất hiện $6$ lần (vị trí thứ 1, 3, 5, 8, 10, 12).', 'Tỉ lệ: $\\frac{6}{12} \\cdot 100\\% = 50\\%$.'],
