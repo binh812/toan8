@@ -43,6 +43,9 @@ test('caiCan soi: có khoá, số chỉ hiện khi em đã gõ thử', () => {
   const b = soi('caiCan', { nhan: 1 }, 0, CAN25);
   kiemSoi(b, ['trai', 'phai', 'khoiX', 'qua', 'bong', 'don']);
   assert.match(b.khoiX.chu, /\$3\$ khối.*\$1\$ khối/);
+  // Nhân với 0: đòn nằm ngang với mọi x, thẻ phải cảnh báo chứ không khen
+  assert.match(soi('caiCan', { nhan: 0 }, 0, CAN25).don.chu, /mọi\*\* \$x\$.*không còn chỉ ra/);
+  assert.match(soi('caiCan', {}, 0, { trai: { x: -2, so: 7 }, phai: { x: 0, so: 0 } }).khoiX.chu, /Hệ số của \$x\$ âm/);
   const DT = { trai: { x: 4, so: -12 }, phai: { x: 0, so: 0 } };
   assert.doesNotMatch(soi('caiCan', {}, 0, DT).trai.chu, /Thay|đĩa nặng/, 'chưa gõ thì không nói đĩa nặng bao nhiêu');
   assert.match(soi('caiCan', { thu: 4 }, 0, DT).trai.chu, /nặng \$4\$/);
@@ -71,6 +74,9 @@ test('mayHamSo soi: có khoá, điểm dấu hỏi không lộ', () => {
   const hoi = soi('mayHamSo', {}, 1, Object.assign({ hoi: 4 }, o));
   assert.doesNotMatch(hoi.diem.chu, /\(2; 3\)/);
   assert.match(hoi.ra.chu, /dấu hỏi/);
+  // 27.8: đề cho số ra y = 4; thẻ phải nói 4 như trên hình
+  const nguoc = soi('mayHamSo', {}, 1, { f: { a: 0.5, b: 1 }, cacX: [-2, 0, 2], nguoc: { y: 4 } });
+  assert.match(nguoc.ra.chu, /y = 4\$/);
 });
 
 // ---------- Bài 28: thêm x² thì các bậc không đều ----------
@@ -105,19 +111,36 @@ test('haiDuongThang thử phá: cùng a thì song song, khác a thì giao điể
   assert.strictEqual(md.pha.hong, false);
   assert.strictEqual(md.dich.cungA, true);
   assert.match(md.pha.chu, /b' - b = 4/);
-  // y = x − 2 và y = −x + 2 cắt nhau tại (2; 0)
-  const k = tinh('haiDuongThang', { a: 1, b: -2, c: 2, lechA: -2 }, 1, D29);
+  // y = x − 2 và y = 3x + 2: −2x = 4, x = −2, cắt tại (−2; −4), trong khung
+  const k = tinh('haiDuongThang', { a: 1, b: -2, c: 2, lechA: 2 }, 1, D29);
   assert.strictEqual(k.pha.hong, true);
-  assert.deepStrictEqual(k.pha.giao, { x: 2, y: 0 });
+  assert.deepStrictEqual(k.pha.giao, { x: -2, y: -4 });
   assert.strictEqual(k.pha.ngoai, false);
-  assert.strictEqual(k.ds[1].a, -1);
+  assert.strictEqual(k.ds[1].a, 3);
   assert.strictEqual(k.dich.cungA, false);
+  assert.match(k.pha.chu, /tức \$-2x = 4\$/);
   // y = x − 2 và y = 1,5x + 2: −0,5x = 4, x = −8, ngoài khung
   const xa = tinh('haiDuongThang', { a: 1, b: -2, c: 2, lechA: 0.5 }, 1, D29);
   assert.deepStrictEqual(xa.pha.giao, { x: -8, y: -10 });
   assert.strictEqual(xa.pha.ngoai, true);
   assert.match(xa.pha.chu, /tại \$x = 2\$ là \$5\$/);
   assert.match(xa.pha.chu, /\(-8; -10\)/);
+  // a = −1 thì a' = −2 (ra xa 0): (a − a')x = 4 tức x = 4, không viết thừa "tức x = 4"
+  const am = tinh('haiDuongThang', { a: -1, b: -2, c: 2, lechA: 1 }, 1, D29);
+  assert.strictEqual(am.ds[1].a, -2);
+  assert.doesNotMatch(am.pha.chu, /tức/);
+  assert.match(am.pha.chu, /được \$x = 4\$/);
+});
+test("haiDuongThang: a' không bao giờ bằng 0, với mọi a và mọi mức phá", () => {
+  [-3, -1, 1, 3].forEach(a => [0, 0.5, 1, 1.5, 2].forEach(l => {
+    const k = tinh('haiDuongThang', { a, b: -2, c: 2, lechA: l }, 1, D29);
+    assert.ok(Math.abs(k.ds[1].a) >= 1, 'a = ' + a + ', lechA = ' + l);
+  }));
+});
+test('soi đường nằm ngang (a = 0, như 28.10): không phải hàm số bậc nhất', () => {
+  const b = soi('duongThang', {}, 1, { khung: [0, 40, 0, 120], tiLe: false, duong: [{ a: 0, b: 100, nhan: 'chi phí 100' }] });
+  assert.match(b.duong0.chu, /không\*\* phải hàm số bậc nhất/);
+  assert.doesNotMatch(b.duong0.chu, /Hệ số góc/);
 });
 test('haiDuongThang soi: có khoá, có số', () => {
   kiemSoi(soi('haiDuongThang', { a: 1, b: -2, c: 2, lechA: 0 }, 1, D29), ['truc', 'duong0', 'duong1', 'bac', 'dich']);
@@ -141,6 +164,8 @@ test('luoiKetQua thử phá: ô đều thì phần sáng = m/n; ô 1 to gấp 3 
   ph.forEach(q => { assert.ok(Math.abs(q.x - x) < 1e-9); x += q.w; });
   assert.ok(Math.abs(x - ph[0].x - 92) < 1e-9);
   assert.ok(Math.abs(k.phan[0].w - 3 * k.phan[1].w) < 1e-9);
+  // Ô 1 to gấp 4: 5/15 rút gọn thành 1/3
+  assert.match(tinh('luoiKetQua', { to: 4 }, 1, V12).pha.chu, /\\frac\{5\}\{15\} = \\frac\{1\}\{3\}/);
 });
 test('luoiKetQua: không có tham số to thì các phần như cũ', () => {
   const k = tinh('luoiKetQua', {}, 1, V12);

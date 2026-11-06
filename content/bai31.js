@@ -119,13 +119,13 @@
         canh: VONG12({ tenBienCo: 'A: Chỉ vào số nguyên tố', bienCo: [{ ten: 'A: Chỉ vào số nguyên tố', thuanLoi: [2, 3, 5, 7, 11] }] }),
         buoc: [
           { id: 'dk', chu: 'Có $n$ kết quả có thể, và chúng **đồng khả năng**: không kết quả nào dễ xảy ra hơn kết quả nào.', canh: { t: 0 } },
-          { id: 'chac', chu: 'Mỗi lần thử chắc chắn xảy ra đúng một trong $n$ kết quả, nên cả $n$ phần gộp lại là xác suất $1$.', can: ['dk'], canh: { t: 0.3 } },
+          { id: 'chac', chu: 'Mỗi lần thử chắc chắn xảy ra đúng một trong $n$ kết quả, nên cả $n$ phần gộp lại là xác suất $1$.', canh: { t: 0.3 } },
           { id: 'deu', chu: 'Các kết quả có khả năng như nhau nên phần của chúng bằng nhau: mỗi kết quả được $\\frac{1}{n}$.', can: ['dk', 'chac'], canh: { t: 0.42 } },
           { id: 'thuan', chu: 'Biến cố $E$ có $m$ kết quả thuận lợi.', canh: { t: 0.6 } },
           { id: 'tong', chu: '$E$ xảy ra đúng khi xảy ra một trong $m$ kết quả đó, nên xác suất của $E$ là tổng $m$ phần của chúng.', can: ['thuan'], canh: { t: 0.84 } },
           { id: 'kl', chu: 'Vậy $P(E) = m \\cdot \\frac{1}{n} = \\frac{m}{n}$.', can: ['deu', 'tong'], canh: { t: 1 } }
         ],
-        ketLuan: 'Mỗi kết quả một phần $\\frac{1}{n}$, biến cố lấy $m$ phần: $P(E) = \\frac{m}{n}$. Thiếu điều kiện đồng khả năng thì các phần không bằng nhau và công thức sai.'
+        ketLuan: 'Mỗi kết quả một phần $\\frac{1}{n}$, biến cố lấy $m$ phần: $P(E) = \\frac{m}{n}$. Thiếu điều kiện đồng khả năng thì các phần không bằng nhau và công thức có thể cho số sai.'
       } },
       { loai: 'chuY', tieuDe: 'Bốn bước tính xác suất',
         noiDung: '**Bước 1.** Đếm các kết quả có thể (thường bằng cách liệt kê).\n\n**Bước 2.** Chỉ ra các kết quả có thể là **đồng khả năng** (thẻ giống nhau, bi cùng kích thước, hình quạt như nhau, xúc xắc cân đối…).\n\n**Bước 3.** Đếm các kết quả thuận lợi cho biến cố $E$.\n\n**Bước 4.** Lập tỉ số: số kết quả thuận lợi chia cho **tổng** số kết quả có thể.' },

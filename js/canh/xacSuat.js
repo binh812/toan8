@@ -130,6 +130,11 @@
 
   // Số trong $…$ của thẻ: dấu phẩy thập phân viết {,}
   function soTex(x) { return String(x).replace('.', '{,}'); }
+  // Phân số cho KaTeX, kèm dạng tối giản nếu rút gọn được: \frac{5}{15} = \frac{1}{3}
+  function phanTex(a, b) {
+    var g = (a === Math.round(a) && b === Math.round(b)) ? ucln(a, b) : 1, goc = '\\frac{' + soTex(a) + '}{' + soTex(b) + '}';
+    return g > 1 ? goc + ' = ' + (b / g === 1 ? String(a / g) : '\\frac{' + (a / g) + '}{' + (b / g) + '}') : goc;
+  }
   function gan3(v) { var r = Math.round(v * 1000) / 1000; return (Math.abs(v - r) < 1e-12 ? '= ' : '\\approx ') + soTex(r); }
   // Thử phá bài 31: ô đầu to gấp to1 lần thì các kết quả không còn đồng khả năng, công thức đếm m/n cho số sai
   function phaDongKhaNang(dau, m, n, mW, W, to1) {
@@ -137,7 +142,7 @@
       return { hong: false, to: 1, chu: 'Mọi ô to như nhau: $' + n + '$ kết quả đồng khả năng, mỗi ô được $\\frac{1}{' + n + '}$ thanh, nên $P = \\frac{' + m + '}{' + n + '}$ đúng bằng phần sáng.' };
     }
     return { hong: true, to: to1, dem: m / n, that: mW / W, chu: 'Ô «' + dau.nhan + '» to gấp $' + soTex(to1) + '$ ô khác, nên dễ trúng hơn: $' + n + '$ kết quả **không** còn đồng khả năng. Đếm vẫn ra $\\frac{' + m + '}{' + n + '} ' + gan3(m / n) +
-      '$, nhưng phần sáng thật trên thanh là $\\frac{' + soTex(mW) + '}{' + soTex(W) + '} ' + gan3(mW / W) + '$. Công thức $\\frac{m}{n}$ chỉ đúng khi mọi kết quả có phần bằng nhau.' };
+      '$, nhưng phần sáng thật trên thanh là $' + phanTex(mW, W) + ' ' + gan3(mW / W) + '$. Công thức $\\frac{m}{n}$ chỉ đúng khi mọi kết quả có phần bằng nhau.' };
   }
   C.dangKi('luoiKetQua', {
     // Thử phá (bài 31): ô đầu tiên to gấp mấy lần các ô khác; 1 là mọi ô như nhau
@@ -245,8 +250,14 @@
         var choi = st === 'chiaKhong' && !q.thuan;
         mk('rect', { x: q.x + 0.15, y: by + 0.15, width: Math.max(0, q.w - 0.3), height: bh - 0.3, opacity: q.hien,
           fill: q.sang > 0 ? 'var(--cc)' : 'var(--b)', 'fill-opacity': q.sang > 0 ? 0.25 + 0.65 * q.sang : 0.12,
-          stroke: choi ? 'var(--sai)' : 'none', 'stroke-width': 0.5, 'data-soi': q.sang > 0 ? 'phanSang' : 'thanh' }, svg);
+          stroke: choi ? 'var(--sai)' : k.to > 1 && !q.sang ? 'var(--b)' : 'none', 'stroke-width': choi ? 0.5 : 0.2, 'data-soi': q.sang > 0 ? 'phanSang' : 'thanh' }, svg);
       });
+      // Thử phá: phần của ô đầu viền đứt đỏ, ghi tên ô, để thấy nó dài hơn các phần khác
+      if (k.to > 1 && k.phan[0].hien > 0) {
+        var p0 = k.phan[0], g0 = mk('g', { opacity: p0.hien, 'data-soi': 'oTo' }, svg);
+        mk('rect', { x: p0.x + 0.15, y: by - 0.4, width: Math.max(0, p0.w - 0.3), height: bh + 0.8, fill: 'var(--sai)', 'fill-opacity': 0.12, stroke: 'var(--sai)', 'stroke-width': 0.5, 'stroke-dasharray': '1 0.6' }, g0);
+        C.chu(g0, p0.x + p0.w / 2, by - 2.2, 'ô ' + k.cham[0].nhan, 3.4, '--sai');
+      }
       C.chu(svg, X0, by + bh + 4, '0', 4.2, '--nhat');
       C.chu(svg, X0 + RONG, by + bh + 4, '1', 4.2, '--nhat');
       var duoi = by + bh + 9.5;
@@ -312,9 +323,10 @@
       ra.thanh = { tieuDe: 'Thanh xác suất', chu: 'Cả thanh dài $1$, vì chắc chắn xảy ra một kết quả nào đó. ' + (hong ? 'Ô ' + k.cham[0].nhan + ' to gấp $' + soTex(k.to) + '$ nên được phần to gấp $' + soTex(k.to) + '$: các phần **không** bằng nhau.'
         : 'Các kết quả đồng khả năng nên thanh chia đều cho $' + k.n + '$ chấm, mỗi phần $\\frac{1}{' + k.n + '}$.') };
       ra.phanSang = { tieuDe: 'Phần sáng', chu: anM ? 'Phần sáng là tổng các phần của chấm sáng. Đếm số phần sáng rồi so với cả thanh.'
-        : hong ? 'Phần sáng thật dài $\\frac{' + soTex(k.mW) + '}{' + soTex(k.W) + '} ' + gan3(k.mW / k.W) + '$ thanh, không bằng $\\frac{' + k.m + '}{' + k.n + '}$ mà công thức đếm cho.'
+        : hong ? 'Phần sáng thật dài $' + phanTex(k.mW, k.W) + ' ' + gan3(k.mW / k.W) + '$ thanh, không bằng $\\frac{' + k.m + '}{' + k.n + '}$ mà công thức đếm cho.'
         : 'Gồm $' + k.m + '$ phần, mỗi phần $\\frac{1}{' + k.n + '}$, nên dài $\\frac{' + k.m + '}{' + k.n + '}$ cả thanh. Đó là xác suất của biến cố.' };
-      if (hong) ra.pha = { tieuDe: 'Vạch đứt đỏ', chu: 'Vạch đứt đỏ ở $\\frac{' + k.m + '}{' + k.n + '}$, chỗ công thức đếm chỉ tới. Phần sáng thật kết thúc ở chỗ khác, vì các kết quả không đồng khả năng.' };
+      if (hong) ra.pha = { tieuDe: 'Vạch đứt đỏ', chu: 'Đánh dấu chỗ $\\frac{' + k.m + '}{' + k.n + '}$ mà công thức đếm chỉ tới, để em so với chỗ phần sáng thật dừng.' };
+      if (hong) ra.oTo = { tieuDe: 'Phần của ô ' + k.cham[0].nhan, chu: 'Phần viền đứt đỏ trên thanh là của ô ' + k.cham[0].nhan + ', dài gấp $' + soTex(k.to) + '$ phần của mỗi ô khác: $' + phanTex(k.to, k.W) + '$ thanh so với $\\frac{1}{' + soTex(k.W) + '}$.' };
     }
     if (k.nhom.length) ra.nhom = { tieuDe: 'Nhóm', chu: anM ? 'Các vật xếp theo nhóm cho dễ đếm. Mỗi vật trong nhóm vẫn là một chấm riêng.'
       : 'Các vật xếp theo nhóm cho dễ đếm: ' + k.nhom.map(function (g) { return g.ten + ' $' + g.so + '$'; }).join(', ') + '. Mỗi vật trong nhóm vẫn là một chấm riêng.' };
@@ -515,8 +527,8 @@
     return {
       tui: { tieuDe: 'Túi bi', chu: 'Túi có ' + nhom.map(function (g) { return '$' + g.so + '$ bi ' + g.ten.toLowerCase(); }).join(' và ') + '. Rút một viên, ghi màu, rồi **trả lại** túi, nên lần nào túi cũng như cũ.' },
       xacSuat: { tieuDe: 'Đường đứt nét: xác suất', chu: 'Các viên bi đồng khả năng nên xác suất là $\\frac{' + k.tl + '}{' + k.tong + '} = ' + soTex(Math.round(k.p * 1000) / 1000) + '$. Số này không đổi, dù rút bao nhiêu lần.' },
-      tiLe: { tieuDe: 'Đường cam: tỉ lệ $\\frac{k}{n}$', chu: k.n ? 'Sau $n = ' + k.n + '$ lần có $k = ' + k.k + '$ lần thuận lợi, tỉ lệ $\\frac{k}{n} ' + gan3(k.tiLe) + '$. Đó là xác suất thực nghiệm. Lúc $n$ nhỏ đường nhảy nhiều, $n$ lớn thì đường dồn về gần đường đứt nét.' : 'Chưa rút lần nào.' },
-      cuoi: { tieuDe: 'Lần rút mới nhất', chu: k.n ? 'Ở $n = ' + k.n + '$: tỉ lệ $' + soTex(tiLe) + '$, lệch xác suất khoảng $' + soTex(Math.round(Math.abs(k.tiLe - k.p) * 1000) / 1000) + '$. Lệch nhỏ dần khi $n$ lớn, nhưng hiếm khi bằng $0$.' : 'Chưa rút lần nào.' },
+      tiLe: { tieuDe: 'Đường cam: tỉ lệ $\\frac{k}{n}$', chu: k.n ? 'Sau $n = ' + k.n + '$ lần có $k = ' + k.k + '$ lần thuận lợi, tỉ lệ $\\frac{k}{n} ' + gan3(k.tiLe) + '$. Đó là xác suất thực nghiệm. Lúc $n$ nhỏ đường nhảy nhiều, $n$ lớn thì đường thường nằm gần đường đứt nét hơn.' : 'Chưa rút lần nào.' },
+      cuoi: { tieuDe: 'Lần rút mới nhất', chu: k.n ? 'Ở $n = ' + k.n + '$: tỉ lệ $' + soTex(tiLe) + '$, lệch xác suất khoảng $' + soTex(Math.round(Math.abs(k.tiLe - k.p) * 1000) / 1000) + '$. Khi $n$ lớn, tỉ lệ thường gần xác suất hơn, nhưng hiếm khi trùng đúng.' : 'Chưa rút lần nào.' },
       truc: { tieuDe: 'Trục số lần rút', chu: 'Trục ngang chia theo bậc gấp $10$: $1$, $10$, $100$, $1000$. Nhờ vậy thấy được cả lúc mới rút vài lần lẫn lúc đã rút $' + k.N + '$ lần.' }
     };
   };

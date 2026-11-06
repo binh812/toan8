@@ -316,7 +316,8 @@
     if (k.thu) vao = 'Số em gõ: $' + bien + ' = ' + soTex(k.thu.x) + '$.';
     else if (k.nguoc) vao = 'Đề cho số ra $' + ham + ' = ' + soTex(k.nguoc.y) + '$ và hỏi số vào. Em tìm $' + bien + '$.';
     else vao = dong ? 'Số đang vào: $' + bien + ' = ' + soTex(dong.x) + '$.' : 'Chưa có số nào vào máy.';
-    if (k.thu && la(k.thu.y)) ra = 'Với $' + bien + ' = ' + soTex(k.thu.x) + '$, máy cho $' + ham + ' = ' + soTex(k.thu.y) + '$' + (k.thu.dung ? ', khớp với đề.' : ', chưa khớp với đề.');
+    if (k.nguoc && !k.thu) ra = 'Đề cho số ra $' + ham + ' = ' + soTex(k.nguoc.y) + '$. Em tìm số vào để máy ra đúng số này.';
+    else if (k.thu && la(k.thu.y)) ra = 'Với $' + bien + ' = ' + soTex(k.thu.x) + '$, máy cho $' + ham + ' = ' + soTex(k.thu.y) + '$' + (k.thu.dung ? ', khớp với đề.' : ', chưa khớp với đề.');
     else if (dong && !dong.an && dong.hien > 0.5) ra = 'Máy trả ra $' + ham + (tron(dong.y) ? ' \\approx ' : ' = ') + soTex(dong.y) + '$, đúng một số cho mỗi $' + bien + '$.';
     else ra = 'Số ra còn là dấu hỏi. Em làm phép tính của máy để tìm.';
     return {
@@ -356,9 +357,17 @@
       return { hong: false, lechA: 0, chu: Math.abs(db) < GAN ? '$a\' = a$ và $b\' = b$: hai đường trùng nhau.'
         : '$a\' = a = ' + soTex(u.a) + '$: ở mọi $x$, hiệu tung độ $y\' - y$ đều bằng $b\' - b = ' + soTex(db) + '$, nên hai đường không bao giờ gặp nhau.' };
     }
-    var x = db / (u.a - v.a), y = u.a * x + u.b, ngoai = !trongKhung(x, y, kh);
-    return { hong: true, lechA: da, giao: { x: x, y: y }, ngoai: ngoai, chu: '$a\' = ' + soTex(v.a) + '$ khác $a = ' + soTex(u.a) + '$: hai bậc thang khác nhau. Hiệu tung độ $y\' - y$ đổi theo $x$: tại $x = 0$ là $' + soTex(db) +
-      '$, tại $x = 2$ là $' + soTex(2 * da + db) + '$. Giải $(a - a\')x = b\' - b$, tức $' + (Math.abs(da + 1) < GAN ? '' : Math.abs(da - 1) < GAN ? '-' : soTex(-da)) + 'x = ' + soTex(db) + '$, được $x ' + soXapXi(x) + '$. Hai đường cắt nhau tại ' + (tron(x) || tron(y) ? 'khoảng ' : '') + '$(' + soTex(x) + '; ' + soTex(y) + ')$' +
+    // Giao điểm sát mép khung (trong 5% bề rộng hay bề cao) cũng coi là ngoài khung, vì vòng tròn sẽ bị cắt
+    var x = db / (u.a - v.a), y = u.a * x + u.b, lx = (kh.x1 - kh.x0) * 0.05, ly = (kh.y1 - kh.y0) * 0.05;
+    var ngoai = !trongKhung(x, y, { x0: kh.x0 + lx, x1: kh.x1 - lx, y0: kh.y0 + ly, y1: kh.y1 - ly });
+    // Hệ số của x bằng 1 thì phương trình đã là "x = …", không cần viết thêm một lần
+    var giai = Math.abs(da + 1) < GAN ? '' : 'tức $' + (Math.abs(da - 1) < GAN ? '-' : soTex(-da)) + 'x = ' + soTex(db) + '$, ';
+    // Chỗ thứ hai để đo hiệu tung độ: x = 2, 1, −1 hoặc −2, chọn chỗ đầu tiên mà cả hai đường còn trong khung (để vẽ được đoạn dọc)
+    var trong2 = function (x) { return trongKhung(x, u.a * x + u.b, kh) && trongKhung(x, v.a * x + v.b, kh); };
+    var x2 = [2, 1, -1, -2].filter(trong2)[0];
+    if (x2 === undefined) x2 = 2;
+    return { hong: true, lechA: da, giao: { x: x, y: y }, ngoai: ngoai, xDoc: [0, x2], chu: '$a\' = ' + soTex(v.a) + '$ khác $a = ' + soTex(u.a) + '$: hai bậc thang khác nhau. Hiệu tung độ $y\' - y$ đổi theo $x$ (đoạn dọc đỏ): tại $x = 0$ là $' + soTex(db) +
+      '$, tại $x = ' + soTex(x2) + '$ là $' + soTex(x2 * da + db) + '$. Giải $(a - a\')x = b\' - b$, ' + giai + 'được $x ' + soXapXi(x) + '$. Hai đường cắt nhau tại ' + (tron(x) || tron(y) ? 'khoảng ' : '') + '$(' + soTex(x) + '; ' + soTex(y) + ')$' +
       (ngoai ? ', ngoài khung hình.' : ', chỗ vòng tròn đỏ.') + ' Vì vậy "song song" cần **cùng** hệ số góc.' };
   }
   function tinhDuong(p, t, o) {
@@ -367,8 +376,10 @@
     if (o.theoThamSo) {
       // Thử phá: cong thêm x² vào đường thứ nhất (bài 28); lechA làm hệ số góc đường thứ hai khác đi (bài 29)
       var cong = o.theoThamSo === true && la(p.cong) ? p.cong : 0, lechA = o.theoThamSo === 2 && la(p.lechA) ? p.lechA : 0;
+      // lechA ≥ 0 đẩy a' ra xa 0 (cùng dấu với a, |a'| = |a| + lechA), nên a' không bao giờ bằng 0
+      var a2 = p.a + (p.a < 0 ? -lechA : lechA);
       ds = [{ a: p.a, b: p.b, mau: '--b', an: !!o.bac && o.theoThamSo !== 2, tuThamSo: true, x2: cong || undefined }]
-        .concat(p.c != null && o.theoThamSo === 2 ? [{ a: p.a + lechA, b: p.c, mau: '--cc', an: true, tuThamSo: true }] : []).concat(ds);
+        .concat(p.c != null && o.theoThamSo === 2 ? [{ a: a2, b: p.c, mau: '--cc', an: true, tuThamSo: true }] : []).concat(ds);
     }
     var thu = null;
     if (o.thu && la(p.thu)) {
@@ -490,8 +501,9 @@
         var ym = s.y1 + (s.y2 - s.y1) * s.tienDoc, z = M.P(s.x2, ym);
         mk('line', { x1: w[0], y1: w[1], x2: z[0], y2: z[1], stroke: 'var(' + mauDoc + ')', 'stroke-width': 0.8, 'stroke-linecap': 'round', 'data-soi': 'bac' }, svg);
         if (cau.nhan && !b.anNhan && s.tienDoc >= 1) {
-          var trai0 = s.ngang < 0;
-          C.chu(svg, (u[0] + w[0]) / 2, u[1] + (s.len > 0 ? 2.6 : -2.2), C.fmt(Math.abs(s.ngang)), 3.1, '--nhat');
+          // Đường cong (thử phá bài 28): bỏ số ngang (bậc nào cũng ngang 1), nhãn đứng đặt về phía xa trục tung để không đè số trên trục
+          var cong = !!(k.ds[b.duong] || {}).x2, trai0 = cong ? s.x2 < -GAN : s.ngang < 0;
+          if (!cong) C.chu(svg, (u[0] + w[0]) / 2, u[1] + (s.len > 0 ? 2.6 : -2.2), C.fmt(Math.abs(s.ngang)), 3.1, '--nhat');
           // Nhãn ở giữa đoạn đứng; nếu sát trục hoành (đè số trên trục) thì dời về đầu xa trục hơn
           var ym = (w[1] + z[1]) / 2, yTruc = M.P(0, C.kep(0, kh.y0, kh.y1))[1];
           if (Math.abs(ym - yTruc) < 3.5) ym = Math.abs(w[1] - yTruc) > Math.abs(z[1] - yTruc) ? w[1] + (z[1] > w[1] ? 1.5 : -1.5) : z[1] + (w[1] > z[1] ? 1.5 : -1.5);
@@ -528,6 +540,16 @@
       var bs = k.bac[0].buoc, Q0 = bs[0], Q1 = bs[bs.length - 1], P0 = M.P(Q0.x1, Q0.y1), P1 = M.P(Q1.x2, Q1.y2);
       if (trongKhung(Q0.x1, Q0.y1, kh) && trongKhung(Q1.x2, Q1.y2, kh)) mk('line', { x1: P0[0], y1: P0[1], x2: P1[0], y2: P1[1], stroke: 'var(--sai)', 'stroke-width': 0.5, 'stroke-dasharray': '1.4 1', 'data-soi': 'pha' }, svg);
     }
+    // Thử phá bài 29: hai đoạn dọc đỏ ở x = 0 và x = 2 là hiệu tung độ, dài khác nhau
+    if (k.pha && k.pha.hong && k.pha.giao && k.ds[1] && k.ds[1].hien > 0.5) {
+      k.pha.xDoc.forEach(function (x) {
+        var y1 = k.ds[0].a * x + k.ds[0].b, y2 = k.ds[1].a * x + k.ds[1].b;
+        if (!trongKhung(x, y1, kh) || !trongKhung(x, y2, kh) || Math.abs(y2 - y1) < GAN) return;
+        var A = M.P(x, y1), B = M.P(x, y2), gd = mk('g', { opacity: k.ds[1].hien, 'data-soi': 'phaDoc' }, svg);
+        mk('line', { x1: A[0] + 0.9, y1: A[1], x2: B[0] + 0.9, y2: B[1], stroke: 'var(--sai)', 'stroke-width': 0.7, 'stroke-linecap': 'round' }, gd);
+        C.chu(gd, A[0] + 2.2, A[1] + 0.7 * (B[1] - A[1]), C.fmt(y2 - y1).replace('-', '−'), 3.3, '--sai', { style: 'fill:var(--sai);text-anchor:start' });
+      });
+    }
     if (k.pha && k.pha.hong && k.pha.giao && !k.pha.ngoai && k.ds[1] && k.ds[1].hien > 0.5) {
       var gq = M.P(k.pha.giao.x, k.pha.giao.y);
       mk('circle', { cx: gq[0], cy: gq[1], r: 2.2, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 0.6, 'data-soi': 'pha' }, svg);
@@ -542,36 +564,41 @@
   });
   C.dangKi('haiDuongThang', {
     thamSo: { a: { min: -3, max: 3, step: 2, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -3, max: 3, step: 1, md: -2, nhan: 'b', mau: '--b' },
-      c: { min: -3, max: 3, step: 1, md: 2, nhan: "b'", mau: '--cc' }, lechA: { min: -2, max: 2, step: 0.5, md: 0, nhan: "a' − a", pha: true } },
+      c: { min: -3, max: 3, step: 1, md: 2, nhan: "b'", mau: '--cc' }, lechA: { min: 0, max: 2, step: 0.5, md: 0, nhan: "Làm a' dốc hơn a", pha: true } },
     tinh: tinhDuong
   });
   // Soi đường thẳng: hệ số chỉ nói khi đường đã có nhãn, do em gõ, đã giải, hoặc lấy từ thanh trượt; đường cần tìm thì không lộ
-  function soiDuong(k, p, o) {
-    var ra = { truc: SOI_TRUC };
+  // heSoGoc: cảnh của bài 29 gọi a là "hệ số góc"; bài 28 chưa học từ này nên gọi "hệ số a"
+  function soiDuong(k, p, o, heSoGoc) {
+    var ra = { truc: SOI_TRUC }, tenA = heSoGoc ? 'Hệ số góc' : 'Hệ số';
     k.ds.forEach(function (d, i) {
       if (d.hien <= 0) return;
       var lo = d.nhan || d.thu || k.giai || d.tuThamSo;
       ra['duong' + i] = { tieuDe: d.x2 ? 'Đường cong' : 'Đường thẳng', chu: !lo ? 'Đây là đường cần tìm. Đọc bậc thang hoặc các điểm nó đi qua để tìm hệ số.'
         : d.x2 ? 'Đồ thị của $' + hamTex(d.x2, d.a, d.b) + '$. Có $x^2$ nên không phải hàm số bậc nhất, đồ thị không thẳng.'
-        : 'Đồ thị của $' + hamTex(0, d.a, d.b) + '$. Cắt trục tung tại $(0; ' + soTex(d.b) + ')$ vì cho $x = 0$ thì $y = b$. Hệ số góc $a = ' + soTex(d.a) + '$' +
-          (Math.abs(d.a) < GAN ? '.' : d.a > 0 ? ' dương: đi sang phải thì đường đi lên.' : ' âm: đi sang phải thì đường đi xuống.') };
+        : Math.abs(d.a) < GAN ? 'Đường nằm ngang $y = ' + soTex(d.b) + '$: với mọi $x$, $y$ đều bằng $' + soTex(d.b) + '$. Hệ số của $x$ bằng $0$ nên đây **không** phải hàm số bậc nhất.'
+        : 'Đồ thị của $' + hamTex(0, d.a, d.b) + '$. Cắt trục tung tại $(0; ' + soTex(d.b) + ')$ vì cho $x = 0$ thì $y = b$. ' + tenA + ' $a = ' + soTex(d.a) + '$' +
+          (d.a > 0 ? ' dương: đi sang phải thì đường đi lên.' : ' âm: đi sang phải thì đường đi xuống.') };
     });
     var b = k.bac[0];
     if (b && b.buoc.length) {
       var s = b.buoc[0];
       var dBac = k.ds[b.duong] || {};
-      ra.bac = { tieuDe: 'Bậc thang', chu: dBac.x2 ? 'Các bậc sang ngang $1$ mà đứng ' + b.buoc.map(function (q) { return '$' + soTex(q.len) + '$'; }).join('; ') + ': không đều nhau, vì hàm số có $x^2$.' : b.anNhan ? 'Mỗi bậc sang ngang $' + soTex(Math.abs(s.ngang)) + '$. Đứng bao nhiêu thì em đếm ô trên hình.'
+      ra.bac = { tieuDe: 'Bậc thang', chu: dBac.x2 ? 'Các bậc cùng sang ngang $1$ nhưng lần lượt ' + b.buoc.map(function (q) { return (q.len >= 0 ? 'lên $' : 'xuống $') + soTex(Math.abs(q.len)) + '$'; }).join('; ') + ': không đều nhau, vì hàm số có $x^2$.' : b.anNhan ? 'Mỗi bậc sang ngang $' + soTex(Math.abs(s.ngang)) + '$. Đứng bao nhiêu thì em đếm ô trên hình.'
         : 'Sang ngang $' + soTex(Math.abs(s.ngang)) + '$ thì ' + (s.len >= 0 ? 'lên' : 'xuống') + ' $' + soTex(Math.abs(s.len)) + '$. Vì $a(x + 1) + b = (ax + b) + a$: tăng $x$ thêm $1$ thì $y$ tăng đúng $a$, ở mọi chỗ như nhau.' };
     }
     if (k.dich) ra.dich = { tieuDe: 'Mũi tên dọc', chu: !k.dich.cungA ? 'Hai đường khác hệ số góc nên không đẩy dọc đường này thành đường kia được: chỗ này phải đẩy nhiều, chỗ kia đẩy ít.' : 'Mọi điểm của đường được đẩy theo chiều dọc cùng một đoạn $b\' - b = ' + soTex(k.dich.khoang) + '$. Bậc thang giữ nguyên, nên hệ số góc giữ nguyên.' };
     if ((o.goc || []).length) ra.goc = { tieuDe: 'Góc $\\alpha$', chu: 'Góc tạo bởi đường thẳng và tia $Ox$, đo từ phía trên trục hoành. $a > 0$ thì $\\alpha$ nhọn, $a < 0$ thì $\\alpha$ tù.' };
     if (k.giao) ra.giao = { tieuDe: 'Chỗ hai đường cắt nhau', chu: 'Điểm này nằm trên cả hai đường, nên toạ độ của nó thoả cả hai phương trình. Hai đường cắt nhau vì hệ số góc khác nhau.' +
       (k.thu !== null || k.giai ? ' Toạ độ: $(' + soTex(k.giao.x) + '; ' + soTex(k.giao.y) + ')$' + (tron(k.giao.x) || tron(k.giao.y) ? ', đã làm tròn.' : '.') : '') };
-    if (k.pha && k.pha.hong) ra.pha = { tieuDe: 'Chỗ công thức hỏng', chu: k.pha.chu };
+    if (k.pha && k.pha.hong) ra.pha = k.pha.dung
+      ? { tieuDe: 'Nét đứt đỏ', chu: 'Nối điểm đầu và điểm cuối của bậc thang. Nếu đồ thị thẳng thì mọi điểm phải nằm trên nét này; ở đây các điểm giữa nằm lệch khỏi nó.' }
+      : { tieuDe: 'Vòng tròn đỏ', chu: 'Chỗ hai đường cắt nhau. Điểm này nằm trên cả hai đường, nên hai đường không song song.' };
+    if (k.pha && k.pha.hong && k.pha.giao) ra.phaDoc = { tieuDe: 'Đoạn dọc đỏ', chu: 'Khoảng cách theo chiều dọc giữa hai đường, tại $x = 0$ và $x = ' + soTex(k.pha.xDoc[1]) + '$. Hai đoạn dài khác nhau: hai đường không cách đều, nên sẽ gặp nhau.' };
     return ra;
   }
-  C.lay('duongThang').soi = soiDuong;
-  C.lay('haiDuongThang').soi = soiDuong;
+  C.lay('duongThang').soi = function (k, p, o) { return soiDuong(k, p, o, false); };
+  C.lay('haiDuongThang').soi = function (k, p, o) { return soiDuong(k, p, o, true); };
   C.lay('duongThang').ve = veDuong;
   C.lay('haiDuongThang').ve = veDuong;
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

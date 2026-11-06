@@ -97,7 +97,7 @@
     mucTieu: [
       'Tính xác suất thực nghiệm $\\frac{k}{n}$ từ bảng kết quả, với $k$ là số lần biến cố xảy ra trong $n$ lần thử.',
       'Phân biệt xác suất thực nghiệm (đếm từ các lần thử) với xác suất (đếm kết quả đồng khả năng).',
-      'Nói được vì sao thử càng nhiều lần thì $\\frac{k}{n}$ càng gần xác suất, nhưng hiếm khi bằng đúng.',
+      'Nói được vì sao thử càng nhiều lần thì $\\frac{k}{n}$ thường càng gần xác suất, nhưng hiếm khi bằng đúng.',
       'Dùng tỉ lệ $\\frac{k}{n}$ để ước lượng xác suất và dự đoán số lần xảy ra trong một số lần thử mới.'
     ],
     lyThuyet: [

@@ -127,7 +127,7 @@
     mucTieu: [
       'Chọn ẩn cho đúng đại lượng đề hỏi, ghi rõ đơn vị và điều kiện của ẩn.',
       'Tìm trong đề một đại lượng tính được bằng hai cách, rồi viết hai cách đó thành hai vế của phương trình.',
-      'Vẽ sơ đồ hai đoạn để kiểm phương trình vừa lập có khớp với đề không.',
+      'Kiểm phương trình vừa lập bằng cách thay số hoặc so hai vế với đề.',
       'Giải phương trình, đối chiếu điều kiện và trả lời đúng câu đề hỏi (giờ, phút, tuổi, tiền…).'
     ],
     lyThuyet: [

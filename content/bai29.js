@@ -130,10 +130,11 @@
           { id: 'gon', chu: 'Chuyển vế, phương trình đó thành $(a - a\')x = b\' - b$.', can: ['chung'] },
           { id: 'bang', chu: 'Nếu $a = a\'$ và $b \\ne b\'$: vế trái bằng $0$, vế phải khác $0$, không có $x$ nào thoả.', can: ['gon'] },
           { id: 'ss', chu: 'Khi đó hai đường không có điểm chung nào: chúng song song.', can: ['bang'] },
+          { id: 'trung', chu: 'Nếu $a = a\'$ và $b = b\'$: cả hai vế bằng $0$, mọi $x$ đều thoả, nên mọi điểm của đường này đều nằm trên đường kia: hai đường trùng nhau.', can: ['gon'] },
           { id: 'khac', chu: 'Nếu $a \\ne a\'$: chia hai vế cho $a - a\' \\ne 0$, được đúng một $x = \\frac{b\' - b}{a - a\'}$.', can: ['gon'] },
           { id: 'cat', chu: 'Khi đó hai đường có đúng một điểm chung: chúng cắt nhau.', can: ['khac'] }
         ],
-        ketLuan: 'Cùng hệ số góc, khác tung độ gốc thì song song; khác hệ số góc thì cắt nhau tại đúng một điểm.'
+        ketLuan: '$a = a\'$, $b \\ne b\'$ thì song song; $a = a\'$, $b = b\'$ thì trùng nhau; $a \\ne a\'$ thì cắt nhau tại đúng một điểm.'
       } },
       { loai: 'hinh', widget: 'doThi', config: { bbox: [-5, 5, 5, -5],
           thanhTruot: [{ ten: 'a', min: -3, max: 3, buoc: 0.5, gt: 2 }, { ten: 'b', min: -3, max: 3, buoc: 1, gt: 1 },

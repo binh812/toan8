@@ -60,14 +60,18 @@
         ? 'Thay $' + bien + ' = ' + so(k.thu) + '$: đĩa nặng $' + so(giaTri(v, k.thu)) + '$.'
         : 'Mỗi khối cam là một $' + bien + '$, mỗi quả ghi $1$ nặng $1$, quả ghi $10$ nặng $10$.') };
     }
-    var bang = Math.abs(k.lech) < 1e-9;
+    var bang = Math.abs(k.lech) < 1e-9, amHS = k.trai.x < 0 || k.phai.x < 0, xTex = '$' + bien + '$';
+    // Khối x kéo lên khi hệ số âm (x dương) hoặc khi x âm (hệ số dương)
+    var ghiAm = amHS && !k.xAm ? ' Hệ số của ' + xTex + ' âm nên khối ' + xTex + ' đó là bóng bay kéo lên.'
+      : !amHS && k.xAm ? ' Ở đây ' + xTex + ' âm nên khối cũng kéo lên như bóng bay.'
+      : amHS && k.xAm ? ' Ở đây ' + xTex + ' âm: khối có hệ số dương kéo lên, khối có hệ số âm lại đè xuống.' : '';
     return {
       trai: dia('trái', k.trai),
       phai: dia('phải', k.phai),
-      khoiX: { tieuDe: 'Khối $' + bien + '$', chu: 'Mỗi khối cam nặng $' + bien + '$, là số chưa biết. Đĩa trái có $' + so(Math.abs(k.trai.x)) + '$ khối, đĩa phải có $' + so(Math.abs(k.phai.x)) + '$ khối.' + (k.xAm ? ' Ở đây $' + bien + '$ âm nên khối cũng kéo lên như bóng bay.' : '') },
+      khoiX: { tieuDe: 'Khối $' + bien + '$', chu: 'Mỗi khối cam nặng $' + bien + '$, là số chưa biết. Đĩa trái có $' + so(Math.abs(k.trai.x)) + '$ khối, đĩa phải có $' + so(Math.abs(k.phai.x)) + '$ khối.' + ghiAm },
       qua: { tieuDe: 'Quả nặng', chu: 'Quả ghi số nào thì nặng bấy nhiêu. Phần số dương: đĩa trái $' + so(duong(k.trai.so)) + '$, đĩa phải $' + so(duong(k.phai.so)) + '$. Bỏ cùng số quả ở **cả hai** đĩa thì cân vẫn như cũ: đó là chuyển vế.' },
       bong: { tieuDe: 'Bóng bay', chu: 'Bóng bay kéo đĩa lên, nên là số âm. Đĩa trái có $' + so(am(k.trai.so)) + '$, đĩa phải có $' + so(am(k.phai.so)) + '$. Thả thêm bấy nhiêu quả $1$ vào **cả hai** đĩa thì hết bóng mà cân không đổi.' },
-      don: { tieuDe: 'Đòn cân', chu: bang ? 'Đòn nằm ngang: hai vế bằng nhau. Làm cùng một việc ở cả hai đĩa thì đòn vẫn nằm ngang.'
+      don: { tieuDe: 'Đòn cân', chu: k.pha && k.pha.hong ? 'Đòn nằm ngang với **mọi** ' + xTex + ', nên cân không còn chỉ ra ' + xTex + ' nào là nghiệm. Đó là lí do không được nhân hai vế với $0$.' : bang ? 'Đòn nằm ngang: hai vế bằng nhau. Làm cùng một việc ở cả hai đĩa thì đòn vẫn nằm ngang.'
         : 'Đòn nghiêng về đĩa nặng hơn: vế trái trừ vế phải bằng $' + so(k.lech) + '$. Đòn chỉ nằm ngang khi thay đúng nghiệm.' }
     };
   };
@@ -136,9 +140,10 @@
       [[trai, k.goc.trai], [phai, k.goc.phai]].forEach(function (d) {
         var vat = vatCua(d[1], !!k.xAm), n = vat.nang.length;
         if (!n) return;
-        var w = Math.min(n, MOI_HANG) * O, h = Math.ceil(n / MOI_HANG) * O, cy = d[0].y + treo;
+        // Khung rộng ít nhất 2 ô để chữ "× 0" nằm gọn bên trong
+        var w = Math.max(2, Math.min(n, MOI_HANG)) * O, h = Math.ceil(n / MOI_HANG) * O, cy = d[0].y + treo;
         mk('rect', { x: d[0].x - w / 2, y: cy - h, width: w, height: h, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 0.4, 'stroke-dasharray': '1.2 0.8' }, svg);
-        C.chu(svg, d[0].x, cy - h / 2, '× 0', 3.4, '--sai');
+        C.chu(svg, d[0].x, cy - h / 2, '× 0', 3.8, '--sai');
       });
       C.chu(svg, tam, 18, 'Nhân với 0: mọi ' + (o.bien || 'x') + ' đều làm cân thăng bằng', 3.4, '--sai');
     }
