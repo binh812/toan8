@@ -49,37 +49,41 @@
     return s;
   }
   function lcm(cc, a, b) { return a / cc.ucln(a, b) * b; }
+  // Hình lời giải: đoạn chia (tử, mẫu là mảng hệ số), mỗi hàng một giá trị của x
+  function hinhDoan(hang, ghiChu) {
+    return { widget: 'canh', config: { ten: 'doanChia', tuyChon: { hang: hang }, chiXem: true, t: 1, ghiChu: ghiChu } };
+  }
 
   TOAN8.luyen(21, [
     { ten: 'Điều kiện xác định', muc: 1, sinh: function (r, cc) {
-      var loai = r.so(0, 3), q = r.khac0(-6, 6), mau, mauNT, kq, ltg = [], buoc, goi;
+      var loai = r.so(0, 3), q = r.khac0(-6, 6), mau, mauNT, kq, ltg = [], buoc, goi, mauDT;
       if (loai === 0) {
         var a = r.chon([1, 2, 3]);
-        mau = vietDT(cc, trienKhai(a, [q])); kq = [q];
+        mauDT = trienKhai(a, [q]); mau = vietDT(cc, mauDT); kq = [q];
         goi = 'Giải $' + mau + ' = 0$.';
         buoc = [a === 1 ? '$' + mau + ' = 0$ khi $x = ' + q + '$.' : '$' + mau + ' = 0$ khi $' + a + 'x = ' + a * q + '$, tức $x = ' + q + '$.'];
       } else if (loai === 1) {
-        mau = vietDT(cc, trienKhai(1, [0, q])); mauNT = 'x(' + coSo(q) + ')'; kq = [0, q];
+        mauDT = trienKhai(1, [0, q]); mau = vietDT(cc, mauDT); mauNT = 'x(' + coSo(q) + ')'; kq = [0, q];
         goi = 'Đặt nhân tử chung: $' + mau + ' = ' + mauNT + '$. Tích bằng $0$ khi một thừa số bằng $0$.';
         buoc = ['$' + mau + ' = ' + mauNT + ' = 0$ khi $x = 0$ hoặc $' + coSo(q) + ' = 0$.', 'Tức là $x = 0$ hoặc $x = ' + q + '$.'];
         ltg.push({ gt: [q], giaiThich: 'Em quên thừa số $x$: $' + mauNT + ' = 0$ cả khi $x = 0$.' });
       } else if (loai === 2) {
         q = r.so(1, 7);
-        mau = vietDT(cc, trienKhai(1, [q, -q])); mauNT = '(' + coSo(q) + ')(' + coSo(-q) + ')'; kq = [q, -q];
+        mauDT = trienKhai(1, [q, -q]); mau = vietDT(cc, mauDT); mauNT = '(' + coSo(q) + ')(' + coSo(-q) + ')'; kq = [q, -q];
         goi = 'Hiệu hai bình phương: $' + mau + ' = ' + mauNT + '$.';
         buoc = ['$' + mau + ' = ' + mauNT + ' = 0$ khi $x = ' + q + '$ hoặc $x = ' + (-q) + '$.'];
         ltg.push({ gt: [q], giaiThich: '$x^2 = ' + q * q + '$ có **hai** giá trị: $x = ' + q + '$ và $x = ' + (-q) + '$.' });
       } else {
         var p = r.khac0(-6, 6);
         while (p === q || p === -q) p = r.khac0(-6, 6);
-        mau = '(' + coSo(p) + ')(' + coSo(q) + ')'; kq = [p, q];
+        mauDT = trienKhai(1, [p, q]); mau = '(' + coSo(p) + ')(' + coSo(q) + ')'; kq = [p, q];
         goi = 'Tích bằng $0$ khi một trong hai thừa số bằng $0$.';
         buoc = ['$' + mau + ' = 0$ khi $' + coSo(p) + ' = 0$ hoặc $' + coSo(q) + ' = 0$.', 'Tức là $x = ' + p + '$ hoặc $x = ' + q + '$.'];
         ltg.push({ gt: [-p, -q], giaiThich: 'Sai dấu: $' + coSo(p) + ' = 0$ khi $x = ' + p + '$ (chuyển vế phải đổi dấu).' });
       }
       var s = r.so(-6, 6);
       while (kq.indexOf(s) >= 0 || s === -q) s = r.so(-6, 6);
-      var c = r.chon([1, 1, 2, 3, -1]), tu = vietDTD(cc, trienKhai(c, [s]));
+      var c = r.chon([1, 1, 2, 3, -1]), tuDT = trienKhai(c, [s]), tu = vietDTD(cc, tuDT);
       ltg.push({ gt: [s], giaiThich: 'Em cho **tử** bằng $0$. Phân thức không xác định khi **mẫu** bằng $0$.' });
       var F = frac(tu, mau);
       return {
@@ -88,7 +92,8 @@
         dapAn: { kieu: 'nghiem', gt: kq },
         goiY: ['Phân thức không xác định khi **mẫu** bằng $0$ (không phải tử).', goi],
         loiGiai: ['Mẫu thức là $' + mau + '$.'].concat(buoc, ['Vậy phân thức không xác định tại ' + kq.map(function (v) { return '$x = ' + v + '$'; }).join(' và ') + '; điều kiện xác định: ' + kq.map(function (v) { return '$x \\ne ' + v + '$'; }).join(' và ') + '.']),
-        loiThuongGap: ltg
+        loiThuongGap: ltg,
+        hinhGiai: hinhDoan(kq.map(function (v) { return { tu: tuDT, mau: mauDT, tenTu: tu, tenMau: mau.replace(/\^2/g, '²'), x: v }; }), 'Tại mỗi giá trị này đoạn mẫu dài 0: không chia được.')
       };
     } },
 
@@ -114,11 +119,12 @@
         loiGiai: ['Tại $x = ' + x0 + '$, mẫu bằng $' + thay(mau, x0) + ' = ' + D + ' \\ne 0$ nên phân thức xác định.',
           'Tử bằng $' + thay(tu, x0) + ' = ' + N + '$.',
           '$P = ' + (giua === kq.tex ? '' : giua + ' = ') + kq.tex + '$'],
-        loiThuongGap: ltg
+        loiThuongGap: ltg,
+        hinhGiai: hinhDoan([{ tu: tu, mau: mau, tenTu: tuS.replace(/\^2/g, '²'), tenMau: mauS.replace(/\^2/g, '²'), x: x0 }], N * D < 0 ? 'Tử và mẫu trái dấu (đoạn nét đứt là số âm) nên giá trị âm.' : undefined)
       };
     } },
 
-    { ten: 'Tìm đa thức (hai phân thức bằng nhau)', muc: 2, sinh: function (r, cc) {
+    { ten: 'Tìm đa thức (hai phân thức bằng nhau)', muc: 2, khongHinh: 'Tìm cả một đa thức bằng phân tích nhân tử; thay số chỉ cho giá trị tại một điểm, không cho cả đa thức.', sinh: function (r, cc) {
       if (r.dau() > 0) {
         // A/(x+a) = U(x−a)/(x²−a²)  ⟹  A = U
         var a = r.so(1, 7) * r.dau(), k = r.khac0(-4, 4), ngU = r.chon([[], [0], [0], [0, 0]]);
@@ -160,6 +166,14 @@
       else { A = xa; B = xb; C = [0, a, 1]; D = [b, 0, 1]; ghiChu = 'nhân tử với $x$ nhưng mẫu thì không'; }
       var AD = nhanDT(A, D), BC = nhanDT(B, C), dung = bangDT(AD, BC);
       var P = frac(vietDT(cc, A), vietDT(cc, B)), Q = frac(vietDT(cc, C), vietDT(cc, D));
+      // Thử một giá trị của x: hai mẫu khác 0 (khẳng định sai thì chọn x cho hai giá trị khác nhau)
+      var xThu = [2, 1, 3, 4, 5, -1, -2, 6].filter(function (x) {
+        var b = giaTri(B, x), d = giaTri(D, x);
+        return b && d && (dung || Math.abs(giaTri(A, x) / b - giaTri(C, x) / d) > 1e-9);
+      })[0];
+      var ve = function (s) { return vietDT(cc, s).replace(/\^2/g, '²'); };
+      var hinh = xThu === undefined ? null : hinhDoan([{ tu: A, mau: B, tenTu: ve(A), tenMau: ve(B), x: xThu }, { tu: C, mau: D, tenTu: ve(C), tenMau: ve(D), x: xThu }],
+        dung ? 'Thử tại x = ' + xThu + ': hai hàng đặt mẫu cùng số lần. Một lần thử chưa đủ, nhân chéo mới chắc chắn.' : 'Thử tại x = ' + xThu + ': hai hàng cho hai số khác nhau, đủ để biết khẳng định sai.');
       return {
         de: 'Khẳng định sau đúng hay sai? $$' + P + ' = ' + Q + '$$',
         dapAn: { kieu: 'dungSai', gt: dung },
@@ -167,7 +181,8 @@
         loiGiai: ['$A\\cdot D = (' + vietDT(cc, A) + ')(' + vietDT(cc, D) + ') = ' + vietDT(cc, AD) + '$.',
           '$B\\cdot C = ' + (B.length > 1 ? '(' + vietDT(cc, B) + ')' : vietDT(cc, B)) + '(' + vietDT(cc, C) + ') = ' + vietDT(cc, BC) + '$.',
           dung ? 'Hai tích bằng nhau nên khẳng định **đúng** (ở đây ta đã ' + ghiChu + ').'
-            : 'Hai tích khác nhau nên khẳng định **sai**: không được ' + ghiChu + ' (ví dụ thay $x = 1$ hai vế cho hai số khác nhau).']
+            : 'Hai tích khác nhau nên khẳng định **sai**: không được ' + ghiChu + (xThu !== undefined ? ' (thay $x = ' + xThu + '$ thì hai vế cho hai số khác nhau).' : '.')],
+        hinhGiai: hinh || undefined
       };
     } },
 

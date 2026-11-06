@@ -75,6 +75,19 @@
   }
   function lcm(cc, a, b) { return a / cc.ucln(a, b) * b; }
 
+  // ---- Hình lời giải: thẻ nhân tử, bỏ từng cặp thẻ giống nhau ở tử và mẫu ----
+  function thuaSo(k) {
+    var o = [], n = Math.abs(k);
+    if (k < 0) o.push('−1');
+    for (var p = 2; p * p <= n; p++) while (n % p === 0) { o.push(String(p)); n /= p; }
+    if (n > 1) o.push(String(n));
+    return o;
+  }
+  function the(r) { return r === 0 ? 'x' : 'x ' + (r > 0 ? '− ' + r : '+ ' + (-r)); }
+  function hinhRutGon(F, ghiChu) {
+    return { widget: 'canh', config: { ten: 'theNhanTu', tuyChon: { dang: 'rutGon', tu: thuaSo(F.k).concat(F.n.map(the)), mau: thuaSo(F.m).concat(F.d.map(the)) }, chiXem: true, t: 1, ghiChu: ghiChu } };
+  }
+
   // Một phân thức khác mẫu dạng ±(n·xᵃyᵇ)/(m·xᶜyᵈ) (tối giản sẵn)
   function sinhDon(r, cc) {
     var n = r.so(1, 9), m = r.so(1, 9);
@@ -85,7 +98,7 @@
   }
 
   TOAN8.luyen(24, [
-    { ten: 'Nhân, chia phân thức (đơn thức)', muc: 1, sinh: function (r, cc) {
+    { ten: 'Nhân, chia phân thức (đơn thức)', muc: 1, khongHinh: 'Mấu chốt là cộng, trừ số mũ của x và y; hình đếm ô chỉ cho thấy phần hệ số.', sinh: function (r, cc) {
       var A = sinhDon(r, cc), B = sinhDon(r, cc), chia = r.dau() > 0;
       var nhan = { t: A.t * B.t, m: A.m * B.m, x: A.x + B.x, y: A.y + B.y };
       var thuong = { t: A.t * B.m, m: A.m * Math.abs(B.t), x: A.x - B.x, y: A.y - B.y };
@@ -113,7 +126,7 @@
       };
     } },
 
-    { ten: 'Phân thức nghịch đảo', muc: 1, sinh: function (r, cc) {
+    { ten: 'Phân thức nghịch đảo', muc: 1, khongHinh: 'Chỉ cần đổi chỗ tử và mẫu.', sinh: function (r, cc) {
       var loai = r.so(0, 2), a = r.khac0(-6, 6), b = r.khac0(-6, 6), F, deS;
       while (b === a) b = r.khac0(-6, 6);
       if (loai === 0) { F = { k: r.chon([1, 1, 2, 3]), m: 1, n: [a], d: [b] }; }
@@ -151,7 +164,8 @@
         dapAn: { kieu: 'bieuThuc', gt: kq.ascii, dang: 'rutGon' },
         goiY: ['Phân tích các tử và mẫu thành nhân tử: $' + nhanTu(A) + '\\cdot ' + nhanTu(B) + '$.', 'Nhân tử với tử, mẫu với mẫu, rồi chia cả tử và mẫu cho các nhân tử chung (đừng nhân khai triển ra).'],
         loiGiai: ['$' + de + ' = ' + nhanTu(A) + '\\cdot ' + nhanTu(B) + '$', '$= ' + nhanTu(P) + '$', '$= ' + kq.tex + '$'],
-        loiThuongGap: ltg
+        loiThuongGap: ltg,
+        hinhGiai: hinhRutGon(P, 'Tử nhân tử, mẫu nhân mẫu: mọi thẻ nhân tử của tử lên trên, của mẫu xuống dưới. Bỏ từng cặp thẻ giống nhau.')
       };
     } },
 
@@ -172,7 +186,8 @@
         dapAn: { kieu: 'bieuThuc', gt: kq.ascii, dang: 'rutGon' },
         goiY: ['Chia cho một phân thức là nhân với phân thức **nghịch đảo** của nó.', 'Phân tích thành nhân tử: $' + nhanTu(A) + '\\cdot ' + nhanTu(daoPT(B)) + '$, rồi rút gọn.'],
         loiGiai: ['$' + de + ' = ' + nhanTu(A) + '\\cdot ' + nhanTu(daoPT(B)) + '$', '$= ' + nhanTu(P) + '$', '$= ' + kq.tex + '$'],
-        loiThuongGap: ltg
+        loiThuongGap: ltg,
+        hinhGiai: hinhRutGon(P, 'Đã lật phân thức chia: thẻ tử của nó xuống mẫu, thẻ mẫu của nó lên tử. Bỏ từng cặp thẻ giống nhau.')
       };
     } },
 

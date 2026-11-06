@@ -82,8 +82,62 @@
     ]
   });
 
+  // Cấu hình hình cho "Nhìn là hiểu". Đa thức ghi bằng mảng hệ số từ bậc 0 lên ([1, 1] là x + 1)
+  function nh(tuyChon, them) { return Object.assign({ ten: 'luoiPhanSo', tuyChon: Object.assign({ dang: 'nhan' }, tuyChon) }, them); }
+  function dc(tuyChon, them) { return Object.assign({ ten: 'doanChia', tuyChon: tuyChon }, them); }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  var N24_1 = nh({ p1: { tu: [0, 2], mau: [1, 1] }, p2: { tu: [1, 1], mau: [0, 0, 4] }, x: 1 }, { moTa: 'Tại x bằng 1: dải dọc 2 trên 2 cột, dải ngang 2 trên 4 hàng của hình vuông 8 ô.' });
+  var N24_3 = nh({ p1: { tu: 4, mau: 8 }, p2: { tu: 4, mau: 6 }, dauDe: 'x = 2, y = 1' }, { moTa: 'Tại x bằng 2, y bằng 1: dải dọc 4 trên 8 cột, dải ngang 4 trên 6 hàng.' });
+  var N24_9 = nh({ p1: { tu: [0, 1], mau: [-1, 3] }, p2: { tu: [-2, 1], mau: [1, 3] }, x: 3, an: 'p1' }, { moTa: 'Tại x bằng 3: hình vuông 8 cột, 10 hàng. Biết phần tô chồng và dải ngang, tìm dải dọc.' });
+  var N24_10 = nh({ p1: { tu: [-2, 1], mau: [0, 1] }, p2: { tu: [0, 1], mau: [2, 1] }, x: 3 }, { moTa: 'Tại x bằng 3: dải dọc 1 trên 3 cột, dải ngang 3 trên 5 hàng.' });
+
   TOAN8.bai({
     id: 24, ten: 'Phép nhân và phép chia phân thức đại số', sgk: { tap: 2, trang: 20 },
+
+    nhin: {
+      tieuDe: 'Tô chồng hai chiều: tử nhân tử, mẫu nhân mẫu', loai: 'minhHoa',
+      luuY: 'Hình đếm ô khi $x$ là số nguyên dương, lúc hai phân thức có giá trị từ $0$ tới $1$. Với mọi $x$, tử và mẫu là những con số, và phép nhân phân thức làm đúng như nhân phân số; SGK lấy điều đó làm quy tắc nhân phân thức.',
+      canh: nh({ p1: { tu: [0, 1], mau: [1, 1] }, p2: { tu: [-1, 1], mau: [0, 1] } }, {
+        moTa: 'Hình vuông đơn vị. Dải dọc màu cam chiếm x trên x cộng 1 cột, dải ngang màu xanh chiếm x trừ 1 trên x hàng. Phần chồng màu xanh lá là tích.',
+        dongSo: function (p) { var x = p.x; return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\ca{' + (x + 1) + '}} \\cdot \\frac{\\cb{' + (x - 1) + '}}{\\cb{' + x + '}} = \\frac{\\cc{' + x * (x - 1) + '}}{' + (x + 1) * x + '}$'; } }),
+      buoc: [
+        { t: 0, chu: 'Hình vuông là $1$. Cần tính $\\frac{\\ca{x}}{\\ca{x+1}} \\cdot \\frac{\\cb{x-1}}{\\cb{x}}$, tức lấy một phần của một phần.' },
+        { t: 0.1, chu: 'Theo chiều dọc: chia $\\ca{x+1}$ cột, tô $\\ca{x}$ cột.' },
+        { t: 0.4, chu: 'Theo chiều ngang: chia $\\cb{x}$ hàng, tô $\\cb{x-1}$ hàng.' },
+        { t: 0.72, chu: 'Phần tô chồng là tích. Nó có $\\ca{x} \\cdot \\cb{(x-1)}$ ô, trong cả hình $\\ca{(x+1)} \\cdot \\cb{x}$ ô: tử nhân tử, mẫu nhân mẫu. Kéo thanh $x$ để thử số khác.' }
+      ],
+      ketLuan: '$$\\frac{\\ca{A}}{\\ca{B}} \\cdot \\frac{\\cb{C}}{\\cb{D}} = \\frac{\\ca{A}\\cb{C}}{\\ca{B}\\cb{D}}$$ Ở đây $\\frac{x}{x+1} \\cdot \\frac{x-1}{x} = \\frac{x(x-1)}{(x+1)x} = \\frac{x-1}{x+1}$. Chia cho một phân thức là nhân với phân thức nghịch đảo của nó.',
+      dung: {
+        tieuDe: 'Đếm ô chồng', tuBai: '24.1', canh: N24_1,
+        moiThu: 'Hình vẽ tại $x = 1$: $\\frac{2x}{x+1} = \\frac{2}{2}$ và $\\frac{x+1}{4x^2} = \\frac{2}{4}$. Em nhân, rút gọn rồi gõ kết quả. Nếu sai, hình so giá trị của em với phần tô chồng.',
+        phanUng: [
+          { gt: '8x^3/(x+1)^2', thamSo: { thu: 2 }, loi: 'Em nhân chéo (tử của phân thức này với mẫu của phân thức kia). Tại $x = 1$ kết quả của em bằng $2$, còn phần tô chồng chỉ là $\\frac{1}{2}$ hình vuông.' },
+          { gt: '1/(2x^2)', loi: 'Tử $2x(x+1)$ và mẫu $4x^2(x+1)$ chỉ có chung $2x(x+1)$; mẫu còn lại $2x$, không phải $2x^2$.' }
+        ],
+        saiChu: 'Tử nhân tử: $2x(x+1)$; mẫu nhân mẫu: $(x+1) \\cdot 4x^2$. Rồi chia cả hai cho nhân tử chung $2x(x+1)$.',
+        dungChu: '$\\frac{2x(x+1)}{(x+1) \\cdot 4x^2} = \\frac{1}{2x}$. Tại $x = 1$: tô chồng $2 \\cdot 2 = 4$ ô trong $2 \\cdot 4 = 8$ ô, đúng $\\frac{1}{2}$.'
+      },
+      suyRa: {
+        tieuDe: 'Hai biến, hai phân thức đặt tên, tìm thừa số: vẫn là tô chồng',
+        baDe: [
+          { tuBai: '24.3', canh: N24_3, tenNut: 'Tô chồng',
+            phanUng: [{ gt: '24y^3/x^5', thamSo: { thu: 0.75 }, loi: 'Em nhân chéo. Tại $x = 2$, $y = 1$ của em bằng $\\frac{3}{4}$, còn phần tô chồng chỉ là $\\frac{16}{48} = \\frac{1}{3}$.' }],
+            dungChu: 'Tử nhân tử $4x^2y^2$, mẫu nhân mẫu $6x^3y$, rút gọn được $\\frac{2y}{3x}$. Tại $x = 2$, $y = 1$: $16$ trong $48$ ô, tức $\\frac{1}{3}$.',
+            saiChu: 'Tử nhân tử, mẫu nhân mẫu, rồi chia cả hai cho $2x^2y$.' },
+          { tuBai: '24.10', de: 'Cho $P = \\frac{x-2}{x}$ và $Q = \\frac{x}{x+2}$. Tính $P \\cdot Q$.', dapAn: { kieu: 'bieuThuc', gt: '(x-2)/(x+2)', dang: 'rutGon' },
+            goiY: ['Tử nhân tử, mẫu nhân mẫu.', '$x$ có ở cả tử và mẫu.'], loiGiai: ['$P \\cdot Q = \\frac{(x-2)x}{x(x+2)}$', '$= \\frac{x-2}{x+2}$'], loiThuongGap: [],
+            canh: N24_10, tenNut: 'Tô chồng',
+            phanUng: [{ gt: '(x+2)/(x-2)', thamSo: { thu: 5 }, loi: 'Kết quả bị lật ngược: tại $x = 3$ của em bằng $5$, mà tích hai phân số nhỏ hơn $1$ không thể lớn hơn $1$.' }],
+            dungChu: '$\\frac{(x-2)x}{x(x+2)} = \\frac{x-2}{x+2}$. Tại $x = 3$: tô chồng $1 \\cdot 3 = 3$ ô trong $3 \\cdot 5 = 15$ ô, tức $\\frac{1}{5}$.',
+            saiChu: 'Nhân tử với tử, mẫu với mẫu, rồi bỏ nhân tử chung $x$.' },
+          { tuBai: '24.9', canh: N24_9, tenNut: 'Tìm dải dọc',
+            phanUng: [{ gt: '(x^2-2x)(x-2)/((9x^2-1)(3x+1))', thamSo: { thu: 3 / 800 }, loi: 'Biết phần tô chồng và dải ngang, muốn tìm dải dọc thì **chia** phần chồng cho dải ngang, không phải nhân.' }],
+            dungChu: '$P = \\frac{x(x-2)}{(3x-1)(3x+1)} \\cdot \\frac{3x+1}{x-2} = \\frac{x}{3x-1}$. Tại $x = 3$: phần chồng $3$ ô nằm trong $1$ hàng, nên dải dọc rộng $3$ trong $8$ cột.',
+            saiChu: '$P$ là thừa số chưa biết: lấy tích chia cho thừa số đã biết, tức nhân với $\\frac{3x+1}{x-2}$.' }
+        ],
+        cachNhan: 'Nhân hai phân thức là tô chồng hai chiều: ô chồng là tử nhân tử, cả hình là mẫu nhân mẫu, rồi rút gọn. Biết tích và một thừa số thì chia, tức nhân với nghịch đảo.'
+      }
+    },
 
     khamPha: {
       nhiemVu: 'Anh Pi nói: "Nhân hai phân thức thì nhân các tử với nhau và nhân các mẫu với nhau." Kéo **điểm cam** để đổi $x$ và so sánh dòng **xanh lá** (nhân trực tiếp hai giá trị) với dòng **xanh dương** (kết quả theo cách của anh Pi).\n\nEm thử thêm $x = 0$: chuyện gì xảy ra ở đó?',
@@ -117,21 +171,28 @@
     ],
 
     viDu: [
-      { de: 'Nhân hai phân thức $\\frac{2x-1}{5x+1}$ và $\\frac{5x+1}{4x^2-1}$.', buoc: [
-        { lam: '$\\frac{2x-1}{5x+1}\\cdot\\frac{5x+1}{4x^2-1} = \\frac{(2x-1)(5x+1)}{(5x+1)(4x^2-1)}$', vi: 'Tử nhân tử, mẫu nhân mẫu. Giữ dạng tích, **chưa** nhân phá ngoặc.' },
-        { lam: '$= \\frac{(2x-1)(5x+1)}{(5x+1)(2x-1)(2x+1)}$', vi: 'Phân tích $4x^2 - 1 = (2x-1)(2x+1)$ để thấy nhân tử chung.' },
-        { lam: '$= \\frac{1}{2x+1}$', vi: 'Chia cả tử và mẫu cho các nhân tử chung $(2x-1)$ và $(5x+1)$.' } ] },
-      { de: 'Tính $\\left(-\\frac{3x}{5xy^2}\\right)\\cdot\\left(-\\frac{5y^2}{12xy}\\right)$.', buoc: [
-        { lam: '$= \\frac{3x\\cdot 5y^2}{5xy^2\\cdot 12xy}$', vi: 'Âm nhân âm được dương.' },
-        { lam: '$= \\frac{15xy^2}{60x^2y^3} = \\frac{1}{4xy}$', vi: 'Chia cả tử và mẫu cho $15xy^2$.' } ] },
-      { de: 'Làm tính chia $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$.', buoc: [
+      { de: 'Nhân hai phân thức $\\frac{2x-1}{5x+1}$ và $\\frac{5x+1}{4x^2-1}$.',
+        canh: nh({ p1: { tu: [-1, 2], mau: [1, 5] }, p2: { tu: [1, 5], mau: [-1, 0, 4] }, x: 1 }, { ghiChu: 'Vẽ tại x = 1: 1/6 nhân 6/3. Thừa số thứ hai lớn hơn 1 nên dải ngang thò ra ngoài hình vuông; phần chồng 6 ô trong hình vuông 18 ô.' }), buoc: [
+        { canh: { t: 0.7 }, lam: '$\\frac{2x-1}{5x+1}\\cdot\\frac{5x+1}{4x^2-1} = \\frac{(2x-1)(5x+1)}{(5x+1)(4x^2-1)}$', vi: 'Tử nhân tử, mẫu nhân mẫu. Giữ dạng tích, **chưa** nhân phá ngoặc.' },
+        { canh: { t: 1 }, lam: '$= \\frac{(2x-1)(5x+1)}{(5x+1)(2x-1)(2x+1)}$', vi: 'Phân tích $4x^2 - 1 = (2x-1)(2x+1)$ để thấy nhân tử chung.' },
+        { canh: { t: 1 }, lam: '$= \\frac{1}{2x+1}$', vi: 'Chia cả tử và mẫu cho các nhân tử chung $(2x-1)$ và $(5x+1)$. Tại $x = 1$: $\\frac{6}{18} = \\frac{1}{3}$.' } ] },
+      { de: 'Tính $\\left(-\\frac{3x}{5xy^2}\\right)\\cdot\\left(-\\frac{5y^2}{12xy}\\right)$.',
+        canh: nh({ p1: { tu: 3, mau: 5 }, p2: { tu: 5, mau: 12 }, dauDe: 'x = y = 1' }, { ghiChu: 'Hai thừa số đều âm; hình vẽ phần độ lớn tại x = y = 1. Âm nhân âm được dương: 15/60 = 1/4.' }), buoc: [
+        { canh: { t: 0.7 }, lam: '$= \\frac{3x\\cdot 5y^2}{5xy^2\\cdot 12xy}$', vi: 'Âm nhân âm được dương.' },
+        { canh: { t: 1 }, lam: '$= \\frac{15xy^2}{60x^2y^3} = \\frac{1}{4xy}$', vi: 'Chia cả tử và mẫu cho $15xy^2$.' } ] },
+      { de: 'Làm tính chia $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$.',
+        canh: dc({ hang: [{ tu: 5 / 3, mau: 3 / 2, tenTu: '5/(x² − 1)', tenMau: '3/(x² − x)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 2' }] },
+          { ghiChu: 'Chia là hỏi số chia nằm trong số bị chia bao nhiêu lần. Tại x = 2: 5/3 chứa 3/2 khoảng 1,11 lần, đúng bằng 5x/(3(x + 1)) = 10/9.' }), buoc: [
         { lam: '$= \\frac{5}{x^2-1}\\cdot\\frac{x^2-x}{3}$', vi: 'Nhân với phân thức nghịch đảo của số chia (lật $\\frac{3}{x^2-x}$ thành $\\frac{x^2-x}{3}$).' },
         { lam: '$= \\frac{5x(x-1)}{3(x-1)(x+1)}$', vi: 'Nhân tử với tử, mẫu với mẫu; phân tích $x^2 - x = x(x-1)$, $x^2 - 1 = (x-1)(x+1)$.' },
         { lam: '$= \\frac{5x}{3(x+1)}$', vi: 'Chia cho nhân tử chung $x - 1$.' } ] },
-      { de: 'Làm tính chia $\\frac{3x}{2y^2} : \\left(-\\frac{5x^2}{12y^3}\\right)$.', buoc: [
+      { de: 'Làm tính chia $\\frac{3x}{2y^2} : \\left(-\\frac{5x^2}{12y^3}\\right)$.',
+        canh: dc({ hang: [{ tu: 1.5, mau: -5 / 12, tenTu: '3x/(2y²)', tenMau: '−5x²/(12y³)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
+          { ghiChu: 'Số chia âm (nét đứt): đoạn của nó nằm 3,6 lần trong đoạn bị chia, và thương mang dấu trừ.' }), buoc: [
         { lam: '$= \\frac{3x}{2y^2}\\cdot\\left(-\\frac{12y^3}{5x^2}\\right)$', vi: 'Lật phân thức thứ hai, giữ dấu trừ.' },
         { lam: '$= -\\frac{36xy^3}{10x^2y^2} = -\\frac{18y}{5x}$', vi: 'Nhân rồi chia cả tử và mẫu cho $2xy^2$.' } ] },
-      { de: 'Tính nhanh $\\frac{x}{y}\\cdot\\frac{x-1}{x+1}\\cdot\\frac{y}{x}$.', buoc: [
+      { de: 'Tính nhanh $\\frac{x}{y}\\cdot\\frac{x-1}{x+1}\\cdot\\frac{y}{x}$.',
+        canh: nh({ p1: { tu: 2, mau: 3 }, p2: { tu: 3, mau: 2 }, dauDe: 'x = 2, y = 3' }, { ghiChu: 'x/y nhân y/x: phần chồng 6 ô, đúng bằng cả hình vuông 6 ô. Tích của hai phân thức nghịch đảo bằng 1.' }), buoc: [
         { lam: '$= \\left(\\frac{x}{y}\\cdot\\frac{y}{x}\\right)\\cdot\\frac{x-1}{x+1}$', vi: 'Giao hoán và kết hợp: ghép hai phân thức nghịch đảo của nhau.' },
         { lam: '$= 1\\cdot\\frac{x-1}{x+1} = \\frac{x-1}{x+1}$', vi: 'Tích của một phân thức với nghịch đảo của nó bằng $1$.' } ] }
     ],
@@ -150,43 +211,46 @@
     ],
 
     baiTap: [
-      { id: '24.1', muc: 1, de: 'Làm tính nhân và rút gọn: $\\frac{2x}{x+1}\\cdot\\frac{x+1}{4x^2}$.',
+      { id: '24.1', hinhGiai: hg(N24_1), muc: 1, de: 'Làm tính nhân và rút gọn: $\\frac{2x}{x+1}\\cdot\\frac{x+1}{4x^2}$.',
         dapAn: { kieu: 'bieuThuc', gt: '1/(2x)', dang: 'rutGon' },
         goiY: ['Tử nhân tử, mẫu nhân mẫu: $\\frac{2x(x+1)}{(x+1)\\cdot 4x^2}$.', 'Chia cả tử và mẫu cho $2x(x+1)$.'],
         loiGiai: ['$= \\frac{2x(x+1)}{4x^2(x+1)}$', '$= \\frac{1}{2x}$'],
         loiThuongGap: [{ gt: '8x^3/(x+1)^2', giaiThich: 'Em nhân chéo (tử của phân thức này với mẫu của phân thức kia). Phép nhân là **tử nhân tử, mẫu nhân mẫu**.' }] },
 
-      { id: '24.2', muc: 1, de: 'Viết phân thức **nghịch đảo** của $\\frac{x-2}{x+5}$.',
+      { id: '24.2', khongHinh: 'Chỉ cần đổi chỗ tử và mẫu; hình tích bằng 1 có ở ví dụ 5.', muc: 1, de: 'Viết phân thức **nghịch đảo** của $\\frac{x-2}{x+5}$.',
         dapAn: { kieu: 'bieuThuc', gt: '(x+5)/(x-2)' },
         goiY: ['Nghịch đảo: lật ngược tử và mẫu.'],
         loiGiai: ['Vì $\\frac{x-2}{x+5}\\cdot\\frac{x+5}{x-2} = 1$, phân thức nghịch đảo là $\\frac{x+5}{x-2}$.'],
         loiThuongGap: [{ gt: '(2-x)/(x+5)', giaiThich: 'Đó là phân thức **đối** (tổng bằng 0). Nghịch đảo là phân thức có **tích** bằng 1: lật ngược tử và mẫu.' }] },
 
-      { id: '24.3', muc: 1, de: 'Làm tính nhân: $\\frac{4y^2}{x^3}\\cdot\\frac{x^2}{6y}$.',
+      { id: '24.3', hinhGiai: hg(N24_3), muc: 1, de: 'Làm tính nhân: $\\frac{4y^2}{x^3}\\cdot\\frac{x^2}{6y}$.',
         dapAn: { kieu: 'bieuThuc', gt: '2y/(3x)', dang: 'rutGon' },
         goiY: ['Tử: $4y^2\\cdot x^2$; mẫu: $x^3\\cdot 6y$.', 'Chia cả tử và mẫu cho $2x^2y$.'],
         loiGiai: ['$= \\frac{4x^2y^2}{6x^3y}$', '$= \\frac{2y}{3x}$'],
         loiThuongGap: [{ gt: '24y^3/x^5', giaiThich: 'Em nhân chéo rồi. Phép nhân: tử $4y^2$ nhân tử $x^2$, mẫu $x^3$ nhân mẫu $6y$.' }] },
 
-      { id: '24.4', muc: 1, de: 'Làm tính chia: $\\frac{3x}{2y} : \\frac{9x^2}{4y^3}$.',
+      { id: '24.4', hinhGiai: hg(dc({ hang: [{ tu: 1.5, mau: 2.25, tenTu: '3x/(2y)', tenMau: '9x²/(4y³)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
+        { ghiChu: 'Số chia dài hơn số bị chia nên chỉ nằm được 2/3 lần, đúng bằng 2y²/(3x) tại x = y = 1.' })), muc: 1, de: 'Làm tính chia: $\\frac{3x}{2y} : \\frac{9x^2}{4y^3}$.',
         dapAn: { kieu: 'bieuThuc', gt: '2y^2/(3x)', dang: 'rutGon' },
         goiY: ['Lật phân thức thứ hai: $\\frac{3x}{2y}\\cdot\\frac{4y^3}{9x^2}$.', 'Nhân rồi chia cả tử và mẫu cho $6xy$.'],
         loiGiai: ['$= \\frac{3x}{2y}\\cdot\\frac{4y^3}{9x^2} = \\frac{12xy^3}{18x^2y}$', '$= \\frac{2y^2}{3x}$'],
         loiThuongGap: [{ gt: '27x^3/(8y^4)', giaiThich: 'Em nhân thẳng mà **quên lật** phân thức chia. $\\frac{A}{B} : \\frac{C}{D} = \\frac{A}{B}\\cdot\\frac{D}{C}$.' }] },
 
-      { id: '24.5', muc: 2, de: 'Làm tính nhân và rút gọn: $\\frac{x^2+x}{3x-1}\\cdot\\frac{9x^2-1}{x^3+1}$.',
+      { id: '24.5', khongHinh: 'Mấu chốt là phân tích 9x² − 1 và x³ + 1 thành nhân tử (hằng đẳng thức); thay số không làm rõ bước đó.', muc: 2, de: 'Làm tính nhân và rút gọn: $\\frac{x^2+x}{3x-1}\\cdot\\frac{9x^2-1}{x^3+1}$.',
         dapAn: { kieu: 'bieuThuc', gt: 'x(3x+1)/(x^2-x+1)', dang: 'rutGon' },
         goiY: ['Phân tích: $x^2 + x = x(x+1)$; $9x^2 - 1 = (3x-1)(3x+1)$; $x^3 + 1 = (x+1)(x^2-x+1)$.', 'Chia cho các nhân tử chung $x + 1$ và $3x - 1$.'],
         loiGiai: ['$= \\frac{x(x+1)(3x-1)(3x+1)}{(3x-1)(x+1)(x^2-x+1)}$', '$= \\frac{x(3x+1)}{x^2-x+1}$'],
         loiThuongGap: [{ gt: 'x(3x+1)/(x^2+x+1)', giaiThich: 'Tổng hai lập phương: $x^3 + 1 = (x+1)(x^2 - x + 1)$ (dấu **trừ** ở giữa).' }] },
 
-      { id: '24.6', muc: 2, de: 'Làm tính chia và rút gọn: $\\frac{x^2-9}{x+1} : \\frac{x-3}{x^2+x}$.',
+      { id: '24.6', hinhGiai: hg(dc({ hang: [{ tu: 1.4, mau: 0.05, tenTu: '(x² − 9)/(x + 1)', tenMau: '(x − 3)/(x² + x)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 4' }] },
+        { ghiChu: 'Số chia rất nhỏ nên nằm tới 28 lần trong số bị chia, đúng bằng x(x + 3) tại x = 4.' })), muc: 2, de: 'Làm tính chia và rút gọn: $\\frac{x^2-9}{x+1} : \\frac{x-3}{x^2+x}$.',
         dapAn: { kieu: 'bieuThuc', gt: 'x(x+3)' },
         goiY: ['Lật phân thức thứ hai: $\\frac{x^2-9}{x+1}\\cdot\\frac{x^2+x}{x-3}$.', '$x^2 - 9 = (x-3)(x+3)$; $x^2 + x = x(x+1)$.'],
         loiGiai: ['$= \\frac{(x-3)(x+3)\\cdot x(x+1)}{(x+1)(x-3)}$', '$= x(x+3)$'],
         loiThuongGap: [{ gt: '1/(x(x+3))', giaiThich: 'Em lật nhầm phân thức thứ nhất. Chỉ lật phân thức **chia** (đứng sau dấu :).' }] },
 
-      { id: '24.7', muc: 2, de: 'Làm tính chia: $\\left(-\\frac{2x}{3y^2}\\right) : \\left(-\\frac{4x^2}{9y}\\right)$.',
+      { id: '24.7', hinhGiai: hg(dc({ hang: [{ tu: -2 / 3, mau: -4 / 9, tenTu: '−2x/(3y²)', tenMau: '−4x²/(9y)', chuTu: 'bị chia', chuMau: 'số chia', ten: 'Tại x = 1, y = 1' }] },
+        { ghiChu: 'Cả hai đều âm (nét đứt): âm chia âm được dương, 1,5 = 3/(2xy) tại x = y = 1.' })), muc: 2, de: 'Làm tính chia: $\\left(-\\frac{2x}{3y^2}\\right) : \\left(-\\frac{4x^2}{9y}\\right)$.',
         dapAn: { kieu: 'bieuThuc', gt: '3/(2xy)', dang: 'rutGon' },
         goiY: ['Âm chia âm được dương.', 'Lật phân thức thứ hai: $\\frac{2x}{3y^2}\\cdot\\frac{9y}{4x^2}$.'],
         loiGiai: ['$= \\frac{2x}{3y^2}\\cdot\\frac{9y}{4x^2} = \\frac{18xy}{12x^2y^2}$', '$= \\frac{3}{2xy}$'],
@@ -194,19 +258,19 @@
           { gt: '-3/(2xy)', giaiThich: 'Hai phân thức đều âm: âm chia âm được **dương**.' },
           { gt: '8x^3/(27y^3)', giaiThich: 'Em quên lật phân thức chia.' }] },
 
-      { id: '24.8', muc: 2, de: 'Làm tính chia và rút gọn: $\\frac{x^2-9}{x^3-27} : \\frac{x^2+6x+9}{x^2+3x+9}$.',
+      { id: '24.8', khongHinh: 'Mấu chốt là hằng đẳng thức x³ − 27 và (x + 3)²; thay số không làm rõ bước đó.', muc: 2, de: 'Làm tính chia và rút gọn: $\\frac{x^2-9}{x^3-27} : \\frac{x^2+6x+9}{x^2+3x+9}$.',
         dapAn: { kieu: 'bieuThuc', gt: '1/(x+3)', dang: 'rutGon' },
         goiY: ['$x^3 - 27 = (x-3)(x^2+3x+9)$; $x^2 + 6x + 9 = (x+3)^2$.', 'Lật phân thức thứ hai rồi nhân, chia các nhân tử chung.'],
         loiGiai: ['$= \\frac{(x-3)(x+3)}{(x-3)(x^2+3x+9)}\\cdot\\frac{x^2+3x+9}{(x+3)^2}$', '$= \\frac{1}{x+3}$'],
         loiThuongGap: [{ gt: 'x+3', giaiThich: 'Kết quả bị lộn ngược: em đã lật nhầm phân thức thứ nhất.' }] },
 
-      { id: '24.9', muc: 2, de: 'Tìm phân thức $P$ thoả mãn $P\\cdot\\frac{x-2}{3x+1} = \\frac{x^2-2x}{9x^2-1}$.',
+      { id: '24.9', hinhGiai: hg(N24_9), muc: 2, de: 'Tìm phân thức $P$ thoả mãn $P\\cdot\\frac{x-2}{3x+1} = \\frac{x^2-2x}{9x^2-1}$.',
         dapAn: { kieu: 'bieuThuc', gt: 'x/(3x-1)', dang: 'rutGon' },
         goiY: ['$P = \\frac{x^2-2x}{9x^2-1} : \\frac{x-2}{3x+1}$.', 'Lật phân thức chia: $\\frac{x(x-2)}{(3x-1)(3x+1)}\\cdot\\frac{3x+1}{x-2}$.'],
         loiGiai: ['$P = \\frac{x(x-2)}{(3x-1)(3x+1)}\\cdot\\frac{3x+1}{x-2}$', '$P = \\frac{x}{3x-1}$'],
         loiThuongGap: [{ gt: '(x^2-2x)(x-2)/((9x^2-1)(3x+1))', giaiThich: 'Muốn tìm thừa số chưa biết, ta lấy tích **chia** cho thừa số đã biết, không phải nhân.' }] },
 
-      { id: '24.10', muc: 3, de: 'Cho $P = \\frac{x^2-4x+4}{x^2-2x}$ và $Q = \\frac{x^2-2x}{x^2-4}$.\n\na) Rút gọn $P$ và $Q$.\n\nb) Dùng kết quả câu a, tính $P\\cdot Q$ và $P : Q$.',
+      { id: '24.10', hinhGiai: hg(N24_10), muc: 3, de: 'Cho $P = \\frac{x^2-4x+4}{x^2-2x}$ và $Q = \\frac{x^2-2x}{x^2-4}$.\n\na) Rút gọn $P$ và $Q$.\n\nb) Dùng kết quả câu a, tính $P\\cdot Q$ và $P : Q$.',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: '$P$ rút gọn', kieu: 'bieuThuc', gt: '(x-2)/x', dang: 'rutGon' },
           { nhan: '$Q$ rút gọn', kieu: 'bieuThuc', gt: 'x/(x+2)', dang: 'rutGon' },
@@ -216,7 +280,7 @@
         goiY: ['$x^2 - 4x + 4 = (x-2)^2$; $x^2 - 2x = x(x-2)$; $x^2 - 4 = (x-2)(x+2)$.', '$P\\cdot Q = \\frac{x-2}{x}\\cdot\\frac{x}{x+2}$; $P : Q = \\frac{x-2}{x}\\cdot\\frac{x+2}{x}$.'],
         loiGiai: ['a) $P = \\frac{(x-2)^2}{x(x-2)} = \\frac{x-2}{x}$; $\\;Q = \\frac{x(x-2)}{(x-2)(x+2)} = \\frac{x}{x+2}$.', 'b) $P\\cdot Q = \\frac{x-2}{x}\\cdot\\frac{x}{x+2} = \\frac{x-2}{x+2}$.', '$P : Q = \\frac{x-2}{x}\\cdot\\frac{x+2}{x} = \\frac{x^2-4}{x^2}$.'] },
 
-      { id: '24.11', muc: 3, de: 'Bác Châu vay $600$ triệu đồng, trả góp trong $y$ tháng. Mỗi tháng bác trả $x$ (triệu đồng) gồm: tiền gốc $\\frac{600}{y}$ và tiền lãi bằng $600$ nhân lãi suất tháng $\\frac{r}{12}$ ($r$ là lãi suất năm, viết dạng số thập phân).\n\na) Viết công thức tính $r$ theo $x$ và $y$.\n\nb) Tính $r$ khi mỗi tháng trả $15$ triệu đồng trong $5$ năm (ghi số thập phân hoặc phần trăm, ví dụ $0{,}05$ hay $5\\%$).',
+      { id: '24.11', khongHinh: 'Bài biến đổi công thức (rút r theo x và y); hình không giúp thêm.', muc: 3, de: 'Bác Châu vay $600$ triệu đồng, trả góp trong $y$ tháng. Mỗi tháng bác trả $x$ (triệu đồng) gồm: tiền gốc $\\frac{600}{y}$ và tiền lãi bằng $600$ nhân lãi suất tháng $\\frac{r}{12}$ ($r$ là lãi suất năm, viết dạng số thập phân).\n\na) Viết công thức tính $r$ theo $x$ và $y$.\n\nb) Tính $r$ khi mỗi tháng trả $15$ triệu đồng trong $5$ năm (ghi số thập phân hoặc phần trăm, ví dụ $0{,}05$ hay $5\\%$).',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'a) $r =$', kieu: 'bieuThuc', gt: '(xy-600)/(50y)' },
           { nhan: 'b) Lãi suất năm $r$', kieu: 'so', gt: 0.1,
@@ -224,7 +288,7 @@
         goiY: ['$x = \\frac{600}{y} + 600\\cdot\\frac{r}{12} = \\frac{600}{y} + 50r$.', 'Suy ra $r = \\left(x - \\frac{600}{y}\\right) : 50$, rồi quy đồng. Câu b: $x = 15$, $y = 60$.'],
         loiGiai: ['a) $50r = x - \\frac{600}{y} = \\frac{xy - 600}{y}$, nên $r = \\frac{xy-600}{50y}$.', 'b) $r = \\frac{15\\cdot 60 - 600}{50\\cdot 60} = \\frac{300}{3000} = 0{,}1$, tức $10\\%$ một năm.'] },
 
-      { id: '24.12', muc: 3, de: 'Một xưởng lập kế hoạch làm $48\\,000$ sản phẩm trong $x$ ngày. Nhờ cải tiến kĩ thuật, xưởng xong sớm $20$ ngày và làm vượt $2\\,000$ sản phẩm.\n\na) Viết phân thức biểu thị số sản phẩm thực tế làm mỗi ngày.\n\nb) Nếu theo kế hoạch mỗi ngày làm $400$ sản phẩm, thì thực tế mỗi ngày làm nhiều hơn kế hoạch bao nhiêu sản phẩm?',
+      { id: '24.12', khongHinh: 'Số sản phẩm rất lớn; bài chỉ cần lập phân thức rồi thay số.', muc: 3, de: 'Một xưởng lập kế hoạch làm $48\\,000$ sản phẩm trong $x$ ngày. Nhờ cải tiến kĩ thuật, xưởng xong sớm $20$ ngày và làm vượt $2\\,000$ sản phẩm.\n\na) Viết phân thức biểu thị số sản phẩm thực tế làm mỗi ngày.\n\nb) Nếu theo kế hoạch mỗi ngày làm $400$ sản phẩm, thì thực tế mỗi ngày làm nhiều hơn kế hoạch bao nhiêu sản phẩm?',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'a) Mỗi ngày thực tế', kieu: 'bieuThuc', gt: '50000/(x-20)',
             loiThuongGap: [{ gt: '48000/(x-20)', giaiThich: 'Thực tế làm vượt $2\\,000$ sản phẩm: tổng là $50\\,000$.' }, { gt: '50000/(x+20)', giaiThich: 'Xong **sớm** $20$ ngày nên số ngày là $x - 20$.' }] },

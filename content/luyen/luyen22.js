@@ -76,6 +76,38 @@
   }
   function bot(a, b) { var o = a.slice(); b.forEach(function (r) { o.splice(o.indexOf(r), 1); }); return o; }
 
+  // ---- Hình lời giải ----
+  function hg(ten, tuyChon, ghiChu) { return { widget: 'canh', config: { ten: ten, tuyChon: tuyChon, chiXem: true, t: 1, ghiChu: ghiChu } }; }
+  // Lưới vẽ được khi tử, mẫu, M là số đếm được và không quá nhiều ô (giống điều kiện trong cảnh luoiPhanSo)
+  function luoiDuoc(a, b, M) {
+    if (![a, b, M].every(Number.isInteger) || a < 1 || b < 1 || M < 2) return false; // tử 0 hoặc M = 1 thì không thấy gì
+    var n = Math.max(1, Math.ceil(a / b));
+    return b <= 16 && M <= 12 && n <= 4 && b * M * n <= 200;
+  }
+  // Tử A, mẫu B, nhân tử M (mảng hệ số): lưới ô tại x nguyên dương nhỏ nhất vẽ được; không có thì hai hàng đoạn chia
+  function hinhNhanM(A, B, M, tenM, chieu, ten) {
+    for (var x = 1; x <= 12; x++) {
+      if (luoiDuoc(giaTri(A, x), giaTri(B, x), giaTri(M, x)))
+        return hg('luoiPhanSo', { dang: 'mot', tu: A, mau: B, M: M, tenM: tenM, chieu: chieu, x: x }, 'Vẽ tại x = ' + x + ': ' + (chieu === 'gop' ? 'gộp' : 'cắt') + ' theo ' + tenM + ' = ' + giaTri(M, x) + ', phần tô không đổi.');
+    }
+    var xs = [2, 1, 3, -1, 4, 5].filter(function (v) { return giaTri(B, v) && giaTri(M, v); });
+    if (!xs.length) return undefined;
+    var AM = nhanDT(A, M), BM = nhanDT(B, M), to = chieu === 'gop' ? [AM, BM, A, B] : [A, B, AM, BM];
+    return hg('doanChia', { hang: [{ tu: to[0], mau: to[1], tenTu: ten[0], tenMau: ten[1], x: xs[0] }, { tu: to[2], mau: to[3], tenTu: ten[2], tenMau: ten[3], x: xs[0] }] },
+      'Thử tại x = ' + xs[0] + ': hai hàng đặt mẫu cùng số lần.');
+  }
+  // Thẻ nhân tử: số tách thành thừa số nguyên tố, nghiệm r cho thẻ (x − r)
+  function thuaSo(k) {
+    var o = [], n = Math.abs(k);
+    if (k < 0) o.push('−1');
+    for (var p = 2; p * p <= n; p++) while (n % p === 0) { o.push(String(p)); n /= p; }
+    if (n > 1) o.push(String(n));
+    return o;
+  }
+  function the(r) { return r === 0 ? 'x' : 'x ' + (r > 0 ? '− ' + r : '+ ' + (-r)); }
+  function theDoi(a) { return { n: a + ' − x', doi: the(a) }; }
+  function cacThe(k, ng) { return thuaSo(k).concat(ng.map(the)); }
+
   TOAN8.luyen(22, [
     { ten: 'Điền đa thức (tính chất cơ bản)', muc: 1, sinh: function (r, cc) {
       var loai = r.so(0, 2);
@@ -89,7 +121,8 @@
           dapAn: { kieu: 'bieuThuc', gt: kq },
           goiY: ['Mẫu $' + coSo(b) + '$ đã được nhân với gì để thành $' + mau2 + '$?', 'Tính chất cơ bản: nhân cả tử với đúng $' + Ms + '$.'],
           loiGiai: ['Mẫu được nhân với $' + Ms + '$: $(' + coSo(b) + ')\\cdot ' + Ms + ' = ' + mau2 + '$.', 'Tử cũng phải nhân với $' + Ms + '$: $? = ' + kq + '$'],
-          loiThuongGap: [{ gt: coSo(-a), giaiThich: 'Mẫu đã nhân với $' + Ms + '$ thì tử cũng phải nhân với $' + Ms + '$ (tính chất cơ bản).' }]
+          loiThuongGap: [{ gt: coSo(-a), giaiThich: 'Mẫu đã nhân với $' + Ms + '$ thì tử cũng phải nhân với $' + Ms + '$ (tính chất cơ bản).' }],
+          hinhGiai: hinhNhanM([a, 1], [-b, 1], trienKhai(M.k, M.ng), Ms, 'chia', [coSo(-a), coSo(b), kq, mau2])
         };
       }
       if (loai === 1) {
@@ -105,7 +138,9 @@
           dapAn: { kieu: 'bieuThuc', gt: kq2 },
           goiY: ['Mẫu $' + mau + '$ đã được đổi dấu thành $' + coSo(d) + '$.', 'Quy tắc đổi dấu: $\\frac{A}{B} = \\frac{-A}{-B}$. Tử cũng đổi dấu.'],
           loiGiai: ['Mẫu đổi dấu: $-(' + mau + ') = ' + coSo(d) + '$.', 'Tử cũng đổi dấu: $? = -(' + tu + ') = ' + kq2 + '$'],
-          loiThuongGap: ltg
+          loiThuongGap: ltg,
+          hinhGiai: hg('doanChia', { hang: [{ tu: tuTruoc ? [c, -1] : [-c, 1], mau: [d, -1], tenTu: tu, tenMau: mau, x: 0 }, { tu: tuTruoc ? [-c, 1] : [c, -1], mau: [-d, 1], tenTu: kq2, tenMau: coSo(d), x: 0 }] },
+            'Thử tại x = 0: đổi dấu cả tử và mẫu, đoạn mẫu vẫn nằm trong đoạn tử đúng chừng ấy lần.')
         };
       }
       var e = r.so(1, 7), k = r.chon([1, 1, 2, 3, 5]), s = r.dau(); // (k x² ± k e x)/(x² − e²) = kx/(x ∓ e)
@@ -116,11 +151,12 @@
         dapAn: { kieu: 'bieuThuc', gt: coSo(-giu) },
         goiY: ['Phân tích tử và mẫu: $' + tu3 + ' = ' + tich(k, [0, giu], false) + '$; $' + mau3 + ' = (' + coSo(e) + ')(' + coSo(-e) + ')$.', 'Tử đã được chia cho nhân tử chung $' + coSo(giu) + '$; mẫu cũng chia cho đúng nhân tử đó.'],
         loiGiai: ['$' + frac(tu3, mau3) + ' = ' + frac(tich(k, [0, giu], false), '(' + coSo(giu) + ')(' + coSo(-giu) + ')') + ' = ' + frac(kx, coSo(-giu)) + '$.', 'Vậy $? = ' + coSo(-giu) + '$'],
-        loiThuongGap: [{ gt: coSo(giu), giaiThich: '$' + mau3 + ' = (' + coSo(giu) + ')(' + coSo(-giu) + ')$; chia cho $' + coSo(giu) + '$ thì còn lại $' + coSo(-giu) + '$.' }, { gt: mau3, giaiThich: 'Tử đã chia cho $' + coSo(giu) + '$ thì mẫu cũng phải chia cho $' + coSo(giu) + '$.' }]
+        loiThuongGap: [{ gt: coSo(giu), giaiThich: '$' + mau3 + ' = (' + coSo(giu) + ')(' + coSo(-giu) + ')$; chia cho $' + coSo(giu) + '$ thì còn lại $' + coSo(-giu) + '$.' }, { gt: mau3, giaiThich: 'Tử đã chia cho $' + coSo(giu) + '$ thì mẫu cũng phải chia cho $' + coSo(giu) + '$.' }],
+        hinhGiai: hinhNhanM([0, k], [giu, 1], [-giu, 1], coSo(giu), 'gop', [tu3, mau3, kx, coSo(-giu)])
       };
     } },
 
-    { ten: 'Rút gọn phân thức (đơn thức)', muc: 1, sinh: function (r, cc) {
+    { ten: 'Rút gọn phân thức (đơn thức)', muc: 1, khongHinh: 'Hai biến x, y với lũy thừa; chỗ khó là trừ số mũ, thay số làm mất phần đó.', sinh: function (r, cc) {
       var g = r.so(2, 6), t = r.so(1, 5), m = r.so(1, 7);
       while (cc.ucln(t, m) !== 1 || (t === 1 && m === 1)) { t = r.so(1, 5); m = r.so(1, 7); }
       var ngang = { x: r.so(1, 3), y: r.so(0, 2) }, du = { x: r.so(1, 3), y: r.so(1, 3) }, xTu = r.dau() > 0, am = r.dau() < 0 && r.dau() < 0;
@@ -171,7 +207,8 @@
         dapAn: { kieu: 'bieuThuc', gt: kq.ascii, dang: 'rutGon' },
         goiY: ['Phân tích tử và mẫu thành nhân tử (đặt nhân tử chung, hằng đẳng thức).', 'Tử và mẫu có nhân tử chung $' + coSo(chung) + '$. Chia cả tử và mẫu cho nó' + (cc.ucln(F.k, F.m) > 1 ? ' và cho $' + cc.ucln(F.k, F.m) + '$' : '') + '.'],
         loiGiai: ['$' + de + ' = ' + nt + '$', '$= ' + kq.tex + '$'],
-        loiThuongGap: ltg
+        loiThuongGap: ltg,
+        hinhGiai: hg('theNhanTu', { dang: 'rutGon', tu: cacThe(F.k, F.n), mau: cacThe(F.m, F.d) }, 'Mỗi nhân tử là một thẻ. Bỏ từng cặp thẻ giống nhau ở tử và mẫu.')
       };
     } },
 
@@ -187,7 +224,9 @@
           goiY: ['Đặt nhân tử chung ở tử: $' + tu + ' = ' + (tuTruoc ? tich(k, [a], false) : k === 1 ? amx : k + '(' + amx + ')') + '$.', 'Đổi dấu: $' + amx + ' = -(' + coSo(a) + ')$.'],
           loiGiai: [tuTruoc ? '$' + frac(tu, mau) + ' = ' + frac(tich(k, [a], false), '-(' + coSo(a) + ')') + '$'
             : '$' + frac(tu, mau) + ' = ' + frac('-' + tich(k, [a], false), coSo(a)) + '$', '$= ' + (-k) + '$'],
-          loiThuongGap: [{ gt: String(k), giaiThich: '$' + amx + ' = -(' + coSo(a) + ')$: hai biểu thức đối nhau, khi gạch phải để lại dấu trừ.' }]
+          loiThuongGap: [{ gt: String(k), giaiThich: '$' + amx + ' = -(' + coSo(a) + ')$: hai biểu thức đối nhau, khi gạch phải để lại dấu trừ.' }],
+          hinhGiai: hg('theNhanTu', { dang: 'rutGon', tu: thuaSo(k).concat([tuTruoc ? the(a) : theDoi(a)]), mau: [tuTruoc ? theDoi(a) : the(a)] },
+            'Thẻ ' + a + ' − x đổi thành −1 nhân (' + the(a) + '). Bỏ cặp thẻ giống nhau, dấu trừ còn lại.')
         };
       }
       var p = r.so(2, 9), q = r.so(2, 9), e1 = r.so(0, 2), e2 = r.so(0, 2), f = r.so(1, 2);
@@ -204,7 +243,9 @@
         dapAn: { kieu: 'bieuThuc', gt: kq.ascii, dang: 'rutGon' },
         goiY: ['Đổi dấu: $' + amx + ' = -(' + coSo(a) + ')$ để tử và mẫu có nhân tử chung.', 'Chia cả tử và mẫu cho nhân tử chung (cả phần số và phần biến). Đừng quên dấu trừ!'],
         loiGiai: ['$' + frac(tuS, mauS) + ' = ' + frac('-' + tich(p, x1.concat([a]), false), mauS) + '$', '$= ' + kq.tex + '$'],
-        loiThuongGap: [{ gt: sai.ascii, giaiThich: '$' + amx + ' = -(' + coSo(a) + ')$: khi đổi $' + amx + '$ thành $' + coSo(a) + '$ phải thêm dấu trừ.' }]
+        loiThuongGap: [{ gt: sai.ascii, giaiThich: '$' + amx + ' = -(' + coSo(a) + ')$: khi đổi $' + amx + '$ thành $' + coSo(a) + '$ phải thêm dấu trừ.' }],
+        hinhGiai: hg('theNhanTu', { dang: 'rutGon', tu: thuaSo(p).concat(x1.map(the), [theDoi(a)]), mau: thuaSo(q).concat(x2.map(the), ff.map(the)) },
+          'Thẻ ' + a + ' − x đổi thành −1 nhân (' + the(a) + '). Bỏ từng cặp thẻ giống nhau.')
       };
     } },
 
@@ -236,7 +277,9 @@
           'Mẫu chung: lấy BCNN của các hệ số và mỗi nhân tử với số mũ cao nhất. Nhân tử phụ = mẫu chung : mẫu riêng.'],
         loiGiai: ['$' + pt1 + '$; $\\;' + pt2 + '$.',
           'MTC $= ' + mtcS + '$. Nhân tử phụ: $' + tichP(phu1) + '$ và $' + tichP(phu2) + '$.',
-          '$' + frac(c1, D1) + ' = ' + frac(tu1, mtcS) + '$; $\\;' + frac(c2, D2) + ' = ' + frac(tu2, mtcS) + '$.']
+          '$' + frac(c1, D1) + ' = ' + frac(tu1, mtcS) + '$; $\\;' + frac(c2, D2) + ' = ' + frac(tu2, mtcS) + '$.'],
+        hinhGiai: hg('theNhanTu', { dang: 'mtc', mau: [cacThe(A.k, A.ng), cacThe(B.k, B.ng)], ten: [pt1, pt2].map(function (s) { return s.replace(/\^2/g, '²').replace(/-/g, ' − ').replace(/\+/g, ' + '); }) },
+          'Thẻ còn thiếu ở mỗi mẫu là nhân tử phụ; tử mới = tử cũ nhân nhân tử phụ.')
       };
     } },
 
