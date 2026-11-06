@@ -71,7 +71,9 @@ async function main() {
           if (!svg.children.length) ra.push('t=' + t + ' không vẽ gì');
           if (/NaN|Infinity|undefined/.test(svg.outerHTML)) ra.push('t=' + t + ' có NaN/undefined');
           const g = svg.getBBox();
-          if (g.x < vb.x - .01 || g.y < vb.y - .01 || g.x + g.width > vb.x + vb.width + .01 || g.y + g.height > vb.y + vb.height + .01)
+          // Sai số theo cỡ khung (0,5%): phông trên máy Linux của CI đo chữ hơi khác Windows
+          const sx = Math.max(.01, vb.width * .005), sy = Math.max(.01, vb.height * .005);
+          if (g.x < vb.x - sx || g.y < vb.y - sy || g.x + g.width > vb.x + vb.width + sx || g.y + g.height > vb.y + vb.height + sy)
             ra.push('t=' + t + ' tràn khung: bbox ' + [g.x, g.y, g.width, g.height].map(v => v.toFixed(2)) + ' viewBox ' + [vb.x, vb.y, vb.width, vb.height].map(v => v.toFixed(2)));
         });
         w.datT(.5);
