@@ -32,3 +32,13 @@ test('kiểm dữ liệu: bắt id trùng, căn cứ không có, tự tham chi�
   assert.match(loi({ ketLuan: 'x', buoc: [{ id: 'a', chu: 'a', can: ['b'] }, { id: 'b', chu: 'b', can: ['a'] }] }), /vòng tròn/);
   assert.match(loi({ buoc: [{ id: 'a', chu: 'a' }, { id: 'b', chu: 'b' }] }), /ketLuan/);
 });
+test('thứ tự hiện trên màn hình không bao giờ là một thứ tự lắp đúng', () => {
+  const laDung = (cm, ds) => { const co = []; return ds.every(id => { const ok = L.kiemBuoc(cm, co, id).ok; co.push(id); return ok; }); };
+  // Xếp theo chữ cái thì ra đúng thứ tự lắp: phải bị đảo lại
+  const theoChu = { ketLuan: 'x', buoc: [{ id: 'a', chu: 'A trước' }, { id: 'b', chu: 'B sau', can: ['a'] }, { id: 'c', chu: 'C cuối', can: ['b'] }] };
+  const hien = L.thuTuHien(theoChu);
+  assert.strictEqual(hien.length, 3);
+  assert.ok(!laDung(theoChu, hien), hien.join(','));
+  // Một bước duy nhất không có căn cứ thì vẫn hiện đủ
+  assert.deepStrictEqual(L.thuTuHien(CM).slice().sort(), ['bn', 'g1', 'gt', 'kl']);
+});

@@ -55,5 +55,12 @@
     return loi;
   }
 
-  return { kiemBuoc: kiemBuoc, thuTuMau: thuTuMau, buocKeTiep: buocKeTiep, kiemDuLieu: kiemDuLieu };
+  // Thứ tự hiện các thẻ: xếp theo chữ để không lộ thứ tự đúng; nếu xếp theo chữ lại tình cờ lắp được thì đảo ngược
+  function thuTuHien(cm) {
+    var ds = cm.buoc.slice().sort(function (a, b) { return String(a.chu).localeCompare(String(b.chu), 'vi'); }).map(function (b) { return b.id; });
+    var co = [], dung = ds.every(function (id) { var ok = kiemBuoc(cm, co, id).ok; co.push(id); return ok; });
+    return dung ? ds.reverse() : ds;
+  }
+
+  return { thuTuHien: thuTuHien, kiemBuoc: kiemBuoc, thuTuMau: thuTuMau, buocKeTiep: buocKeTiep, kiemDuLieu: kiemDuLieu };
 });

@@ -16,8 +16,8 @@
     var nut = hop.appendChild(el('div', { class: 'lcm-nut' }));
     if (hinhO) hinh = T.mountWidget(hinhO, 'canh', Object.assign({ chiXem: true }, cfg.canh));
 
-    // Xếp theo chữ để thứ tự trên màn hình không lộ thứ tự đúng
-    var thuTu = cfg.buoc.slice().sort(function (a, b) { return String(a.chu).localeCompare(String(b.chu), 'vi'); });
+    // Xếp theo chữ (đảo lại nếu tình cờ đúng thứ tự) để màn hình không lộ thứ tự lắp
+    var thuTu = L.thuTuHien(cfg).map(function (id) { return cfg.buoc.filter(function (b) { return b.id === id; })[0]; });
     function chuCua(id) { return (cfg.buoc.filter(function (b) { return b.id === id; })[0] || {}).chu || id; }
     function nhan(s) { return T.md(s).replace(/^<p>|<\/p>$/g, ''); }
     function datTin(lop, s) { tin.className = 'lcm-tin ' + lop; tin.innerHTML = nhan(s); }
