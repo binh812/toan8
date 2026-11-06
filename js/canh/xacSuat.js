@@ -128,7 +128,20 @@
     return out;
   }
 
+  // Số trong $…$ của thẻ: dấu phẩy thập phân viết {,}
+  function soTex(x) { return String(x).replace('.', '{,}'); }
+  function gan3(v) { var r = Math.round(v * 1000) / 1000; return (Math.abs(v - r) < 1e-12 ? '= ' : '\\approx ') + soTex(r); }
+  // Thử phá bài 31: ô đầu to gấp to1 lần thì các kết quả không còn đồng khả năng, công thức đếm m/n cho số sai
+  function phaDongKhaNang(dau, m, n, mW, W, to1) {
+    if (Math.abs(to1 - 1) < 1e-9) {
+      return { hong: false, to: 1, chu: 'Mọi ô to như nhau: $' + n + '$ kết quả đồng khả năng, mỗi ô được $\\frac{1}{' + n + '}$ thanh, nên $P = \\frac{' + m + '}{' + n + '}$ đúng bằng phần sáng.' };
+    }
+    return { hong: true, to: to1, dem: m / n, that: mW / W, chu: 'Ô «' + dau.nhan + '» to gấp $' + soTex(to1) + '$ ô khác, nên dễ trúng hơn: $' + n + '$ kết quả **không** còn đồng khả năng. Đếm vẫn ra $\\frac{' + m + '}{' + n + '} ' + gan3(m / n) +
+      '$, nhưng phần sáng thật trên thanh là $\\frac{' + soTex(mW) + '}{' + soTex(W) + '} ' + gan3(mW / W) + '$. Công thức $\\frac{m}{n}$ chỉ đúng khi mọi kết quả có phần bằng nhau.' };
+  }
   C.dangKi('luoiKetQua', {
+    // Thử phá (bài 31): ô đầu tiên to gấp mấy lần các ô khác; 1 là mọi ô như nhau
+    thamSo: { to: { min: 1, max: 4, step: 1, md: 1, nhan: 'Ô đầu to gấp', pha: true } },
     tinh: function (p, t, o) {
       var d = dsKetQua(o), kq = d.kq, n = kq.length, bc = bienCoCua(o, p), chia = o.cheDo === 'chia', st = p.trangThai;
       var coGom = !!o.gom && d.nhom.length > 0 && d.nhom.length < n;
@@ -151,21 +164,28 @@
         var gr = d.nhom[x.g], viTri = i - xep.dauNhom[x.g];
         return { danhDau: !!(p.danhDau && gr && gr.danhDau && viTri >= gr.so - gr.danhDau.so),
           x: C.noiSuy(a.x, b.x, tach), y: C.noiSuy(a.y, b.y, tach), nhan: x.nhan, g: x.g, thuan: thuan[i], sang: s,
-          dau: xep.dauNhom[x.g] === i };
+          dau: xep.dauNhom[x.g] === i, dauTien: i === 0 };
       });
       var moiBienCo = (o.bienCo || []).length > 1 ? o.bienCo.map(function (b) { return { ten: b.ten, m: kq.filter(function (x) { return laThuan(b, x, d.nhom); }).length, dangXem: b === bc }; }) : null;
       var ra = { moiBienCo: moiBienCo, cham: cham, n: n, m: m, tach: tach, coGom: coGom, nhom: d.nhom, xep: xep, bienCo: bc, chia: chia,
         soHien: t >= P.so - 1e-9 ? 1 : 0, sangXong: doan(t, P.sang[0], P.sang[1]) };
       if (chia) {
         // Thanh dài 1 (biến cố chắc chắn) chia đều cho n chấm; dồn các phần sáng về đầu thanh
-        var w = RONG / n, dd = doan(t, P.don[0], P.don[1]), rs = 0, rt = 0;
+        // Mỗi chấm một phần theo "độ to" của nó; mặc định mọi chấm như nhau (đồng khả năng)
+        var to1 = la(p.to) && p.to > 0 ? p.to : 1, wt = kq.map(function (x, i) { return i === 0 ? to1 : 1; });
+        var W = wt.reduce(function (a, b) { return a + b; }, 0), mW = wt.reduce(function (a, b, i) { return a + (thuan[i] ? b : 0); }, 0);
+        var w = RONG / W, dd = doan(t, P.don[0], P.don[1]), cs = 0, ct = 0, cg = 0;
         ra.phan = kq.map(function (x, i) {
-          var dich = thuan[i] ? rs++ : m + rt++;
-          return { x: X0 + w * C.noiSuy(i, dich, dd), w: w, thuan: thuan[i], sang: cham[i].sang,
+          var goc = cg, dich = thuan[i] ? cs : mW + ct;
+          cg += wt[i];
+          if (thuan[i]) cs += wt[i]; else ct += wt[i];
+          return { x: X0 + w * C.noiSuy(goc, dich, dd), w: w * wt[i], thuan: thuan[i], sang: cham[i].sang,
             hien: doan(t, P.thanh[0] + (P.thanh[1] - P.thanh[0]) * 0.7 * i / n, P.thanh[0] + (P.thanh[1] - P.thanh[0]) * (0.7 * i / n + 0.3)) };
         });
         ra.don = dd;
-        ra.phanSang = m / n;
+        ra.phanSang = mW / W;
+        ra.to = to1; ra.mW = mW; ra.W = W;
+        ra.pha = phaDongKhaNang(kq[0], m, n, mW, W, to1);
         ra.mocThanh = doan(t, P.thanh[0], P.thanh[1]);
       }
       return ra;
@@ -181,7 +201,7 @@
     }
     if (xep.goc) {
       var g = xep.goc;
-      mk('rect', { x: g.x, y: g.y, width: g.o * g.N, height: g.o * g.N, fill: 'none', stroke: 'var(--nhat)', 'stroke-width': 0.2 }, svg);
+      mk('rect', { x: g.x, y: g.y, width: g.o * g.N, height: g.o * g.N, fill: 'none', stroke: 'var(--nhat)', 'stroke-width': 0.2, 'data-soi': 'luoi' }, svg);
       for (var i = 1; i < g.N; i++) {
         mk('line', { x1: g.x + i * g.o, y1: g.y, x2: g.x + i * g.o, y2: g.y + g.N * g.o, stroke: 'var(--nhat)', 'stroke-width': 0.12, opacity: 0.6 }, svg);
         mk('line', { x1: g.x, y1: g.y + i * g.o, x2: g.x + g.N * g.o, y2: g.y + i * g.o, stroke: 'var(--nhat)', 'stroke-width': 0.12, opacity: 0.6 }, svg);
@@ -191,17 +211,18 @@
       C.chu(svg, g.x - 1, g.y - 7.2, xep.tenTruc[1] + ' →', 3.6, '--nhat', trai('--nhat'));
       C.chu(svg, g.x - 8.5, g.y + g.N * g.o / 2, xep.tenTruc[0], 3.6, '--nhat', { transform: 'rotate(-90 ' + (g.x - 8.5) + ' ' + (g.y + g.N * g.o / 2) + ')' });
     }
-    xep.nhanNhom.forEach(function (q) { C.chu(svg, q.x, q.y, q.chu, 4.2, null, { style: 'fill:' + to(q.mau) + ';text-anchor:start' }); });
+    xep.nhanNhom.forEach(function (q) { C.chu(svg, q.x, q.y, q.chu, 4.2, null, { style: 'fill:' + to(q.mau) + ';text-anchor:start', 'data-soi': 'nhom' }); });
     // Lúc còn gộp: chấm đầu mỗi nhóm ghi số vật của nhóm
     // Chấm đầu nhóm vẽ sau cùng để số ×n lúc gộp không bị che
     k.cham.slice().sort(function (a, b) { return (a.dau ? 1 : 0) - (b.dau ? 1 : 0); }).forEach(function (c) {
       if (k.coGom && !c.dau && k.tach < 0.02) return;
       var gr = k.nhom[c.g] || {}, mauNhom = gr.mau || (k.nhom.length ? MAU_NHOM[c.g % MAU_NHOM.length] : '--b');
       var choi = st === 'chiaKhong' && !c.thuan;
-      var gc = mk('g', null, svg);
-      mk('circle', { cx: c.x, cy: c.y, r: R, fill: 'var(--mat)', stroke: choi ? 'var(--sai)' : to(mauNhom), 'stroke-width': choi ? 0.9 : 0.5 }, gc);
-      var sang = st === 'nguoc' ? (c.thuan ? 0 : k.sangXong) : c.sang;
-      if (sang > 0) mk('circle', { cx: c.x, cy: c.y, r: R * (0.55 + 0.45 * sang), fill: 'var(' + mauSang + ')', opacity: sang }, gc);
+      var gc = mk('g', null, svg), sang = st === 'nguoc' ? (c.thuan ? 0 : k.sangXong) : c.sang, khoa = c.thuan && sang > 0.5 ? 'sang' : 'cham';
+      // Thử phá: ô đầu to hơn thì chấm của nó vẽ to hơn, viền đứt đỏ
+      var R1 = c.dauTien && k.to > 1 ? R * (1 + 0.2 * (k.to - 1)) : R;
+      mk('circle', { cx: c.x, cy: c.y, r: R1, fill: 'var(--mat)', stroke: choi || R1 > R ? 'var(--sai)' : to(mauNhom), 'stroke-width': choi ? 0.9 : 0.5, 'stroke-dasharray': R1 > R ? '1 0.6' : null, 'data-soi': khoa }, gc);
+      if (sang > 0) mk('circle', { cx: c.x, cy: c.y, r: R1 * (0.55 + 0.45 * sang), fill: 'var(' + mauSang + ')', opacity: sang, 'data-soi': khoa }, gc);
       if (c.danhDau) mk('circle', { cx: c.x, cy: c.y, r: R + 0.8, fill: 'none', stroke: 'var(--a)', 'stroke-width': 0.6, 'stroke-dasharray': '1 0.6' }, gc);
       var gomChu = k.coGom && c.dau && k.tach < 0.5 && gr.so > 1;
       var nhan = gomChu ? '×' + (k.nhom[c.g].so || '') : c.nhan;
@@ -218,22 +239,28 @@
     }
     if (k.chia) {
       var by = y + (k.coGom ? 9 : 3), bh = 7;
-      mk('rect', { x: X0, y: by, width: RONG, height: bh, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 0.35 }, svg);
+      mk('rect', { x: X0, y: by, width: RONG, height: bh, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 0.35, 'data-soi': 'thanh' }, svg);
       k.phan.forEach(function (q) {
         if (q.hien <= 0) return;
         var choi = st === 'chiaKhong' && !q.thuan;
         mk('rect', { x: q.x + 0.15, y: by + 0.15, width: Math.max(0, q.w - 0.3), height: bh - 0.3, opacity: q.hien,
           fill: q.sang > 0 ? 'var(--cc)' : 'var(--b)', 'fill-opacity': q.sang > 0 ? 0.25 + 0.65 * q.sang : 0.12,
-          stroke: choi ? 'var(--sai)' : 'none', 'stroke-width': 0.5 }, svg);
+          stroke: choi ? 'var(--sai)' : 'none', 'stroke-width': 0.5, 'data-soi': q.sang > 0 ? 'phanSang' : 'thanh' }, svg);
       });
       C.chu(svg, X0, by + bh + 4, '0', 4.2, '--nhat');
       C.chu(svg, X0 + RONG, by + bh + 4, '1', 4.2, '--nhat');
       var duoi = by + bh + 9.5;
-      if (k.mocThanh > 0 && k.don < 0.5) C.chu(svg, 50, duoi, 'Mỗi chấm một phần bằng nhau: 1/' + k.n, 4.6, '--b', { opacity: k.mocThanh * (1 - 2 * k.don) });
+      var hong = k.pha && k.pha.hong;
+      if (k.mocThanh > 0 && k.don < 0.5) C.chu(svg, 50, duoi, hong ? 'Ô ' + k.cham[0].nhan + ' to gấp ' + k.to + ': các phần không bằng nhau' : 'Mỗi chấm một phần bằng nhau: 1/' + k.n, 4.6, hong ? '--sai' : '--b', { opacity: k.mocThanh * (1 - 2 * k.don) });
       if (k.don > 0) {
         var cuoi = X0 + RONG * k.phanSang;
         mk('line', { x1: cuoi, y1: by - 1.5, x2: cuoi, y2: by + bh + 1.5, stroke: 'var(--cc)', 'stroke-width': 0.5, opacity: k.don }, svg);
-        if (k.soHien || giai) C.chu(svg, 50, duoi, anM ? 'Phần sáng = ? phần' : 'Phần sáng = ' + k.m + ' phần = ' + phanSo(k.m, k.n), 4.8, '--cc');
+        if (hong) {
+          // Chỗ công thức đếm chỉ tới (m/n), lệch khỏi chỗ phần sáng thật kết thúc
+          var xd = X0 + RONG * k.m / k.n;
+          mk('line', { x1: xd, y1: by - 2.5, x2: xd, y2: by + bh + 2.5, stroke: 'var(--sai)', 'stroke-width': 0.5, 'stroke-dasharray': '1 0.6', opacity: k.don, 'data-soi': 'pha' }, svg);
+        }
+        if (k.soHien || giai) C.chu(svg, 50, duoi, anM ? 'Phần sáng = ? phần' : hong ? 'Đếm: ' + k.m + '/' + k.n + ', nhưng phần sáng thật là ' + phanSo(k.mW, k.W) : 'Phần sáng = ' + k.m + ' phần = ' + phanSo(k.m, k.n), hong ? 4.2 : 4.8, hong ? '--sai' : '--cc');
       }
       // Số em gõ: một vạch trên thanh
       if (la(p.thu)) {
@@ -271,6 +298,28 @@
       });
     } else y += 6;
     svg.setAttribute('viewBox', '0 0 100 ' + Math.max(30, y + 3));
+  };
+
+  // Soi chi tiết: số chấm sáng chỉ nói khi hình đang không giấu số (anSo), để không lộ đáp số bài tập
+  C.lay('luoiKetQua').soi = function (k, p, o) {
+    var anM = o.anSo && p.trangThai !== 'giai', ten = k.bienCo && k.bienCo.ten, hong = k.pha && k.pha.hong;
+    var ra = {
+      cham: { tieuDe: 'Một chấm', chu: 'Mỗi chấm là **một** kết quả có thể' + (anM ? '.' : ': có tất cả $' + k.n + '$ chấm.') + (k.coGom ? ' Các vật cùng loại vẫn là những chấm khác nhau, vì lấy ra thì được một vật cụ thể.' : '') +
+        (hong ? ' Chấm ' + k.cham[0].nhan + ' viền đỏ to gấp $' + soTex(k.to) + '$ chấm khác, nên dễ xảy ra hơn.' : '') },
+      sang: { tieuDe: 'Chấm sáng', chu: 'Chấm sáng là kết quả **thuận lợi**' + (ten ? ' cho biến cố «' + ten + '»' : '') + ': nó xảy ra thì biến cố xảy ra. ' + (anM ? 'Em tự đếm các chấm sáng.' : 'Có $' + k.m + '$ chấm sáng.') }
+    };
+    if (k.chia) {
+      ra.thanh = { tieuDe: 'Thanh xác suất', chu: 'Cả thanh dài $1$, vì chắc chắn xảy ra một kết quả nào đó. ' + (hong ? 'Ô ' + k.cham[0].nhan + ' to gấp $' + soTex(k.to) + '$ nên được phần to gấp $' + soTex(k.to) + '$: các phần **không** bằng nhau.'
+        : 'Các kết quả đồng khả năng nên thanh chia đều cho $' + k.n + '$ chấm, mỗi phần $\\frac{1}{' + k.n + '}$.') };
+      ra.phanSang = { tieuDe: 'Phần sáng', chu: anM ? 'Phần sáng là tổng các phần của chấm sáng. Đếm số phần sáng rồi so với cả thanh.'
+        : hong ? 'Phần sáng thật dài $\\frac{' + soTex(k.mW) + '}{' + soTex(k.W) + '} ' + gan3(k.mW / k.W) + '$ thanh, không bằng $\\frac{' + k.m + '}{' + k.n + '}$ mà công thức đếm cho.'
+        : 'Gồm $' + k.m + '$ phần, mỗi phần $\\frac{1}{' + k.n + '}$, nên dài $\\frac{' + k.m + '}{' + k.n + '}$ cả thanh. Đó là xác suất của biến cố.' };
+      if (hong) ra.pha = { tieuDe: 'Vạch đứt đỏ', chu: 'Vạch đứt đỏ ở $\\frac{' + k.m + '}{' + k.n + '}$, chỗ công thức đếm chỉ tới. Phần sáng thật kết thúc ở chỗ khác, vì các kết quả không đồng khả năng.' };
+    }
+    if (k.nhom.length) ra.nhom = { tieuDe: 'Nhóm', chu: anM ? 'Các vật xếp theo nhóm cho dễ đếm. Mỗi vật trong nhóm vẫn là một chấm riêng.'
+      : 'Các vật xếp theo nhóm cho dễ đếm: ' + k.nhom.map(function (g) { return g.ten + ' $' + g.so + '$'; }).join(', ') + '. Mỗi vật trong nhóm vẫn là một chấm riêng.' };
+    if (k.xep.goc) ra.luoi = { tieuDe: 'Bảng hai chiều', chu: 'Hàng là kết quả của cái thứ nhất, cột là kết quả của cái thứ hai. Mỗi ô là một cặp: có $' + k.xep.goc.N + ' \\cdot ' + k.xep.goc.N + ' = ' + (k.xep.goc.N * k.xep.goc.N) + '$ ô.' };
+    return ra;
   };
 
   /* ================= Mỗi lần thử là một ô ================= */
@@ -461,13 +510,23 @@
       return { N: N, n: n, k: n ? mp.dem[n] : 0, tiLe: n ? mp.dem[n] / n : null, p: mp.p, tl: mp.tl, tong: mp.tong, diem: diem, hat: h };
     }
   });
+  C.lay('moPhong').soi = function (k, p, o) {
+    var nhom = o.nhom || [{ ten: 'Đỏ', so: 3 }, { ten: 'Xanh', so: 2 }], tiLe = k.n ? Math.round(k.tiLe * 1000) / 1000 : null;
+    return {
+      tui: { tieuDe: 'Túi bi', chu: 'Túi có ' + nhom.map(function (g) { return '$' + g.so + '$ bi ' + g.ten.toLowerCase(); }).join(' và ') + '. Rút một viên, ghi màu, rồi **trả lại** túi, nên lần nào túi cũng như cũ.' },
+      xacSuat: { tieuDe: 'Đường đứt nét: xác suất', chu: 'Các viên bi đồng khả năng nên xác suất là $\\frac{' + k.tl + '}{' + k.tong + '} = ' + soTex(Math.round(k.p * 1000) / 1000) + '$. Số này không đổi, dù rút bao nhiêu lần.' },
+      tiLe: { tieuDe: 'Đường cam: tỉ lệ $\\frac{k}{n}$', chu: k.n ? 'Sau $n = ' + k.n + '$ lần có $k = ' + k.k + '$ lần thuận lợi, tỉ lệ $\\frac{k}{n} ' + gan3(k.tiLe) + '$. Đó là xác suất thực nghiệm. Lúc $n$ nhỏ đường nhảy nhiều, $n$ lớn thì đường dồn về gần đường đứt nét.' : 'Chưa rút lần nào.' },
+      cuoi: { tieuDe: 'Lần rút mới nhất', chu: k.n ? 'Ở $n = ' + k.n + '$: tỉ lệ $' + soTex(tiLe) + '$, lệch xác suất khoảng $' + soTex(Math.round(Math.abs(k.tiLe - k.p) * 1000) / 1000) + '$. Lệch nhỏ dần khi $n$ lớn, nhưng hiếm khi bằng $0$.' : 'Chưa rút lần nào.' },
+      truc: { tieuDe: 'Trục số lần rút', chu: 'Trục ngang chia theo bậc gấp $10$: $1$, $10$, $100$, $1000$. Nhờ vậy thấy được cả lúc mới rút vài lần lẫn lúc đã rút $' + k.N + '$ lần.' }
+    };
+  };
   C.lay('moPhong').ve = function (svg, k, p, t, o) {
     var mk = C.mk, L = 13, Rr = 95, T = 15, D = 62, N = k.N;
     var X = function (u) { return L + (Rr - L) * u; }, Y = function (v) { return D - (D - T) * v; };
     svg.setAttribute('viewBox', '0 0 100 74');
     // Túi bi nhỏ ở góc
     var nhom = o.nhom || [{ ten: 'Đỏ', so: 3, mau: '#e03131' }, { ten: 'Xanh', so: 2, mau: '#1971c2' }], j = 0;
-    nhom.forEach(function (g) { for (var i = 0; i < g.so; i++) { mk('circle', { cx: 4 + j * 3.4, cy: 4.5, r: 1.4, fill: to(g.mau) }, svg); j++; } });
+    nhom.forEach(function (g) { for (var i = 0; i < g.so; i++) { mk('circle', { cx: 4 + j * 3.4, cy: 4.5, r: 1.4, fill: to(g.mau), 'data-soi': 'tui' }, svg); j++; } });
     C.chu(svg, 4 + j * 3.4 + 1, 5, k.n ? 'n = ' + soLon(k.n) + '   k = ' + soLon(k.k) + '   k/n ' + (Math.abs(k.tiLe * 1000 - Math.round(k.tiLe * 1000)) > 1e-9 ? '≈ ' : '= ') + String(Math.round(k.tiLe * 1000) / 1000).replace('.', ',') : 'Chưa rút lần nào', 4.6, null, trai(k.n ? '--a' : '--nhat'));
     // Lưới và trục
     [0, 0.5, 1].forEach(function (v) {
@@ -480,17 +539,17 @@
       mk('line', { x1: x, y1: T, x2: x, y2: D, stroke: 'var(--nhat)', 'stroke-width': 0.15, opacity: 0.5 }, svg);
       C.chu(svg, x, D + 3.6, soLon(v), 3.8, '--nhat');
     });
-    C.chu(svg, (L + Rr) / 2, D + 8.6, 'Số lần rút n (mỗi vạch gấp 10 lần)', 3.8, '--nhat');
-    mk('line', { x1: L, y1: D, x2: Rr, y2: D, stroke: 'var(--muc)', 'stroke-width': 0.35 }, svg);
+    C.chu(svg, (L + Rr) / 2, D + 8.6, 'Số lần rút n (mỗi vạch gấp 10 lần)', 3.8, '--nhat', { 'data-soi': 'truc' });
+    mk('line', { x1: L, y1: D, x2: Rr, y2: D, stroke: 'var(--muc)', 'stroke-width': 0.35, 'data-soi': 'truc' }, svg);
     mk('line', { x1: L, y1: T - 1, x2: L, y2: D, stroke: 'var(--muc)', 'stroke-width': 0.35 }, svg);
     // Xác suất
-    mk('line', { x1: L, y1: Y(k.p), x2: Rr, y2: Y(k.p), stroke: 'var(--cc)', 'stroke-width': 0.6, 'stroke-dasharray': '1.6 1' }, svg);
+    mk('line', { x1: L, y1: Y(k.p), x2: Rr, y2: Y(k.p), stroke: 'var(--cc)', 'stroke-width': 0.6, 'stroke-dasharray': '1.6 1', 'data-soi': 'xacSuat' }, svg);
     C.chu(svg, Rr, T - 3, '- - xác suất ' + k.tl + '/' + k.tong + ' = ' + soViet(k.p), 4, '--cc', phai('--cc'));
     // Tỉ lệ thực nghiệm
     if (k.diem.length) {
-      mk('polyline', { points: k.diem.map(function (q) { return X(q[0]) + ',' + Y(q[1]); }).join(' '), fill: 'none', stroke: 'var(--a)', 'stroke-width': 0.6, 'stroke-linejoin': 'round' }, svg);
+      mk('polyline', { points: k.diem.map(function (q) { return X(q[0]) + ',' + Y(q[1]); }).join(' '), fill: 'none', stroke: 'var(--a)', 'stroke-width': 0.6, 'stroke-linejoin': 'round', 'data-soi': 'tiLe' }, svg);
       var c = k.diem[k.diem.length - 1];
-      mk('circle', { cx: X(c[0]), cy: Y(c[1]), r: 1.1, fill: 'var(--a)' }, svg);
+      mk('circle', { cx: X(c[0]), cy: Y(c[1]), r: 1.1, fill: 'var(--a)', 'data-soi': 'cuoi' }, svg);
     }
     C.chu(svg, L + 1, T - 3, 'Tỉ lệ k/n', 4, '--a', trai('--a'));
   };

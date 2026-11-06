@@ -94,6 +94,12 @@
       }
     },
 
+    mucTieu: [
+      'Tính xác suất thực nghiệm $\\frac{k}{n}$ từ bảng kết quả, với $k$ là số lần biến cố xảy ra trong $n$ lần thử.',
+      'Phân biệt xác suất thực nghiệm (đếm từ các lần thử) với xác suất (đếm kết quả đồng khả năng).',
+      'Nói được vì sao thử càng nhiều lần thì $\\frac{k}{n}$ càng gần xác suất, nhưng hiếm khi bằng đúng.',
+      'Dùng tỉ lệ $\\frac{k}{n}$ để ước lượng xác suất và dự đoán số lần xảy ra trong một số lần thử mới.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Xác suất thực nghiệm của một biến cố',
         noiDung: 'Giả sử trong $\\cb{n}$ lần thực nghiệm hoặc $\\cb{n}$ lần theo dõi (quan sát) một hiện tượng, ta thấy biến cố $E$ xảy ra $\\cc{k}$ lần. Khi đó **xác suất thực nghiệm** của biến cố $E$ bằng $\\dfrac{\\cc{k}}{\\cb{n}}$:\n\ntỉ số giữa **số lần xuất hiện biến cố $E$** và **số lần thực hiện thực nghiệm** (hoặc theo dõi hiện tượng).' },

@@ -20,10 +20,11 @@
       tieuDe: 'Sang phải $1$, lên đúng $a$: các điểm thẳng hàng', loai: 'minhHoa',
       luuY: 'Hình cho thấy các điểm có $x$ nguyên. Lập luận chung: giữa hai điểm bất kì của đồ thị, sang ngang $d$ thì lên đúng $a \\cdot d$, nên mọi tam giác bậc thang đều cùng một hình dạng (đồng dạng, em học ở chương IX), và mọi điểm nằm trên một đường thẳng. SGK công nhận điều này ở bài 28.',
       canh: mp({ theoThamSo: true, tiLe: false, khung: [-3, 3, -8.5, 8.5], bac: [{ duong: 0, tu: -2, soBuoc: 4, nhan: true }], diem: [] }, {
-        thamSo: { a: 3 }, ghiChu: 'Hai trục khác tỉ lệ.',
+        thamSo: { a: 3 }, thuPha: true, ghiChu: 'Hai trục khác tỉ lệ.',
         giay: 14, moTa: 'Đồ thị y bằng a x cộng b. Từ điểm có x bằng âm 2, mỗi bậc sang phải 1 đơn vị và lên a đơn vị; các điểm nằm trên một đường thẳng.',
         dongSo: function (p, f) {
           var so = function (x) { return f(x).replace(',', '{,}'); };
+          if (p.cong) return 'Có thêm $x^2$: không còn là hàm số bậc nhất, các bậc không đều.';
           var ax = p.a === 1 ? 'x' : p.a === -1 ? '-x' : p.a === 0 ? '' : so(p.a) + 'x';
           var b = p.b === 0 ? (ax ? '' : '0') : (ax ? (p.b < 0 ? ' - ' : ' + ') + so(Math.abs(p.b)) : so(p.b));
           return '$y = ' + ax + b + '$: mỗi bậc sang phải $1$, ' + (p.a >= 0 ? 'lên' : 'xuống') + ' $' + so(Math.abs(p.a)) + '$.';
@@ -86,6 +87,13 @@
       }
     },
 
+    mucTieu: [
+      'Nhận ra hàm số bậc nhất $y = ax + b$ sau khi thu gọn, và chỉ ra $a$, $b$ (nhớ $a \\ne 0$).',
+      'Nói được vì sao đồ thị thẳng: sang phải $1$ thì $y$ tăng đúng $a$, ở mọi chỗ như nhau.',
+      'Vẽ đồ thị bằng hai điểm, thường là hai giao điểm với hai trục.',
+      'Tìm giao điểm của đồ thị với trục tung và trục hoành.',
+      'Dùng hàm số bậc nhất cho bài toán thực tế (chi phí, quãng đường) và đọc kết quả trên đồ thị.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Hàm số bậc nhất',
         noiDung: '**Hàm số bậc nhất** là hàm số cho bởi công thức $$y = \\ca{a}x + \\cb{b},$$ trong đó $a$, $b$ là các số cho trước và $\\ca{a \\ne 0}$.\n\nVí dụ: $y = -2x + 3$ ($a = -2$, $b = 3$); $\\;y = kx$ với $k \\ne 0$ ($a = k$, $b = 0$) cũng là hàm số bậc nhất.' },

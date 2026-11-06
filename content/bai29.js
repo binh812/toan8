@@ -38,10 +38,11 @@
     nhin: {
       tieuDe: 'Cùng bậc thang thì đẩy lên được: hai đường song song', loai: 'chungMinh',
       luuY: 'Lập luận đúng với mọi $x$, không chỉ những chỗ có mũi tên: $(ax + b\') - (ax + b) = b\' - b$. Hai tung độ luôn chênh nhau cùng một số, nên hai đường không có điểm chung nào khi $b\' \\ne b$. Ngược lại, nếu $a \\ne a\'$ thì phương trình $ax + b = a\'x + b\'$, tức $(a - a\')x = b\' - b$, có nghiệm $x = \\frac{b\' - b}{a - a\'}$, nên hai đường có điểm chung: chúng cắt nhau.',
-      canh: { ten: 'haiDuongThang', tuyChon: { theoThamSo: 2, khung: [-4, 4, -5, 5], tinhTien: { tu: 0, den: 1 }, bac: [{ duong: 0, tu: 0, soBuoc: 1, nhan: true }] }, giay: 14,
+      canh: { ten: 'haiDuongThang', tuyChon: { theoThamSo: 2, khung: [-4, 4, -5, 5], tinhTien: { tu: 0, den: 1 }, bac: [{ duong: 0, tu: 0, soBuoc: 1, nhan: true }] }, giay: 14, thuPha: true,
         moTa: 'Đường thẳng y bằng a x cộng b được đẩy thẳng lên (hoặc xuống) thành đường y bằng a x cộng b phẩy; mũi tên dọc ở mọi chỗ dài bằng nhau.',
         dongSo: function (p, f) {
           var so = function (x) { return f(x).replace(',', '{,}'); }, d = p.c - p.b;
+          if (p.lechA) return 'Hai hệ số góc khác nhau: chênh lệch dọc đổi theo $x$.';
           return d === 0 ? '$b\' = b$: hai đường **trùng nhau**.' : 'Ở mọi $x$, hai đường chênh nhau $b\' - b = ' + so(d) + '$ theo chiều dọc.';
         } },
       buoc: [
@@ -101,6 +102,13 @@
       }
     },
 
+    mucTieu: [
+      'Chỉ ra hệ số góc của đường thẳng $y = ax + b$ và đọc nó trên bậc thang: sang phải $1$, đứng $a$.',
+      'Nói được góc tạo bởi đường thẳng và trục $Ox$ là góc nhọn hay góc tù, chỉ nhìn dấu của $a$.',
+      'Nhận ra hai đường thẳng song song, trùng nhau hay cắt nhau bằng cách so $a$ với $a\'$, $b$ với $b\'$.',
+      'Giải thích vì sao khác hệ số góc thì hai đường cắt nhau, bằng phương trình $(a - a\')x = b\' - b$.',
+      'Tìm tham số $m$ để hai đường thẳng song song hoặc cắt nhau.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Góc tạo bởi đường thẳng và trục $Ox$',
         noiDung: 'Góc $\\alpha$ tạo bởi đường thẳng $y = ax + b$ $(a \\ne 0)$ và trục $Ox$ là góc tạo bởi tia $Ax$ và tia $AT$, trong đó $A$ là giao điểm của đường thẳng với trục $Ox$, $T$ là một điểm thuộc đường thẳng và có **tung độ dương**. Ta có $0^{\\circ} < \\alpha < 180^{\\circ}$.' },
@@ -114,6 +122,19 @@
         chuThich: 'Từ điểm $(0; b)$ trên đường thẳng, đi **sang phải 1 đơn vị** (nét đứt) thì phải đi **lên $a$ đơn vị** (nét màu) mới gặp lại đường thẳng. $a$ càng lớn, đường thẳng càng **dốc**; $a$ âm thì phải đi **xuống**.' },
       { loai: 'dinhLi', tieuDe: '2. Hai đường thẳng song song, trùng nhau, cắt nhau',
         noiDung: 'Cho hai đường thẳng $y = \\ca{a}x + \\cb{b}$ $(a \\ne 0)$ và $y = \\ca{a\'}x + \\cb{b\'}$ $(a\' \\ne 0)$:\n\n• **Song song** khi $\\ca{a = a\'}$ và $\\cb{b \\ne b\'}$ (và ngược lại);\n\n• **Trùng nhau** khi $a = a\'$ và $b = b\'$ (và ngược lại);\n\n• **Cắt nhau** khi $\\ca{a \\ne a\'}$ (và ngược lại).' },
+      { loai: 'lapCM', tieuDe: 'Lắp lập luận: khi nào hai đường thẳng có điểm chung?', config: {
+        de: 'Xếp các ý theo đúng thứ tự lập luận. Có hai nhánh, $a = a\'$ và $a \\ne a\'$; em lắp nhánh nào trước cũng được. Ý nào chưa đủ căn cứ, máy sẽ nói còn thiếu ý nào.',
+        buoc: [
+          { id: 'gt', chu: 'Xét hai đường thẳng $y = ax + b$ và $y = a\'x + b\'$.' },
+          { id: 'chung', chu: 'Một điểm chung $(x; y)$ của hai đường phải thoả $ax + b = a\'x + b\'$.', can: ['gt'] },
+          { id: 'gon', chu: 'Chuyển vế, phương trình đó thành $(a - a\')x = b\' - b$.', can: ['chung'] },
+          { id: 'bang', chu: 'Nếu $a = a\'$ và $b \\ne b\'$: vế trái bằng $0$, vế phải khác $0$, không có $x$ nào thoả.', can: ['gon'] },
+          { id: 'ss', chu: 'Khi đó hai đường không có điểm chung nào: chúng song song.', can: ['bang'] },
+          { id: 'khac', chu: 'Nếu $a \\ne a\'$: chia hai vế cho $a - a\' \\ne 0$, được đúng một $x = \\frac{b\' - b}{a - a\'}$.', can: ['gon'] },
+          { id: 'cat', chu: 'Khi đó hai đường có đúng một điểm chung: chúng cắt nhau.', can: ['khac'] }
+        ],
+        ketLuan: 'Cùng hệ số góc, khác tung độ gốc thì song song; khác hệ số góc thì cắt nhau tại đúng một điểm.'
+      } },
       { loai: 'hinh', widget: 'doThi', config: { bbox: [-5, 5, 5, -5],
           thanhTruot: [{ ten: 'a', min: -3, max: 3, buoc: 0.5, gt: 2 }, { ten: 'b', min: -3, max: 3, buoc: 1, gt: 1 },
             { ten: 'c', nhan: "<i>a'</i>", min: -3, max: 3, buoc: 0.5, gt: 2 }, { ten: 'd', nhan: "<i>b'</i>", min: -3, max: 3, buoc: 1, gt: -2 }],

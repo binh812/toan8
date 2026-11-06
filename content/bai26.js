@@ -124,6 +124,12 @@
       }
     },
 
+    mucTieu: [
+      'Chọn ẩn cho đúng đại lượng đề hỏi, ghi rõ đơn vị và điều kiện của ẩn.',
+      'Tìm trong đề một đại lượng tính được bằng hai cách, rồi viết hai cách đó thành hai vế của phương trình.',
+      'Vẽ sơ đồ hai đoạn để kiểm phương trình vừa lập có khớp với đề không.',
+      'Giải phương trình, đối chiếu điều kiện và trả lời đúng câu đề hỏi (giờ, phút, tuổi, tiền…).'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: 'Các bước giải bài toán bằng cách lập phương trình',
         noiDung: '**Bước 1. Lập phương trình:**\n\n• Chọn **ẩn số** (nói rõ ẩn là gì, **đơn vị** gì) và đặt **điều kiện** thích hợp cho ẩn;\n\n• Biểu diễn các đại lượng chưa biết theo ẩn và các đại lượng đã biết;\n\n• Lập phương trình biểu thị mối quan hệ giữa các đại lượng.\n\n**Bước 2. Giải phương trình.**\n\n**Bước 3. Trả lời:** kiểm tra nghiệm nào thoả mãn điều kiện của ẩn, nghiệm nào không, rồi kết luận.' },

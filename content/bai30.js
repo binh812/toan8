@@ -107,6 +107,12 @@
       }
     },
 
+    mucTieu: [
+      'Liệt kê đủ, không sót, không trùng các kết quả có thể của một phép thử (xúc xắc, đồng xu, rút thẻ, chọn bạn).',
+      'Tách các vật cùng loại thành từng kết quả riêng, ví dụ $5$ bạn nữ là $5$ kết quả chứ không phải một.',
+      'Chỉ ra các kết quả thuận lợi cho một biến cố và đếm chúng.',
+      'Dùng bảng hai chiều để liệt kê kết quả khi tung hai đồng xu, và thấy vì sao $SN$ và $NS$ là hai kết quả khác nhau.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Kết quả có thể',
         noiDung: 'Có những **hành động, thực nghiệm** mà ta không biết trước kết quả (gieo xúc xắc, rút thẻ, lấy bóng trong túi…). Nhưng ta thường **liệt kê được tất cả** các kết quả có thể xảy ra, gọi tắt là **các kết quả có thể**.\n\nVí dụ: gieo một con xúc xắc có 6 kết quả có thể: $1;\\ 2;\\ 3;\\ 4;\\ 5;\\ 6$ (số chấm xuất hiện).' },

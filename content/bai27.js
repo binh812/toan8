@@ -76,6 +76,12 @@
       }
     },
 
+    mucTieu: [
+      'Nhận ra khi nào $y$ là hàm số của $x$: mỗi giá trị của $x$ cho đúng một giá trị của $y$.',
+      'Tính giá trị của hàm số, ví dụ $f(-2)$, khi biết công thức hoặc bảng.',
+      'Đọc và ghi toạ độ của một điểm trên mặt phẳng toạ độ, biết điểm nằm ở góc phần tư nào.',
+      'Vẽ các điểm $(x; f(x))$ để có đồ thị của hàm số cho bằng bảng hoặc công thức.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Hàm số',
         noiDung: 'Nếu đại lượng $y$ phụ thuộc vào đại lượng thay đổi $x$ sao cho **với mỗi giá trị của $x$** ta luôn xác định được **chỉ một** giá trị tương ứng của $y$ thì $y$ được gọi là **hàm số** của $x$, và $x$ gọi là **biến số**.\n\nVí dụ: ô tô đi với vận tốc $60$ km/h thì quãng đường $S = 60t$. Mỗi thời gian $t$ cho đúng một quãng đường $S$, nên $S$ là hàm số của $t$.' },

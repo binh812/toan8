@@ -105,7 +105,7 @@
     nhin: {
       tieuDe: 'Phương trình hỏi: $x$ bằng bao nhiêu thì cân thăng bằng?', loai: 'minhHoa',
       luuY: 'Lập luận chung: nếu $A = B$ thì $A + C = B + C$, và trừ $C$ đi lại về như cũ, nên nghiệm không đổi. Quả nặng là số dương, bóng bay kéo lên là số âm; nếu $x$ âm thì khối $x$ cũng kéo lên.',
-      canh: can(v(3, 2), v(1, 6), [b2(v(2, 2), v(0, 6)), b2(v(2, 0), v(0, 4)), b2(v(1, 0), v(0, 2))], { giay: 16, moTa: 'Cái cân với hai vế của phương trình, luôn thăng bằng sau mỗi bước.' }),
+      canh: can(v(3, 2), v(1, 6), [b2(v(2, 2), v(0, 6)), b2(v(2, 0), v(0, 4)), b2(v(1, 0), v(0, 2))], { giay: 16, thuPha: true, moTa: 'Cái cân với hai vế của phương trình, luôn thăng bằng sau mỗi bước.' }),
       buoc: [
         { t: 0, chu: 'Hai đĩa nặng bằng nhau: $3x + 2 = x + 6$. Mỗi khối cam là một $x$ chưa biết.' },
         { t: 0.25, chu: 'Nhấc một $x$ khỏi **cả hai** đĩa: cân vẫn thăng bằng.' },
@@ -154,6 +154,13 @@
       }
     },
 
+    mucTieu: [
+      'Thay một số vào hai vế để kiểm số đó có là nghiệm của phương trình hay không.',
+      'Nhận ra phương trình bậc nhất một ẩn $ax + b = 0$ và chỉ ra vì sao cần $a \\ne 0$.',
+      'Giải phương trình bằng chuyển vế (nhớ đổi dấu) và chia hai vế cho cùng một số khác $0$.',
+      'Nói được vì sao không được nhân hay chia hai vế cho $0$, bằng cái cân.',
+      'Đưa phương trình có ngoặc, có mẫu về dạng $ax + b = 0$, và nhận ra khi nào vô nghiệm hay vô số nghiệm.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: '1. Phương trình một ẩn',
         noiDung: 'Một **phương trình với ẩn $x$** có dạng $A(x) = B(x)$, trong đó **vế trái** $A(x)$ và **vế phải** $B(x)$ là hai biểu thức của cùng một biến $x$.\n\nVí dụ: $2x + 9 = 3 - x$ là phương trình ẩn $x$; vế trái là $2x + 9$, vế phải là $3 - x$.' },
@@ -167,6 +174,18 @@
         chuThich: 'Kéo thanh **Bước** để xem cách giải $3x + 2 = x + 8$ bằng cái cân. Mỗi bước ta làm **giống nhau ở cả hai đĩa** nên cân luôn thăng bằng. Bỏ quả cân ở hai bên chính là **chuyển vế**; giữ một nửa ở hai bên chính là **chia hai vế cho 2**.' },
       { loai: 'dinhLi', tieuDe: 'Cách giải phương trình bậc nhất',
         noiDung: '$$\\begin{aligned} ax + b &= 0 \\\\ ax &= -b \\\\ x &= -\\frac{b}{a} \\end{aligned}$$\n\nDòng 2: chuyển $b$ sang vế phải, **đổi dấu**. Dòng 3: chia hai vế cho $a \\ne 0$.\n\nPhương trình bậc nhất $ax + b = 0$ $(a \\ne 0)$ **luôn có một nghiệm duy nhất** $x = -\\dfrac{b}{a}$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp lập luận: vì sao $ax + b = 0$ $(a \\ne 0)$ có đúng một nghiệm?', config: {
+        de: 'Xếp các ý theo đúng thứ tự lập luận. Ý nào chưa đủ căn cứ, máy sẽ nói còn thiếu ý nào.',
+        buoc: [
+          { id: 'gt', chu: 'Cho phương trình $ax + b = 0$ với $a \\ne 0$.' },
+          { id: 'chuyen', chu: 'Chuyển $b$ sang vế phải và đổi dấu: $ax = -b$.', can: ['gt'] },
+          { id: 'chia', chu: 'Chia hai vế cho $a$, làm được vì $a \\ne 0$: $x = -\\frac{b}{a}$.', can: ['chuyen'] },
+          { id: 'giu', chu: 'Chuyển vế và chia cho số khác $0$ đều giữ nguyên tập nghiệm, nên mọi nghiệm đều phải bằng $-\\frac{b}{a}$.', can: ['chia'] },
+          { id: 'thu', chu: 'Thay $x = -\\frac{b}{a}$ vào vế trái: $a \\cdot \\left(-\\frac{b}{a}\\right) + b = -b + b = 0$, nên số đó đúng là một nghiệm.', can: ['gt'] },
+          { id: 'kl', chu: 'Vậy phương trình có đúng một nghiệm $x = -\\frac{b}{a}$.', can: ['giu', 'thu'] }
+        ],
+        ketLuan: 'Có một nghiệm (thử lại thấy đúng) và không có nghiệm nào khác (các phép biến đổi giữ tập nghiệm): $x = -\\frac{b}{a}$.'
+      } },
       { loai: 'text', tieuDe: '3. Phương trình đưa được về dạng $ax + b = 0$',
         noiDung: 'Nhiều phương trình chưa có dạng $ax + b = 0$ nhưng biến đổi được về dạng đó. Thứ tự làm:\n\n**1.** Nếu có mẫu: **quy đồng** rồi **nhân hai vế với mẫu chung** để khử mẫu.\n\n**2.** **Bỏ dấu ngoặc** (nhớ đổi dấu khi trước ngoặc là dấu trừ).\n\n**3.** **Chuyển vế:** hạng tử chứa $x$ sang trái, hạng tử không chứa $x$ sang phải.\n\n**4.** **Thu gọn** rồi **chia** hai vế cho hệ số của $x$.' },
       { loai: 'chuY', tieuDe: 'Hay nhầm',

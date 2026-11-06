@@ -43,7 +43,7 @@
     nhin: {
       tieuDe: 'Chia đều thanh xác suất cho các chấm, rồi lấy phần sáng', loai: 'chungMinh',
       luuY: 'Lập luận dựa trên hai điều: các kết quả **đồng khả năng** nên phần của mọi chấm bằng nhau; xác suất của một biến cố là tổng phần của các chấm làm nó xảy ra. Công thức chỉ đúng khi có điều kiện đồng khả năng. Nếu coi ba màu bi là ba kết quả trong khi số bi mỗi màu khác nhau, các phần không còn bằng nhau và công thức cho số sai.',
-      canh: VONG12({ tenBienCo: 'A: Chỉ vào số nguyên tố', bienCo: [{ ten: 'A: Chỉ vào số nguyên tố', thuanLoi: [2, 3, 5, 7, 11] }] }),
+      canh: Object.assign(VONG12({ tenBienCo: 'A: Chỉ vào số nguyên tố', bienCo: [{ ten: 'A: Chỉ vào số nguyên tố', thuanLoi: [2, 3, 5, 7, 11] }] }), { thuPha: true }),
       buoc: [
         { t: 0, chu: 'Tấm bìa có $12$ hình quạt **như nhau**, đánh số $1$ đến $12$. Mỗi hình quạt là một chấm. Các hình quạt như nhau nên $\\cb{12}$ kết quả **đồng khả năng**: không ô nào dễ trúng hơn ô nào.' },
         { t: 0.08, chu: 'Chắc chắn mũi tên chỉ vào một ô nào đó, nên cả thanh là xác suất $1$. Các chấm có khả năng như nhau nên chia **đều** thanh: mỗi chấm được $\\frac{1}{12}$.' },
@@ -104,9 +104,29 @@
       }
     },
 
+    mucTieu: [
+      'Tính xác suất bằng tỉ số $\\frac{m}{n}$: đếm kết quả thuận lợi, đếm tổng kết quả có thể.',
+      'Kiểm điều kiện đồng khả năng trước khi dùng công thức (thẻ giống nhau, ô bằng nhau, xúc xắc cân đối).',
+      'Nói được vì sao công thức sai khi các kết quả không đồng khả năng, ví dụ vòng quay có ô to ô nhỏ.',
+      'Nhận ra lỗi coi mỗi màu hay mỗi loại là một kết quả, và sửa bằng cách coi mỗi vật là một kết quả.',
+      'Rút gọn và kiểm kết quả: xác suất luôn nằm trong khoảng từ $0$ đến $1$.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: 'Công thức tính xác suất',
         noiDung: 'Giả thiết rằng các kết quả có thể của một hành động hay thực nghiệm là **đồng khả năng**. Khi đó xác suất của biến cố $E$, kí hiệu $P(E)$, bằng tỉ số giữa số kết quả thuận lợi cho $E$ và tổng số kết quả có thể:\n\n$P(E)$ = **Số kết quả thuận lợi cho $E$ : Tổng số kết quả có thể**.\n\nNếu có $\\cb{n}$ kết quả có thể (đồng khả năng), trong đó có $\\cc{m}$ kết quả thuận lợi cho $E$ thì $$P(E) = \\dfrac{\\cc{m}}{\\cb{n}}.$$' },
+      { loai: 'lapCM', tieuDe: 'Lắp lập luận: vì sao $P(E) = \\dfrac{m}{n}$?', config: {
+        de: 'Xếp các ý theo đúng thứ tự lập luận, ví dụ với vòng quay $12$ ô và biến cố "chỉ vào số nguyên tố". Ý nào chưa đủ căn cứ, máy sẽ nói còn thiếu ý nào.',
+        canh: VONG12({ tenBienCo: 'A: Chỉ vào số nguyên tố', bienCo: [{ ten: 'A: Chỉ vào số nguyên tố', thuanLoi: [2, 3, 5, 7, 11] }] }),
+        buoc: [
+          { id: 'dk', chu: 'Có $n$ kết quả có thể, và chúng **đồng khả năng**: không kết quả nào dễ xảy ra hơn kết quả nào.', canh: { t: 0 } },
+          { id: 'chac', chu: 'Mỗi lần thử chắc chắn xảy ra đúng một trong $n$ kết quả, nên cả $n$ phần gộp lại là xác suất $1$.', can: ['dk'], canh: { t: 0.3 } },
+          { id: 'deu', chu: 'Các kết quả có khả năng như nhau nên phần của chúng bằng nhau: mỗi kết quả được $\\frac{1}{n}$.', can: ['dk', 'chac'], canh: { t: 0.42 } },
+          { id: 'thuan', chu: 'Biến cố $E$ có $m$ kết quả thuận lợi.', canh: { t: 0.6 } },
+          { id: 'tong', chu: '$E$ xảy ra đúng khi xảy ra một trong $m$ kết quả đó, nên xác suất của $E$ là tổng $m$ phần của chúng.', can: ['thuan'], canh: { t: 0.84 } },
+          { id: 'kl', chu: 'Vậy $P(E) = m \\cdot \\frac{1}{n} = \\frac{m}{n}$.', can: ['deu', 'tong'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Mỗi kết quả một phần $\\frac{1}{n}$, biến cố lấy $m$ phần: $P(E) = \\frac{m}{n}$. Thiếu điều kiện đồng khả năng thì các phần không bằng nhau và công thức sai.'
+      } },
       { loai: 'chuY', tieuDe: 'Bốn bước tính xác suất',
         noiDung: '**Bước 1.** Đếm các kết quả có thể (thường bằng cách liệt kê).\n\n**Bước 2.** Chỉ ra các kết quả có thể là **đồng khả năng** (thẻ giống nhau, bi cùng kích thước, hình quạt như nhau, xúc xắc cân đối…).\n\n**Bước 3.** Đếm các kết quả thuận lợi cho biến cố $E$.\n\n**Bước 4.** Lập tỉ số: số kết quả thuận lợi chia cho **tổng** số kết quả có thể.' },
       { loai: 'hinh', widget: 'xacSuat', config: { loai: 'vongQuay', tui: vongMau, suKien: { ten: 'Mũi tên chỉ vào số nguyên tố', thuanLoi: ['2', '3', '5', '7', '11'] } },

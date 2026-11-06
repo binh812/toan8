@@ -63,8 +63,8 @@
         var x = X0 + m.tu * s, w = m.dai * s;
         if (w <= 0) return;
         var g = mk('g', { opacity: m.hien }, svg);
-        if (m.bo) mk('rect', { x: x + 0.2, y: y, width: Math.max(0, w - 0.4), height: CAO, fill: 'var(--mat)', stroke: 'var(--sai)', 'stroke-width': 0.4, 'stroke-dasharray': '1.5 1' }, g);
-        else mk('rect', { x: x + 0.2, y: y, width: Math.max(0, w - 0.4), height: CAO, rx: 0.6, fill: m.laAn ? 'var(--a)' : 'var(--b)', 'fill-opacity': 0.88 }, g);
+        if (m.bo) mk('rect', { x: x + 0.2, y: y, width: Math.max(0, w - 0.4), height: CAO, fill: 'var(--mat)', stroke: 'var(--sai)', 'stroke-width': 0.4, 'stroke-dasharray': '1.5 1', 'data-soi': 'bo' }, g);
+        else mk('rect', { x: x + 0.2, y: y, width: Math.max(0, w - 0.4), height: CAO, rx: 0.6, fill: m.laAn ? 'var(--a)' : 'var(--b)', 'fill-opacity': 0.88, 'data-soi': r === 0 ? 'tren' : 'duoi' }, g);
         var nhan = m.nhan || '', co = Math.min(5, (w - 1) / (Math.max(1, nhan.length) * 0.52));
         if (nhan && co >= 2.6) C.chu(g, x + w / 2, y + CAO / 2 + 0.2, nhan, co, null, { style: 'fill:var(' + (m.bo ? '--sai' : '--mat') + ')', opacity: m.hien });
         // Mảnh hẹp quá thì ghi nhãn ngay dưới mảnh
@@ -76,7 +76,7 @@
       var bang0 = Math.abs(k.lech) < 1e-9, a = k.hang[0].tong * s, b = k.hang[1].tong * s;
       var g = mk('g', { opacity: k.ketHien }, svg);
       [a, b].forEach(function (e) {
-        mk('line', { x1: X0 + Math.max(0, e), y1: 9, x2: X0 + Math.max(0, e), y2: yCuoi + 1.5, stroke: bang0 ? 'var(--cc)' : 'var(--sai)', 'stroke-width': 0.45, 'stroke-dasharray': '1.4 1' }, g);
+        mk('line', { x1: X0 + Math.max(0, e), y1: 9, x2: X0 + Math.max(0, e), y2: yCuoi + 1.5, stroke: bang0 ? 'var(--cc)' : 'var(--sai)', 'stroke-width': 0.45, 'stroke-dasharray': '1.4 1', 'data-soi': 'vach' }, g);
       });
       if (!bang0) {
         var tu = X0 + Math.max(0, Math.min(a, b)), den = X0 + Math.max(0, Math.max(a, b));
@@ -97,7 +97,34 @@
       // Chỉ một đoạn thì x là số chọn để vẽ, không phải đáp số: không ghi ra
       if (o.duoi && (giai || (o.hienX && t >= 1))) chu = (chu ? chu + '; ' : '') + bien + bang(k.goc) + (o.donVi || '');
     }
-    if (chu) C.chu(svg, 50, H - 4, chu, Math.min(4.8, 96 / (chu.length * 0.55)), mau, { opacity: k.thu !== null ? 1 : k.ketHien });
+    if (chu) C.chu(svg, 50, H - 4, chu, Math.min(4.8, 96 / (chu.length * 0.55)), mau, { opacity: k.thu !== null ? 1 : k.ketHien, 'data-soi': 'pt' });
+  };
+
+  // Số trong $…$ của thẻ soi: dấu phẩy thập phân viết {,}
+  function soTex(v) { return C.fmt(v).replace(',', '{,}'); }
+  // Soi chi tiết: độ dài chỉ ghi khi em đã gõ thử một số, để không lộ nghiệm ở bài tập
+  C.lay('soDoDoan').soi = function (k, p, o) {
+    var bien = o.bien || 'x', coThu = k.thu !== null;
+    function hang(r, viTri) {
+      var h = k.hang[r];
+      if (!h) return null;
+      var manh = h.manh.filter(function (m) { return !m.bo && m.nhan; }).map(function (m) { return '«' + m.nhan + '»'; });
+      return { tieuDe: 'Đoạn ' + viTri + (h.ten ? ': ' + h.ten : ''), chu: 'Đoạn này gồm $' + h.manh.filter(function (m) { return !m.bo; }).length + '$ mảnh: ' + manh.join(', ') + '. ' +
+        'Mảnh cam có chứa $' + bien + '$ nên dài ngắn theo $' + bien + '$; mảnh xanh là số, dài cố định. ' +
+        (coThu ? 'Thay $' + bien + ' = ' + soTex(k.thu) + '$: đoạn dài $' + soTex(h.tong) + '$.' : 'Cả đoạn là một vế của phương trình.') };
+    }
+    var ra = {
+      tren: hang(0, 'trên'),
+      bo: { tieuDe: 'Phần chung bị bỏ', chu: 'Phần đứt nét đỏ có ở **cả hai** đoạn. Bỏ nó ở cả hai đoạn thì hai đoạn vẫn dài bằng nhau, giống như trừ cùng một biểu thức ở hai vế.' },
+      vach: { tieuDe: 'Hai vạch ở cuối hai đoạn', chu: coThu && k.lech !== null
+        ? (Math.abs(k.lech) < 1e-9 ? 'Với $' + bien + ' = ' + soTex(k.thu) + '$ hai vạch trùng nhau: hai đoạn cùng dài $' + soTex(k.hang[0].tong) + '$.'
+          : 'Với $' + bien + ' = ' + soTex(k.thu) + '$ hai vạch lệch nhau $' + soTex(Math.abs(k.lech)) + '$: đoạn trên dài $' + soTex(k.hang[0].tong) + '$, đoạn dưới dài $' + soTex(k.hang[1].tong) + '$.')
+        : 'Hai vạch thẳng hàng nghĩa là hai đoạn dài bằng nhau. Đó chính là dấu "=" của phương trình.' },
+      pt: { tieuDe: 'Dòng chữ dưới hình', chu: k.ghi ? 'Phương trình của bước đang xem: «' + k.ghi + '». Mỗi bước làm cùng một việc ở cả hai đoạn, nên nghiệm không đổi.' : 'Dòng này ghi độ dài hai đoạn khi em thử một số.' }
+    };
+    var d = hang(1, 'dưới');
+    if (d) ra.duoi = d;
+    return ra;
   };
 
   /* ================= Mặt phẳng toạ độ dùng chung ================= */
@@ -139,12 +166,12 @@
     for (v = Math.ceil(kh.x0 / bx) * bx; v <= kh.x1 + GAN; v += bx) { q = M.P(v, 0); mk('line', { x1: q[0], y1: M.tren, x2: q[0], y2: M.duoi, stroke: 'var(--nhat)', 'stroke-width': 0.12, opacity: 0.45 }, svg); }
     for (v = Math.ceil(kh.y0 / by) * by; v <= kh.y1 + GAN; v += by) { q = M.P(0, v); mk('line', { x1: M.trai, y1: q[1], x2: M.phai, y2: q[1], stroke: 'var(--nhat)', 'stroke-width': 0.12, opacity: 0.45 }, svg); }
     var gx = M.P(kh.x0, ax), gy = M.P(ay, kh.y1);
-    mk('line', { x1: M.trai, y1: gx[1], x2: M.phai + 1.6, y2: gx[1], stroke: 'var(--muc)', 'stroke-width': 0.35 }, svg);
-    mk('line', { x1: gy[0], y1: M.duoi, x2: gy[0], y2: M.tren - 1.6, stroke: 'var(--muc)', 'stroke-width': 0.35 }, svg);
+    mk('line', { x1: M.trai, y1: gx[1], x2: M.phai + 1.6, y2: gx[1], stroke: 'var(--muc)', 'stroke-width': 0.35, 'data-soi': 'truc' }, svg);
+    mk('line', { x1: gy[0], y1: M.duoi, x2: gy[0], y2: M.tren - 1.6, stroke: 'var(--muc)', 'stroke-width': 0.35, 'data-soi': 'truc' }, svg);
     mk('path', { d: 'M' + (M.phai + 2.2) + ' ' + gx[1] + 'l-1.8 -0.9v1.8z', fill: 'var(--muc)' }, svg);
     mk('path', { d: 'M' + gy[0] + ' ' + (M.tren - 2.2) + 'l-0.9 1.8h1.8z', fill: 'var(--muc)' }, svg);
-    C.chu(svg, M.phai + 1.2, gx[1] - 2.6, o.bien || 'x', co * 1.1, null, { 'font-style': 'italic' });
-    C.chu(svg, gy[0] + 2.4, M.tren - 0.6, o.tenHam || 'y', co * 1.1, null, { 'font-style': 'italic' });
+    C.chu(svg, M.phai + 1.2, gx[1] - 2.6, o.bien || 'x', co * 1.1, null, { 'font-style': 'italic', 'data-soi': 'truc' });
+    C.chu(svg, gy[0] + 2.4, M.tren - 0.6, o.tenHam || 'y', co * 1.1, null, { 'font-style': 'italic', 'data-soi': 'truc' });
     var gan = function (u, ds, b) { return (ds || []).some(function (d) { return Math.abs(d - u) < b * 0.6; }); };
     for (v = Math.ceil(kh.x0 / bx) * bx; v <= kh.x1 + GAN; v += bx) {
       if (Math.abs(v) < GAN || gan(v, tranh && tranh.x, bx)) continue;
@@ -175,10 +202,10 @@
     return xa < xb ? [[xa, a * xa + b], [xb, a * xb + b]] : null;
   }
   function trongKhung(x, y, kh) { return x >= kh.x0 - GAN && x <= kh.x1 + GAN && y >= kh.y0 - GAN && y <= kh.y1 + GAN; }
-  function veDiem(svg, M, kh, q, mau, ten, mo) {
+  function veDiem(svg, M, kh, q, mau, ten, mo, soi) {
     if (!trongKhung(q[0], q[1], kh)) return;
     var c = M.P(q[0], q[1]), g = C.mk('g', { opacity: mo == null ? 1 : mo }, svg);
-    C.mk('circle', { cx: c[0], cy: c[1], r: 1.25, fill: 'var(' + (mau || '--muc') + ')' }, g);
+    C.mk('circle', { cx: c[0], cy: c[1], r: 1.25, fill: 'var(' + (mau || '--muc') + ')', 'data-soi': soi || null }, g);
     if (ten) {
       // Nhãn đặt bên phải điểm; sát mép phải thì đặt bên trái, sát mép trên thì đặt dưới
       var rong = ten.length * 2, benTrai = q[2] === 'trai' || c[0] + 2 + rong > 99, ly = c[1] - 2.4 < M.tren + 2 ? c[1] + 3 : c[1] - 2.2;
@@ -247,15 +274,15 @@
       vao = viet(dong.x);
       ra = dong.an ? '?' : dong.hien > 0.5 ? (tron(dong.y) ? '≈ ' : '') + viet(dong.y) : '…';
     }
-    C.chu(svg, 20, 7, bien + ' = ' + vao, 4.6, '--a', { opacity: k.nguoc || k.thu || !dong ? 1 : 0.35 + 0.65 * dong.vao });
+    C.chu(svg, 20, 7, bien + ' = ' + vao, 4.6, '--a', { opacity: k.nguoc || k.thu || !dong ? 1 : 0.35 + 0.65 * dong.vao, 'data-soi': 'vao' });
     mk('path', { d: 'M20 10.5V17', stroke: 'var(--nhat)', 'stroke-width': 0.5 }, svg);
     mk('path', { d: 'M18.4 15.6L20 18.6L21.6 15.6Z', fill: 'var(--nhat)' }, svg);
-    mk('rect', { x: 2, y: 19.5, width: 36, height: 17, rx: 2.2, fill: 'var(--tg)', 'fill-opacity': 0.92 }, svg);
+    mk('rect', { x: 2, y: 19.5, width: 36, height: 17, rx: 2.2, fill: 'var(--tg)', 'fill-opacity': 0.92, 'data-soi': 'may' }, svg);
     var nhanF = o.nhanF || '', coF = Math.min(4.6, 33 / (Math.max(1, nhanF.length) * 0.5));
-    C.chu(svg, 20, 28.2, nhanF, coF, null, { style: 'fill:var(--mat)' });
+    C.chu(svg, 20, 28.2, nhanF, coF, null, { style: 'fill:var(--mat)', 'data-soi': 'may' });
     mk('path', { d: 'M20 37V43.5', stroke: 'var(--nhat)', 'stroke-width': 0.5 }, svg);
     mk('path', { d: 'M18.4 42.2L20 45.2L21.6 42.2Z', fill: 'var(--nhat)' }, svg);
-    C.chu(svg, 20, 50, ham + ' = ' + ra, 4.6, mauRa || '--b');
+    C.chu(svg, 20, 50, ham + ' = ' + ra, 4.6, mauRa || '--b', { 'data-soi': 'ra' });
     if (k.trung.length) C.chu(svg, 20, 58, 'Một x mà hai y!', 3.8, '--sai', { opacity: C.muot((t - 0.9) / 0.1) });
     // Đường y = giá trị cần tìm (bài cho y, hỏi x)
     if (k.nguoc) {
@@ -264,7 +291,7 @@
     }
     k.trung.forEach(function (x) {
       var u = M.P(x, kh.y0), w = M.P(x, kh.y1);
-      mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(--sai)', 'stroke-width': 0.4, 'stroke-dasharray': '1.4 1', opacity: C.muot((t - 0.9) / 0.1) }, svg);
+      mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(--sai)', 'stroke-width': 0.4, 'stroke-dasharray': '1.4 1', opacity: C.muot((t - 0.9) / 0.1), 'data-soi': 'trung' }, svg);
     });
     k.diem.forEach(function (d) {
       if (d.an) {
@@ -272,19 +299,76 @@
         if (d.hien > 0 && trongKhung(d.x, 0, kh)) { var c = M.P(d.x, C.kep(0, kh.y0, kh.y1)); C.chu(svg, c[0], c[1] - 2.6, '?', 4.4, '--a', { opacity: d.hien }); }
         return;
       }
-      veDiem(svg, M, kh, [d.x, d.y], '--a', null, d.hien);
+      veDiem(svg, M, kh, [d.x, d.y], '--a', null, d.hien, 'diem');
       if (o.chieu && d.hien > 0) veChieu(svg, M, kh, [d.x, d.y], '--nhat', d.hien * 0.8);
     });
     if (k.nguoc && k.giai && la(k.nguoc.x)) { veDiem(svg, M, kh, [k.nguoc.x, k.nguoc.y], '--cc'); veChieu(svg, M, kh, [k.nguoc.x, k.nguoc.y], '--cc', 1); }
     if (k.thu && la(k.thu.y)) { veDiem(svg, M, kh, [k.thu.x, k.thu.y], k.thu.dung ? '--cc' : '--sai'); veChieu(svg, M, kh, [k.thu.x, k.thu.y], k.thu.dung ? '--cc' : '--sai', 1); }
   };
 
+  // Trục toạ độ: dùng chung cho mọi cảnh có mặt phẳng toạ độ
+  var SOI_TRUC = { tieuDe: 'Hai trục toạ độ', chu: 'Trục hoành $Ox$ nằm ngang, chỉ $x$; trục tung $Oy$ thẳng đứng, chỉ $y$. Hai trục vuông góc tại gốc $O(0; 0)$. Điểm $(x; y)$: từ $O$ sang ngang $x$, rồi lên (hay xuống) $y$.' };
+  // Soi máy hàm số: chỉ nói số đã hiện trên hình, ô dấu hỏi vẫn là dấu hỏi
+  C.lay('mayHamSo').soi = function (k, p, o) {
+    var bien = o.bien || 'x', ham = o.tenHam || 'y', dong = k.dang >= 0 ? k.diem[k.dang] : null;
+    var daHien = k.diem.filter(function (d) { return !d.an && d.hien > 0.5; });
+    var vao, ra;
+    if (k.thu) vao = 'Số em gõ: $' + bien + ' = ' + soTex(k.thu.x) + '$.';
+    else if (k.nguoc) vao = 'Đề cho số ra $' + ham + ' = ' + soTex(k.nguoc.y) + '$ và hỏi số vào. Em tìm $' + bien + '$.';
+    else vao = dong ? 'Số đang vào: $' + bien + ' = ' + soTex(dong.x) + '$.' : 'Chưa có số nào vào máy.';
+    if (k.thu && la(k.thu.y)) ra = 'Với $' + bien + ' = ' + soTex(k.thu.x) + '$, máy cho $' + ham + ' = ' + soTex(k.thu.y) + '$' + (k.thu.dung ? ', khớp với đề.' : ', chưa khớp với đề.');
+    else if (dong && !dong.an && dong.hien > 0.5) ra = 'Máy trả ra $' + ham + (tron(dong.y) ? ' \\approx ' : ' = ') + soTex(dong.y) + '$, đúng một số cho mỗi $' + bien + '$.';
+    else ra = 'Số ra còn là dấu hỏi. Em làm phép tính của máy để tìm.';
+    return {
+      may: { tieuDe: 'Cái máy', chu: (o.nhanF ? 'Máy «' + o.nhanF + '». ' : '') + 'Nhận một số $' + bien + '$, làm đúng một việc, trả ra **đúng một** số $' + ham + '$. Hình cho $' + k.cap.length + '$ số vào.' },
+      vao: { tieuDe: 'Số vào', chu: vao },
+      ra: { tieuDe: 'Số ra', chu: ra },
+      diem: { tieuDe: 'Các điểm', chu: 'Mỗi chấm là một cặp $(' + bien + '; ' + ham + ')$. ' + (daHien.length ? 'Đã hiện $' + daHien.length + '$ điểm: ' + daHien.map(function (d) { return '$(' + soTex(d.x) + '; ' + soTex(d.y) + ')$'; }).join(', ') + '.' : 'Chưa có điểm nào hiện.') },
+      truc: SOI_TRUC,
+      trung: { tieuDe: 'Một x mà hai y', chu: 'Trên đường đỏ có hai điểm cùng $' + bien + '$ mà khác $' + ham + '$. Một số vào cho hai số ra, nên đây **không** phải hàm số.' }
+    };
+  };
+
   /* ================= Đường thẳng, bậc thang, tịnh tiến ================= */
+  // y = x2·x² + ax + b viết cho KaTeX
+  function hamTex(x2, a, b) {
+    var ra = '', them = function (he, phan) {
+      if (Math.abs(he) < GAN) return;
+      var tri = Math.abs(he), chu = (Math.abs(tri - 1) < GAN && phan ? '' : soTex(tri)) + phan;
+      ra += ra ? (he < 0 ? ' - ' : ' + ') + chu : (he < 0 ? '-' : '') + chu;
+    };
+    them(x2 || 0, 'x^2'); them(a, 'x'); them(b, '');
+    return 'y = ' + (ra || '0');
+  }
+  function soXapXi(v) { return (tron(v) ? '\\approx ' : '= ') + soTex(v); }
+  // Thử phá bài 28: thêm x² thì các bậc thang không còn đều, các điểm không thẳng hàng
+  function phaCong(d, b) {
+    var x2 = d.x2 || 0, xs = b && b.buoc.length ? b.buoc : [-2, -1, 0, 1].map(function (x) { return { len: x2 * (2 * x + 1) + d.a }; });
+    var dung = xs.map(function (s) { return s.len; });
+    if (Math.abs(x2) < GAN) return { hong: false, cong: 0, chu: 'Không có $x^2$: bậc nào cũng sang ngang $1$ thì đứng đúng $a = ' + soTex(d.a) + '$, nên các điểm thẳng hàng.' };
+    return { hong: true, cong: x2, dung: dung, chu: 'Thêm $' + soTex(x2) + 'x^2$: hàm số thành $' + hamTex(x2, d.a, d.b) + '$, không còn là bậc nhất. Sang ngang $1$, các bậc đứng lần lượt $' +
+      dung.map(soTex).join('$; $') + '$, không đều nhau. Bậc thang không đều thì các điểm không thẳng hàng: đồ thị là một đường cong, lệch khỏi nét đứt đỏ nối điểm đầu và điểm cuối.' };
+  }
+  // Thử phá bài 29: hệ số góc khác nhau thì hiệu tung độ đổi theo x, và hai đường cắt nhau
+  function phaHaiDuong(u, v, kh) {
+    var da = v.a - u.a, db = v.b - u.b;
+    if (Math.abs(da) < GAN) {
+      return { hong: false, lechA: 0, chu: Math.abs(db) < GAN ? '$a\' = a$ và $b\' = b$: hai đường trùng nhau.'
+        : '$a\' = a = ' + soTex(u.a) + '$: ở mọi $x$, hiệu tung độ $y\' - y$ đều bằng $b\' - b = ' + soTex(db) + '$, nên hai đường không bao giờ gặp nhau.' };
+    }
+    var x = db / (u.a - v.a), y = u.a * x + u.b, ngoai = !trongKhung(x, y, kh);
+    return { hong: true, lechA: da, giao: { x: x, y: y }, ngoai: ngoai, chu: '$a\' = ' + soTex(v.a) + '$ khác $a = ' + soTex(u.a) + '$: hai bậc thang khác nhau. Hiệu tung độ $y\' - y$ đổi theo $x$: tại $x = 0$ là $' + soTex(db) +
+      '$, tại $x = 2$ là $' + soTex(2 * da + db) + '$. Giải $(a - a\')x = b\' - b$, tức $' + (Math.abs(da + 1) < GAN ? '' : Math.abs(da - 1) < GAN ? '-' : soTex(-da)) + 'x = ' + soTex(db) + '$, được $x ' + soXapXi(x) + '$. Hai đường cắt nhau tại ' + (tron(x) || tron(y) ? 'khoảng ' : '') + '$(' + soTex(x) + '; ' + soTex(y) + ')$' +
+      (ngoai ? ', ngoài khung hình.' : ', chỗ vòng tròn đỏ.') + ' Vì vậy "song song" cần **cùng** hệ số góc.' };
+  }
   function tinhDuong(p, t, o) {
     var giai = p.trangThai === 'giai';
     var ds = (o.duong || []).map(function (d) { return Object.assign({}, d); });
     if (o.theoThamSo) {
-      ds = [{ a: p.a, b: p.b, mau: '--b', an: !!o.bac && o.theoThamSo !== 2 }].concat(p.c != null && o.theoThamSo === 2 ? [{ a: p.a, b: p.c, mau: '--cc', an: true }] : []).concat(ds);
+      // Thử phá: cong thêm x² vào đường thứ nhất (bài 28); lechA làm hệ số góc đường thứ hai khác đi (bài 29)
+      var cong = o.theoThamSo === true && la(p.cong) ? p.cong : 0, lechA = o.theoThamSo === 2 && la(p.lechA) ? p.lechA : 0;
+      ds = [{ a: p.a, b: p.b, mau: '--b', an: !!o.bac && o.theoThamSo !== 2, tuThamSo: true, x2: cong || undefined }]
+        .concat(p.c != null && o.theoThamSo === 2 ? [{ a: p.a + lechA, b: p.c, mau: '--cc', an: true, tuThamSo: true }] : []).concat(ds);
     }
     var thu = null;
     if (o.thu && la(p.thu)) {
@@ -304,11 +388,11 @@
     });
     // Bậc thang: sang ngang dx thì đứng a·dx, lần lượt từng bậc
     var bac = (o.bac || []).map(function (b) {
-      var d = ds[b.duong || 0], n = Math.abs(b.soBuoc), h = b.soBuoc < 0 ? -1 : 1, dx = (b.dx || 1) * h;
+      var d = ds[b.duong || 0], n = Math.abs(b.soBuoc), h = b.soBuoc < 0 ? -1 : 1, dx = (b.dx || 1) * h, f = function (x) { return (d.x2 || 0) * x * x + d.a * x + d.b; };
       var tu = b.tu != null ? b.tu : 0, khe = 0.65 / Math.max(1, n), ds2 = [];
       for (var k = 0; k < n; k++) {
         var x1 = tu + dx * k, x2 = x1 + dx, bd = 0.1 + khe * k;
-        ds2.push({ x1: x1, y1: d.a * x1 + d.b, x2: x2, y2: d.a * x2 + d.b, len: d.a * dx, ngang: dx,
+        ds2.push({ x1: x1, y1: f(x1), x2: x2, y2: f(x2), len: d.x2 ? f(x2) - f(x1) : d.a * dx, ngang: dx,
           tienNgang: C.muot((t - bd) / (khe / 2)), tienDoc: C.muot((t - bd - khe / 2) / (khe / 2)) });
       }
       if (an && ds2.length > 1) ds2.pop(); else if (an && ds2.length) ds2[0].anDoc = true;
@@ -317,7 +401,7 @@
     var dich = null;
     if (o.tinhTien && !an) {
       var A = ds[o.tinhTien.tu], B = ds[o.tinhTien.den], k2 = C.muot((t - 0.15) / 0.55);
-      dich = { a: A.a, b: C.noiSuy(A.b, B.b, k2), tien: k2, khoang: B.b - A.b, cungA: Math.abs(A.a - B.a) < GAN, hienKhoang: C.muot((t - 0.72) / 0.15) };
+      dich = { a: C.noiSuy(A.a, B.a, k2), b: C.noiSuy(A.b, B.b, k2), tien: k2, khoang: B.b - A.b, cungA: Math.abs(A.a - B.a) < GAN, hienKhoang: C.muot((t - 0.72) / 0.15) };
     }
     var giao = null;
     if (o.giao) {
@@ -331,7 +415,9 @@
     diem.forEach(function (q) { can.push([q.x, q.y]); });
     bac.forEach(function (b) { b.buoc.forEach(function (s) { can.push([s.x1, s.y1], [s.x2, s.y2]); }); });
     ds.forEach(function (d) { can.push([0, d.b]); });
-    return { ds: ds, bac: bac, dich: dich, giao: giao, diem: diem, thu: thu, giai: giai, an: an, kh: tuKhung(o, can) };
+    var kh = tuKhung(o, can);
+    var pha = o.theoThamSo === true ? phaCong(ds[0], bac[0]) : o.theoThamSo === 2 && ds[1] ? phaHaiDuong(ds[0], ds[1], kh) : undefined;
+    return { ds: ds, bac: bac, dich: dich, giao: giao, diem: diem, thu: thu, giai: giai, an: an, kh: kh, pha: pha };
   }
   function veDuong(svg, k, p, t, o) {
     var mk = C.mk, kh = k.kh, tiLe = o.tiLe !== false, xs = kh.x1 - kh.x0, ys = kh.y1 - kh.y0;
@@ -346,13 +432,13 @@
     var tranh = { x: [], y: [] };
     k.diem.forEach(function (q) { if (q.chieu && q.hien > 0) { tranh.x.push(q.x); tranh.y.push(q.y); } });
     veMatPhang(svg, kh, M, o, tranh);
-    var net = function (a, b, mau, mo, dut, day) {
+    var net = function (a, b, mau, mo, dut, day, soi) {
       var d = catKhung(a, b, kh);
       if (!d || mo <= 0) return;
       var u = M.P(d[0][0], d[0][1]), w = M.P(d[1][0], d[1][1]);
-      mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(' + mau + ')', 'stroke-width': day || 0.7, 'stroke-dasharray': dut ? '1.8 1.1' : null, opacity: mo, 'stroke-linecap': 'round' }, svg);
+      mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(' + mau + ')', 'stroke-width': day || 0.7, 'stroke-dasharray': dut ? '1.8 1.1' : null, opacity: mo, 'stroke-linecap': 'round', 'data-soi': soi || null }, svg);
     };
-    k.ds.forEach(function (d) {
+    k.ds.forEach(function (d, di) {
       var mau = d.thu ? (d.dung ? '--cc' : '--sai') : (d.mau || '--b');
       if (d.x2) {
         // Đường cong y = x2·x² + ax + b (để so với đường thẳng)
@@ -361,8 +447,8 @@
           var y = d.x2 * x * x + d.a * x + d.b;
           if (y >= kh.y0 && y <= kh.y1) diemCong.push(M.P(x, y)); else if (diemCong.length) break;
         }
-        if (diemCong.length > 1) mk('polyline', { points: C.diem(diemCong), fill: 'none', stroke: 'var(' + mau + ')', 'stroke-width': 0.7, opacity: d.hien }, svg);
-      } else net(d.a, d.b, mau, d.hien, d.net);
+        if (diemCong.length > 1) mk('polyline', { points: C.diem(diemCong), fill: 'none', stroke: 'var(' + mau + ')', 'stroke-width': 0.7, opacity: d.hien, 'data-soi': 'duong' + di }, svg);
+      } else net(d.a, d.b, mau, d.hien, d.net, null, 'duong' + di);
       if (d.nhan && d.hien > 0) {
         // Nhãn đặt ở gần cuối đoạn nhìn thấy (hoặc ở hoành độ nhanX), về phía không có đường: đường đi lên thì phía trên bên trái,
         // đường đi xuống thì phía trên bên phải; không đủ chỗ thì đổi sang phía dưới bên kia
@@ -384,7 +470,7 @@
         var chon = hop.length > 2 ? [hop[0], hop[Math.floor(hop.length / 2)], hop[hop.length - 1]] : hop;
         chon.forEach(function (x, i) {
           var y1 = goc0.a * x + goc0.b, y2 = y1 + dc.khoang;
-          var u = M.P(x, y1), w = M.P(x, y2), len = w[1] > u[1] ? -1 : 1, g = mk('g', { opacity: dc.hienKhoang }, svg);
+          var u = M.P(x, y1), w = M.P(x, y2), len = w[1] > u[1] ? -1 : 1, g = mk('g', { opacity: dc.hienKhoang, 'data-soi': 'dich' }, svg);
           mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1] + len * 0.9, stroke: 'var(--a)', 'stroke-width': 0.5 }, g);
           mk('path', { d: 'M' + w[0] + ' ' + w[1] + 'l-1 ' + (len * 1.8) + 'h2z', fill: 'var(--a)' }, g);
           var phai0 = (goc0.a > 0) !== (dc.khoang > 0);
@@ -399,10 +485,10 @@
         var xm = s.x1 + (s.x2 - s.x1) * s.tienNgang;
         if (!trongKhung(s.x1, s.y1, kh) || !trongKhung(s.x2, s.y1, kh)) return;
         var u = M.P(s.x1, s.y1), w = M.P(xm, s.y1);
-        mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(--nhat)', 'stroke-width': 0.45, 'stroke-dasharray': '1.2 0.8' }, svg);
+        mk('line', { x1: u[0], y1: u[1], x2: w[0], y2: w[1], stroke: 'var(--nhat)', 'stroke-width': 0.45, 'stroke-dasharray': '1.2 0.8', 'data-soi': 'bac' }, svg);
         if (s.anDoc || s.tienDoc <= 0 || !trongKhung(s.x2, s.y2, kh)) return;
         var ym = s.y1 + (s.y2 - s.y1) * s.tienDoc, z = M.P(s.x2, ym);
-        mk('line', { x1: w[0], y1: w[1], x2: z[0], y2: z[1], stroke: 'var(' + mauDoc + ')', 'stroke-width': 0.8, 'stroke-linecap': 'round' }, svg);
+        mk('line', { x1: w[0], y1: w[1], x2: z[0], y2: z[1], stroke: 'var(' + mauDoc + ')', 'stroke-width': 0.8, 'stroke-linecap': 'round', 'data-soi': 'bac' }, svg);
         if (cau.nhan && !b.anNhan && s.tienDoc >= 1) {
           var trai0 = s.ngang < 0;
           C.chu(svg, (u[0] + w[0]) / 2, u[1] + (s.len > 0 ? 2.6 : -2.2), C.fmt(Math.abs(s.ngang)), 3.1, '--nhat');
@@ -424,7 +510,7 @@
       var A = M.P(xA, 0), r = 6, phi = Math.atan2(d.a * M.sy, M.sx); // hướng đi lên của đường thẳng trên hình
       if (phi < 0) phi += Math.PI;
       var E = [A[0] + r * Math.cos(phi), A[1] - r * Math.sin(phi)];
-      mk('path', { d: 'M' + A[0] + ' ' + A[1] + 'L' + (A[0] + r) + ' ' + A[1] + 'A' + r + ' ' + r + ' 0 0 0 ' + E[0] + ' ' + E[1] + 'Z', fill: 'var(--a)', 'fill-opacity': 0.25, stroke: 'var(--a)', 'stroke-width': 0.35, opacity: d.hien }, svg);
+      mk('path', { d: 'M' + A[0] + ' ' + A[1] + 'L' + (A[0] + r) + ' ' + A[1] + 'A' + r + ' ' + r + ' 0 0 0 ' + E[0] + ' ' + E[1] + 'Z', fill: 'var(--a)', 'fill-opacity': 0.25, stroke: 'var(--a)', 'stroke-width': 0.35, opacity: d.hien, 'data-soi': 'goc' }, svg);
       var m = phi / 2;
       C.chu(svg, A[0] + (r + 2.4) * Math.cos(m), A[1] - (r + 2.4) * Math.sin(m), 'α', 3.8, '--a', { opacity: d.hien });
     });
@@ -435,20 +521,57 @@
     });
     if (k.giao && trongKhung(k.giao.x, k.giao.y, kh) && k.ds[o.giao[0]].hien > 0.5 && k.ds[o.giao[1]].hien > 0.5) {
       var gp = M.P(k.giao.x, k.giao.y);
-      mk('circle', { cx: gp[0], cy: gp[1], r: 1.9, fill: 'none', stroke: 'var(' + (o.mauGiao || '--sai') + ')', 'stroke-width': 0.5 }, svg);
+      mk('circle', { cx: gp[0], cy: gp[1], r: 1.9, fill: 'none', stroke: 'var(' + (o.mauGiao || '--sai') + ')', 'stroke-width': 0.5, 'data-soi': 'giao' }, svg);
+    }
+    // Thử phá: nét đứt đỏ nối điểm đầu và cuối của bậc thang (bài 28); vòng tròn đỏ ở chỗ hai đường cắt nhau (bài 29)
+    if (k.pha && k.pha.hong && k.pha.dung && k.bac[0] && k.bac[0].buoc.length) {
+      var bs = k.bac[0].buoc, Q0 = bs[0], Q1 = bs[bs.length - 1], P0 = M.P(Q0.x1, Q0.y1), P1 = M.P(Q1.x2, Q1.y2);
+      if (trongKhung(Q0.x1, Q0.y1, kh) && trongKhung(Q1.x2, Q1.y2, kh)) mk('line', { x1: P0[0], y1: P0[1], x2: P1[0], y2: P1[1], stroke: 'var(--sai)', 'stroke-width': 0.5, 'stroke-dasharray': '1.4 1', 'data-soi': 'pha' }, svg);
+    }
+    if (k.pha && k.pha.hong && k.pha.giao && !k.pha.ngoai && k.ds[1] && k.ds[1].hien > 0.5) {
+      var gq = M.P(k.pha.giao.x, k.pha.giao.y);
+      mk('circle', { cx: gq[0], cy: gq[1], r: 2.2, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 0.6, 'data-soi': 'pha' }, svg);
     }
     if (o.ghi) C.chu(svg, 50, H - 1.8, typeof o.ghi === 'function' ? o.ghi(k, p) : o.ghi, 3.6, '--nhat');
   }
   C.dangKi('duongThang', {
     // a chỉ nhận −3, −1, 1, 3: không có a = 0 (khi đó không còn là hàm số bậc nhất)
-    thamSo: { a: { min: -3, max: 3, step: 2, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -2, max: 2, step: 1, md: -1, nhan: 'b', mau: '--b' } },
+    thamSo: { a: { min: -3, max: 3, step: 2, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -2, max: 2, step: 1, md: -1, nhan: 'b', mau: '--b' },
+      cong: { min: -0.5, max: 0.5, step: 0.25, md: 0, nhan: 'Thêm x²', pha: true } },
     tinh: tinhDuong
   });
   C.dangKi('haiDuongThang', {
     thamSo: { a: { min: -3, max: 3, step: 2, md: 1, nhan: 'Hệ số a', mau: '--a' }, b: { min: -3, max: 3, step: 1, md: -2, nhan: 'b', mau: '--b' },
-      c: { min: -3, max: 3, step: 1, md: 2, nhan: "b'", mau: '--cc' } },
+      c: { min: -3, max: 3, step: 1, md: 2, nhan: "b'", mau: '--cc' }, lechA: { min: -2, max: 2, step: 0.5, md: 0, nhan: "a' − a", pha: true } },
     tinh: tinhDuong
   });
+  // Soi đường thẳng: hệ số chỉ nói khi đường đã có nhãn, do em gõ, đã giải, hoặc lấy từ thanh trượt; đường cần tìm thì không lộ
+  function soiDuong(k, p, o) {
+    var ra = { truc: SOI_TRUC };
+    k.ds.forEach(function (d, i) {
+      if (d.hien <= 0) return;
+      var lo = d.nhan || d.thu || k.giai || d.tuThamSo;
+      ra['duong' + i] = { tieuDe: d.x2 ? 'Đường cong' : 'Đường thẳng', chu: !lo ? 'Đây là đường cần tìm. Đọc bậc thang hoặc các điểm nó đi qua để tìm hệ số.'
+        : d.x2 ? 'Đồ thị của $' + hamTex(d.x2, d.a, d.b) + '$. Có $x^2$ nên không phải hàm số bậc nhất, đồ thị không thẳng.'
+        : 'Đồ thị của $' + hamTex(0, d.a, d.b) + '$. Cắt trục tung tại $(0; ' + soTex(d.b) + ')$ vì cho $x = 0$ thì $y = b$. Hệ số góc $a = ' + soTex(d.a) + '$' +
+          (Math.abs(d.a) < GAN ? '.' : d.a > 0 ? ' dương: đi sang phải thì đường đi lên.' : ' âm: đi sang phải thì đường đi xuống.') };
+    });
+    var b = k.bac[0];
+    if (b && b.buoc.length) {
+      var s = b.buoc[0];
+      var dBac = k.ds[b.duong] || {};
+      ra.bac = { tieuDe: 'Bậc thang', chu: dBac.x2 ? 'Các bậc sang ngang $1$ mà đứng ' + b.buoc.map(function (q) { return '$' + soTex(q.len) + '$'; }).join('; ') + ': không đều nhau, vì hàm số có $x^2$.' : b.anNhan ? 'Mỗi bậc sang ngang $' + soTex(Math.abs(s.ngang)) + '$. Đứng bao nhiêu thì em đếm ô trên hình.'
+        : 'Sang ngang $' + soTex(Math.abs(s.ngang)) + '$ thì ' + (s.len >= 0 ? 'lên' : 'xuống') + ' $' + soTex(Math.abs(s.len)) + '$. Vì $a(x + 1) + b = (ax + b) + a$: tăng $x$ thêm $1$ thì $y$ tăng đúng $a$, ở mọi chỗ như nhau.' };
+    }
+    if (k.dich) ra.dich = { tieuDe: 'Mũi tên dọc', chu: !k.dich.cungA ? 'Hai đường khác hệ số góc nên không đẩy dọc đường này thành đường kia được: chỗ này phải đẩy nhiều, chỗ kia đẩy ít.' : 'Mọi điểm của đường được đẩy theo chiều dọc cùng một đoạn $b\' - b = ' + soTex(k.dich.khoang) + '$. Bậc thang giữ nguyên, nên hệ số góc giữ nguyên.' };
+    if ((o.goc || []).length) ra.goc = { tieuDe: 'Góc $\\alpha$', chu: 'Góc tạo bởi đường thẳng và tia $Ox$, đo từ phía trên trục hoành. $a > 0$ thì $\\alpha$ nhọn, $a < 0$ thì $\\alpha$ tù.' };
+    if (k.giao) ra.giao = { tieuDe: 'Chỗ hai đường cắt nhau', chu: 'Điểm này nằm trên cả hai đường, nên toạ độ của nó thoả cả hai phương trình. Hai đường cắt nhau vì hệ số góc khác nhau.' +
+      (k.thu !== null || k.giai ? ' Toạ độ: $(' + soTex(k.giao.x) + '; ' + soTex(k.giao.y) + ')$' + (tron(k.giao.x) || tron(k.giao.y) ? ', đã làm tròn.' : '.') : '') };
+    if (k.pha && k.pha.hong) ra.pha = { tieuDe: 'Chỗ công thức hỏng', chu: k.pha.chu };
+    return ra;
+  }
+  C.lay('duongThang').soi = soiDuong;
+  C.lay('haiDuongThang').soi = soiDuong;
   C.lay('duongThang').ve = veDuong;
   C.lay('haiDuongThang').ve = veDuong;
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);
