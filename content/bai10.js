@@ -131,8 +131,8 @@
   // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
   function so(x) { return String(x).replace('.', '{,}'); }
   function vong(goc, them) { return { ten: 'gocTuGiac', tuyChon: Object.assign({ goc: goc }, them || {}) }; }
-  // Hình ở lời giải: đã ghép xong và hiện đáp án
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  // Hình ở lời giải: đã ghép xong; đáp án chỉ hiện khi em bấm "Xem lời giải" (trang tự đặt trạng thái giai)
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   // Em gõ một số đo: hình đặt góc đó vào chỗ hở (n góc bằng nhau thì n quạt), để thấy còn hở hay bị đè
   function datGoc(ho, n) {
     return function (v) {

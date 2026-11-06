@@ -66,7 +66,7 @@
   // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
   function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
   function ht(them, moTa) { return { ten: 'haiThanh', tuyChon: them, moTa: moTa }; }
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   // Góc giữa hai đường chéo của hình chữ nhật dài a, rộng b (góc nhìn cạnh a từ tâm)
   function gocCheo(a, b) { return 2 * Math.atan2(a, b) * 180 / Math.PI; }
   var hVD3 = hinhTG({ diem: { A: [0, 4], B: [7, 4], C: [7, 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'], goc: [['B', 'A', 'D', VUONG]],
@@ -181,7 +181,8 @@
             phanUng: [{ gt: 60, loi: '$60^\\circ$ là tổng **hai** góc ở đáy của tam giác cân $OAB$. Mỗi góc một nửa.' }, { gt: 120, loi: '$120^\\circ$ là góc ở đỉnh $O$. Góc $OAB$ là góc ở đáy của tam giác cân $OAB$.' }],
             dungChu: '$OA = OB$ (hai nửa thanh) nên $\\widehat{OAB} = (180^\\circ - 120^\\circ) : 2 = 30^\\circ$.', saiChu: 'Hai nửa thanh $OA$, $OB$ bằng nhau: tam giác $OAB$ cân tại $O$.' },
           { tuBai: '13.7', canh: ht({ dang: 'trungTuyen', bc: 8, gocB: 32, vuongA: false, nhan: { BC: '8 cm', AM: '4 cm' }, goc: { A: { dau: '?', giai: '90°' } } }, 'Tam giác ABC, M là trung điểm BC, BC 8 cm, AM 4 cm. Hỏi góc BAC.'), tenNut: 'Tìm hai thanh',
-            phanUng: [{ gt: 60, loi: 'Kéo dài $AM$ thêm $4$ cm tới $D$: hai thanh $AD$, $BC$ đều dài $8$ cm và cắt nhau tại trung điểm. Tứ giác $ABDC$ là hình gì?' }, { gt: 45, loi: 'Hai thanh bằng nhau cắt nhau tại trung điểm tạo ra hình chữ nhật: góc ở đỉnh $A$ là góc gì?' }],
+            phanUng: [{ gt: 60, loi: 'Góc $A$ không phải $60^\\circ$: $AM = 4$ đúng bằng nửa $BC = 8$. Kéo dài $AM$ thêm $4$ cm tới $D$, hai thanh $AD$, $BC$ bằng nhau và cắt nhau tại trung điểm: $ABDC$ là hình chữ nhật. Vậy góc $A$ là góc gì?' },
+              { gt: 45, loi: 'Góc $A$ không phải $45^\\circ$: $AM = 4$ đúng bằng nửa $BC = 8$, nên $A$, $B$, $C$ là ba đỉnh của một hình chữ nhật. Vậy góc $A$ là góc gì?' }],
             dungChu: '$AD = BC = 8$ và cắt nhau tại trung điểm $M$: $ABDC$ là hình chữ nhật, nên $\\widehat{BAC} = 90^\\circ$.', saiChu: 'Kéo dài $AM$ thêm một đoạn bằng nó: hai thanh bằng nhau, cắt nhau tại trung điểm.' }
         ],
         cachNhan: 'Thấy hai đoạn bằng nhau cắt nhau tại trung điểm của mỗi đoạn (hai đường chéo hình chữ nhật, hay trung tuyến bằng nửa cạnh): đó là hai thanh của một hình chữ nhật. Bốn nửa thanh bằng nhau, bốn góc ở đỉnh đều vuông.'

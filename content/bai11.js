@@ -82,7 +82,7 @@
   // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
   function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
   function tc(them, moTa) { return { ten: 'thangCan', tuyChon: them, moTa: moTa }; }
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   // Hình thang cân 11.9: tam giác ABC cân tại A (góc A 40°), DE cắt AB, AC tại 0,42 cạnh tính từ A
   var TAM_GIAC = { dl: 8, gocDay: 70, h: 4 * Math.tan(rad(70)) * 0.58, dinh: 'A', ten: ['D', 'E', 'C', 'B'] };
   // Hình cho ví dụ 2 (hình thang thường, Â = 110°, D̂ = 70°) và ví dụ 3 (AB = AD, góc ABD = 35°)

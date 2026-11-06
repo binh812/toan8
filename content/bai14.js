@@ -56,7 +56,7 @@
   // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
   function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
   function kt(them, moTa) { return { ten: 'khungThoi', tuyChon: them, moTa: moTa }; }
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
 
   // ---------- Hình động ----------
   var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
@@ -138,13 +138,13 @@
       tieuDe: 'Bóp khung bốn thanh bằng nhau: hai đường chéo vẫn vuông góc', loai: 'chungMinh',
       luuY: 'Lúc bóp qua góc $A = 90^\\circ$, khung là hình vuông: hai đường chéo vừa vuông góc vừa bằng nhau. Lập luận dùng tính chất đường trung trực đã học ở lớp 7: điểm cách đều hai đầu đoạn thẳng thì nằm trên trung trực của đoạn đó.',
       canh: { ten: 'khungThoi', tuyChon: { dang: 'bop' }, moTa: 'Khung bốn thanh dài bằng nhau ABCD được bóp lại; hai đường chéo AC và BD luôn vuông góc tại O. A và C cùng cách đều B và D nên AC là trung trực của BD.',
-        dongSo: function (p) { return 'Góc $A$ đổi từ $' + p.g + '^\\circ$ tới $' + (180 - p.g) + '^\\circ$, góc giữa hai đường chéo vẫn là $90^\\circ$.'; } },
+        dongSo: function (p) { return 'Góc $A$ đổi từ $' + p.g + '^\\circ$ tới $' + (180 - p.g) + '^\\circ$; bốn thanh vẫn dài bằng nhau.'; } },
       buoc: [
         { t: 0, chu: 'Khung $ABCD$ gồm bốn thanh dài bằng nhau, nối bằng bản lề ở bốn đỉnh: một hình thoi.' },
-        { t: 0.1, chu: 'Bóp khung lại. Hình đổi dạng, nhưng góc giữa hai đường chéo vẫn vuông.' },
+        { t: 0.1, chu: 'Bóp khung lại. Hình đổi dạng, bốn thanh vẫn dài bằng nhau. Hai đường chéo cắt nhau thế nào?' },
         { t: 0.55, chu: 'Vì sao? $\\ca{AB} = \\ca{AD}$ (hai thanh cam): $A$ cách đều $B$ và $D$, nên $A$ nằm trên đường trung trực của $BD$.' },
         { t: 0.75, chu: '$\\cb{CB} = \\cb{CD}$ (hai thanh xanh): $C$ cũng cách đều $B$ và $D$, nên cũng nằm trên trung trực đó.' },
-        { t: 0.9, chu: 'Hai điểm $A$, $C$ xác định một đường thẳng: $AC$ chính là trung trực của $BD$ (nét đứt đỏ). Vậy $AC \\perp BD$ tại trung điểm $O$. Hình đối xứng qua $AC$ nên $AC$ còn chia đôi góc $A$ và góc $C$.' }
+        { t: 0.9, chu: 'Hai điểm $A$, $C$ xác định một đường thẳng: $AC$ chính là trung trực của $BD$ (nét đứt đỏ). Vậy $AC \\perp BD$ tại trung điểm $O$. Ngoài ra $\\triangle ABC = \\triangle ADC$ (c.c.c) nên $\\widehat{BAC} = \\widehat{DAC}$: $AC$ chia đôi góc $A$, và cũng chia đôi góc $C$.' }
       ],
       ketLuan: 'Trong hình thoi, hai đường chéo **vuông góc** với nhau và là **phân giác** các góc: $$AC \\perp BD, \\qquad \\widehat{BAC} = \\widehat{DAC}$$',
       dung: {

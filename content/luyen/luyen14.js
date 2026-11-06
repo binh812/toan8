@@ -40,7 +40,7 @@
   function d(x) { return x + '^\\circ'; }
   function ds(x) { return String(x).replace('.', ','); }
   // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 14): khung bốn thanh bằng nhau và hai đường chéo, theo chính số của đề
-  function hg(them, ghiChu) { return { widget: 'canh', config: { ten: 'khungThoi', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them, ghiChu: ghiChu } }; }
+  function hg(them, ghiChu) { return { widget: 'canh', config: { ten: 'khungThoi', chiXem: true, t: 1,tuyChon: them, ghiChu: ghiChu } }; }
   function boTrung(gt, ds) {
     var da = [gt];
     return ds.filter(function (l) {
@@ -116,7 +116,7 @@
           '$S = \\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + ' = ' + cc.so(S) + '$ (cm²)'],
         loiThuongGap: boTrung(S, [{ gt: d1 * d2, giaiThich: 'Em quên nhân $\\frac{1}{2}$. Diện tích hình thoi bằng **nửa** tích hai đường chéo.' }, { gt: d1 * d2 / 4, giaiThich: 'Em nhân hai **nửa** đường chéo với nhau ($' + cc.so(d1 / 2) + ' \\cdot ' + cc.so(d2 / 2) + '$). Công thức dùng cả hai đường chéo: $\\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + '$.' }]),
         hinh: hinhTG({ diem: thoi(t, d1 * f / 2, d2 * f / 2), vong: t, vach: vach4(t), canh: cheo(t, 2), goc: [[t[1], 'O', t[2], VUONG]],
-          nhan: [['O', t[2], d1 + ' cm', false, 1.2, TIM], ['O', t[1], d2 + ' cm', false, 1.6, TIM]], lechTen: { O: [12, -14] } }),
+          ghiChu: t[0] + t[2] + ' = ' + d1 + ' cm; ' + t[1] + t[3] + ' = ' + d2 + ' cm', lechTen: { O: [12, -14] } }),
         // Bốn tam giác ở góc hình chữ nhật d1 × d2 trượt vào lấp kín hình thoi: diện tích bằng nửa
         hinhGiai: hg({ dang: 'dienTich', d1: d1, d2: d2, nhan: { d1: d1 + ' cm', d2: d2 + ' cm' }, nhanDT: { dau: '?', giai: ds(S) + ' cm²' } })
       };
@@ -150,7 +150,7 @@
           goiY: ['Hình vuông là hình chữ nhật: hai đường chéo bằng nhau và cắt nhau tại trung điểm mỗi đường.', '$O' + t[3] + ' = ' + t[1] + t[3] + ' : 2$, mà $' + t[1] + t[3] + ' = ' + t[0] + t[2] + '$.'],
           loiGiai: ['$' + t[1] + t[3] + ' = ' + t[0] + t[2] + ' = ' + x + '$ cm (hai đường chéo bằng nhau), $O$ là trung điểm của $' + t[1] + t[3] + '$.', '$O' + t[3] + ' = ' + x + ' : 2 = ' + cc.so(x / 2) + '$'],
           loiThuongGap: boTrung(x / 2, [{ gt: x, giaiThich: '$O' + t[3] + '$ chỉ là **nửa** đường chéo.' }]),
-          hinh: hinhTG({ diem: vuong(t, 6), vong: t, vach: vach4(t), canh: cheo(t), goc: vuong4(t), nhan: [[t[0], 'O', x + ' cm', false, 1.2, TIM], ['O', t[3], '?', false, 1, XANH]], lechTen: { O: [16, 0] } }),
+          hinh: hinhTG({ diem: vuong(t, 6), vong: t, vach: vach4(t), canh: cheo(t), goc: vuong4(t), nhan: [['O', t[3], '?', false, 1, XANH]], ghiChu: t[0] + t[2] + ' = ' + x + ' cm', lechTen: { O: [16, 0] } }),
           hinhGiai: hg({ gA: 90, s: 5, ten: t, nhan: { AC: x + ' cm', OD: { dau: '?', giai: ds(x / 2) + ' cm' } } }, 'Hình không theo tỉ lệ.')
         };
       }
@@ -197,7 +197,7 @@
           '$' + t[1] + t[3] + ' = ' + 2 * S + ' : ' + d1 + ' = ' + d2 + '$'],
         loiThuongGap: boTrung(d2, [{ gt: S / d1, giaiThich: 'Em quên $\\frac{1}{2}$: $' + t[1] + t[3] + ' = 2S : ' + t[0] + t[2] + '$, phải nhân đôi diện tích trước.' }]),
         hinh: hinhTG({ diem: thoi(t, d1 * f / 2, d2 * f / 2), vong: t, vach: vach4(t), canh: cheo(t, 2), goc: [[t[1], 'O', t[2], VUONG]],
-          nhan: [['O', t[2], d1 + ' cm', false, 1.2, TIM], ['O', t[1], '?', false, 1.2, XANH]], lechTen: { O: [12, -14] } })
+          ghiChu: t[0] + t[2] + ' = ' + d1 + ' cm; ' + t[1] + t[3] + ' = ?', lechTen: { O: [12, -14] } })
       };
     } }
   ], { deCo: [

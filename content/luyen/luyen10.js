@@ -98,7 +98,7 @@
   }
   function tong(a) { return a.reduce(function (s, x) { return s + x; }, 0); }
   // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 10): các góc ghép quanh một điểm thành một vòng, theo chính số của đề
-  function hg(goc, them) { return { widget: 'canh', config: { ten: 'gocTuGiac', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: Object.assign({ goc: goc }, them) } }; }
+  function hg(goc, them) { return { widget: 'canh', config: { ten: 'gocTuGiac', chiXem: true, t: 1,tuyChon: Object.assign({ goc: goc }, them) } }; }
 
   // Hình cho câu soạn sẵn: góc ngoài tại B bằng 70°
   var gN = [85, 110, 75, 90], PN = dung(gN), xN = [PN[1][0] + 0.45 * (PN[1][0] - PN[0][0]), PN[1][1]];

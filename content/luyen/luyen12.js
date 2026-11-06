@@ -62,7 +62,7 @@
   function bo(t, i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4]]; }
   function ds(x) { return String(x).replace('.', ','); } // số trên hình (chữ thường)
   // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 12): quay nửa hình bình hành nửa vòng quanh tâm, theo chính số của đề
-  function hg(them) { return { widget: 'canh', config: { ten: 'quayHBH', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them } }; }
+  function hg(them) { return { widget: 'canh', config: { ten: 'quayHBH', chiXem: true, t: 1,tuyChon: them } }; }
   var VAI = ['A', 'B', 'C', 'D'];
 
   TOAN8.luyen(12, [
@@ -113,7 +113,7 @@
         loiGiai: lg, loiThuongGap: boTrung(kq, ltg),
         hinh: hinhTG({ diem: D, vong: t, canh: [[t[0], t[2], { mau: TIM, day: 2 }], [t[1], t[3], { mau: TIM, day: 2 }]], nhan: nhan,
           lechTen: { O: [0, -18] }, ghiChu: hoiAC ? null : t[1] + t[3] + ' = ' + ds(2 * ob) + ' cm' }),
-        hinhGiai: { widget: 'canh', config: { ten: 'quayHBH', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, ghiChu: 'Hình không theo tỉ lệ.',
+        hinhGiai: { widget: 'canh', config: { ten: 'quayHBH', chiXem: true, t: 1,ghiChu: 'Hình không theo tỉ lệ.',
           tuyChon: { a: 6, b: 3.5, g: 60, cheo: true, ten: t, cat: hoiAC ? 'AC' : 'BD',
             nhan: hoiAC ? { OA: ds(oa), OC: { dau: '?', giai: ds(oa) } } : { BD: ds(2 * ob), OB: { dau: '?', giai: ds(ob) } } } } }
       };

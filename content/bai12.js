@@ -63,7 +63,7 @@
   // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
   function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
   function qh(them, moTa) { return { ten: 'quayHBH', tuyChon: them, moTa: moTa }; }
-  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   // Ví dụ 3: hai đường chéo dài 10 và 6 (nửa là 5 và 3); ví dụ 4: AB = 8, AD = 5, phân giác góc D
   var A3v = toi([0, 0], 160, 5), B3v = toi([0, 0], 70, 3);
   var hVD3 = hinhTG({ diem: { A: A3v, B: B3v, C: [-A3v[0], -A3v[1]], D: [-B3v[0], -B3v[1]], O: [0, 0] }, vong: ['A', 'B', 'C', 'D'],
@@ -151,7 +151,7 @@
     nhin: {
       tieuDe: 'Quay nửa vòng: nửa hình bình hành trùng khít nửa kia', loai: 'chungMinh',
       luuY: 'Cắt theo đường chéo $BD$ và quay như vậy, em được thêm $\\widehat{A} = \\widehat{C}$. Lập luận này chính là $\\triangle ABC = \\triangle CDA$ (g.c.g) trong SGK, chỉ khác là em nhìn thấy nó.',
-      canh: { ten: 'quayHBH', tuyChon: { cheo: true }, moTa: 'Hình bình hành ABCD, O là trung điểm đường chéo AC. Tam giác ABC được cắt ra và quay nửa vòng quanh O, rơi đúng vào tam giác CDA.',
+      canh: { ten: 'quayHBH', tuyChon: { cheo: 'sau' }, moTa: 'Hình bình hành ABCD, O là trung điểm đường chéo AC. Tam giác ABC được cắt ra và quay nửa vòng quanh O, rơi đúng vào tam giác CDA.',
         dongSo: function (p) { return 'Đo: $\\ca{AB} = \\ca{CD} = 6$; $\\cb{AD} = \\cb{BC} = ' + so(p.b) + '$; $\\cc{\\widehat{B}} = \\cc{\\widehat{D}} = ' + p.g + '^\\circ$.'; } },
       buoc: [
         { t: 0, chu: 'Hình bình hành $ABCD$: $AB \\parallel CD$ và $AD \\parallel BC$. $O$ là trung điểm của đường chéo $AC$.' },

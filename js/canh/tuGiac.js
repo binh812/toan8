@@ -53,6 +53,13 @@
     if (t >= NGUONG_CUOI && spec.cuoi != null) return spec.cuoi;
     return spec.dau == null ? '' : spec.dau;
   }
+  // Tên đoạn theo tên đỉnh đề dùng: vai A, B, C, D đổi thành o.ten; O, H, K, M giữ nguyên
+  function tenDoan(key, o) {
+    var ten = o.ten || 'ABCD';
+    return key.split('').map(function (c) { var i = 'ABCD'.indexOf(c); return i >= 0 ? ten[i] : c; }).join('');
+  }
+  // Chỉ ẩn số (chữ lúc đầu là dấu hỏi) mới tô đỏ; số đề đã cho giữ màu thường
+  function mauAn(spec) { return spec && typeof spec === 'object' && spec.dau === '?' ? '--sai' : null; }
   function soThu(p) { return typeof p.thu === 'number' && isFinite(p.thu) && p.thu > 0 ? p.thu : null; }
 
   /* ---------- Bài 10: các góc của tứ giác ---------- */
@@ -94,7 +101,7 @@
       var chia = o.dang === 'chia';
       var P = chuanHoa(chia ? [[0, 0], [6, 0], [p.cx, p.cy], [1, 4.5]] : o.diem ? o.diem : tuGoc(o.goc));
       var g = P.map(function (V, i) { return doGoc(P[(i + 3) % 4], V, P[(i + 1) % 4]); });
-      var b = bien(P), r = R_QUAT, T = [b.x1 + 2.6 + r, (b.y0 + b.y1) / 2];
+      var b = bien(P), r = R_QUAT, T = [b.x1 + 3.3 + r, (b.y0 + b.y1) / 2];
       var dinh = P.map(function (V, i) { return quat(V, P[(i + 1) % 4], P[(i + 3) % 4], r, ['--a', '--b', '--cc', '--tg'][i]); });
       var kq = { P: P, g: g, T: T, r: r, w: b.x1, h: b.y1, dinh: dinh };
       if (chia) {
@@ -310,7 +317,7 @@
       doan(svg, m.V, m.E, net('--muc', 1.5, { 'stroke-dasharray': '5 4' }));
       var q = quat(m.V, m.E, P[(m.i + 1) % 4], 0.7, '--nhat');
       veQuat(svg, q, { 'fill-opacity': 0.25 });
-      chuGoc(svg, m.V, m.E, P[(m.i + 1) % 4], viet(m.nhan, p, t, o), co * 0.9, 1.75, '--nhat');
+      chuGoc(svg, m.V, m.E, P[(m.i + 1) % 4], viet(m.nhan, p, t, o), co * 0.9, 2.2, '--nhat');
     });
     da(svg, P, net('--muc', 2.2));
     var lo = p.trangThai === 'giai' || (o.loCuoi && t >= 1 - 1e-9), an = o.an || [], nh = o.nhan || {};
@@ -358,7 +365,8 @@
   /* ---------- Vẽ bài 11 ---------- */
   C.lay('thangCan').ve = function (svg, k, p, t, o) {
     var dl = k.dl, mg = 0.17 * dl, top = k.S ? k.S[1] : k.h, ten = o.ten || ['A', 'B', 'C', 'D'];
-    var co = khung(svg, -mg, -mg - (k.thu ? 0.06 * dl : 0), dl + mg, top + mg * 0.9);
+    // Có đường cao thì tên H, K nằm dưới đáy: chữ độ dài đáy xuống một dòng nữa
+    var co = khung(svg, -mg, -mg - (k.thu ? 0.06 * dl : 0) - (o.duongCao ? 0.1 * dl : 0), dl + mg, top + mg * 0.9);
     var D4 = { A: k.A, B: k.B, C: k.C, D: k.D, H: k.H, K: k.K, S: k.S }, G = trongTam([k.A, k.B, k.C, k.D]), rg = 0.1 * dl;
     var vTruc = [[k.m, -mg * 0.6], [k.m, top + mg * 0.5]];
     if (k.S) {
@@ -404,9 +412,10 @@
     var nh = o.nhan || {};
     Object.keys(nh).forEach(function (key) {
       var s = viet(nh[key], p, t, o), P1 = D4[key[0]], P2 = D4[key[1]];
-      if (key === 'AC' || key === 'BD') { chuTai(svg, cong(lerp(P1, P2, 0.78), [0, 0.7 * co]), s, co * 0.9, '--b'); return; }
+      if (key === 'AC' || key === 'BD') { chuTai(svg, cong(lerp(P1, P2, 0.78), [0, 0.7 * co]), tenDoan(key, o) + ' = ' + s, co * 0.9, '--b'); return; }
       if (key === 'DH' || key === 'KC' || key === 'HC') { chuTai(svg, cong(giua(P1, P2), [0, 0.8 * co]), s, co * 0.95, '--cc'); return; }
       // Hai đáy: ghi lệch sang trái của trục nét đứt cho khỏi đè lên trục
+      if (key === 'DC' && o.duongCao) { chuTai(svg, [k.m, -1.9 * co], s, co * 0.95); return; }
       if (key === 'DC' || key === 'AB') { chuCanh(svg, P1, lerp(P1, P2, 0.6), G, s, co * 0.95, null, 0.9); return; }
       chuCanh(svg, P1, P2, [k.m, G[1]], s, co * 0.95, key === 'AD' || key === 'BC' ? '--a' : null, 0.9);
     });
@@ -447,7 +456,8 @@
     var gocDay = k.cat === 'AC' ? ['B', 'D'] : ['A', 'C'];
     gocDay.forEach(function (n) { vienQuat(svg, quat(D4[n], D4[keCanh[n][0]], D4[keCanh[n][1]], rg, '--cc')); });
     Object.keys(mauCanh).forEach(function (c) { doan(svg, D4[c[0]], D4[c[1]], net(mauCanh[c], 2.2)); });
-    if (o.cheo) { doan(svg, k.A, k.C, net('--tg', 1.8)); doan(svg, k.B, k.D, net('--tg', 1.8)); }
+    // cheo: 'sau' (phần Nhìn): chỉ vẽ AC; BD chỉ vẽ khi B đã rơi đúng vào D, vì "O nằm trên BD" là điều cần chứng minh
+    if (o.cheo) { doan(svg, k.A, k.C, net('--tg', 1.8)); if (o.cheo !== 'sau' || k.k >= 0.95) doan(svg, k.B, k.D, net('--tg', 1.8)); }
     var catLa = k.cat === 'AC' ? [k.A, k.C] : [k.B, k.D];
     doan(svg, catLa[0], catLa[1], net('--muc', 1.8, { 'stroke-dasharray': '6 4', opacity: k.catHien }));
     // Các cạnh em còn thiếu khi tính (trạng thái "thieu-AB-CD"…)
@@ -473,11 +483,12 @@
     var nh = o.nhan || {};
     Object.keys(nh).forEach(function (key) {
       var s2 = viet(nh[key], p, t, o), P1 = D4[key[0]], P2 = D4[key[1]];
-      if (key[0] === 'O' || key === 'AC' || key === 'BD') { chuCanh(svg, P1, P2, k.D, s2, co * 0.9, '--tg', 0.7); return; }
+      if (key === 'AC' || key === 'BD') { chuCanh(svg, P1, k.O, key === 'AC' ? k.B : k.A, tenDoan(key, o) + ' = ' + s2, co * 0.9, '--tg', 0.7); return; }
+      if (key[0] === 'O') { chuCanh(svg, P1, P2, k.D, s2, co * 0.9, '--tg', 0.7); return; }
       chuCanh(svg, P1, P2, G, s2, co * 0.95, mauCanh[key] || mauCanh[key[1] + key[0]], 0.9);
     });
     var goc = o.goc || {};
-    Object.keys(goc).forEach(function (n) { chuGoc(svg, D4[n], D4[keCanh[n][0]], D4[keCanh[n][1]], viet(goc[n], p, t, o), co * 0.9, rg + 0.95 * co, gocDay.indexOf(n) >= 0 ? '--cc' : null); });
+    Object.keys(goc).forEach(function (n) { chuGoc(svg, D4[n], D4[keCanh[n][0]], D4[keCanh[n][1]], viet(goc[n], p, t, o), co * 0.9, Math.min(rg + 0.95 * co, 0.35 * dai(D4[n], k.O)), gocDay.indexOf(n) >= 0 ? '--cc' : null); });
   };
 
   /* ---------- Vẽ bài 13 ---------- */
@@ -511,13 +522,15 @@
       chuCanh(svg, D4[key[0]], D4[key[1]], k.M, s2, co * 0.95, key === 'AD' ? '--cc' : null, 0.85);
     });
     var goc = o.goc || {};
-    if (goc.A != null) chuGoc(svg, k.A, k.B, k.C, viet(goc.A, p, t, o), co * 0.95, 0.12 * s + co, '--sai');
+    if (goc.A != null) chuGoc(svg, k.A, k.B, k.C, viet(goc.A, p, t, o), co * 0.95, 0.12 * s + co, mauAn(goc.A));
   }
   C.lay('haiThanh').ve = function (svg, k, p, t, o) {
     if (k.dang === 'trungTuyen') { veTrungTuyen(svg, k, p, t, o); return; }
     var D4 = { A: k.A, B: k.B, C: k.C, D: k.D, O: k.O }, Ls = k.L, bo = [k.A, k.B, k.C, k.D];
     var b = bien(bo.concat(k.T ? [[k.T[0] + k.r, k.T[1] - k.r], [k.T[0] - k.r, k.T[1] + k.r]] : []));
-    var mg = 0.3 * Ls, co = khung(svg, b.x0 - mg, Math.min(b.y0, -0.5 * Ls) - 1.3 * mg, b.x1 + mg * (k.T ? 1.3 : 1), Math.max(b.y1, 0.5 * Ls) + 1.3 * mg), e = 0.05 * Ls;
+    // Độ dài cả thanh (AC, BD) ghi thành một dòng dưới hình, kẻo đứng cạnh một nửa thanh mà tưởng là nửa thanh
+    var nhCaThanh = Object.keys(o.nhan || {}).filter(function (key) { return key === 'AC' || key === 'BD'; }), day = Math.min(b.y0, -0.5 * Ls);
+    var mg = 0.3 * Ls, co = khung(svg, b.x0 - mg, day - 1.3 * mg - (nhCaThanh.length ? 0.3 * Ls : 0), b.x1 + mg * (k.T ? 1.3 : 1), Math.max(b.y1, 0.5 * Ls) + 1.3 * mg), e = 0.05 * Ls;
     da(svg, bo, { fill: 'var(--nhat)', 'fill-opacity': 0.08 * k.khung, stroke: 'none' });
     if (o.to) { var tg = o.to.split('').map(function (n) { return D4[n]; }); da(svg, tg, to('--a', 0.22 * C.muot((t - 0.6) / 0.2))); }
     if (k.tamGiac) {
@@ -550,20 +563,20 @@
     Object.keys(nh).forEach(function (key) {
       var s2 = viet(nh[key], p, t, o), P1 = D4[key[0]], P2 = D4[key[1]];
       // Chữ trên một thanh: đặt cạnh nửa thanh, đẩy ra xa thanh kia
-      var coO = key.indexOf('O') >= 0;
-      if (key === 'AC' || key === 'BD' || coO) {
-        // Cả thanh ghi ở nửa dưới (C, D), nửa thanh OA, OB ghi ở nửa trên: hai chữ không chồng nhau
-        var nua = key === 'AC' ? 'C' : key === 'BD' ? 'D' : key.replace('O', ''), dau = D4[nua];
-        var xaDiem = { A: k.B, B: k.A, C: k.D, D: k.C }[nua];
-        chuCanh(svg, dau, k.O, xaDiem, s2, co * 0.9, coO ? null : '--cc', 0.8);
+      if (key === 'AC' || key === 'BD') return;
+      if (key.indexOf('O') >= 0) {
+        // Nửa thanh: đặt cạnh nửa thanh đó, đẩy ra xa thanh kia
+        var nua = key.replace('O', '');
+        chuCanh(svg, D4[nua], k.O, { A: k.B, B: k.A, C: k.D, D: k.C }[nua], s2, co * 0.9, null, 0.8);
         return;
       }
       chuCanh(svg, P1, P2, k.O, s2, co * 0.9, null, 0.8);
     });
+    if (nhCaThanh.length) chuTai(svg, [0, day - 1.05 * mg], nhCaThanh.map(function (key) { return tenDoan(key, o) + ' = ' + viet(nh[key], p, t, o); }).join(';  '), co * 0.9, '--cc');
     var goc = o.goc || {};
     Object.keys(goc).forEach(function (n) {
       var s2 = viet(goc[n], p, t, o);
-      if (n.length === 3) chuGoc(svg, D4[n[1]], D4[n[0]], D4[n[2]], s2, co * 0.85, n[1] === 'O' ? 1.3 * co : 0.22 * Ls + 0.6 * co, '--sai');
+      if (n.length === 3) chuGoc(svg, D4[n[1]], D4[n[0]], D4[n[2]], s2, co * 0.85, n[1] === 'O' ? 1.3 * co : 0.22 * Ls + 0.6 * co, mauAn(goc[n]));
     });
   };
 
@@ -579,7 +592,7 @@
     var nh = o.nhan || {};
     if (nh.d1) chuTai(svg, [w / 2, -0.55 * mg], viet(nh.d1, p, t, o), co);
     if (nh.d2) chuTai(svg, [-0.55 * mg, h / 2], viet(nh.d2, p, t, o), co, null, { transform: 'rotate(-90 ' + (-0.55 * mg) + ' ' + (-h / 2) + ')' });
-    if (o.nhanDT != null) chuTai(svg, [w / 2, h / 2 - 0.12 * h], viet(o.nhanDT, p, t, o), co * 1.1, '--sai');
+    if (o.nhanDT != null) chuTai(svg, [w / 2, h / 2 - 0.12 * h], viet(o.nhanDT, p, t, o), co * 1.1, mauAn(o.nhanDT));
   }
   C.lay('khungThoi').ve = function (svg, k, p, t, o) {
     if (k.dang === 'dienTich') { veDienTich(svg, k, p, t, o); return; }
@@ -596,7 +609,8 @@
     if (k.dang === 'bop') {
       if (k.kT > 0.001) doan(svg, [-1.25 * s, 0], [1.25 * s, 0], net('--sai', 2, { 'stroke-dasharray': '8 5', opacity: k.kT }));
       doan(svg, k.A, k.C, net('--tg', 2)); doan(svg, k.B, k.D, net('--tg', 2));
-      vuongGoc(svg, k.O, k.B, k.C, 0.09 * s);
+      // Dấu góc vuông chỉ hiện khi đã lập luận xong
+      vuongGoc(svg, k.O, k.B, k.C, 0.09 * s, { opacity: k.kT });
       bo.forEach(function (V, i) { doan(svg, V, bo[(i + 1) % 4], net('--muc', 3)); });
       [['B', '--a', k.kA], ['D', '--a', k.kA]].concat([['B', '--b', k.kC], ['D', '--b', k.kC]]).forEach(function (x, i) {
         if (x[2] > 0.001) doan(svg, i < 2 ? k.A : k.C, D4[x[0]], net(x[1], 6, { opacity: x[2] }));
@@ -626,7 +640,10 @@
     var nh = o.nhan || {};
     Object.keys(nh).forEach(function (key) {
       var s2 = viet(nh[key], p, t, o), P1 = D4[key[0]], P2 = D4[key[1]];
-      if (key === 'BD' || key === 'OB') { chuTai(svg, cong(giua(P1, P2), [-0.9 * co, key === 'BD' ? 0.35 * s : 0]), s2, co * 0.9, '--tg'); return; }
+      if (key === 'BD' || key === 'AC') s2 = tenDoan(key, o) + ' = ' + s2;
+      // Chưa vẽ đường chéo thì chưa ghi chữ của nó, kẻo dấu hỏi lơ lửng
+      if (/^(BD|OB|AC|OA)$/.test(key) && hienCheo < 0.5) return;
+      if (key === 'BD' || key === 'OB') { chuTai(svg, cong(giua(P1, P2), [-1.4 * co, key === 'BD' ? 0.35 * s : 0]), s2, co * 0.9, '--tg'); return; }
       if (key === 'AC' || key === 'OA') { chuTai(svg, cong(giua(P1, P2), [key === 'AC' ? -0.35 * s : 0, -0.7 * co]), s2, co * 0.9, '--tg'); return; }
       chuCanh(svg, P1, P2, k.O, s2, co * 0.9, null, 0.85);
     });
@@ -638,7 +655,13 @@
         chuTai(svg, cong(k.A, nhan(huongDen(lech * Math.max(k.gA / 4, 12)), 0.42 * s + 0.3 * co)), s2, co * 0.85, g3 === 'BAC' ? '--a' : '--b');
         return;
       }
-      chuGoc(svg, D4[g3[1]], D4[g3[0]], D4[g3[2]], s2, co * 0.85, kc, null);
+      if (g3 === ma[n]) {
+        // Cả góc ở đỉnh: phân giác trùng đường chéo, nên lệch chữ khỏi phân giác một phần tư góc để không nằm đè lên đường chéo
+        var V = D4[n], ph = huong(V, k.O), q = Math.max(doGoc(D4[g3[0]], V, D4[g3[2]]) / 4, 12) * (n === 'A' || n === 'C' ? -1 : 1);
+        chuTai(svg, cong(V, nhan(huongDen(ph + q), n === 'A' || n === 'C' ? 0.42 * s + 0.3 * co : kc)), s2, co * 0.85, mauAn(goc[n]));
+        return;
+      }
+      chuGoc(svg, D4[g3[1]], D4[g3[0]], D4[g3[2]], s2, co * 0.85, kc, mauAn(goc[n]));
     });
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

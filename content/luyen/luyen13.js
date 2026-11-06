@@ -39,7 +39,7 @@
     return o;
   }
   // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 13): hai thanh bằng nhau gắn ở trung điểm, theo chính số của đề
-  function hg(them, ghiChu) { return { widget: 'canh', config: { ten: 'haiThanh', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them, ghiChu: ghiChu } }; }
+  function hg(them, ghiChu) { return { widget: 'canh', config: { ten: 'haiThanh', chiXem: true, t: 1,tuyChon: them, ghiChu: ghiChu } }; }
   function vuong4(t) { return [0, 1, 2, 3].map(function (i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4], VUONG]; }); }
   // Tam giác ABC vuông tại A, cạnh huyền BC = a nằm ngang, góc B = gB; M là trung điểm BC.
   function tgVuong(a, gB) {

@@ -55,12 +55,13 @@
   function vachBen(t) { var o = {}; o[t[1] + t[2]] = 1; o[t[3] + t[0]] = 1; return o; }
   function bo(t, i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4]]; }
   // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 11): gập hình thang cân theo trục, theo chính số của đề
-  function hg(them) { return { widget: 'canh', config: { ten: 'thangCan', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them } }; }
+  function hg(them) { return { widget: 'canh', config: { ten: 'thangCan', chiXem: true, t: 1,tuyChon: them } }; }
   var VAI = ['A', 'B', 'C', 'D'];
 
   TOAN8.luyen(11, [
     { ten: 'Góc của hình thang cân', muc: 1, sinh: function (r) {
       var t = r.chon(TEN), g = r.so(9, 16) * 5, h = r.chon([3, 3.5, 4]);
+      h = Math.min(h, 0.3 * 9 * Math.tan(rad(g))); // góc đáy nhỏ mà hình cao thì đáy nhỏ ngắn quá, tên hai đỉnh dính nhau
       var gt = [180 - g, 180 - g, g, g], i = r.so(0, 3), j;
       do { j = r.so(0, 3); } while (j === i);
       var v = gt[i], kq = gt[j], cungDay = (i < 2) === (j < 2);
@@ -138,8 +139,9 @@
           canh: [['D', 'E', { mau: TIM, day: 4 }]], goc: [['B', 'A', 'C'], [hoi[0], hoi[1], hoi[2], { mau: XANH }]],
           soGoc: [['B', 'A', 'C', al + '°', al < 70 ? 1.2 : 0.9], [hoi[0], hoi[1], hoi[2], '?', 0.8, XANH]], lechTen: { D: [-16, 8], E: [16, 8] } }),
         hinhGiai: hg((function () {
-          var goc = { S: al + '°', D: B + '°', C: B + '°' };
-          goc[hoi[0] === 'B' ? 'A' : 'B'] = { dau: '?', giai: kq + '°' };
+          // Ghi góc đáy ở phía đối diện với góc hỏi, để hai chữ cùng một bên không chồng nhau (gập theo trục thì hai góc đáy bằng nhau)
+          var goc = { S: al + '°' };
+          if (hoi[0] === 'B') { goc.C = B + '°'; goc.A = { dau: '?', giai: kq + '°' }; } else { goc.D = B + '°'; goc.B = { dau: '?', giai: kq + '°' }; }
           return { dl: 8, gocDay: B, h: A[1] * (1 - k), dinh: 'A', ten: ['D', 'E', 'C', 'B'], goc: goc };
         })())
       };
