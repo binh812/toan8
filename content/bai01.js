@@ -1,6 +1,55 @@
 // Bài 1. Đơn thức – SGK Toán 8 KNTT Tập 1, trang 5–10.
+(function () {
+  'use strict';
+  // Hình cho "Nhìn là hiểu": khoiGop (mỗi hạng tử là một nhóm mảnh/khối giống nhau), thuaSo (đơn thức là tích các thẻ thừa số)
+  function gop(nhom, them) { return { ten: 'khoiGop', tuyChon: Object.assign({ nhom: nhom }, them || {}) }; }
+  function the(o) { return { ten: 'thuaSo', tuyChon: o }; }
+  function hg(c, t) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: t == null ? 1 : t }, c) }; }
+  var MA_X4 = { muMu: { ma: { don: 'x^4', nhan: 'một mảnh x⁴' } } };
+
 TOAN8.bai({
   id: 1, ten: 'Đơn thức', sgk: { tap: 1, trang: 5 },
+  nhin: {
+    tieuDe: 'Đơn thức là một nhóm khối giống nhau', loai: 'minhHoa',
+    luuY: 'Kéo thanh để đổi $x$, $y$: khối to nhỏ khác đi nhưng số khối không đổi. Lập luận cho mọi số: $2x^2y + 3x^2y = (2 + 3)x^2y$ theo tính chất phân phối của phép nhân đối với phép cộng.',
+    canh: Object.assign(gop(['2x^2y', '3x^2y', 'xy^2'], { nhanCanh: true }), { moTa: 'Hai khối x bình phương y, ba khối x bình phương y và một khối x y bình phương. Các khối cùng hình được gom vào một hàng.' }),
+    buoc: [
+      { t: 0, chu: '$2x^2y$ là $2$ khối giống nhau. Mỗi khối có ba cạnh $\\ca{x}$, $\\ca{x}$, $\\cb{y}$, nên thể tích là $x \\cdot x \\cdot y = x^2y$.' },
+      { t: 0.1, chu: 'Gom các khối cùng hình về một hàng. Không khối nào đổi kích thước.' },
+      { t: 0.88, chu: '$2$ khối thêm $3$ khối là $5$ khối $x^2y$. Khối $xy^2$ có cạnh $x$, $y$, $y$: khác hình nên đứng riêng. Mỗi khối có ba cạnh nhân với nhau nên bậc là $3$.' }
+    ],
+    ketLuan: 'Cộng hai đơn thức đồng dạng là đếm các khối cùng hình: $$2x^2y + 3x^2y = (2 + 3)x^2y = 5x^2y$$ Hình khối (phần biến) giữ nguyên, chỉ số khối (hệ số) thay đổi.',
+    dung: {
+      tieuDe: 'Gộp mảnh thì hình mảnh có đổi không?', tuBai: '1.5',
+      canh: Object.assign(gop(['4x^2', '3x^2'], { nhanCanh: true, sai: MA_X4 }), { moTa: 'Bốn mảnh vuông x bình phương và ba mảnh vuông x bình phương.' }),
+      moiThu: 'Mỗi mảnh là hình vuông cạnh $x$. Gộp hai nhóm lại thì được mấy mảnh, và mỗi mảnh là gì? Nếu gõ sai, hình sẽ chỉ chỗ sai.',
+      phanUng: [
+        { gt: '7x^4', trangThai: 'muMu', t: 0.8, loi: 'Mảnh đỏ là $x^4$: hình vuông cạnh $x^2$, to hơn hẳn mảnh $x^2$. Gộp mảnh không làm mảnh to ra, chỉ có **số mảnh** thay đổi.' },
+        { gt: '12x^4', trangThai: 'muMu', t: 0.8, loi: 'Đây là phép **cộng**: $4$ mảnh thêm $3$ mảnh. Và gộp mảnh không biến mảnh $x^2$ thành mảnh $x^4$ (mảnh đỏ).' },
+        { gt: '12x^2', t: 0.8, loi: 'Đây là phép **cộng**: $4$ mảnh thêm $3$ mảnh, không phải $4$ nhân $3$. Đếm lại số mảnh trên hình.' }
+      ],
+      saiT: 0.8,
+      dungChu: '$4$ mảnh $x^2$ thêm $3$ mảnh $x^2$ là $7$ mảnh $x^2$: $4x^2 + 3x^2 = 7x^2$.',
+      saiChu: 'Đếm số mảnh trên hình. Mỗi mảnh vẫn là hình vuông cạnh $x$.'
+    },
+    suyRa: {
+      tieuDe: 'Cùng hình thì gộp, khác hình thì để riêng',
+      baDe: [
+        { tuBai: '1.2', canh: gop(['3x^2y', '-5xy^2'], { nhanCanh: true }), tenNut: 'Dựng khối',
+          dungChu: 'Khối $x^2y$ có cạnh $x$, $x$, $y$; khối $xy^2$ có cạnh $x$, $y$, $y$. Hai hình khác nhau nên hai đơn thức **không** đồng dạng.',
+          saiChu: 'Bấm "Dựng khối" rồi so cạnh của hai loại khối. Chúng có cùng hình không?' },
+        { tuBai: '1.10', canh: gop(['6xy', '3xy'], { nhanCanh: true }), tenNut: 'Gộp mảnh', saiT: 0.8,
+          phanUng: [{ gt: '9x^2y^2', t: 0.8, loi: 'Gộp mảnh không làm mảnh to ra. Mỗi mảnh vẫn là $xy$, chỉ đếm số mảnh.' },
+            { gt: '18xy', t: 0.8, loi: 'Hai phần đất ghép **cạnh** nhau nên diện tích **cộng** lại: $6$ mảnh thêm $3$ mảnh.' }],
+          dungChu: '$6$ mảnh $xy$ thêm $3$ mảnh $xy$ là $9$ mảnh: $9xy$.', saiChu: 'Bấm "Gộp mảnh" rồi đếm số mảnh $xy$.' },
+        { tuBai: '1.9', canh: gop([{ don: '15xy', nhan: '15xy (gạo)' }, { don: '8xy', nhan: '+ 8xy (sữa)' }]), tenNut: 'Gộp mảnh', saiT: 0.8,
+          phanUng: [{ gt: '23x^2y^2', t: 0.8, loi: 'Gộp mảnh không làm mảnh to ra. Tiền gạo và tiền sữa đều là các mảnh $xy$.' },
+            { gt: '23x', t: 0.8, loi: '$23x$ là tiền **một** phần quà. Có $y$ phần quà, nên mỗi mảnh là $x \\cdot y$.' }],
+          dungChu: '$15$ mảnh $xy$ thêm $8$ mảnh $xy$ là $23xy$ (nghìn đồng).', saiChu: 'Tiền gạo $15xy$ và tiền sữa $8xy$ là cùng một loại mảnh $xy$. Đếm số mảnh.' }
+      ],
+      cachNhan: 'Thấy các đơn thức cùng phần biến (cùng hình mảnh): cộng hệ số, tức là đếm mảnh. Phần biến giữ nguyên. Khác phần biến thì để riêng.'
+    }
+  },
   khamPha: {
     nhiemVu: 'Một mảnh vườn hình chữ nhật có chiều dài $\\ca{3x}$ và chiều rộng $\\cb{2y}$ (mét). Mảnh vườn được chia thành các ô nhỏ, mỗi ô có kích thước $x \\times y$. Em kéo thanh trượt **x**, **y** rồi **đếm số ô**.',
     widget: 'dienTich',
@@ -51,16 +100,16 @@ TOAN8.bai({
     { loai: 'chuY', noiDung: '**Hay nhầm:** $2x^2 + 3x^2 \\ne 5x^4$. Khi **cộng** đơn thức đồng dạng, số mũ giữ nguyên. Chỉ khi **nhân** mới cộng số mũ: $x^2 \\cdot x^3 = x^5$.' }
   ],
   viDu: [
-    { de: 'Thu gọn đơn thức $3x^2y \\cdot (-2)xy^3$, rồi cho biết hệ số, phần biến và bậc của nó.', buoc: [
-      { lam: '$3x^2y \\cdot (-2)xy^3 = [3 \\cdot (-2)] \\cdot (x^2 \\cdot x) \\cdot (y \\cdot y^3)$', vi: 'Nhóm các số với nhau, các lũy thừa của cùng một biến với nhau.' },
-      { lam: '$= -6x^3y^4$', vi: '$3 \\cdot (-2) = -6$; $x^2 \\cdot x = x^3$; $y \\cdot y^3 = y^4$ (nhân thì cộng số mũ).' },
-      { lam: 'Hệ số: $-6$. Phần biến: $x^3y^4$. Bậc: $3 + 4 = 7$.', vi: 'Bậc là tổng số mũ của các biến.' } ] },
-    { de: 'Cho hai đơn thức đồng dạng $A = 4xy^2$ và $B = -7xy^2$. Tính $A + B$ và $A - B$.', buoc: [
-      { lam: '$A + B = 4xy^2 + (-7)xy^2 = [4 + (-7)]xy^2 = -3xy^2$', vi: 'Cộng hai hệ số, giữ nguyên phần biến $xy^2$.' },
-      { lam: '$A - B = 4xy^2 - (-7)xy^2 = [4 - (-7)]xy^2 = 11xy^2$', vi: 'Trừ hai hệ số: $4 - (-7) = 4 + 7 = 11$.' } ] },
-    { de: 'Tính giá trị của đơn thức $-2x^2y$ tại $x = 3$, $y = -1$.', buoc: [
-      { lam: '$-2x^2y = -2 \\cdot 3^2 \\cdot (-1)$', vi: 'Thay $x = 3$, $y = -1$ vào đơn thức.' },
-      { lam: '$= -2 \\cdot 9 \\cdot (-1) = 18$', vi: 'Tính lũy thừa trước: $3^2 = 9$, rồi nhân. Âm nhân âm ra dương.' } ] }
+    { de: 'Thu gọn đơn thức $3x^2y \\cdot (-2)xy^3$, rồi cho biết hệ số, phần biến và bậc của nó.', canh: the({ don: ['3x^2y', '-2xy^3'], bac: true }), buoc: [
+      { canh: { t: 0.65 }, lam: '$3x^2y \\cdot (-2)xy^3 = [3 \\cdot (-2)] \\cdot (x^2 \\cdot x) \\cdot (y \\cdot y^3)$', vi: 'Nhóm các số với nhau, các lũy thừa của cùng một biến với nhau. Trên hình: thẻ số về một nhóm, mỗi chữ về một nhóm.' },
+      { canh: { t: 1 }, lam: '$= -6x^3y^4$', vi: '$3 \\cdot (-2) = -6$; $x^2 \\cdot x = x^3$; $y \\cdot y^3 = y^4$ (nhân thì cộng số mũ, tức là đếm thẻ chữ).' },
+      { canh: { t: 1 }, lam: 'Hệ số: $-6$. Phần biến: $x^3y^4$. Bậc: $3 + 4 = 7$.', vi: 'Bậc là tổng số mũ của các biến, cũng là số thẻ chữ: $7$ thẻ.' } ] },
+    { de: 'Cho hai đơn thức đồng dạng $A = 4xy^2$ và $B = -7xy^2$. Tính $A + B$ và $A - B$.', canh: gop(['4xy^2', '-7xy^2']), buoc: [
+      { canh: { t: 1 }, lam: '$A + B = 4xy^2 + (-7)xy^2 = [4 + (-7)]xy^2 = -3xy^2$', vi: 'Cộng hai hệ số, giữ nguyên phần biến $xy^2$. Trên hình: $4$ khối dương, $7$ khối âm (viền đỏ). Mỗi cặp một dương một âm triệt tiêu nhau, còn lại $3$ khối âm.' },
+      { lam: '$A - B = 4xy^2 - (-7)xy^2 = [4 - (-7)]xy^2 = 11xy^2$', vi: 'Trừ hai hệ số: $4 - (-7) = 4 + 7 = 11$. Bớt đi $7$ khối âm cũng như thêm $7$ khối dương.' } ] },
+    { de: 'Tính giá trị của đơn thức $-2x^2y$ tại $x = 3$, $y = -1$.', canh: the({ don: '-2x^2y', thay: { x: 3, y: -1 } }), buoc: [
+      { canh: { t: 0.6 }, lam: '$-2x^2y = -2 \\cdot 3^2 \\cdot (-1)$', vi: 'Thay $x = 3$, $y = -1$ vào đơn thức: mỗi thẻ chữ lật thành giá trị của nó.' },
+      { canh: { t: 1 }, lam: '$= -2 \\cdot 9 \\cdot (-1) = 18$', vi: 'Tính lũy thừa trước: $3^2 = 9$, rồi nhân. Âm nhân âm ra dương.' } ] }
   ],
   viDuMo: [
     { de: 'Tính $5x^3y - 8x^3y + x^3y$.', buoc: [
@@ -77,25 +126,25 @@ TOAN8.bai({
         loiThuongGap: [{ gt: 6, giaiThich: 'Biến $z$ có số mũ $1$, cũng phải cộng vào: $3 + 3 + 1 = 7$.' }] } ] }
   ],
   baiTap: [
-    { id: '1.1', muc: 1, de: 'Biểu thức nào sau đây **là đơn thức**?',
+    { id: '1.1', khongHinh: 'Câu nhận dạng: chỉ cần xem biểu thức có phép cộng, phép chia cho biến hay căn của biến không.', muc: 1, de: 'Biểu thức nào sau đây **là đơn thức**?',
       dapAn: { kieu: 'chon', gt: 1, luaChon: ['$x + 3y$', '$-\\frac{2}{5}x^2y$', '$\\frac{4}{x}$', '$2\\sqrt{x}$'] },
       goiY: ['Đơn thức chỉ là một số, một biến, hoặc **tích** của số và biến. Không có phép cộng, trừ, không chia cho biến, không có căn của biến.',
         'Xét từng biểu thức: có dấu $+$ không? có biến ở mẫu không? có căn không?'],
       loiGiai: ['$x + 3y$ có phép cộng; $\\frac{4}{x}$ có biến ở mẫu; $2\\sqrt{x}$ có căn của biến.',
         'Chỉ $-\\frac{2}{5}x^2y$ là tích của số và biến, nên nó là đơn thức.'] },
-    { id: '1.2', muc: 1, de: 'Đúng hay sai: Hai đơn thức $3x^2y$ và $-5xy^2$ là hai đơn thức đồng dạng.',
+    { id: '1.2', hinhGiai: hg(gop(['3x^2y', '-5xy^2'], { nhanCanh: true })), muc: 1, de: 'Đúng hay sai: Hai đơn thức $3x^2y$ và $-5xy^2$ là hai đơn thức đồng dạng.',
       dapAn: { kieu: 'dungSai', gt: false },
       goiY: ['Hai đơn thức đồng dạng phải có **phần biến giống nhau**.', 'So sánh $x^2y$ với $xy^2$: số mũ của $x$ có giống nhau không?'],
       loiGiai: ['Phần biến của hai đơn thức là $x^2y$ và $xy^2$, khác nhau (số mũ của $x$ là 2 và 1).',
         'Vậy hai đơn thức **không** đồng dạng. Khẳng định **sai**.'] },
-    { id: '1.3', muc: 1, de: 'Thu gọn đơn thức $2x^3y \\cdot 5xy^2$.',
+    { id: '1.3', hinhGiai: hg(the({ don: ['2x^3y', '5xy^2'] })), muc: 1, de: 'Thu gọn đơn thức $2x^3y \\cdot 5xy^2$.',
       dapAn: { kieu: 'bieuThuc', gt: '10x^4y^3', dang: 'khaiTrien' },
       goiY: ['Nhân các số với nhau, nhân các lũy thừa của cùng một biến với nhau.', '$x^3 \\cdot x = x^{3+1}$, $y \\cdot y^2 = y^{1+2}$.'],
       loiGiai: ['$2x^3y \\cdot 5xy^2 = (2 \\cdot 5)(x^3 \\cdot x)(y \\cdot y^2)$', '$= 10x^4y^3$'],
       loiThuongGap: [
         { gt: '10x^3y^2', giaiThich: 'Em chưa nhân các lũy thừa cùng biến: $x^3 \\cdot x = x^4$ và $y \\cdot y^2 = y^3$.' },
         { gt: '7x^4y^3', giaiThich: 'Khi **nhân** hai đơn thức thì các hệ số cũng **nhân**: $2 \\cdot 5 = 10$, không phải $2 + 5$.' }] },
-    { id: '1.4', muc: 1, de: 'Bậc của đơn thức $5x^2y^3$ là bao nhiêu?',
+    { id: '1.4', hinhGiai: hg(the({ don: '5x^2y^3', bac: true })), muc: 1, de: 'Bậc của đơn thức $5x^2y^3$ là bao nhiêu?',
       dapAn: { kieu: 'so', gt: 5 },
       goiY: ['Bậc của đơn thức là **tổng số mũ** của các biến. Hệ số không tính vào bậc.', 'Số mũ của $x$ là bao nhiêu? Của $y$ là bao nhiêu? Cộng lại.'],
       loiGiai: ['Số mũ của $x$ là $2$, số mũ của $y$ là $3$.', 'Bậc là $2 + 3 = 5$'],
@@ -103,29 +152,29 @@ TOAN8.bai({
         { gt: 3, giaiThich: 'Bậc là **tổng** số mũ của tất cả các biến: $2 + 3 = 5$, không phải số mũ lớn nhất.' },
         { gt: 6, giaiThich: 'Bậc là tổng $2 + 3$, không phải tích $2 \\cdot 3$.' },
         { gt: 10, giaiThich: 'Hệ số $5$ không tính vào bậc. Bậc chỉ là tổng số mũ của các biến: $2 + 3 = 5$.' }] },
-    { id: '1.5', muc: 1, de: 'Tính $4x^2 + 3x^2$.',
+    { id: '1.5', hinhGiai: hg(gop(['4x^2', '3x^2'], { nhanCanh: true })), muc: 1, de: 'Tính $4x^2 + 3x^2$.',
       dapAn: { kieu: 'bieuThuc', gt: '7x^2', dang: 'khaiTrien' },
       goiY: ['Hai đơn thức đồng dạng: cộng hệ số, **giữ nguyên phần biến**.', '$4x^2 + 3x^2 = (4 + 3)x^2$.'],
       loiGiai: ['$4x^2 + 3x^2 = (4 + 3)x^2$', '$= 7x^2$'],
       loiThuongGap: [
-        { gt: '7x^4', giaiThich: 'Em đã cộng cả số mũ! Khi **cộng** đơn thức đồng dạng chỉ cộng hệ số, giữ nguyên phần biến $x^2$: $4x^2 + 3x^2 = 7x^2$.' },
+        { gt: '7x^4', hinh: hg(Object.assign(gop(['4x^2', '3x^2'], { sai: MA_X4 }), { thamSo: { trangThai: 'muMu' } }), 0.8), giaiThich: 'Em đã cộng cả số mũ! Khi **cộng** đơn thức đồng dạng chỉ cộng hệ số, giữ nguyên phần biến $x^2$: $4x^2 + 3x^2 = 7x^2$.' },
         { gt: '12x^2', giaiThich: 'Đây là phép cộng: $4 + 3 = 7$, không phải $4 \\cdot 3$.' },
         { gt: '12x^4', giaiThich: 'Em đã làm như phép nhân. Đây là phép **cộng**: cộng hệ số $4 + 3 = 7$ và giữ nguyên $x^2$.' }] },
-    { id: '1.6', muc: 2, de: 'Cho $A = 3xy^3$ và $B = -5xy^3$. Tính $A - B$.',
+    { id: '1.6', hinhGiai: hg(gop(['3xy^3', { don: '-5xy^3', lat: true }])), muc: 2, de: 'Cho $A = 3xy^3$ và $B = -5xy^3$. Tính $A - B$.',
       dapAn: { kieu: 'bieuThuc', gt: '8xy^3', dang: 'khaiTrien' },
       goiY: ['Trừ hai đơn thức đồng dạng: trừ hệ số, giữ nguyên phần biến.', '$A - B = [3 - (-5)]xy^3$. Trừ một số âm là cộng số đối của nó.'],
       loiGiai: ['$A - B = 3xy^3 - (-5)xy^3 = [3 - (-5)]xy^3$', '$= 8xy^3$'],
       loiThuongGap: [
         { gt: '-2xy^3', giaiThich: 'Trừ một số âm: $3 - (-5) = 3 + 5 = 8$, không phải $-2$.' },
         { gt: '8x^2y^6', giaiThich: 'Em đã cộng cả số mũ. Giữ nguyên phần biến $xy^3$.' }] },
-    { id: '1.7', muc: 2, de: 'Tính giá trị của đơn thức $-3x^2y$ tại $x = -2$, $y = \\frac{1}{3}$.',
+    { id: '1.7', hinhGiai: hg(the({ don: '-3x^2y', thay: { x: -2, y: '1/3' } })), muc: 2, de: 'Tính giá trị của đơn thức $-3x^2y$ tại $x = -2$, $y = \\frac{1}{3}$.',
       dapAn: { kieu: 'so', gt: -4 },
       goiY: ['Thay giá trị của $x$, $y$ vào đơn thức. Tính lũy thừa trước rồi mới nhân.', '$(-2)^2 = (-2) \\cdot (-2) = ?$'],
       loiGiai: ['$-3x^2y = -3 \\cdot (-2)^2 \\cdot \\frac{1}{3}$', '$= -3 \\cdot 4 \\cdot \\frac{1}{3} = -4$'],
       loiThuongGap: [
         { gt: 4, giaiThich: '$(-2)^2 = (-2) \\cdot (-2) = 4$ (dương), không phải $-4$.' },
         { gt: 12, giaiThich: 'Chỉ có $x$ được bình phương: $-3x^2 = -3 \\cdot x^2$, không phải $(-3x)^2$.' }] },
-    { id: '1.8', muc: 2, de: 'Thu gọn đơn thức $-\\frac{1}{3}x^2y \\cdot 6xy^2z$, rồi cho biết hệ số và bậc của nó.',
+    { id: '1.8', hinhGiai: hg(the({ don: ['-1/3x^2y', '6xy^2z'], bac: true })), muc: 2, de: 'Thu gọn đơn thức $-\\frac{1}{3}x^2y \\cdot 6xy^2z$, rồi cho biết hệ số và bậc của nó.',
       dapAn: { kieu: 'nhieuO', o: [
         { kieu: 'bieuThuc', gt: '-2x^3y^3z', dang: 'khaiTrien', nhan: 'Đơn thức thu gọn',
           loiThuongGap: [{ gt: '-2x^2y^2z', giaiThich: 'Nhân lũy thừa cùng biến phải cộng số mũ: $x^2 \\cdot x = x^3$, $y \\cdot y^2 = y^3$.' }] },
@@ -135,7 +184,7 @@ TOAN8.bai({
       goiY: ['Thu gọn: nhân các số, nhân lũy thừa cùng biến. Bậc = tổng số mũ các biến.', '$-\\frac{1}{3} \\cdot 6 = -2$; $x^2 \\cdot x = x^3$; $y \\cdot y^2 = y^3$; còn $z$.'],
       loiGiai: ['$-\\frac{1}{3}x^2y \\cdot 6xy^2z = \\left(-\\frac{1}{3} \\cdot 6\\right)(x^2 \\cdot x)(y \\cdot y^2)z = -2x^3y^3z$',
         'Hệ số là $-2$; bậc là $3 + 3 + 1 = 7$.'] },
-    { id: '1.9', muc: 3, de: 'Mỗi phần quà gồm $x$ kg gạo (giá 15 nghìn đồng/kg) và $x$ hộp sữa (giá 8 nghìn đồng/hộp). Viết **đơn thức thu gọn** biểu thị tổng số tiền (nghìn đồng) của $y$ phần quà.',
+    { id: '1.9', hinhGiai: hg(gop([{ don: '15xy', nhan: '15xy (gạo)' }, { don: '8xy', nhan: '+ 8xy (sữa)' }])), muc: 3, de: 'Mỗi phần quà gồm $x$ kg gạo (giá 15 nghìn đồng/kg) và $x$ hộp sữa (giá 8 nghìn đồng/hộp). Viết **đơn thức thu gọn** biểu thị tổng số tiền (nghìn đồng) của $y$ phần quà.',
       dapAn: { kieu: 'bieuThuc', gt: '23xy', dang: 'khaiTrien' },
       goiY: ['Tiền gạo của $y$ phần quà là $15xy$; tiền sữa là $8xy$.', 'Cộng hai đơn thức đồng dạng $15xy + 8xy$.'],
       loiGiai: ['Tiền gạo: $15 \\cdot x \\cdot y = 15xy$; tiền sữa: $8 \\cdot x \\cdot y = 8xy$.', 'Tổng số tiền: $15xy + 8xy = 23xy$'],
@@ -167,3 +216,4 @@ TOAN8.bai({
       sua: 'Số mũ của $x$, $y$, $z$ là $3$, $1$, $2$ nên bậc là $3 + 1 + 2 = 6$.' }
   ]
 });
+})();

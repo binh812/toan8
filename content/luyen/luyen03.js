@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
+  // Hình lời giải theo chính số của đề: mảnh bày sẵn (da), đa thức bị trừ thì lật mọi mảnh (tru)
+  function hg(da, tru) { var o = { da: da }; if (tru) o.tru = tru; return { widget: 'canh', config: { ten: 'khoiGop', tuyChon: o, chiXem: true, t: 1 } }; }
+  function noi(a, b) { return a + (String(b).charAt(0) === '-' ? '' : '+') + b; }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
   // đa thức = [[hệ số, phần biến], …] theo cùng một thứ tự phần biến
   function cong(A, B, s) {
@@ -27,6 +30,7 @@
       var S = cong(A, B, 1), kq = cc.daThuc(S);
       var a = cc.daThuc(A), b = cc.daThuc(B);
       return {
+        hinhGiai: hg(noi(a, b)),
         de: 'Tính $(' + tx(cc, a) + ') + (' + tx(cc, b) + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Trước ngoặc có dấu cộng: bỏ ngoặc, **giữ nguyên** dấu các hạng tử.', 'Nhóm các hạng tử đồng dạng rồi cộng hệ số.'],
@@ -46,6 +50,7 @@
       var a = cc.daThuc(A), b = cc.daThuc(B), bDoi = cc.daThuc(B.map(function (h) { return [-h[0], h[1]]; }));
       var ten = r.chon([['P', 'Q'], ['A', 'B'], ['M', 'N']]);
       return {
+        hinhGiai: hg(a, b),
         de: 'Cho $' + ten[0] + ' = ' + tx(cc, a) + '$ và $' + ten[1] + ' = ' + tx(cc, b) + '$. Tính $' + ten[0] + ' - ' + ten[1] + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Viết $' + ten[0] + ' - ' + ten[1] + ' = (' + tx(cc, a) + ') - (' + tx(cc, b) + ')$.', 'Trước ngoặc có dấu trừ: bỏ ngoặc và **đổi dấu tất cả** các hạng tử trong ngoặc.'],
@@ -65,6 +70,7 @@
       var M = cong(K, A, cong1 ? -1 : 1), sai = cong(K, A, cong1 ? 1 : -1);
       var kq = cc.daThuc(M);
       return {
+        hinhGiai: cong1 ? hg(k, a) : hg(noi(k, a)),
         de: 'Tìm đa thức $M$, biết $M ' + (cong1 ? '+' : '-') + ' (' + tx(cc, a) + ') = ' + tx(cc, k) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: [cong1 ? 'Nếu $M + A = B$ thì $M = B - A$.' : 'Nếu $M - A = B$ thì $M = B + A$.',
@@ -85,8 +91,10 @@
       var s1 = cc.daThuc(p1), s2 = cc.daThuc(p2), s3 = cc.daThuc(p3);
       var bo = cc.daThuc([[1, 'x'], [a, 'y'], [b, 'y'], [d, 'z'], [-1, 'x'], [-c, 'y'], [-e, 'z']]);
       var ltg = [];
+      var hinhGiai = hg(noi(s1, s2), s3);
       if (d + e !== d - e) ltg.push({ gt: sai, giaiThich: 'Trước ngoặc thứ ba có dấu trừ: phải đổi dấu **tất cả** các hạng tử, kể cả $' + tx(cc, cc.daThuc([[e, 'z']])) + '$.' });
       return {
+        hinhGiai: hinhGiai,
         de: 'Rút gọn biểu thức $(' + tx(cc, s1) + ') + (' + tx(cc, s2) + ') - (' + tx(cc, s3) + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Bỏ ngoặc: trước ngoặc dấu $+$ giữ nguyên dấu; trước ngoặc dấu $-$ đổi dấu mọi hạng tử.', 'Nhóm các hạng tử chứa $x$, chứa $y$, chứa $z$ rồi thu gọn.'],

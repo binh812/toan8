@@ -3,6 +3,12 @@
   'use strict';
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
+  // Hình lời giải theo chính số của đề: bảng nhân, mỗi ô là một tích
+  function hg(hang, cot) {
+    // Luôn vẽ thành bảng: số của đề có thể làm hình chữ nhật quá dẹt
+    var c = { ten: 'hcnNhan', tuyChon: { hang: hang, cot: cot, bang: true }, chiXem: true, t: 1, ghiChu: 'Vẽ thành bảng nhân, ô không theo tỉ lệ.' };
+    return { widget: 'canh', config: c };
+  }
   function nhi(cc, p, a) { return cc.daThuc([[p, 'x'], [a, '']]); } // px + a
 
   TOAN8.luyen(4, [
@@ -19,6 +25,7 @@
       var sai = ba ? cc.daThuc([[k * a, 'x^' + (m + 2)], [b, 'x'], [c, '']]) : cc.daThuc([[k * a, 'x^' + (m + 1)], [b, '']]);
       var donTex = tx(cc, don);
       return {
+        hinhGiai: hg(don, trong),
         de: 'Tính $' + (k < 0 ? '(' + donTex + ')' : donTex) + '(' + tx(cc, trong) + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Nhân đơn thức với **từng** hạng tử của đa thức rồi cộng các tích.', 'Nhân lũy thừa cùng cơ số thì cộng số mũ; chú ý dấu khi nhân với số âm.'],
@@ -36,6 +43,7 @@
       var kq = cc.daThuc([[1, 'x^2'], [a + b, 'x'], [a * b, '']]);
       var A = nhi(cc, 1, a), B = nhi(cc, 1, b);
       return {
+        hinhGiai: hg(A, B),
         de: 'Tính $(' + cc.tex(A) + ')(' + cc.tex(B) + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Nhân **mỗi** hạng tử của đa thức này với **từng** hạng tử của đa thức kia: được $4$ tích.', '$x \\cdot x$, $x \\cdot ' + ngoac(b) + '$, $' + ngoac(a) + ' \\cdot x$, $' + ngoac(a) + ' \\cdot ' + ngoac(b) + '$. Rồi thu gọn hai hạng tử chứa $x$.'],
@@ -54,6 +62,7 @@
         var A = cc.daThuc([[1, 'x'], [a, 'y']]), B = cc.daThuc([[1, 'x'], [b, 'y']]);
         var kq = cc.daThuc([[1, 'x^2'], [a + b, 'xy'], [a * b, 'y^2']]);
         return {
+          hinhGiai: hg(A, B),
           de: 'Tính $(' + cc.tex(A) + ')(' + cc.tex(B) + ')$.',
           dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
           goiY: ['Nhân mỗi hạng tử của ngoặc đầu với từng hạng tử của ngoặc sau: $4$ tích.', 'Hai tích chứa $xy$ là hạng tử đồng dạng, nhớ gộp lại.'],
@@ -69,6 +78,7 @@
       var ltg = [{ gt: cc.daThuc([[p * q, 'x^2'], [c * d, '']]), giaiThich: 'Còn thiếu hai tích ở giữa: $' + cc.tex(p + 'x') + ' \\cdot ' + ngoac(d) + '$ và $' + ngoac(c) + ' \\cdot ' + cc.tex(q === 1 ? 'x' : q + 'x') + '$.' }];
       if (p * d - q * c !== p * d + q * c) ltg.push({ gt: cc.daThuc([[p * q, 'x^2'], [p * d - q * c, 'x'], [c * d, '']]), giaiThich: 'Sai dấu ở tích $' + ngoac(c) + ' \\cdot ' + cc.tex(q === 1 ? 'x' : q + 'x') + ' = ' + tx(cc, cc.daThuc([[c * q, 'x']])) + '$.' });
       return {
+        hinhGiai: hg(A2, B2),
         de: 'Tính $(' + cc.tex(A2) + ')(' + cc.tex(B2) + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq2, dang: 'khaiTrien' },
         goiY: ['Nhân mỗi hạng tử của ngoặc đầu với từng hạng tử của ngoặc sau.', '$' + cc.tex(p + 'x') + ' \\cdot ' + cc.tex(q === 1 ? 'x' : q + 'x') + ' = ' + cc.tex(p * q + 'x^2') + '$; còn ba tích nữa.'],
@@ -87,6 +97,7 @@
       if (a + b !== kq) ltg.push({ gt: a + b, giaiThich: 'Tích $' + ngoac(a) + ' \\cdot ' + ngoac(b) + ' = ' + kq + '$ (nhân hai số hạng tự do), không cộng.' });
       if (-kq !== kq && -kq !== a + b) ltg.push({ gt: -kq, giaiThich: 'Kiểm tra lại dấu: $' + ngoac(a) + ' \\cdot ' + ngoac(b) + ' = ' + kq + '$.' });
       return {
+        hinhGiai: hg(nhi(cc, 1, a), nhi(cc, 1, b)),
         de: 'Chứng tỏ giá trị của biểu thức $' + de + '$ không phụ thuộc vào $x$. Giá trị đó bằng bao nhiêu?',
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Nhân phá ngoặc từng phần rồi thu gọn: các hạng tử chứa $x$ sẽ triệt tiêu.', 'Trước $x(' + cc.tex(nhi(cc, 1, c)) + ')$ có dấu trừ: nhân xong phải đổi dấu cả hai hạng tử.'],
@@ -105,6 +116,7 @@
       var sai = p * x * x + k1 * x + k0; // quên trừ p·x^2
       var thay = (k1 === 1 ? '' : k1 === -1 ? '-' : k1 + ' \\cdot ') + ngoac(x) + (k0 ? (k0 > 0 ? ' + ' : ' - ') + Math.abs(k0) : '');
       return {
+        hinhGiai: hg(nhi(cc, p, a), nhi(cc, 1, b)),
         de: 'Rút gọn rồi tính giá trị của biểu thức $(' + cc.tex(nhi(cc, p, a)) + ')(' + cc.tex(nhi(cc, 1, b)) + ') - ' + p + 'x^2$ tại $x = ' + x + '$.',
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Nhân hai đa thức trước, rồi trừ $' + p + 'x^2$: biểu thức thu gọn chỉ còn bậc nhất.', 'Thay $x = ' + x + '$ vào dạng thu gọn.'],

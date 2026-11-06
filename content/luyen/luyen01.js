@@ -14,6 +14,8 @@
   function ngoac(c) { return c < 0 ? '(' + c + ')' : String(c); }
   // lũy thừa trong lời giải: x^1 viết gọn là x
   function lt(b, e) { return e === 1 ? b : b + '^{' + e + '}'; }
+  // Hình lời giải theo chính số của đề: thẻ thừa số (thuaSo) hoặc mảnh, khối (khoiGop)
+  function hg(ten, tuyChon) { return { widget: 'canh', config: { ten: ten, tuyChon: tuyChon, chiXem: true, t: 1 } }; }
 
   TOAN8.luyen(1, [
     { ten: 'Thu gọn tích hai đơn thức', muc: 1, sinh: function (r, cc) {
@@ -26,6 +28,7 @@
       if (a + b !== a * b && a + b !== 0) ltg.push({ gt: don(cc, a + b, p + m, q + n), giaiThich: 'Khi **nhân** hai đơn thức thì hệ số cũng **nhân**: $' + ngoac(a) + ' \\cdot ' + ngoac(b) + ' = ' + a * b + '$, không cộng.' });
       if (p * m !== p + m) ltg.push({ gt: don(cc, a * b, p * m, q + n), giaiThich: 'Nhân hai lũy thừa cùng cơ số thì **cộng** số mũ: $' + lt('x', p) + ' \\cdot ' + lt('x', m) + ' = x^{' + (p + m) + '}$, không nhân số mũ.' });
       return {
+        hinhGiai: hg('thuaSo', { don: [A, B] }),
         de: 'Thu gọn đơn thức $' + tx(cc, A) + ' \\cdot ' + (b < 0 ? '(' + tx(cc, B) + ')' : tx(cc, B)) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Nhân các số với nhau, nhân các lũy thừa của cùng một biến với nhau.',
@@ -48,6 +51,7 @@
       if (Math.abs(c) + bac !== bac && ltg.length < 2 && Math.abs(c) + bac !== lon) ltg.push({ gt: Math.abs(c) + bac, giaiThich: 'Hệ số không tính vào bậc. Bậc chỉ là tổng số mũ của các biến.' });
       var tex = tx(cc, cc.daThuc([[c, phan]]));
       return {
+        hinhGiai: hg('thuaSo', { don: cc.daThuc([[c, phan]]), bac: true }),
         de: 'Tìm bậc của đơn thức $' + tex + '$.',
         dapAn: { kieu: 'so', gt: bac },
         goiY: ['Bậc của đơn thức là **tổng số mũ** của các biến; hệ số không tính.', 'Viết rõ số mũ của từng biến (biến không ghi số mũ thì số mũ là $1$) rồi cộng lại.'],
@@ -72,6 +76,7 @@
         if (a + b === kq) ltg = [];
         ltg.push({ gt: don(cc, kq, 2 * p, 2 * q), giaiThich: 'Cộng, trừ đơn thức đồng dạng chỉ làm với hệ số, **giữ nguyên** phần biến $' + tx(cc, ph) + '$.' });
         return {
+          hinhGiai: hg('khoiGop', { nhom: [A, { don: B, lat: true }] }),
           de: 'Cho $A = ' + tx(cc, A) + '$ và $B = ' + tx(cc, B) + '$. Tính $A - B$.',
           dapAn: { kieu: 'bieuThuc', gt: K, dang: 'khaiTrien' },
           goiY: ['Hai đơn thức đồng dạng: trừ hệ số, giữ nguyên phần biến.', '$A - B = [' + a + ' - (' + b + ')]' + tx(cc, ph) + '$. Trừ một số âm là cộng số đối của nó.'],
@@ -84,6 +89,7 @@
       if (tong === 0) { c += c > 0 ? 1 : -1; tong = a + b + c; }
       var bt = cc.daThuc([[a, ph], [b, ph], [c, ph]]), K2 = don(cc, tong, p, q);
       return {
+        hinhGiai: hg('khoiGop', { da: bt }),
         de: 'Tính $' + tx(cc, bt) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: K2, dang: 'khaiTrien' },
         goiY: ['Ba đơn thức đồng dạng (cùng phần biến $' + tx(cc, ph) + '$): cộng các hệ số, giữ nguyên phần biến.', 'Hạng tử nào chỉ ghi $' + tx(cc, ph) + '$ hay $-' + tx(cc, ph) + '$ thì hệ số là $1$ hay $-1$. Nhớ mang theo dấu.'],
@@ -105,6 +111,7 @@
       var deA = dauA + '\\frac{' + Math.abs(a) + '}{' + mau + '}' + tx(cc, phanA);
       var deB = tx(cc, cc.daThuc([[b, phanB]]));
       return {
+        hinhGiai: hg('thuaSo', { don: [dauA + Math.abs(a) + '/' + mau + phanA, cc.daThuc([[b, phanB]])], bac: true }),
         de: 'Thu gọn đơn thức $' + deA + ' \\cdot ' + (b < 0 ? '(' + deB + ')' : deB) + '$, rồi cho biết hệ số và bậc của nó.',
         dapAn: { kieu: 'nhieuO', o: [
           { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien', nhan: 'Đơn thức thu gọn',
@@ -130,6 +137,7 @@
       var sai = Math.pow(c * x, p) * Math.pow(y, q);
       if (Math.abs(c) !== 1 && sai !== kq && (!ltg.length || sai !== ltg[0].gt)) ltg.push({ gt: sai, giaiThich: 'Chỉ có $x$ được nâng lên lũy thừa: $' + tex + '$ là $' + c + ' \\cdot x^' + p + '$, không phải $(' + c + 'x)^' + p + '$.' });
       return {
+        hinhGiai: hg('thuaSo', { don: don(cc, c, p, q), thay: { x: x, y: y } }),
         de: 'Tính giá trị của đơn thức $' + tex + '$ tại $x = ' + x + '$, $y = ' + y + '$.',
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Thay giá trị của $x$, $y$ vào đơn thức. Tính lũy thừa trước rồi mới nhân.', x < 0 ? 'Số âm thì đặt trong ngoặc: $(' + x + ')^' + p + ' = ' + Math.pow(x, p) + '$.' : y < 0 && q > 1 ? 'Số âm thì đặt trong ngoặc: $(' + y + ')^' + q + ' = ' + Math.pow(y, q) + '$.' : 'Tính lũy thừa trước: $' + x + '^' + p + ' = ' + Math.pow(x, p) + '$, rồi mới nhân (số âm thì đặt trong ngoặc).'],

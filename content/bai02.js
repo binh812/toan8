@@ -1,6 +1,59 @@
 // Bài 2. Đa thức – SGK Toán 8 KNTT Tập 1, trang 11–14.
+(function () {
+  'use strict';
+  // Hình cho "Nhìn là hiểu": mỗi hạng tử là một nhóm mảnh; mảnh viền đỏ đứt là mảnh âm
+  function gop(da, them) { return { ten: 'khoiGop', tuyChon: Object.assign(typeof da === 'string' ? { da: da } : { nhom: da }, them || {}) }; }
+  function hg(c, t) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: t == null ? 1 : t }, c) }; }
+  var SAU_XEP = 0.8;
+
 TOAN8.bai({
   id: 2, ten: 'Đa thức', sgk: { tap: 1, trang: 11 },
+  nhin: {
+    tieuDe: 'Thu gọn là xếp các mảnh cùng loại về một chỗ', loai: 'minhHoa',
+    luuY: 'Hình vẽ với một giá trị dương của $x$, $y$ (kéo thanh để đổi). Với mọi số, gộp được là nhờ tính chất giao hoán, kết hợp của phép cộng và tính chất phân phối: $-3xy + 5xy = (-3 + 5)xy$.',
+    canh: Object.assign(gop('2x^2-3xy+x^2+5xy', { nhanCanh: true }), { moTa: 'Đa thức 2x bình phương trừ 3xy cộng x bình phương cộng 5xy, mỗi hạng tử là một nhóm mảnh. Mảnh cùng loại được xếp về một hàng, mảnh dương và mảnh âm triệt tiêu nhau.' }),
+    buoc: [
+      { t: 0, chu: 'Mỗi hạng tử là một nhóm mảnh. Mảnh viền đỏ đứt là mảnh âm: $-3xy$ là $3$ mảnh $xy$ âm.' },
+      { t: 0.1, chu: 'Xếp các mảnh cùng loại (hạng tử đồng dạng) về một hàng. Mảnh âm xếp ngay dưới mảnh dương.' },
+      { t: 0.64, chu: 'Một mảnh dương và một mảnh âm cùng loại triệt tiêu nhau.' },
+      { t: 0.88, chu: 'Còn lại $3$ mảnh $x^2$ và $2$ mảnh $xy$. Mảnh $x^2$ và mảnh $xy$ khác hình nên không gộp.' }
+    ],
+    ketLuan: 'Thu gọn đa thức: nhóm các hạng tử đồng dạng rồi cộng hệ số. $$2x^2 - 3xy + x^2 + 5xy = 3x^2 + 2xy$$',
+    dung: {
+      tieuDe: 'Xếp mảnh rồi đếm', tuBai: '2.4',
+      canh: Object.assign(gop('3x^2-2xy+x^2+5xy-y^2', { nhanCanh: true }), { moTa: 'Đa thức 3x bình phương trừ 2xy cộng x bình phương cộng 5xy trừ y bình phương, mỗi hạng tử là một nhóm mảnh.' }),
+      moiThu: 'Đếm trên hình: mấy mảnh $x^2$, mấy mảnh $xy$ dương, mấy mảnh âm? Nếu gõ sai, hình sẽ xếp mảnh để em thấy.',
+      phanUng: [
+        { gt: '4x^4+3x^2y^2-y^2', t: SAU_XEP, loi: 'Xếp mảnh không làm mảnh to ra: $4$ mảnh $x^2$ vẫn là $4x^2$. Chỉ cộng hệ số, giữ nguyên phần biến.' },
+        { gt: '4x^2-7xy-y^2', t: SAU_XEP, loi: 'Hàng $xy$ có $5$ mảnh dương và $2$ mảnh âm. Hai cặp triệt tiêu, còn lại $3$ mảnh **dương**.' },
+        { gt: '4x^2-3xy-y^2', t: SAU_XEP, loi: 'Hàng $xy$ có $5$ mảnh dương và chỉ $2$ mảnh âm, nên phần còn lại là mảnh dương: $-2xy + 5xy = 3xy$.' },
+        { gt: '4x^2+3xy+y^2', t: SAU_XEP, loi: 'Mảnh $y^2$ viền đỏ là mảnh âm: hạng tử là $-y^2$.' },
+        { gt: '4x^2+3xy', t: SAU_XEP, loi: 'Còn mảnh $y^2$ ở hàng cuối, nó không gộp với ai nhưng vẫn phải viết vào.' }
+      ],
+      saiT: SAU_XEP,
+      dungChu: '$4$ mảnh $x^2$; hàng $xy$ còn $3$ mảnh dương; một mảnh $y^2$ âm: $4x^2 + 3xy - y^2$.',
+      saiChu: 'Đếm từng hàng trên hình: mảnh dương cộng, mảnh âm trừ.'
+    },
+    suyRa: {
+      tieuDe: 'Chưa gọn, tìm bậc, đếm hạng tử: vẫn là xếp mảnh',
+      baDe: [
+        { tuBai: '2.3', canh: gop('x^2+2xy-3x^2+y', { nhanCanh: true }), tenNut: 'Xếp mảnh',
+          dungChu: '$x^2$ và $-3x^2$ cùng loại mảnh, còn gộp được thành $-2x^2$. Đa thức chưa thu gọn, nên khẳng định **sai**.',
+          saiChu: 'Bấm "Xếp mảnh": có hàng nào gồm hai nhóm mảnh cùng loại không?' },
+        { tuBai: '2.6', canh: gop('2x^5-x^2y+4xy-2x^5+3', { bac: true }), tenNut: 'Xếp mảnh', saiT: SAU_XEP,
+          phanUng: [{ gt: 5, t: SAU_XEP, loi: 'Bấm "Xếp mảnh": hai thẻ $x^5$ dương và hai thẻ $x^5$ âm triệt tiêu hết. Không còn hạng tử bậc $5$.' },
+            { gt: 6, t: SAU_XEP, loi: 'Bậc của đa thức là bậc **lớn nhất** của các hạng tử, không cộng các bậc lại.' }],
+          dungChu: 'Thẻ $x^5$ triệt tiêu hết. Còn $-x^2y$ (bậc $3$), $4xy$ (bậc $2$), $3$ (bậc $0$). Bậc của $H$ là $3$.',
+          saiChu: 'Thu gọn trước: xếp mảnh rồi xem loại nào còn lại.' },
+        { tuBai: '2.10', canh: gop(['x^2', 'xy', 'y^2', 'x', 'y', '1'], { gop: false, bac: true }), tenNut: 'Ghi bậc',
+          phanUng: [{ gt: 3, loi: 'Ngoài ba mảnh bậc $2$ ($x^2$, $xy$, $y^2$), đa thức bậc hai vẫn có thể có mảnh bậc $1$ ($x$, $y$) và ô số $1$ (bậc $0$).' },
+            { gt: 5, loi: 'Gần đúng rồi. Còn ô vuông nhỏ: số $1$ (bậc $0$).' }],
+          dungChu: 'Mỗi loại mảnh có bậc không quá $2$ góp một hạng tử: $x^2$, $xy$, $y^2$, $x$, $y$, $1$. Có $6$ loại.',
+          saiChu: 'Liệt kê mọi loại mảnh có bậc không quá $2$, kể cả bậc $1$ và bậc $0$.' }
+      ],
+      cachNhan: 'Gặp đa thức chưa gọn: xếp mảnh cùng loại về một hàng, mảnh dương và mảnh âm cùng loại triệt tiêu nhau. Bậc của đa thức là bậc của loại mảnh cao nhất còn lại.'
+    }
+  },
   khamPha: {
     nhiemVu: 'Hình chữ nhật dưới đây có chiều rộng $x$ và được ghép từ **5 mảnh**. Diện tích cả hình là tổng diện tích các mảnh: $S = x^2 + xy + x^2 + xy + xy$. Em kéo thanh trượt rồi quan sát: những mảnh nào **cùng nhãn, cùng màu** (cùng phần biến)?',
     widget: 'dienTich',
@@ -42,12 +95,12 @@ TOAN8.bai({
     { loai: 'chuY', noiDung: '**Hay nhầm 1:** bậc của đa thức **không phải** tổng bậc các hạng tử. Với $x^2y + 3x - 1$: bậc là $3$ (lớn nhất), không phải $3 + 1 + 0 = 4$.\n\n**Hay nhầm 2:** phải **thu gọn trước** rồi mới tìm bậc. Ví dụ $x^4 + 2xy - x^4 = 2xy$ có bậc $2$, không phải $4$.\n\nMuốn tính giá trị của đa thức, nên thu gọn trước rồi mới thay số cho nhanh.' }
   ],
   viDu: [
-    { de: 'Thu gọn đa thức $M = 2x^2y - 3xy + 5xy^2 + 4x^2y - xy^2 + 7$.', buoc: [
-      { lam: '$M = (2x^2y + 4x^2y) + (5xy^2 - xy^2) - 3xy + 7$', vi: 'Đổi chỗ và nhóm các hạng tử đồng dạng (cùng phần biến).' },
-      { lam: '$= 6x^2y + 4xy^2 - 3xy + 7$', vi: 'Cộng hệ số trong mỗi nhóm: $2 + 4 = 6$; $5 - 1 = 4$. Phần biến giữ nguyên.' } ] },
-    { de: 'Cho $P = 2x^3 + xy - 2x^3 + 3x^2y - 5$. a) Tìm bậc của $P$. b) Tính giá trị của $P$ tại $x = 2$, $y = -1$.', buoc: [
-      { lam: '$P = (2x^3 - 2x^3) + 3x^2y + xy - 5 = 3x^2y + xy - 5$', vi: 'Thu gọn trước: $2x^3 - 2x^3 = 0$.' },
-      { lam: 'Các hạng tử $3x^2y$; $xy$; $-5$ có bậc $3$; $2$; $0$. Vậy bậc của $P$ là $3$.', vi: 'Lấy bậc **lớn nhất**, không cộng các bậc.' },
+    { de: 'Thu gọn đa thức $M = 2x^2y - 3xy + 5xy^2 + 4x^2y - xy^2 + 7$.', canh: gop('2x^2y-3xy+5xy^2+4x^2y-xy^2+7'), buoc: [
+      { canh: { t: 0.62 }, lam: '$M = (2x^2y + 4x^2y) + (5xy^2 - xy^2) - 3xy + 7$', vi: 'Đổi chỗ và nhóm các hạng tử đồng dạng (cùng phần biến). Trên hình: mỗi loại khối, mảnh về một hàng.' },
+      { canh: { t: 1 }, lam: '$= 6x^2y + 4xy^2 - 3xy + 7$', vi: 'Cộng hệ số trong mỗi nhóm: $2 + 4 = 6$; $5 - 1 = 4$. Phần biến giữ nguyên.' } ] },
+    { de: 'Cho $P = 2x^3 + xy - 2x^3 + 3x^2y - 5$. a) Tìm bậc của $P$. b) Tính giá trị của $P$ tại $x = 2$, $y = -1$.', canh: gop('2x^3+xy-2x^3+3x^2y-5', { bac: true }), buoc: [
+      { canh: { t: 1 }, lam: '$P = (2x^3 - 2x^3) + 3x^2y + xy - 5 = 3x^2y + xy - 5$', vi: 'Thu gọn trước: $2x^3 - 2x^3 = 0$. Trên hình: hai khối $x^3$ dương và hai khối âm triệt tiêu hết.' },
+      { canh: { t: 1 }, lam: 'Các hạng tử $3x^2y$; $xy$; $-5$ có bậc $3$; $2$; $0$. Vậy bậc của $P$ là $3$.', vi: 'Lấy bậc **lớn nhất**, không cộng các bậc.' },
       { lam: '$P = 3 \\cdot 2^2 \\cdot (-1) + 2 \\cdot (-1) - 5 = -12 - 2 - 5 = -19$', vi: 'Thay $x = 2$, $y = -1$ vào dạng thu gọn.' } ] }
   ],
   viDuMo: [
@@ -61,56 +114,56 @@ TOAN8.bai({
         loiThuongGap: [{ gt: 5, giaiThich: 'Bậc của đa thức là bậc **lớn nhất** của các hạng tử ($3$), không phải tổng $3 + 2 + 0$.' }] } ] }
   ],
   baiTap: [
-    { id: '2.1', muc: 1, de: 'Biểu thức nào sau đây **không** là đa thức?',
+    { id: '2.1', khongHinh: 'Câu nhận dạng: chỉ cần tìm biểu thức có biến ở mẫu.', muc: 1, de: 'Biểu thức nào sau đây **không** là đa thức?',
       dapAn: { kieu: 'chon', gt: 2, luaChon: ['$3x^2 - 2xy + 1$', '$\\frac{x}{3} + y$', '$x + \\frac{2}{y}$', '$2025$'] },
       goiY: ['Đa thức là tổng các đơn thức. Đơn thức không chia cho biến.', 'Biểu thức nào có **biến ở mẫu**? ($\\frac{x}{3} = \\frac{1}{3}x$ vẫn là đơn thức.)'],
       loiGiai: ['$\\frac{x}{3} = \\frac{1}{3}x$ là đơn thức; $2025$ là một số nên cũng là đa thức.', '$\\frac{2}{y}$ có biến ở mẫu nên không là đơn thức. Vậy $x + \\frac{2}{y}$ **không** là đa thức.'] },
-    { id: '2.2', muc: 1, de: 'Đa thức $A = 5x^2y - xy + 3x - 8$ có bao nhiêu hạng tử?',
+    { id: '2.2', hinhGiai: hg(gop('5x^2y-xy+3x-8', { gop: false, demNhom: true })), muc: 1, de: 'Đa thức $A = 5x^2y - xy + 3x - 8$ có bao nhiêu hạng tử?',
       dapAn: { kieu: 'so', gt: 4 },
       goiY: ['Mỗi đơn thức trong tổng là một hạng tử, kể cả số.', 'Viết $A = 5x^2y + (-xy) + 3x + (-8)$ rồi đếm.'],
       loiGiai: ['$A = 5x^2y + (-xy) + 3x + (-8)$', 'Các hạng tử: $5x^2y$; $-xy$; $3x$; $-8$. Số hạng tử $= 4$'],
       loiThuongGap: [{ gt: 3, giaiThich: 'Số $-8$ cũng là một hạng tử (hạng tử bậc 0). Có 4 hạng tử.' }] },
-    { id: '2.3', muc: 1, de: 'Đúng hay sai: Đa thức $x^2 + 2xy - 3x^2 + y$ là đa thức thu gọn.',
+    { id: '2.3', hinhGiai: hg(gop('x^2+2xy-3x^2+y', { nhanCanh: true })), muc: 1, de: 'Đúng hay sai: Đa thức $x^2 + 2xy - 3x^2 + y$ là đa thức thu gọn.',
       dapAn: { kieu: 'dungSai', gt: false },
       goiY: ['Đa thức thu gọn không có hai hạng tử nào đồng dạng.', 'Tìm xem có hai hạng tử nào cùng phần biến không.'],
       loiGiai: ['Hai hạng tử $x^2$ và $-3x^2$ đồng dạng (cùng phần biến $x^2$).', 'Vậy đa thức chưa thu gọn. Khẳng định **sai**.'] },
-    { id: '2.4', muc: 1, de: 'Thu gọn đa thức $3x^2 - 2xy + x^2 + 5xy - y^2$.',
+    { id: '2.4', hinhGiai: hg(gop('3x^2-2xy+x^2+5xy-y^2', { nhanCanh: true })), muc: 1, de: 'Thu gọn đa thức $3x^2 - 2xy + x^2 + 5xy - y^2$.',
       dapAn: { kieu: 'bieuThuc', gt: '4x^2+3xy-y^2', dang: 'khaiTrien' },
       goiY: ['Nhóm các hạng tử đồng dạng: nhóm $x^2$, nhóm $xy$.', '$(3x^2 + x^2) + (-2xy + 5xy) - y^2$.'],
       loiGiai: ['$= (3x^2 + x^2) + (-2xy + 5xy) - y^2$', '$= 4x^2 + 3xy - y^2$'],
       loiThuongGap: [
         { gt: '4x^4+3x^2y^2-y^2', giaiThich: 'Em đã cộng cả số mũ. Khi cộng hạng tử đồng dạng chỉ cộng hệ số, giữ nguyên phần biến.' },
         { gt: '4x^2-7xy-y^2', giaiThich: 'Chú ý dấu: $-2xy + 5xy = (-2 + 5)xy = 3xy$.' }] },
-    { id: '2.5', muc: 2, de: 'Tìm bậc của đa thức $x^3y^2 - 4xy + 2x^2 + 1$.',
+    { id: '2.5', hinhGiai: hg(gop('x^3y^2-4xy+2x^2+1', { gop: false, bac: true })), muc: 2, de: 'Tìm bậc của đa thức $x^3y^2 - 4xy + 2x^2 + 1$.',
       dapAn: { kieu: 'so', gt: 5 },
       goiY: ['Đa thức đã thu gọn. Tìm bậc của từng hạng tử, rồi lấy bậc **lớn nhất**.', 'Bậc của $x^3y^2$ là $3 + 2$.'],
       loiGiai: ['Các hạng tử $x^3y^2$; $-4xy$; $2x^2$; $1$ có bậc lần lượt là $5$; $2$; $2$; $0$.', 'Bậc của đa thức là $5$'],
       loiThuongGap: [
         { gt: 9, giaiThich: 'Em đã cộng bậc các hạng tử ($5 + 2 + 2 + 0$). Bậc của đa thức là bậc **lớn nhất** của các hạng tử: $5$.' },
         { gt: 3, giaiThich: 'Bậc của hạng tử $x^3y^2$ là $3 + 2 = 5$ (cộng số mũ của mọi biến), không phải $3$.' }] },
-    { id: '2.6', muc: 2, de: 'Tìm bậc của đa thức $H = 2x^5 - x^2y + 4xy - 2x^5 + 3$.',
+    { id: '2.6', hinhGiai: hg(gop('2x^5-x^2y+4xy-2x^5+3', { bac: true })), muc: 2, de: 'Tìm bậc của đa thức $H = 2x^5 - x^2y + 4xy - 2x^5 + 3$.',
       dapAn: { kieu: 'so', gt: 3 },
       goiY: ['Phải **thu gọn trước** rồi mới tìm bậc.', '$2x^5 - 2x^5 = 0$. Còn lại những hạng tử nào?'],
       loiGiai: ['$H = (2x^5 - 2x^5) - x^2y + 4xy + 3 = -x^2y + 4xy + 3$', 'Các hạng tử có bậc $3$; $2$; $0$. Bậc của $H$ là $3$'],
       loiThuongGap: [{ gt: 5, giaiThich: 'Phải thu gọn trước! $2x^5 - 2x^5 = 0$ nên hạng tử bậc 5 không còn. Bậc của $H$ là $3$.' }] },
-    { id: '2.7', muc: 2, de: 'Tính giá trị của đa thức $P = x^2y - 2xy + y^2$ tại $x = -1$, $y = 2$.',
+    { id: '2.7', khongHinh: 'Câu thay số vào từng hạng tử; cách lật thẻ chữ thành số đã có hình ở bài 1 (ví dụ 3 và bài 1.7).', muc: 2, de: 'Tính giá trị của đa thức $P = x^2y - 2xy + y^2$ tại $x = -1$, $y = 2$.',
       dapAn: { kieu: 'so', gt: 10 },
       goiY: ['Thay $x = -1$, $y = 2$ vào từng hạng tử. Tính lũy thừa trước.', '$x^2y = (-1)^2 \\cdot 2$; $-2xy = -2 \\cdot (-1) \\cdot 2$; $y^2 = 2^2$.'],
       loiGiai: ['$P = (-1)^2 \\cdot 2 - 2 \\cdot (-1) \\cdot 2 + 2^2$', '$= 2 + 4 + 4 = 10$'],
       loiThuongGap: [
         { gt: 6, giaiThich: '$(-1)^2 = (-1) \\cdot (-1) = 1$, không phải $-1$.' },
         { gt: 2, giaiThich: 'Chú ý dấu: $-2xy = -2 \\cdot (-1) \\cdot 2 = +4$ (âm nhân âm ra dương).' }] },
-    { id: '2.8', muc: 2, de: 'Thu gọn rồi tính giá trị của $M = \\frac{1}{2}x^2y + 3xy - \\frac{5}{2}x^2y + xy$ tại $x = 3$, $y = -1$.',
+    { id: '2.8', hinhGiai: hg(gop('1/2x^2y+3xy-5/2x^2y+xy')), muc: 2, de: 'Thu gọn rồi tính giá trị của $M = \\frac{1}{2}x^2y + 3xy - \\frac{5}{2}x^2y + xy$ tại $x = 3$, $y = -1$.',
       dapAn: { kieu: 'so', gt: 6 },
       goiY: ['Thu gọn: $\\frac{1}{2} - \\frac{5}{2} = -2$; $3 + 1 = 4$.', 'Dạng thu gọn $M = -2x^2y + 4xy$. Thay $x = 3$, $y = -1$.'],
       loiGiai: ['$M = \\left(\\frac{1}{2} - \\frac{5}{2}\\right)x^2y + (3 + 1)xy = -2x^2y + 4xy$', '$M = -2 \\cdot 9 \\cdot (-1) + 4 \\cdot 3 \\cdot (-1) = 18 - 12 = 6$'],
       loiThuongGap: [{ gt: -30, giaiThich: 'Chú ý dấu: $-2 \\cdot 9 \\cdot (-1) = +18$ (âm nhân âm ra dương).' }] },
-    { id: '2.9', muc: 3, de: 'Mỗi quyển sách giá $x$ nghìn đồng, mỗi cây bút giá $y$ nghìn đồng. Lan mua 5 quyển sách và 3 hộp bút (mỗi hộp có 10 cây). Minh mua 2 quyển sách và 4 cây bút. Viết đa thức thu gọn biểu thị **tổng** số tiền cả hai bạn đã trả.',
+    { id: '2.9', khongHinh: 'Có tới 34 mảnh y (30 cây bút của Lan), vẽ từng mảnh không rõ hơn; cách gộp giống bài 2.4.', muc: 3, de: 'Mỗi quyển sách giá $x$ nghìn đồng, mỗi cây bút giá $y$ nghìn đồng. Lan mua 5 quyển sách và 3 hộp bút (mỗi hộp có 10 cây). Minh mua 2 quyển sách và 4 cây bút. Viết đa thức thu gọn biểu thị **tổng** số tiền cả hai bạn đã trả.',
       dapAn: { kieu: 'bieuThuc', gt: '7x+34y', dang: 'khaiTrien' },
       goiY: ['Lan trả $5x + 30y$ (vì 3 hộp có $30$ cây bút). Minh trả $2x + 4y$.', 'Cộng hai đa thức rồi thu gọn các hạng tử đồng dạng.'],
       loiGiai: ['Lan trả: $5x + 3 \\cdot 10 \\cdot y = 5x + 30y$; Minh trả: $2x + 4y$.', 'Tổng: $(5x + 2x) + (30y + 4y) = 7x + 34y$'],
       loiThuongGap: [{ gt: '7x+7y', giaiThich: 'Mỗi hộp có 10 cây bút nên 3 hộp là $30$ cây, tiền bút của Lan là $30y$, không phải $3y$.' }] },
-    { id: '2.10', muc: 3, de: 'Một đa thức thu gọn **bậc hai**, có hai biến $x$ và $y$, mọi hạng tử đều có hệ số bằng $1$. Đa thức đó có **nhiều nhất** bao nhiêu hạng tử?',
+    { id: '2.10', hinhGiai: hg(gop(['x^2', 'xy', 'y^2', 'x', 'y', '1'], { gop: false, bac: true, demNhom: true })), muc: 3, de: 'Một đa thức thu gọn **bậc hai**, có hai biến $x$ và $y$, mọi hạng tử đều có hệ số bằng $1$. Đa thức đó có **nhiều nhất** bao nhiêu hạng tử?',
       dapAn: { kieu: 'so', gt: 6 },
       goiY: ['Liệt kê mọi hạng tử có bậc không quá 2: bậc 2, bậc 1 và bậc 0.', 'Bậc 2: $x^2$, $xy$, $y^2$. Bậc 1: $x$, $y$. Bậc 0: số $1$.'],
       loiGiai: ['Đa thức có nhiều hạng tử nhất là $x^2 + xy + y^2 + x + y + 1$.', 'Số hạng tử nhiều nhất là $6$'],
@@ -131,3 +184,4 @@ TOAN8.bai({
       sua: 'Thu gọn: $B = -2x^2y + 3$. Hạng tử bậc cao nhất là $-2x^2y$ (bậc 3), nên bậc của $B$ là $3$.' }
   ]
 });
+})();

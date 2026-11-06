@@ -8,6 +8,9 @@
     return s;
   }
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
+  // Hình lời giải theo chính số của đề: ghép thẻ chữ (chia đơn thức), bảng chia từng mảnh (chia đa thức)
+  function hgThe(a, b) { return { widget: 'canh', config: { ten: 'thuaSo', tuyChon: { chia: [a, b] }, chiXem: true, t: 1 } }; }
+  function hgBang(dt, cho) { return { widget: 'canh', config: { ten: 'hcnNhan', tuyChon: { chia: cho, dt: dt, bang: true }, chiXem: true, t: 1, ghiChu: 'Vẽ thành bảng, ô không theo tỉ lệ.' } }; }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
   // lũy thừa trong lời giải: x^1 viết gọn là x
   function lt(b, e) { return e === 1 ? b : b + '^{' + e + '}'; }
@@ -39,6 +42,7 @@
       if (px % rr === 0 && px / rr !== e && rr > 1) ltg.push({ gt: ds(cc, [[q, px / rr, f]]), giaiThich: 'Chia hai lũy thừa cùng cơ số thì **trừ** số mũ: $x^{' + px + '} : x^{' + rr + '} = x^{' + px + ' - ' + rr + '}$, không chia số mũ.' });
       if (b < 0) ltg.push({ gt: ds(cc, [[-q, e, f]]), giaiThich: 'Chú ý dấu khi chia hệ số: $' + q * b + ' : ' + ngoac(b) + ' = ' + q + '$.' });
       return {
+        hinhGiai: hgThe(A, ds(cc, [[b, rr, s]])),
         de: 'Thực hiện phép chia $' + tx(cc, A) + ' : ' + chiaTex(cc, b, rr, s) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: Q, dang: 'khaiTrien' },
         goiY: ['Chia hệ số cho hệ số; chia lũy thừa của từng biến cho lũy thừa cùng biến (trừ số mũ).', 'Hệ số: $' + q * b + ' : ' + ngoac(b) + '$. Phần $x$: $' + lt('x', px) + ' : ' + lt('x', rr) + '$' + (s ? '; phần $y$: $' + lt('y', f + s) + ' : ' + lt('y', s) + '$' : '') + '.'],
@@ -58,6 +62,7 @@
       } else ly = 'Mỗi biến của đơn thức chia đều có trong đơn thức bị chia với số mũ không lớn hơn ($' + rr + ' \\le ' + p + '$' + (s ? ', $' + s + ' \\le ' + q + '$' : '') + ').';
       var A = tx(cc, ds(cc, [[a, p, q]])), B = tx(cc, ds(cc, [[b, rr, s]]));
       return {
+        hinhGiai: hgThe(ds(cc, [[a, p, q]]), ds(cc, [[b, rr, s]])),
         de: 'Đúng hay sai: Đơn thức $' + A + '$ chia hết cho đơn thức $' + B + '$.',
         dapAn: { kieu: 'dungSai', gt: dung },
         goiY: ['$A$ chia hết cho $B$ khi mỗi biến của $B$ đều là biến của $A$ với số mũ **không lớn hơn** số mũ của nó trong $A$.', 'So sánh số mũ của $x$, rồi của $y$ trong hai đơn thức. (Hệ số không ảnh hưởng.)'],
@@ -75,6 +80,7 @@
       if (coHs) ltg.push({ gt: ds(cc, Q.slice(0, n - 1)), giaiThich: 'Hạng tử $' + tx(cc, ds(cc, [A[n - 1]])) + '$ chia cho $' + chiaTex(cc, b, rr, s) + '$ được $' + Q[n - 1][0] + '$, không phải $0$. Đừng bỏ quên.' });
       else if (b < 0) ltg.push({ gt: ds(cc, Q.map(function (h) { return [-h[0], h[1], h[2]]; })), giaiThich: 'Đơn thức chia có hệ số âm: chia xong **mỗi** hạng tử đều đổi dấu.' });
       return {
+        hinhGiai: hgBang(ds(cc, A), ds(cc, [[b, rr, s]])),
         de: 'Thực hiện phép chia $(' + tx(cc, ds(cc, A)) + ') : ' + chiaTex(cc, b, rr, s) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Chia **từng** hạng tử của đa thức cho đơn thức rồi cộng các kết quả.', 'Với mỗi hạng tử: chia hệ số, trừ số mũ của từng biến.'],
@@ -90,6 +96,7 @@
         var Q = sinhThuong(r, 2, false), C = nhanDon(Q, b, rr, s);
         var Bt = chiaTex(cc, b, rr, s), kq = ds(cc, Q);
         return {
+          hinhGiai: hgBang(ds(cc, C), ds(cc, [[b, rr, s]])),
           de: 'Tìm đa thức $A$, biết $A \\cdot ' + Bt + ' = ' + tx(cc, ds(cc, C)) + '$.',
           dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
           goiY: ['Thừa số chưa biết bằng tích chia cho thừa số đã biết: $A = (' + tx(cc, ds(cc, C)) + ') : ' + Bt + '$.', 'Chia từng hạng tử cho $' + Bt + '$.'],
@@ -101,6 +108,7 @@
       var q = r.chon([2, 3, 4, 5]), e = r.so(1, 2), f = r.so(0, 1), mx = r.so(1, 3), my = r.so(1, 2), m = r.chon([2, 3, -2, -3]);
       var A = ds(cc, [[q * m, e + mx, f + my]]), Qd = ds(cc, [[q, e, f]]), M = ds(cc, [[m, mx, my]]);
       return {
+        hinhGiai: hgThe(A, Qd),
         de: 'Tìm đơn thức $M$, biết $' + tx(cc, A) + ' : M = ' + tx(cc, Qd) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: M, dang: 'khaiTrien' },
         goiY: ['Số chia bằng số bị chia chia cho thương: $M = ' + tx(cc, A) + ' : ' + tx(cc, Qd) + '$.', 'Chia hệ số, trừ số mũ của từng biến.'],

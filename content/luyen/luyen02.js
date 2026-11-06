@@ -7,6 +7,8 @@
   var RATCAO = [['x^5y', 6], ['x^4y^2', 6], ['x^6', 6], ['x^3y^4', 7], ['x^5y^2', 7]];
 
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
+  // Hình lời giải theo chính số của đề: mỗi hạng tử là một nhóm mảnh (khoiGop)
+  function hg(tuyChon) { return { widget: 'canh', config: { ten: 'khoiGop', tuyChon: tuyChon, chiXem: true, t: 1 } }; }
   function ngoac(v) { return v < 0 ? '(' + v + ')' : String(v); }
   function soMu(ph, b) { var m = ph.match(new RegExp(b + '(\\^(\\d+))?')); return m ? (m[2] ? +m[2] : 1) : 0; }
   function giaTri(heSo, x, y, saiDau) {
@@ -41,6 +43,7 @@
       ltg.push({ gt: cc.daThuc([[a1 + a2, u], [b1 + b2, v]]), giaiThich: 'Em đừng bỏ quên hạng tử tự do $' + c + '$.' });
       if (c === 0) ltg.pop();
       return {
+        hinhGiai: hg({ da: de }),
         de: 'Thu gọn đa thức $' + tx(cc, de) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
         goiY: ['Nhóm các hạng tử đồng dạng (cùng phần biến) với nhau.', 'Cộng hệ số trong mỗi nhóm, giữ nguyên phần biến: nhóm $' + cc.tex(u) + '$ và nhóm $' + cc.tex(v) + '$.'],
@@ -57,6 +60,7 @@
       var de = cc.daThuc(heSo.map(function (h) { return [h[0], h[1]]; }));
       var tong = heSo.reduce(function (s, h) { return s + h[2]; }, 0);
       return {
+        hinhGiai: hg({ da: de, gop: false, bac: true }),
         de: 'Tìm bậc của đa thức $' + tx(cc, de) + '$.',
         dapAn: { kieu: 'so', gt: cao[1] },
         goiY: ['Đa thức đã thu gọn. Tìm bậc của từng hạng tử (tổng số mũ các biến).', 'Bậc của đa thức là bậc **lớn nhất** trong các bậc đó.'],
@@ -72,6 +76,7 @@
       var de = cc.daThuc([[k, rc[0]], [a, cao[0]], [b, ds[0][0]], [-k, rc[0]], [c, '']]);
       var gon = cc.daThuc([[a, cao[0]], [b, ds[0][0]], [c, '']]);
       return {
+        hinhGiai: hg({ da: de, bac: true }),
         de: 'Tìm bậc của đa thức $' + tx(cc, de) + '$.',
         dapAn: { kieu: 'so', gt: cao[1] },
         goiY: ['Phải **thu gọn trước** rồi mới tìm bậc.', 'Hai hạng tử $' + k + cc.tex(rc[0]) + '$ và $-' + k + cc.tex(rc[0]) + '$ cộng lại bằng bao nhiêu?'],
@@ -83,7 +88,7 @@
       };
     } },
 
-    { ten: 'Giá trị của đa thức', muc: 2, sinh: function (r, cc) {
+    { ten: 'Giá trị của đa thức', muc: 2, khongHinh: 'Thay số vào từng hạng tử rồi cộng; cách lật thẻ chữ thành số đã có hình ở luyện thêm bài 1.', sinh: function (r, cc) {
       var coY = r.chon(['xy', 'y^2', 'x^2y', 'xy^2']), khac = r.chon(PHAN.slice(0, 6).filter(function (p) { return p[0] !== coY; }));
       var ds = r.xaoTron([[coY], khac]);
       var heSo = [[r.khac0(-4, 4), ds[0][0]], [r.khac0(-4, 4), ds[1][0]], [r.khac0(-6, 6), '']];
