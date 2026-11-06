@@ -153,7 +153,7 @@
     nhin: {
       tieuDe: 'Kẻ một đường chéo: các góc ghép đủ một vòng', loai: 'chungMinh',
       luuY: 'Hình vẽ tứ giác lồi. Ở tứ giác lồi, đường chéo $BD$ luôn nằm bên trong nên chia góc $B$ và góc $D$ làm hai phần. Kéo hai thanh để đổi hình: cách ghép vẫn đúng.',
-      canh: { ten: 'gocTuGiac', tuyChon: { dang: 'chia' }, moTa: 'Tứ giác ABCD có bốn góc tô bốn màu. Đường chéo BD chia nó thành hai tam giác; sáu góc của hai tam giác được đặt quanh một điểm và lấp kín một vòng tròn.',
+      canh: { ten: 'gocTuGiac', tuyChon: { dang: 'chia' }, thuPha: true, moTa: 'Tứ giác ABCD có bốn góc tô bốn màu. Đường chéo BD chia nó thành hai tam giác; sáu góc của hai tam giác được đặt quanh một điểm và lấp kín một vòng tròn.',
         dongSo: function (p) {
           var g = lamTron(TOAN8.canh.lay('gocTuGiac').tinh(p, 0, { dang: 'chia' }).g);
           return 'Đo bốn góc: $\\ca{\\widehat{A}} \\approx ' + g[0] + '^\\circ$, $\\cb{\\widehat{B}} \\approx ' + g[1] + '^\\circ$, $\\cc{\\widehat{C}} \\approx ' + g[2] + '^\\circ$, $\\widehat{D} \\approx ' + g[3] + '^\\circ$. Cộng lại: $' + (g[0] + g[1] + g[2] + g[3]) + '^\\circ$.';
@@ -208,6 +208,12 @@
         loiGiai: ['Dù kéo thế nào, tổng bốn góc luôn là $360^\\circ$.', 'Đó chính là **định lí tổng các góc của một tứ giác**: $\\widehat{A} + \\widehat{B} + \\widehat{C} + \\widehat{D} = 360^\\circ$.']
       }
     },
+    mucTieu: [
+      'Nhận ra tứ giác lồi, chỉ ra được các cặp cạnh đối, góc đối và hai đường chéo.',
+      'Giải thích được vì sao tổng bốn góc của tứ giác bằng $360^\\circ$ bằng cách kẻ một đường chéo.',
+      'Tính một góc của tứ giác khi biết ba góc kia, hoặc biết quan hệ giữa các góc.',
+      'Đổi góc ngoài thành góc trong tại một đỉnh để tính góc.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Tứ giác',
         noiDung: '**Tứ giác** $ABCD$ là hình gồm bốn đoạn thẳng $AB$, $BC$, $CD$, $DA$, trong đó **không có hai đoạn thẳng nào nằm trên cùng một đường thẳng**.\n\n- Các điểm $A$, $B$, $C$, $D$ là các **đỉnh**.\n- Các đoạn thẳng $AB$, $BC$, $CD$, $DA$ là các **cạnh**.\n\nVí dụ: nếu $B$, $C$, $D$ thẳng hàng thì $BC$ và $CD$ nằm trên một đường thẳng, hình đó **không** là tứ giác (nhìn như một tam giác).' },
@@ -220,6 +226,20 @@
         chuThich: 'Cặp cạnh đối $\\ca{AB}$, $\\ca{CD}$ tô cam; hai đường chéo $\\cd{AC}$, $\\cd{BD}$ là nét đứt màu tím.' },
       { loai: 'dinhLi', tieuDe: 'Tổng các góc của một tứ giác',
         noiDung: '**Tổng các góc của một tứ giác bằng $360^\\circ$.**\n\n$$\\widehat{A} + \\widehat{B} + \\widehat{C} + \\widehat{D} = 360^\\circ$$\n\n**Vì sao?** Kẻ đường chéo $BD$, tứ giác bị chia thành hai tam giác $\\ca{ABD}$ và $\\cb{CBD}$. Tổng ba góc của mỗi tam giác là $180^\\circ$, nên tổng các góc của tứ giác là $180^\\circ + 180^\\circ = 360^\\circ$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao tổng bốn góc bằng $360^\\circ$?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        canh: { ten: 'gocTuGiac', tuyChon: { dang: 'chia' } },
+        buoc: [
+          { id: 'gt', chu: 'Tứ giác lồi $ABCD$. Kẻ đường chéo $BD$.', canh: { t: 0 } },
+          { id: 'trong', chu: 'Tứ giác lồi nên $BD$ nằm trong hình, chia nó thành hai tam giác $ABD$ và $CBD$.', can: ['gt'], canh: { t: 0.15 } },
+          { id: 'tachB', chu: 'Tia $BD$ nằm giữa hai tia $BA$ và $BC$, nên $\\widehat{ABC} = \\widehat{ABD} + \\widehat{DBC}$.', can: ['trong'], canh: { t: 0.2 } },
+          { id: 'tachD', chu: 'Tia $DB$ nằm giữa hai tia $DA$ và $DC$, nên $\\widehat{ADC} = \\widehat{ADB} + \\widehat{BDC}$.', can: ['trong'], canh: { t: 0.2 } },
+          { id: 'tg1', chu: 'Trong tam giác $ABD$: $\\widehat{A} + \\widehat{ABD} + \\widehat{ADB} = 180^\\circ$.', can: ['trong'], canh: { t: 0.55 } },
+          { id: 'tg2', chu: 'Trong tam giác $CBD$: $\\widehat{C} + \\widehat{DBC} + \\widehat{BDC} = 180^\\circ$.', can: ['trong'], canh: { t: 0.9 } },
+          { id: 'kl', chu: 'Cộng hai đẳng thức của hai tam giác, gộp hai phần ở $B$ và hai phần ở $D$: $\\widehat{A} + \\widehat{B} + \\widehat{C} + \\widehat{D} = 360^\\circ$.', can: ['tachB', 'tachD', 'tg1', 'tg2'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Tổng các góc của một tứ giác bằng $180^\\circ + 180^\\circ = 360^\\circ$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 7.9, 10, -1], build: chiaBuild },
         chuThich: 'Kéo các đỉnh. Đường chéo $BD$ chia tứ giác thành tam giác **cam** và tam giác **xanh**. Góc $B$ và góc $D$ của tứ giác bị chia làm hai phần, mỗi phần thuộc một tam giác.' },
       { loai: 'chuY', noiDung: '**Cách tìm góc còn lại:** $\\widehat{D} = 360^\\circ - (\\widehat{A} + \\widehat{B} + \\widehat{C})$.\n\n**Hay nhầm 1 – nhớ nhầm $180^\\circ$.** $180^\\circ$ là tổng ba góc của **tam giác**. Tứ giác là $360^\\circ$.\n\n**Hay nhầm 2 – lấy góc ngoài làm góc trong.** Nếu hình cho góc **ngoài** tại một đỉnh (góc tạo bởi một cạnh và phần kéo dài của cạnh kề), thì góc trong của tứ giác tại đỉnh đó $= 180^\\circ -$ góc ngoài.' }

@@ -153,10 +153,11 @@
     nhin: {
       tieuDe: 'Gập theo trục: hai nửa hình thang cân trùng khít', loai: 'chungMinh',
       luuY: 'Kéo hai thanh để đổi đáy nhỏ và chiều cao: lần gập nào cũng trùng khít, vì lập luận chỉ dùng $\\widehat{D} = \\widehat{C}$ và $AB \\parallel CD$.',
-      canh: { ten: 'thangCan', tuyChon: { cheo: true, goc: { D: '', C: '' } }, moTa: 'Hình thang cân ABCD, đáy lớn DC ở dưới. Đường nét đứt là trục. Hình được lật qua trục: cạnh AD trùng BC, đường chéo AC trùng BD.',
+      canh: { ten: 'thangCan', tuyChon: { cheo: true, goc: { D: '', C: '' } }, thuPha: true, moTa: 'Hình thang cân ABCD, đáy lớn DC ở dưới. Đường nét đứt là trục. Hình được lật qua trục: cạnh AD trùng BC, đường chéo AC trùng BD.',
         dongSo: function (p) {
-          var k = TOAN8.canh.lay('thangCan').tinh(p, 0, {}), ben = Math.hypot(k.A[0], k.A[1]), cheo = Math.hypot(k.C[0] - k.A[0], k.A[1]);
-          return 'Đo: $\\ca{AD} = \\ca{BC} \\approx ' + so(ben) + '$; $\\cb{AC} = \\cb{BD} \\approx ' + so(cheo) + '$; $\\cc{\\widehat{D}} = \\cc{\\widehat{C}} \\approx ' + Math.round(k.gocDay) + '^\\circ$.';
+          var k = TOAN8.canh.lay('thangCan').tinh(p, 0, {});
+          if (k.pha.hong) return 'Đo: $\\ca{AD} \\approx ' + so(k.AD) + '$, $\\ca{BC} \\approx ' + so(k.BC) + '$; $\\cb{AC} \\approx ' + so(k.AC) + '$, $\\cb{BD} \\approx ' + so(k.BD) + '$; $\\cc{\\widehat{D}} \\approx ' + Math.round(k.gocDay) + '^\\circ$, $\\cc{\\widehat{C}} \\approx ' + Math.round(k.gocC) + '^\\circ$.';
+          return 'Đo: $\\ca{AD} = \\ca{BC} \\approx ' + so(k.AD) + '$; $\\cb{AC} = \\cb{BD} \\approx ' + so(k.AC) + '$; $\\cc{\\widehat{D}} = \\cc{\\widehat{C}} \\approx ' + Math.round(k.gocDay) + '^\\circ$.';
         } },
       buoc: [
         { t: 0, chu: 'Hình thang $ABCD$ có $AB \\parallel CD$ và hai góc ở đáy $\\cc{\\widehat{D}} = \\cc{\\widehat{C}}$: đó là hình thang cân. Nét đứt là đường trung trực của đáy $DC$.' },
@@ -211,6 +212,13 @@
         loiGiai: ['Hai đường chéo luôn bằng nhau. Hai cạnh bên cũng luôn bằng nhau và hai góc ở đáy luôn bằng nhau.', 'Đó là các **tính chất của hình thang cân** mà ta học trong bài này.']
       }
     },
+    mucTieu: [
+      'Nhận ra hình thang, hình thang cân qua hai đáy song song và hai góc kề một đáy.',
+      'Giải thích được vì sao hình thang cân có hai cạnh bên bằng nhau và hai đường chéo bằng nhau.',
+      'Tính góc và cạnh của hình thang cân, dùng tính chất hai góc kề một cạnh bên bù nhau.',
+      'Dùng dấu hiệu hai đường chéo bằng nhau để chứng minh một hình thang là hình thang cân.',
+      'Nhận ra hình thang có hai cạnh bên bằng nhau chưa chắc là hình thang cân.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình thang',
         noiDung: '**Hình thang** là tứ giác có hai cạnh đối **song song**.\n\nHình thang $ABCD$ ($AB \\parallel CD$):\n- Hai cạnh song song $AB$, $CD$ là **hai đáy** (đáy nhỏ, đáy lớn).\n- Hai cạnh còn lại $AD$, $BC$ là **hai cạnh bên**.\n- Đoạn vuông góc $AH$ kẻ từ $A$ đến $CD$ là một **đường cao**.' },
@@ -221,6 +229,21 @@
         noiDung: '**Hình thang cân** là hình thang có **hai góc kề một đáy bằng nhau**.\n\nHình thang cân $ABCD$ ($AB \\parallel CD$): $\\widehat{A} = \\widehat{B}$ và $\\widehat{C} = \\widehat{D}$.\n\n(Hai góc kề một đáy bằng nhau thì hai góc kề đáy kia cũng bằng nhau, vì mỗi góc bù với một góc của đáy kia.)' },
       { loai: 'dinhLi', tieuDe: 'Tính chất của hình thang cân',
         noiDung: '**Định lí 1.** Trong hình thang cân, **hai cạnh bên bằng nhau**: $\\ca{AD} = \\ca{BC}$.\n\n**Định lí 2.** Trong hình thang cân, **hai đường chéo bằng nhau**: $\\cd{AC} = \\cd{BD}$.\n\n(Chứng minh Định lí 2: $\\triangle ACD = \\triangle BDC$ (c.g.c) vì $AD = BC$, $\\widehat{ADC} = \\widehat{BCD}$, $DC$ chung.)' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $AD = BC$ và $AC = BD$?', config: {
+        de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$, $AB < CD$). Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        canh: { ten: 'thangCan', tuyChon: { cheo: true, dinh: 'E', goc: { D: '', C: '' } } },
+        buoc: [
+          { id: 'gt', chu: 'Hình thang $ABCD$ có $AB \\parallel CD$, $AB < CD$ và $\\widehat{D} = \\widehat{C}$.', canh: { t: 0 } },
+          { id: 'E', chu: 'Kéo dài $DA$ và $CB$, chúng cắt nhau tại $E$ (vì $AB < CD$).', can: ['gt'], canh: { t: 0 } },
+          { id: 'EDC', chu: 'Tam giác $EDC$ có $\\widehat{D} = \\widehat{C}$ nên cân tại $E$: $ED = EC$.', can: ['E'], canh: { t: 0 } },
+          { id: 'dongVi', chu: '$AB \\parallel CD$ nên $\\widehat{EAB} = \\widehat{EDC}$ và $\\widehat{EBA} = \\widehat{ECD}$ (hai cặp góc đồng vị).', can: ['E'], canh: { t: 0 } },
+          { id: 'EAB', chu: 'Suy ra $\\widehat{EAB} = \\widehat{EBA}$: tam giác $EAB$ cân tại $E$, $EA = EB$.', can: ['dongVi'], canh: { t: 0 } },
+          { id: 'ben', chu: '$AD = ED - EA = EC - EB = BC$.', can: ['EDC', 'EAB'], canh: { t: 0.6 } },
+          { id: 'cgc', chu: '$\\triangle ACD = \\triangle BDC$ (c.g.c): $AD = BC$, $\\widehat{ADC} = \\widehat{BCD}$, cạnh $DC$ chung.', can: ['ben'], canh: { t: 0.8 } },
+          { id: 'cheo', chu: 'Vậy $AC = BD$.', can: ['cgc'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Trong hình thang cân, $AD = BC$ và $AC = BD$.'
+      } },
       { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết (Định lí 3)',
         noiDung: '**Hình thang có hai đường chéo bằng nhau là hình thang cân.**\n\nĐây là định lí **đảo** của Định lí 2. Vậy có hai cách nhận biết hình thang cân:\n1. Hình thang có hai góc kề một đáy bằng nhau (định nghĩa).\n2. Hình thang có hai đường chéo bằng nhau.' },
       { loai: 'chuY', noiDung: '**Hay nhầm – hai cạnh bên bằng nhau.** Hình thang có hai cạnh bên bằng nhau **chưa chắc** là hình thang cân! Hình bình hành ở dưới có $AB \\parallel CD$, $AD = BC$ nhưng hai góc kề đáy không bằng nhau, hai đường chéo cũng không bằng nhau.\n\n(Nếu thêm điều kiện hai đáy **không bằng nhau** thì hình thang có hai cạnh bên bằng nhau mới là hình thang cân.)' },

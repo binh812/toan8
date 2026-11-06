@@ -137,8 +137,8 @@
     nhin: {
       tieuDe: 'Bóp khung bốn thanh bằng nhau: hai đường chéo vẫn vuông góc', loai: 'chungMinh',
       luuY: 'Lúc bóp qua góc $A = 90^\\circ$, khung là hình vuông: hai đường chéo vừa vuông góc vừa bằng nhau. Lập luận dùng tính chất đường trung trực đã học ở lớp 7: điểm cách đều hai đầu đoạn thẳng thì nằm trên trung trực của đoạn đó.',
-      canh: { ten: 'khungThoi', tuyChon: { dang: 'bop' }, moTa: 'Khung bốn thanh dài bằng nhau ABCD được bóp lại; hai đường chéo AC và BD luôn vuông góc tại O. A và C cùng cách đều B và D nên AC là trung trực của BD.',
-        dongSo: function (p) { return 'Góc $A$ đổi từ $' + p.g + '^\\circ$ tới $' + (180 - p.g) + '^\\circ$; bốn thanh vẫn dài bằng nhau.'; } },
+      canh: { ten: 'khungThoi', tuyChon: { dang: 'bop' }, thuPha: true, moTa: 'Khung bốn thanh dài bằng nhau ABCD được bóp lại; hai đường chéo AC và BD luôn vuông góc tại O. A và C cùng cách đều B và D nên AC là trung trực của BD.',
+        dongSo: function (p) { return 'Góc $A$ đổi từ $' + p.g + '^\\circ$ tới $' + (180 - p.g) + '^\\circ$; ' + (p.lech ? 'hai thanh $AD$, $BC$ dài khác hai thanh $AB$, $CD$.' : 'bốn thanh vẫn dài bằng nhau.'); } },
       buoc: [
         { t: 0, chu: 'Khung $ABCD$ gồm bốn thanh dài bằng nhau, nối bằng bản lề ở bốn đỉnh: một hình thoi.' },
         { t: 0.1, chu: 'Bóp khung lại. Hình đổi dạng, bốn thanh vẫn dài bằng nhau. Hai đường chéo cắt nhau thế nào?' },
@@ -193,11 +193,31 @@
         loiGiai: ['Hai cạnh kề bằng nhau: hình thoi. Có góc vuông: hình chữ nhật. Có cả hai: **hình vuông**.', 'Em cũng thấy: khi hai cạnh kề bằng nhau thì hai đường chéo vuông góc; khi góc $A$ vuông thì hai đường chéo bằng nhau.']
       }
     },
+    mucTieu: [
+      'Giải thích được vì sao hai đường chéo của hình thoi vuông góc, dựa vào đường trung trực.',
+      'Tính góc, cạnh, đường chéo và diện tích của hình thoi, hình vuông từ các tính chất.',
+      'Chọn đúng dấu hiệu để nhận biết hình thoi, hình vuông.',
+      'Nhận ra tứ giác có hai đường chéo vuông góc chưa chắc là hình thoi.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình thoi',
         noiDung: '**Hình thoi** là tứ giác có **bốn cạnh bằng nhau**.\n\nHình thoi có các cạnh đối bằng nhau nên **là hình bình hành**: nó có mọi tính chất của hình bình hành (các góc đối bằng nhau, hai đường chéo cắt nhau tại trung điểm mỗi đường…).' },
       { loai: 'dinhLi', tieuDe: 'Tính chất đường chéo của hình thoi (Định lí 1)',
         noiDung: 'Trong hình thoi:\n\na) Hai đường chéo **vuông góc** với nhau;\n\nb) Hai đường chéo là các **đường phân giác** của các góc trong hình thoi.\n\nVí dụ: hình thoi $ABCD$ có $AC \\perp BD$ và $\\widehat{BAC} = \\widehat{DAC} = \\frac{\\widehat{A}}{2}$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao hai đường chéo của hình thoi vuông góc?', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        canh: { ten: 'khungThoi', tuyChon: { dang: 'bop' } },
+        buoc: [
+          { id: 'gt', chu: 'Hình thoi $ABCD$: $AB = BC = CD = DA$. Hai đường chéo cắt nhau tại $O$.', canh: { t: 0 } },
+          { id: 'A', chu: '$AB = AD$ nên $A$ cách đều $B$ và $D$: $A$ nằm trên đường trung trực của $BD$.', can: ['gt'], canh: { t: 0.65 } },
+          { id: 'C', chu: '$CB = CD$ nên $C$ cách đều $B$ và $D$: $C$ nằm trên đường trung trực của $BD$.', can: ['gt'], canh: { t: 0.85 } },
+          { id: 'tt', chu: 'Hai điểm $A$, $C$ cùng nằm trên trung trực của $BD$, nên đường thẳng $AC$ chính là trung trực đó.', can: ['A', 'C'], canh: { t: 0.97 } },
+          { id: 'vg', chu: 'Vậy $AC \\perp BD$ tại trung điểm $O$ của $BD$.', can: ['tt'], canh: { t: 1 } },
+          { id: 'ccc', chu: '$\\triangle ABC = \\triangle ADC$ (c.c.c): $AB = AD$, $CB = CD$, cạnh $AC$ chung.', can: ['gt'], canh: { t: 0.5 } },
+          { id: 'pg', chu: 'Suy ra $\\widehat{BAC} = \\widehat{DAC}$ và $\\widehat{BCA} = \\widehat{DCA}$: $AC$ là phân giác của góc $A$ và góc $C$.', can: ['ccc'], canh: { t: 0.5 } }
+        ],
+        ketLuan: 'Trong hình thoi, hai đường chéo vuông góc với nhau và là phân giác các góc.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1.5, 8.6, 9.5, -0.6], build: thoiBuild,
         // Kéo A cho OA = OB: hình thoi thành hình vuông; kéo tiếp cho thoi dẹt; rồi trả về.
         tuChay: [{ cho: 0.8 }, { diem: 'A', den: [1.8, 3], giay: 2 }, { cho: 2.5 }, { diem: 'A', den: [0.2, 3], giay: 2 }, { cho: 1.5 }, { diem: 'A', den: [0.8, 3], giay: 1.5 }] },

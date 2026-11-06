@@ -151,8 +151,11 @@
     nhin: {
       tieuDe: 'Quay nửa vòng: nửa hình bình hành trùng khít nửa kia', loai: 'chungMinh',
       luuY: 'Cắt theo đường chéo $BD$ và quay như vậy, em được thêm $\\widehat{A} = \\widehat{C}$. Lập luận này chính là $\\triangle ABC = \\triangle CDA$ (g.c.g) trong SGK, chỉ khác là em nhìn thấy nó.',
-      canh: { ten: 'quayHBH', tuyChon: { cheo: 'sau' }, moTa: 'Hình bình hành ABCD, O là trung điểm đường chéo AC. Tam giác ABC được cắt ra và quay nửa vòng quanh O, rơi đúng vào tam giác CDA.',
-        dongSo: function (p) { return 'Đo: $\\ca{AB} = \\ca{CD} = 6$; $\\cb{AD} = \\cb{BC} = ' + so(p.b) + '$; $\\cc{\\widehat{B}} = \\cc{\\widehat{D}} = ' + p.g + '^\\circ$.'; } },
+      canh: { ten: 'quayHBH', tuyChon: { cheo: 'sau' }, thuPha: true, moTa: 'Hình bình hành ABCD, O là trung điểm đường chéo AC. Tam giác ABC được cắt ra và quay nửa vòng quanh O, rơi đúng vào tam giác CDA.',
+        dongSo: function (p) {
+          if (p.lech) return 'Đo: $\\ca{AB} = 6$ nhưng $\\ca{CD} = ' + so(6 + p.lech) + '$: tứ giác này không còn là hình bình hành.';
+          return 'Đo: $\\ca{AB} = \\ca{CD} = 6$; $\\cb{AD} = \\cb{BC} = ' + so(p.b) + '$; $\\cc{\\widehat{B}} = \\cc{\\widehat{D}} = ' + p.g + '^\\circ$.';
+        } },
       buoc: [
         { t: 0, chu: 'Hình bình hành $ABCD$: $AB \\parallel CD$ và $AD \\parallel BC$. $O$ là trung điểm của đường chéo $AC$.' },
         { t: 0.1, chu: 'Cắt theo đường chéo $AC$, tách tam giác $ABC$ ra.' },
@@ -210,11 +213,33 @@
         loiGiai: ['Luôn có $OA = OC$ và $OB = OD$: hai đường chéo cắt nhau tại **trung điểm của mỗi đường**.', 'Ngoài ra các cạnh đối luôn bằng nhau và các góc đối luôn bằng nhau.']
       }
     },
+    mucTieu: [
+      'Nói được vì sao hình bình hành có các cạnh đối và các góc đối bằng nhau, bằng cách quay nửa hình quanh tâm.',
+      'Chứng minh được hai đường chéo của hình bình hành cắt nhau tại trung điểm mỗi đường.',
+      'Tính cạnh, góc và đoạn trên đường chéo của hình bình hành từ các tính chất.',
+      'Chọn đúng một trong năm dấu hiệu để chứng minh một tứ giác là hình bình hành.',
+      'Nhận ra "một cặp cạnh song song, cặp kia bằng nhau" chưa đủ để là hình bình hành.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình bình hành',
         noiDung: '**Hình bình hành** là tứ giác có **các cạnh đối song song**.\n\nTứ giác $ABCD$ là hình bình hành $\\Leftrightarrow$ $AB \\parallel CD$ và $AD \\parallel BC$.\n\n(Hình bình hành cũng là một hình thang đặc biệt.)' },
       { loai: 'dinhLi', tieuDe: 'Tính chất (Định lí 1)',
         noiDung: 'Trong hình bình hành $ABCD$ ($O$ là giao điểm hai đường chéo):\n\na) **Các cạnh đối bằng nhau:** $AB = CD$, $AD = BC$.\n\nb) **Các góc đối bằng nhau:** $\\widehat{A} = \\widehat{C}$, $\\widehat{B} = \\widehat{D}$.\n\nc) **Hai đường chéo cắt nhau tại trung điểm của mỗi đường:** $\\ca{OA} = \\ca{OC}$, $\\cd{OB} = \\cd{OD}$.\n\n**Nhận xét.** Trong hình bình hành, hai góc kề một cạnh bất kì thì **bù nhau**: $\\widehat{A} + \\widehat{B} = 180^\\circ$.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: các tính chất của hình bình hành', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        canh: { ten: 'quayHBH', tuyChon: { cheo: true } },
+        buoc: [
+          { id: 'gt', chu: 'Hình bình hành $ABCD$: $AB \\parallel CD$ và $AD \\parallel BC$. Nối đường chéo $AC$.', canh: { t: 0 } },
+          { id: 'sl1', chu: '$AB \\parallel CD$ nên $\\widehat{BAC} = \\widehat{DCA}$ (so le trong).', can: ['gt'], canh: { t: 0.1 } },
+          { id: 'sl2', chu: '$AD \\parallel BC$ nên $\\widehat{BCA} = \\widehat{DAC}$ (so le trong).', can: ['gt'], canh: { t: 0.1 } },
+          { id: 'gcg', chu: '$\\triangle ABC = \\triangle CDA$ (g.c.g): hai cặp góc đó và cạnh $AC$ chung.', can: ['sl1', 'sl2'], canh: { t: 1 } },
+          { id: 'canh', chu: 'Suy ra $AB = CD$, $BC = DA$ và $\\widehat{B} = \\widehat{D}$.', can: ['gcg'], canh: { t: 1 } },
+          { id: 'sl3', chu: '$AB \\parallel CD$ nên $\\widehat{ABD} = \\widehat{CDB}$ (so le trong).', can: ['gt'], canh: { t: 0 } },
+          { id: 'oab', chu: 'Gọi $O$ là giao điểm hai đường chéo. $\\triangle OAB = \\triangle OCD$ (g.c.g): $\\widehat{OAB} = \\widehat{OCD}$, $AB = CD$, $\\widehat{OBA} = \\widehat{ODC}$.', can: ['sl1', 'canh', 'sl3'], canh: { t: 0 } },
+          { id: 'kl', chu: 'Suy ra $OA = OC$ và $OB = OD$: hai đường chéo cắt nhau tại trung điểm mỗi đường.', can: ['oab'], canh: { t: 0 } }
+        ],
+        ketLuan: 'Hình bình hành có các cạnh đối bằng nhau, các góc đối bằng nhau, và hai đường chéo cắt nhau tại trung điểm mỗi đường.'
+      } },
       { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết theo cạnh (Định lí 2)',
         noiDung: 'a) Tứ giác có **các cạnh đối bằng nhau** là một hình bình hành.\n\nb) Tứ giác có **một cặp cạnh đối song song và bằng nhau** là một hình bình hành.' },
       { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết theo góc và đường chéo (Định lí 3)',

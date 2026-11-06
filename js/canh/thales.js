@@ -129,13 +129,21 @@
     if (thu.catBot) ve.chu(thu.cuoi[0] + n[0] * 1.0 * co, thu.cuoi[1] + n[1] * 1.0 * co - 0.95 * co, '(hình cắt bớt)', '--sai', 1, 0.7);
   }
   function nhanCua(o, giai) { return Object.assign({}, o.nhan || {}, giai ? o.giai || {} : {}); }
+  function soTex(x) { return C.fmt(x).replace(',', '{,}'); }
+  // Số đúng tới hai chữ số thập phân thì ghi "=", còn lại ghi "≈"
+  function bang2(x) { return Math.abs(x * 100 - Math.round(x * 100)) < 1e-6 ? '= ' + soTex(x) : '\\approx ' + soTex(x); }
+  function xoayHuong(u, d) { var r = d * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [u[0] * c - u[1] * s, u[0] * s + u[1] * c]; }
+  function gocDo(P, O, Q) { var u = donVi(tru(P, O)), v = donVi(tru(Q, O)); return Math.acos(Math.max(-1, Math.min(1, u[0] * v[0] + u[1] * v[1]))) * 180 / Math.PI; }
+  // Soi chi tiết chỉ khi hình không mang số của đề (phần Nhìn), kẻo lộ đáp số
+  function theSoi(o) { return function (khoa, them) { return Object.assign(o.nhan || o.thu || o.giai || o.dao ? {} : { 'data-soi': khoa }, them || {}); }; }
 
   /* ================= 1. Định lí Thalès: chia AB thành m + k phần bằng nhau ================= */
   // Kẻ qua mỗi vạch một đường song song với BC. Tam giác nhỏ trên cùng trượt dọc AB từng nấc, vừa khít giữa hai
   // đường song song kề nhau; cạnh của nó song song với AC trượt ngang sang AC (hình bình hành) và trùng một khúc.
   // Nên AC cũng bị chia thành m + k khúc bằng nhau. Chỉ đúng khi tỉ số là phân số m/k.
   C.dangKi('thalesLuoi', {
-    thamSo: { m: { min: 1, max: 5, step: 1, md: 2, nhan: 'm', mau: '--a' }, k: { min: 1, max: 5, step: 1, md: 3, nhan: 'k', mau: '--b' } },
+    thamSo: { m: { min: 1, max: 5, step: 1, md: 2, nhan: 'm', mau: '--a' }, k: { min: 1, max: 5, step: 1, md: 3, nhan: 'k', mau: '--b' },
+      dN: { min: -0.6, max: 0.6, step: 0.2, md: 0, nhan: 'Dời N khỏi vạch', pha: true } },
     trangThai: { giai: true },
     tinh: function (p, t, o) {
       var m = o.m || p.m, k = o.k || p.k, n = m + k, i;
@@ -155,10 +163,20 @@
           canhTruot.push([cong(P[i], dd), cong(V, dd)]);
         }
       }
-      var M = P[m], N = o.dao ? lerp(A, Cc, o.dao.AN / (o.dao.AN + o.dao.NC)) : Q[m];
+      // Thử phá: dời N trên AC lệch khỏi vạch thứ m một phần khúc (dN), nên MN không còn song song với BC
+      var lech = o.dao ? 0 : p.dN || 0;
+      var M = P[m], N = o.dao ? lerp(A, Cc, o.dao.AN / (o.dao.AN + o.dao.NC)) : lech ? lerp(A, Cc, (m + lech) / n) : Q[m];
       var diem = { A: A, B: B, C: Cc, M: M, N: N };
       var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 1.6 * Math.max(dai(A, B), dai(A, Cc), dai(B, Cc))) : null;
-      return { A: A, B: B, C: Cc, M: M, N: N, P: P, Q: Q, m: m, k: k, n: n, banSao: banSao, canhTruot: canhTruot, thu: thu,
+      var ten = o.ten || ['A', 'B', 'C', 'M', 'N'], tiAN = dai(A, N) / dai(N, Cc), tiM = '\\frac{' + m + '}{' + k + '}';
+      var ti = function (a, b) { return '\\frac{' + ten[a[0]] + ten[a[1]] + '}{' + ten[b[0]] + ten[b[1]] + '}'; };
+      var gocLech = gocDo(cong(B, tru(N, M)), B, Cc);
+      gocLech = Math.min(gocLech, 180 - gocLech);
+      var pha = lech
+        ? { hong: true, tiAN: tiAN, gocLech: gocLech, chu: '$' + ten[3] + ten[4] + '$ lệch $\\approx ' + Math.round(gocLech) + '^\\circ$ so với phương $' + ten[1] + ten[2] + '$, không còn song song: $' + ti([0, 3], [3, 1]) + ' = ' + tiM + ' ' + bang2(m / k) + '$ nhưng $' + ti([0, 4], [4, 2]) + ' \\approx ' + soTex(tiAN) +
+          '$. Các đường song song vẫn chia $' + ten[0] + ten[2] + '$ thành $' + n + '$ khúc bằng nhau, nhưng $' + ten[4] + '$ không nằm ở vạch thứ $' + m + '$ nữa.' }
+        : { hong: false, tiAN: tiAN, gocLech: gocLech, chu: '$' + ten[3] + ten[4] + ' \\parallel ' + ten[1] + ten[2] + '$: $' + ti([0, 3], [3, 1]) + ' = ' + ti([0, 4], [4, 2]) + ' = ' + tiM + '$.' };
+      return { A: A, B: B, C: Cc, M: M, N: N, P: P, Q: Q, m: m, k: k, n: n, banSao: banSao, canhTruot: canhTruot, thu: thu, lech: lech, pha: pha,
         songSong: dai(N, Q[m]) < 1e-9 * (1 + dai(A, Cc)), AM: dai(A, M), MB: dai(M, B), AN: dai(A, N), NC: dai(N, Cc) };
     }
   });
@@ -169,7 +187,7 @@
     // Cỡ chữ tính theo cả hình, kể cả đoạn đỏ em gõ, để chữ không bé đi khi đoạn đỏ dài
     var ve = bang(svg, [A, B, Cc].concat(g.thu ? [g.thu.cuoi] : [])), co = ve.co;
     var giai = p.trangThai === 'giai', cuoi = C.muot((t - 0.88) / 0.1), hienVach = o.anLucDau ? C.muot((t - 0.02) / 0.06) : 1;
-    var w1 = 0.3 / Math.max(1, n - 1);
+    var w1 = 0.3 / Math.max(1, n - 1), lech = !!g.lech, the = theSoi(o);
     ve.da([A, B, Cc], '--tg', 0.05);
     if (o.song) ve.nen(function (cha, vb) {
       // Hai bờ sông: hai đường song song với BC, qua B và qua M, kéo hết bề ngang khung
@@ -185,23 +203,25 @@
       ve.net(Q[i], lerp(B, Cc, i / n), '--nhat', 0.05, { opacity: 0.8 * cuoi, 'stroke-dasharray': 0.2 * co + ' ' + 0.15 * co });
       ve.vachDiem(lerp(B, Cc, i / n), tru(Cc, B), cuoi);
     }
-    g.banSao.forEach(function (b) { if (b.hien > 0) ve.da(b.dinh, '--cc', 0.3 * b.hien * (1 - 0.6 * cuoi), '--cc', 0.05, { 'stroke-opacity': b.hien }); });
+    g.banSao.forEach(function (b) { if (b.hien > 0) ve.da(b.dinh, '--cc', 0.3 * b.hien * (1 - 0.6 * cuoi), '--cc', 0.05, the('tgNho', { 'stroke-opacity': b.hien })); });
     for (i = 1; i < n; i++) {
       var s = C.muot((t - 0.1 - (i - 1) * w1) / w1);
-      if (i === g.m && !o.dao) continue;
-      if (s > 0) ve.net(P[i], lerp(P[i], Q[i], s), '--nhat', 0.06, o.dao && i === g.m ? { 'stroke-dasharray': 0.25 * co + ' ' + 0.15 * co } : null);
+      // Thử phá: vẫn vẽ đường song song thật qua M (nét đứt) để thấy MN lệch khỏi nó
+      if (i === g.m && !o.dao && !lech) continue;
+      if (s > 0) ve.net(P[i], lerp(P[i], Q[i], s), '--nhat', 0.06, the('song', (o.dao || lech) && i === g.m ? { 'stroke-dasharray': 0.25 * co + ' ' + 0.15 * co } : null));
       if (!o.dao || i !== g.m) ve.vachDiem(Q[i], tru(Cc, A), C.muot((s - 0.85) / 0.15));
     }
     var truot = C.muot((t - 0.7) / 0.04) * (1 - 0.5 * cuoi);
-    if (truot > 0) g.canhTruot.forEach(function (d) { ve.net(d[0], d[1], '--cc', 0.17, { opacity: truot }); });
-    ve.net(A, B); ve.net(A, Cc); ve.net(B, Cc);
+    if (truot > 0) g.canhTruot.forEach(function (d) { ve.net(d[0], d[1], '--cc', 0.17, the('tgNho', { opacity: truot })); });
+    ve.net(A, B, null, null, the('AB')); ve.net(A, Cc, null, null, the('AC')); ve.net(B, Cc);
     for (i = 1; i < n; i++) ve.vachDiem(P[i], tru(B, A), hienVach);
     if (cuoi > 0) {
-      ve.net(A, M, '--a', 0.18, { opacity: cuoi }); ve.net(M, B, '--b', 0.18, { opacity: cuoi });
-      if (!o.dao) { ve.net(A, N, '--a', 0.18, { opacity: cuoi }); ve.net(N, Cc, '--b', 0.18, { opacity: cuoi }); }
+      ve.net(A, M, '--a', 0.18, the('AB', { opacity: cuoi })); ve.net(M, B, '--b', 0.18, the('AB', { opacity: cuoi }));
+      if (!o.dao && !lech) { ve.net(A, N, '--a', 0.18, the('AC', { opacity: cuoi })); ve.net(N, Cc, '--b', 0.18, the('AC', { opacity: cuoi })); }
     }
     if (o.goc) { ve.cung(M, A, N, 1.1, '--a'); ve.cung(B, A, Cc, 1.1, '--a'); }
-    ve.net(M, N, o.dao ? (cuoi > 0.5 ? (g.songSong ? '--cc' : '--sai') : '--nhat') : TIM, 0.14);
+    ve.net(M, N, o.dao ? (cuoi > 0.5 ? (g.songSong ? '--cc' : '--sai') : '--nhat') : lech ? '--sai' : TIM, 0.14, the('MN'));
+    if (lech) ve.cham(N, '--sai', 0.2);
     veThu(ve, g.thu);
     ve.ten(A, G, ten[0]); ve.ten(B, G, ten[1]); ve.ten(Cc, G, ten[2]);
     ve.tenCanh(M, A, B, G, ten[3]); ve.tenCanh(N, A, Cc, G, ten[4]);
@@ -210,7 +230,7 @@
     Object.keys(doan).forEach(function (r) {
       var s = nhan[r], m = null, op = 1, xa = 0;
       // Hình không có số của đề: cuối cùng ghi số phần của mỗi đoạn; đoạn ngắn thì đẩy nhãn xa hơn, khỏi đè tên M, N
-      if (s == null && !o.nhan && dem[r] && !(o.dao && (r === 'AN' || r === 'NC'))) {
+      if (s == null && !o.nhan && dem[r] && !((o.dao || lech) && (r === 'AN' || r === 'NC'))) {
         s = dem[r] + ' phần'; op = cuoi; m = r === 'AM' || r === 'AN' ? '--a' : '--b';
         xa = dai(doan[r][0], doan[r][1]) < 4.5 * co ? 1.4 : 0;
       }
@@ -221,6 +241,19 @@
     if (o.dao) ve.chu(giuaBC[0], Math.max(B[1], Cc[1]) + 2.3 * co, ten[3] + ten[4] + (g.songSong ? ' ∥ ' : ' không song song với ') + ten[1] + ten[2],
       g.songSong ? '--cc' : '--sai', cuoi, 0.85);
     ve.xong();
+  };
+
+  C.lay('thalesLuoi').soi = function (g, p, o) {
+    var n = o.ten || ['A', 'B', 'C', 'M', 'N'], m = g.m, k = g.k, tong = g.n;
+    return {
+      AB: { tieuDe: 'Cạnh $' + n[0] + n[1] + '$', chu: 'Chia thành $' + m + ' + ' + k + ' = ' + tong + '$ phần bằng nhau. $' + n[0] + n[3] + '$ có $' + m + '$ phần, $' + n[3] + n[1] + '$ có $' + k + '$ phần, nên $\\frac{' + n[0] + n[3] + '}{' + n[3] + n[1] + '} = \\frac{' + m + '}{' + k + '}$.' },
+      AC: { tieuDe: 'Cạnh $' + n[0] + n[2] + '$', chu: 'Các đường song song với $' + n[1] + n[2] + '$ chia nó thành $' + tong + '$ khúc bằng nhau, mỗi khúc $\\approx ' + soTex(dai(g.A, g.C) / tong) + '$. ' +
+        (g.lech ? 'Nhưng $' + n[4] + '$ lệch khỏi vạch: $\\frac{' + n[0] + n[4] + '}{' + n[4] + n[2] + '} \\approx ' + soTex(g.pha.tiAN) + '$.' : '$' + n[0] + n[4] + '$ có $' + m + '$ khúc, $' + n[4] + n[2] + '$ có $' + k + '$ khúc.') },
+      MN: { tieuDe: 'Đoạn $' + n[3] + n[4] + '$', chu: g.lech ? 'Lệch $\\approx ' + Math.round(g.pha.gocLech) + '^\\circ$ khỏi phương $' + n[1] + n[2] + '$, nên không trùng đường song song qua $' + n[3] + '$ (nét đứt).'
+        : 'Song song với $' + n[1] + n[2] + '$. Qua $' + n[3] + '$ chỉ có một đường song song với $' + n[1] + n[2] + '$ (tiên đề Euclid), nên $' + n[3] + n[4] + '$ chính là đường kẻ qua vạch thứ $' + m + '$.' },
+      tgNho: { tieuDe: 'Tam giác nhỏ', chu: 'Trượt dọc $' + n[0] + n[1] + '$ từng nấc thì không đổi hình. Đáy luôn song song với $' + n[1] + n[2] + '$, nên vừa khít giữa hai đường song song kề nhau. Cạnh phải trượt sang $' + n[0] + n[2] + '$ thành một khúc: các khúc bằng nhau.' },
+      song: { tieuDe: 'Đường song song', chu: 'Kẻ qua mỗi vạch của $' + n[0] + n[1] + '$, song song với $' + n[1] + n[2] + '$. Các đường này cắt $' + n[0] + n[2] + '$ tại những điểm chia; tam giác nhỏ trượt xuống cho thấy các khúc trên $' + n[0] + n[2] + '$ dài bằng nhau.' }
+    };
   };
 
   /* ================= 2. Tỉ số hai đoạn thẳng: đo cả hai bằng cùng một đơn vị ================= */
@@ -247,11 +280,14 @@
   /* ================= 3. Đường trung bình: cắt theo MN, quay mảnh trên nửa vòng quanh N ================= */
   // dang: 'quay' (mặc định), 'ba' (ba đường trung bình, mỗi đường gấp đôi vừa khít cạnh song song), 'quaM' (qua trung điểm M kẻ song song)
   C.dangKi('thalesTrungBinh', {
-    thamSo: { ax: { min: -1, max: 9, step: 0.5, md: 3, nhan: 'Đỉnh A', mau: '--tg' }, bc: { min: 6, max: 12, step: 0.5, md: 10, nhan: 'Cạnh BC', mau: '--b' } },
+    thamSo: { ax: { min: -1, max: 9, step: 0.5, md: 3, nhan: 'Đỉnh A', mau: '--tg' }, bc: { min: 6, max: 12, step: 0.5, md: 10, nhan: 'Cạnh BC', mau: '--b' },
+      tM: { min: 0.3, max: 0.7, step: 0.05, md: 0.5, nhan: 'Tỉ số AM : AB', pha: true } },
     trangThai: { giai: true },
     tinh: function (p, t, o) {
       var T = tamGiac(o, { A: [p.ax, -7], B: [0, 0], C: [p.bc, 0] }), A = T.A, B = T.B, Cc = T.C, dang = o.dang || 'quay';
-      var M = lerp(A, B, 0.5), N = lerp(A, Cc, 0.5), P = lerp(B, Cc, 0.5), M2 = tru(nhanSo(N, 2), M);
+      // Thử phá (chỉ ở hình quay): M không còn là trung điểm của AB
+      var tM = dang === 'quay' && p.tM != null ? p.tM : 0.5;
+      var M = lerp(A, B, tM), N = lerp(A, Cc, 0.5), P = lerp(B, Cc, 0.5), M2 = tru(nhanSo(N, 2), M);
       // Quay về phía ngoài tam giác (xa B) để mảnh không đè lên phần còn lại
       var chieu = dai(quay(A, N, Math.PI / 2), B) >= dai(quay(A, N, -Math.PI / 2), B) ? 1 : -1;
       var goc = dang === 'quay' ? chieu * Math.PI * C.muot((t - 0.2) / 0.5) : 0;
@@ -263,8 +299,18 @@
       });
       var diem = { A: A, B: B, C: Cc, M: M, N: N };
       var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 2.2 * dai(B, Cc)) : null;
-      return { A: A, B: B, C: Cc, M: M, N: N, P: P, M2: M2, manh: manh, goc: goc, banSao: banSao, thu: thu, dang: dang,
-        MN: dai(M, N), BC: dai(B, Cc) };
+      var ten = o.ten || ['A', 'B', 'C', 'M', 'N'], t2 = ten[5] || ten[3] + '\'', AM = dai(A, M), MB = dai(M, B), MN = dai(M, N), BC = dai(B, Cc);
+      // Góc giữa MN và BC (độ), để nói MN lệch khỏi song song bao nhiêu
+      var lechMN = gocDo(cong(B, tru(N, M)), B, Cc);
+      lechMN = Math.min(lechMN, 180 - lechMN);
+      var pha = Math.abs(tM - 0.5) > 1e-9
+        ? { hong: true, lechMN: lechMN, chu: '$' + ten[3] + '$ không là trung điểm: $' + ten[0] + ten[3] + ' \\approx ' + soTex(AM) + '$ còn $' + ten[3] + ten[1] + ' \\approx ' + soTex(MB) + '$. Quay quanh $' + ten[4] + '$, $' + ten[0] + '$ vẫn tới $' + ten[2] + '$, nhưng $' + ten[2] + t2 + ' = ' + ten[0] + ten[3] +
+          ' \\ne ' + ten[3] + ten[1] + '$: tứ giác $' + ten[3] + ten[1] + ten[2] + t2 + '$ không là hình bình hành. $' + ten[3] + ten[4] + ' \\approx ' + soTex(MN) + '$' +
+          (Math.abs(MN - BC / 2) > 0.05 ? ', không bằng $\\frac{' + ten[1] + ten[2] + '}{2} ' + bang2(BC / 2) + '$, và' : ' (tình cờ gần bằng $\\frac{' + ten[1] + ten[2] + '}{2}$), nhưng') +
+          ' lệch khỏi phương $' + ten[1] + ten[2] + '$ khoảng $' + Math.round(lechMN) + '^\\circ$: không song song.' }
+        : { hong: false, lechMN: lechMN, chu: '$' + ten[3] + '$, $' + ten[4] + '$ là trung điểm: $' + ten[2] + t2 + ' = ' + ten[0] + ten[3] + ' = ' + ten[3] + ten[1] + '$, nên $' + ten[3] + ten[1] + ten[2] + t2 + '$ là hình bình hành và $' + ten[3] + ten[4] + ' = \\frac{' + ten[1] + ten[2] + '}{2} ' + bang2(BC / 2) + '$.' };
+      return { A: A, B: B, C: Cc, M: M, N: N, P: P, M2: M2, manh: manh, goc: goc, banSao: banSao, thu: thu, dang: dang, tM: tM, pha: pha,
+        MN: MN, BC: BC, AM: AM, MB: MB };
     }
   });
 
@@ -278,16 +324,18 @@
       var tam = lerp(M, N, 0.5), rx = dai(M, N) / 2;
       C.mk('ellipse', { cx: tam[0], cy: tam[1], rx: rx, ry: 0.3 * rx, fill: '#74c0fc', 'fill-opacity': 0.45, stroke: '#74c0fc', 'stroke-width': 0.05 * co }, svg);
     }
+    var the = theSoi(o), hong = !!(g.pha && g.pha.hong);
     if (g.dang === 'quay') {
-      var hl = C.muot((t - 0.72) / 0.12), roi = g.goc !== 0;
-      ve.da([M, B, Cc, N], '--tg', 0.07);
-      if (hl > 0) ve.da([M, B, Cc, M2], '--cc', 0.12 * hl, '--cc', 0.12, { 'stroke-opacity': hl });
-      ve.da(g.manh, '--a', 0.12 + 0.13 * C.muot((t - 0.06) / 0.1), '--a', 0.08);
+      var hl = C.muot((t - 0.72) / 0.12), roi = g.goc !== 0, mauHBH = hong ? '--sai' : '--cc';
+      ve.da([M, B, Cc, N], '--tg', 0.07, null, null, the('hbh'));
+      if (hl > 0) ve.da([M, B, Cc, M2], mauHBH, 0.12 * hl, mauHBH, 0.12, the('hbh', { 'stroke-opacity': hl }));
+      ve.da(g.manh, '--a', 0.12 + 0.13 * C.muot((t - 0.06) / 0.1), '--a', 0.08, the('manh'));
       if (roi) { ve.net(A, M, '--nhat', 0.05, { 'stroke-dasharray': 0.22 * co + ' ' + 0.16 * co }); ve.net(A, N, '--nhat', 0.05, { 'stroke-dasharray': 0.22 * co + ' ' + 0.16 * co }); }
-      ve.net(M, B); ve.net(B, Cc); ve.net(Cc, N);
+      ve.net(M, B, null, null, the('MB')); ve.net(B, Cc, null, null, the('BC')); ve.net(Cc, N);
+      // Hỏng: AM khác MB, nên đoạn AM (đang quay) mang ba vạch, khác một vạch của MB
       ve.vach(M, B, 1); ve.vach(N, Cc, 2);
-      ve.vach(g.manh[0], g.manh[1], 1); ve.vach(g.manh[0], N, 2);
-      ve.net(M, N, TIM, 0.14); ve.net(g.manh[1], N, TIM, 0.14);
+      ve.vach(g.manh[0], g.manh[1], hong ? 3 : 1); ve.vach(g.manh[0], N, 2);
+      ve.net(M, N, TIM, 0.14, the('MN')); ve.net(g.manh[1], N, TIM, 0.14, the('MN'));
       ve.ten(roi ? A : A, G, ten[0], roi ? 0.55 : 1);
       ve.chu(M2[0] + 0.9 * co, M2[1] - 0.5 * co, tenM2, null, C.muot((t - 0.66) / 0.06));
     } else {
@@ -322,26 +370,50 @@
       if (g.dang === 'ba' && (r === 'AB' || r === 'AC' || r === 'BC')) return;
       ve.nhanDoan(d[0], d[1], d[2], nhan[r], mauNhan);
     });
-    if (g.dang === 'quay' && !o.nhan && cuoi > 0) ve.chu(giuaBC[0], giuaBC[1] + 1.1 * co, ten[3] + tenM2 + ' = ' + ten[1] + ten[2], '--cc', cuoi, 0.9);
+    if (g.dang === 'quay' && !o.nhan && cuoi > 0) ve.chu(giuaBC[0], giuaBC[1] + 1.1 * co, ten[3] + tenM2 + (hong ? (Math.abs(2 * g.MN - g.BC) > 0.1 ? ' ≠ ' : ' không song song ') : ' = ') + ten[1] + ten[2], hong ? '--sai' : '--cc', cuoi, 0.9);
     ve.xong();
+  };
+
+  C.lay('thalesTrungBinh').soi = function (g, p, o) {
+    if (g.dang !== 'quay' || !g.pha) return {};
+    var n = o.ten || ['A', 'B', 'C', 'M', 'N'], t2 = n[5] || n[3] + '\'', hong = g.pha.hong;
+    return {
+      MN: { tieuDe: 'Đoạn $' + n[3] + n[4] + '$', chu: '$' + n[3] + n[4] + ' \\approx ' + soTex(g.MN) + '$, $' + n[1] + n[2] + ' ' + bang2(g.BC) + '$. ' + (hong ? '$' + n[3] + '$ không là trung điểm nên $' + n[3] + n[4] + '$ không song song với $' + n[1] + n[2] + '$ (lệch $\\approx ' + Math.round(g.pha.lechMN) + '^\\circ$)' + (Math.abs(g.MN - g.BC / 2) > 0.05 ? ' và không bằng nửa $' + n[1] + n[2] + '$.' : '.')
+        : '$' + n[4] + '$ là trung điểm của $' + n[3] + t2 + '$, nên $' + n[3] + n[4] + ' = \\frac{1}{2}' + n[3] + t2 + ' = \\frac{1}{2}' + n[1] + n[2] + '$.') },
+      manh: { tieuDe: 'Mảnh $' + n[0] + n[3] + n[4] + '$', chu: 'Quay nửa vòng quanh $' + n[4] + '$. $' + n[4] + n[0] + ' = ' + n[4] + n[2] + '$ nên $' + n[0] + '$ tới đúng $' + n[2] + '$. Hai tam giác $' + n[0] + n[3] + n[4] + '$ và $' + n[2] + t2 + n[4] + '$ bằng nhau (c.g.c), góc ở $' + n[4] + '$ là hai góc đối đỉnh.' },
+      hbh: { tieuDe: 'Tứ giác $' + n[3] + n[1] + n[2] + t2 + '$', chu: hong ? '$' + n[2] + t2 + ' = ' + n[0] + n[3] + ' \\approx ' + soTex(g.AM) + '$ còn $' + n[3] + n[1] + ' \\approx ' + soTex(g.MB) + '$: song song nhưng không bằng nhau, nên không là hình bình hành.'
+        : '$' + n[2] + t2 + ' = ' + n[0] + n[3] + ' = ' + n[3] + n[1] + '$ và $' + n[2] + t2 + ' \\parallel ' + n[3] + n[1] + '$ (so le trong): hai cạnh đối song song và bằng nhau, nên là hình bình hành.' },
+      MB: { tieuDe: 'Đoạn $' + n[3] + n[1] + '$', chu: hong ? '$' + n[3] + n[1] + ' \\approx ' + soTex(g.MB) + '$, $' + n[0] + n[3] + ' \\approx ' + soTex(g.AM) + '$: khác nhau.' : '$' + n[3] + n[1] + ' = ' + n[0] + n[3] + ' \\approx ' + soTex(g.MB) + '$ vì $' + n[3] + '$ là trung điểm của $' + n[0] + n[1] + '$.' },
+      BC: { tieuDe: 'Cạnh $' + n[1] + n[2] + '$', chu: '$' + n[1] + n[2] + ' ' + bang2(g.BC) + '$. ' + (hong ? '' : 'Trong hình bình hành, $' + n[3] + t2 + '$ song song và bằng cạnh này.') }
+    };
   };
 
   /* ================= 4. Phân giác: hai tam giác chung đỉnh A, tính diện tích hai cách ================= */
   C.dangKi('thalesPhanGiac', {
     // Khoảng kéo vừa phải (hai cạnh chênh nhau không quá 2 lần, góc A 50°–100°) để tam giác không dẹt, các kí hiệu không dồn đống
     thamSo: { ab: { min: 4, max: 8, step: 0.5, md: 5, nhan: 'Cạnh AB', mau: '--a' }, ac: { min: 4, max: 8, step: 0.5, md: 8, nhan: 'Cạnh AC', mau: '--b' },
-      gocA: { min: 50, max: 100, step: 5, md: 70, nhan: 'Góc A' } },
+      gocA: { min: 50, max: 100, step: 5, md: 70, nhan: 'Góc A' },
+      lech: { min: -15, max: 15, step: 5, md: 0, nhan: 'Xoay AD lệch phân giác (độ)', pha: true } },
     trangThai: { giai: true },
     tinh: function (p, t, o) {
       var T = o.AB && o.AC && o.BC ? tgCanh(o.AB, o.AC, o.BC) : tgGoc(p.ab, p.ac, p.gocA), A = T.A, B = T.B, Cc = T.C;
       // D là giao của tia phân giác (tổng hai vectơ đơn vị) với BC, không dùng sẵn tính chất cần chứng minh
-      var D = giao(A, cong(donVi(tru(B, A)), donVi(tru(Cc, A))), B, tru(Cc, B));
+      // Thử phá: xoay tia AD lệch khỏi phân giác một góc lech (độ)
+      var lech = p.lech || 0, w = cong(donVi(tru(B, A)), donVi(tru(Cc, A)));
+      var D = giao(A, lech ? xoayHuong(w, lech) : w, B, tru(Cc, B));
       var H = chan(A, B, Cc), E = chan(D, A, B), F = chan(D, A, Cc);
       var diem = { A: A, B: B, C: Cc, D: D };
       var thu = o.thu ? doanThu(p, diem[o.thu.tu], diem[o.thu.den], 2.2 * dai(B, Cc)) : null;
-      return { A: A, B: B, C: Cc, D: D, H: H, E: E, F: F, thu: thu,
+      var kq = { A: A, B: B, C: Cc, D: D, H: H, E: E, F: F, thu: thu,
         AB: dai(A, B), AC: dai(A, Cc), DB: dai(D, B), DC: dai(D, Cc), AH: dai(A, H), DE: dai(D, E), DF: dai(D, F),
         S1: dienTich(A, B, D), S2: dienTich(A, Cc, D) };
+      var n = o.ten || ['A', 'B', 'C', 'D'], g1 = gocDo(B, A, D), g2 = gocDo(D, A, Cc), fr = function (a, b) { return '\\frac{' + a + '}{' + b + '}'; };
+      kq.gocBAD = g1; kq.gocDAC = g2;
+      kq.pha = lech
+        ? { hong: true, chu: '$' + n[0] + n[3] + '$ lệch khỏi phân giác: $\\widehat{' + n[1] + n[0] + n[3] + '} \\approx ' + Math.round(g1) + '^\\circ$ còn $\\widehat{' + n[3] + n[0] + n[2] + '} \\approx ' + Math.round(g2) + '^\\circ$. $' + n[3] + '$ không cách đều hai cạnh: khoảng cách tới $' + n[0] + n[1] + '$ là $\\approx ' + soTex(kq.DE) + '$, tới $' + n[0] + n[2] + '$ là $\\approx ' + soTex(kq.DF) +
+          '$. Vẫn có $' + fr('S_{' + n[0] + n[1] + n[3] + '}', 'S_{' + n[0] + n[2] + n[3] + '}') + ' = ' + fr(n[3] + n[1], n[3] + n[2]) + ' \\approx ' + soTex(kq.DB / kq.DC) + '$ (chung đường cao), nhưng $' + fr(n[0] + n[1], n[0] + n[2]) + ' ' + bang2(kq.AB / kq.AC) + '$: hai tỉ số khác nhau.' }
+        : { hong: false, chu: '$' + n[0] + n[3] + '$ là phân giác: $' + n[3] + '$ cách đều hai cạnh (cùng $\\approx ' + soTex(kq.DE) + '$), nên $' + fr(n[3] + n[1], n[3] + n[2]) + ' = ' + fr(n[0] + n[1], n[0] + n[2]) + ' ' + bang2(kq.AB / kq.AC) + '$.' };
+      return kq;
     }
   });
 
@@ -350,8 +422,9 @@
     var G = trongTam(A, B, Cc), giai = p.trangThai === 'giai';
     var ve = bang(svg, [A, B, Cc, H, E, F].concat(g.thu ? [g.thu.cuoi] : [])), co = ve.co, net2 = { 'stroke-dasharray': 0.22 * co + ' ' + 0.15 * co };
     var cao = C.muot((t - 0.1) / 0.3), cach = C.muot((t - 0.45) / 0.3), cuoi = C.muot((t - 0.85) / 0.12);
-    ve.da([A, B, D], '--a', 0.12 + 0.1 * cao);
-    ve.da([A, Cc, D], '--b', 0.12 + 0.1 * cao);
+    var the = theSoi(o), hong = !!(g.pha && g.pha.hong);
+    ve.da([A, B, D], '--a', 0.12 + 0.1 * cao, null, null, the('ABD'));
+    ve.da([A, Cc, D], '--b', 0.12 + 0.1 * cao, null, null, the('ACD'));
     // Đường cao AH có thể rơi ra ngoài đoạn BC: kéo dài BC bằng nét đứt
     // Chân đường vuông góc rơi ngoài đoạn PQ (góc tù): kéo dài PQ bằng nét đứt, vượt qua chân một chút cho dễ thấy
     function ngoaiDoan(X, P, Q) { return ((X[0] - P[0]) * (Q[0] - P[0]) + (X[1] - P[1]) * (Q[1] - P[1])) / (dai(P, Q) * dai(P, Q)); }
@@ -365,11 +438,12 @@
     ve.net(B, Cc);
     if (cuoi > 0) { ve.net(D, B, '--a', 0.18, { opacity: cuoi }); ve.net(D, Cc, '--b', 0.18, { opacity: cuoi }); }
     ve.cung(A, B, D, 1.25, '--a'); ve.cung(A, D, Cc, 1.25, '--b');
-    ve.net(A, D, TIM, 0.12);
-    if (cao > 0) { ve.net(A, lerp(A, H, cao), '--muc', 0.07, net2); if (cao >= 1) ve.vuong(H, A, dai(H, B) > dai(H, Cc) ? B : Cc); }
+    ve.net(A, D, hong ? '--sai' : TIM, 0.12, the('AD'));
+    if (cao > 0) { ve.net(A, lerp(A, H, cao), '--muc', 0.07, the('AH', net2)); if (cao >= 1) ve.vuong(H, A, dai(H, B) > dai(H, Cc) ? B : Cc); }
     if (cach > 0) {
-      ve.net(D, lerp(D, E, cach), '--cc', 0.1); ve.net(D, lerp(D, F, cach), '--cc', 0.1);
-      if (cach >= 1) { ve.vuong(E, D, A); ve.vuong(F, D, A); ve.vach(D, E, 1, '--cc'); ve.vach(D, F, 1, '--cc'); }
+      // Hỏng: D không cách đều hai cạnh, đoạn tới AC tô đỏ và mang hai vạch
+      ve.net(D, lerp(D, E, cach), '--cc', 0.1, the('cach')); ve.net(D, lerp(D, F, cach), hong ? '--sai' : '--cc', 0.1, the('cach'));
+      if (cach >= 1) { ve.vuong(E, D, A); ve.vuong(F, D, A); ve.vach(D, E, 1, '--cc'); ve.vach(D, F, hong ? 2 : 1, hong ? '--sai' : '--cc'); }
     }
     veThu(ve, g.thu);
     ve.ten(A, G, ten[0]); ve.ten(B, G, ten[1]); ve.ten(Cc, G, ten[2]);
@@ -384,5 +458,19 @@
       ve.nhanDoan(doan[r][0], doan[r][1], G, nhan[r], giai && o.giai && o.giai[r] != null ? '--cc' : (r === 'DB' ? null : null));
     });
     ve.xong();
+  };
+  C.lay('thalesPhanGiac').soi = function (g, p, o) {
+    if (!g.pha) return {};
+    var n = o.ten || ['A', 'B', 'C', 'D'], hong = g.pha.hong, x = soTex, dg = function (v) { return Math.round(v) + '^\\circ'; };
+    var S = function (a, b, c) { return 'S_{' + a + b + c + '}'; };
+    return {
+      ABD: { tieuDe: 'Mảnh $' + n[0] + n[1] + n[3] + '$', chu: '$' + S(n[0], n[1], n[3]) + ' \\approx ' + x(g.S1) + '$. Tính hai cách: $\\frac{1}{2} \\cdot ' + n[3] + n[1] + ' \\cdot ' + n[0] + 'H$ (đáy $' + n[3] + n[1] + ' \\approx ' + x(g.DB) + '$), hoặc $\\frac{1}{2} \\cdot ' + n[0] + n[1] + ' \\cdot$ (khoảng cách từ $' + n[3] + '$ tới $' + n[0] + n[1] + '$) với $' + n[0] + n[1] + ' ' + bang2(g.AB) + '$.' },
+      ACD: { tieuDe: 'Mảnh $' + n[0] + n[2] + n[3] + '$', chu: '$' + S(n[0], n[2], n[3]) + ' \\approx ' + x(g.S2) + '$. Đáy $' + n[3] + n[2] + ' \\approx ' + x(g.DC) + '$ với đường cao $' + n[0] + 'H$, hoặc đáy $' + n[0] + n[2] + ' ' + bang2(g.AC) + '$ với khoảng cách từ $' + n[3] + '$ tới $' + n[0] + n[2] + '$.' },
+      AD: { tieuDe: 'Đoạn $' + n[0] + n[3] + '$', chu: hong ? 'Lệch khỏi phân giác: $\\widehat{' + n[1] + n[0] + n[3] + '} \\approx ' + dg(g.gocBAD) + '$, $\\widehat{' + n[3] + n[0] + n[2] + '} \\approx ' + dg(g.gocDAC) + '$.'
+        : 'Phân giác của góc $' + n[0] + '$: $\\widehat{' + n[1] + n[0] + n[3] + '} = \\widehat{' + n[3] + n[0] + n[2] + '} \\approx ' + dg(g.gocBAD) + '$.' },
+      AH: { tieuDe: 'Đường cao $' + n[0] + 'H$', chu: '$' + n[0] + 'H \\approx ' + x(g.AH) + '$, chung cho cả hai mảnh. Nên $\\frac{' + S(n[0], n[1], n[3]) + '}{' + S(n[0], n[2], n[3]) + '} = \\frac{' + n[3] + n[1] + '}{' + n[3] + n[2] + '} \\approx ' + x(g.DB / g.DC) + '$.' },
+      cach: { tieuDe: 'Khoảng cách từ $' + n[3] + '$ tới hai cạnh', chu: hong ? 'Tới $' + n[0] + n[1] + '$: $\\approx ' + x(g.DE) + '$; tới $' + n[0] + n[2] + '$: $\\approx ' + x(g.DF) + '$. Không bằng nhau vì $' + n[3] + '$ không nằm trên tia phân giác.'
+        : 'Cùng $\\approx ' + x(g.DE) + '$, vì điểm trên tia phân giác của một góc cách đều hai cạnh của góc (lớp 7). Nên $\\frac{' + S(n[0], n[1], n[3]) + '}{' + S(n[0], n[2], n[3]) + '} = \\frac{' + n[0] + n[1] + '}{' + n[0] + n[2] + '}$.' }
+    };
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

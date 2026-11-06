@@ -120,8 +120,11 @@
     nhin: {
       tieuDe: 'Cắt theo đường trung bình, quay nửa vòng: thành hình bình hành', loai: 'chungMinh',
       luuY: 'Lập luận dùng hai tam giác bằng nhau (c.g.c) và dấu hiệu hình bình hành, nên đúng với mọi tam giác. Kéo đỉnh $A$ và đổi cạnh $BC$ để thử.',
-      canh: { ten: 'thalesTrungBinh', moTa: 'Tam giác ABC, M và N là trung điểm AB, AC. Mảnh tam giác AMN quay nửa vòng quanh N, ghép với phần còn lại thành hình bình hành MBCM phẩy.',
-        dongSo: function (p, f) { return '$BC = ' + f(p.bc).replace(',', '{,}') + '$. Hình bình hành cho $MM\' = BC$, nên $MN = ' + f(p.bc / 2).replace(',', '{,}') + '$.'; } },
+      canh: { ten: 'thalesTrungBinh', thuPha: true, moTa: 'Tam giác ABC, M và N là trung điểm AB, AC. Mảnh tam giác AMN quay nửa vòng quanh N, ghép với phần còn lại thành hình bình hành MBCM phẩy.',
+        dongSo: function (p, f) {
+          if (p.tM !== 0.5) return '$BC = ' + f(p.bc).replace(',', '{,}') + '$. $M$ không là trung điểm nên không có hình bình hành, và $MN$ không còn song song với $BC$.';
+          return '$BC = ' + f(p.bc).replace(',', '{,}') + '$. Hình bình hành cho $MM\' = BC$, nên $MN = ' + f(p.bc / 2).replace(',', '{,}') + '$.';
+        } },
       buoc: [
         { t: 0, chu: '$M$, $N$ là trung điểm của $AB$, $AC$. Cắt tam giác theo $MN$.' },
         { t: 0.2, chu: 'Quay mảnh $AMN$ nửa vòng quanh $N$. Vì $NA = NC$ nên $A$ rơi đúng vào $C$; $M$ rơi tới $M\'$, với $N$ là trung điểm của $MM\'$.' },
@@ -178,11 +181,31 @@
         loiGiai: ['$MN$ luôn bằng **một nửa** $BC$. Hai góc đồng vị $\\angle AMN = \\angle ABC$ nên $MN \\parallel BC$. Đoạn $MN$ gọi là **đường trung bình** của tam giác.']
       }
     },
+    mucTieu: [
+      'Nhận ra đường trung bình của tam giác và phân biệt nó với đường trung tuyến.',
+      'Giải thích được vì sao đường trung bình song song và bằng nửa cạnh thứ ba, bằng cách quay nửa vòng một mảnh tam giác.',
+      'Tính độ dài đường trung bình khi biết cạnh thứ ba, hoặc ngược lại.',
+      'Dùng đường trung bình để đo một khoảng cách bị vật cản chắn ngang.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Đường trung bình của tam giác',
         noiDung: '**Đường trung bình của tam giác** là đoạn thẳng nối **trung điểm hai cạnh** của tam giác.\n\nMỗi tam giác có ba đường trung bình.' },
       { loai: 'dinhLi', tieuDe: 'Tính chất đường trung bình',
         noiDung: 'Đường trung bình của tam giác **song song** với cạnh thứ ba và **bằng nửa** cạnh đó.\n\n**GT:** $\\triangle ABC$, $AD = DB$, $AE = EC$ ($D \\in AB$, $E \\in AC$); $F$ là trung điểm của $BC$.\n\n**KL:** $DE \\parallel BC$; $$\\ca{DE} = \\frac{1}{2}BC = \\ca{BF}.$$' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $MN \\parallel BC$ và $MN = \\frac{1}{2}BC$?', config: {
+        de: 'Tam giác $ABC$, $M$ và $N$ là trung điểm của $AB$ và $AC$. Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        canh: { ten: 'thalesTrungBinh' },
+        buoc: [
+          { id: 'gt', chu: '$M$, $N$ là trung điểm của $AB$, $AC$. Lấy $M\'$ trên tia đối của tia $NM$ sao cho $NM\' = NM$.', canh: { t: 0.7 } },
+          { id: 'cgc', chu: '$\\triangle AMN = \\triangle CM\'N$ (c.g.c): $NA = NC$, $\\widehat{ANM} = \\widehat{CNM\'}$ (đối đỉnh), $NM = NM\'$.', can: ['gt'], canh: { t: 0.7 } },
+          { id: 'bang', chu: 'Suy ra $CM\' = AM$, mà $AM = MB$, nên $CM\' = MB$.', can: ['cgc'], canh: { t: 0.72 } },
+          { id: 'sl', chu: 'Từ hai tam giác bằng nhau: $\\widehat{NCM\'} = \\widehat{NAM}$. Hai góc này so le trong, nên $CM\' \\parallel AB$, tức $CM\' \\parallel MB$.', can: ['cgc'], canh: { t: 0.72 } },
+          { id: 'hbh', chu: 'Tứ giác $MBCM\'$ có hai cạnh đối $CM\'$, $MB$ song song và bằng nhau, nên là hình bình hành.', can: ['bang', 'sl'], canh: { t: 0.85 } },
+          { id: 'ss', chu: 'Suy ra $MM\' \\parallel BC$ và $MM\' = BC$.', can: ['hbh'], canh: { t: 1 } },
+          { id: 'kl', chu: '$N$ là trung điểm của $MM\'$ nên $MN = \\frac{1}{2}MM\'$. Vậy $MN \\parallel BC$ và $MN = \\frac{1}{2}BC$.', can: ['ss'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Đường trung bình song song với cạnh thứ ba và bằng nửa cạnh đó.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 10, -0.8], build: tinhChatBuild },
         chuThich: '$F$ là trung điểm $BC$. Kéo các đỉnh: đoạn cam $DE$ luôn dài bằng đoạn cam $BF$ (một nửa $BC$). Tứ giác $DEFB$ là hình bình hành.' },
       { loai: 'text', tieuDe: 'Vì sao?',

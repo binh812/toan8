@@ -100,7 +100,7 @@
     nhin: {
       tieuDe: 'Chia một cạnh thành các phần bằng nhau, cạnh kia cũng bị chia y như thế', loai: 'chungMinh',
       luuY: 'Hình chứng minh định lí khi tỉ số $\\frac{AM}{MB}$ là một phân số $\\frac{m}{k}$, tức là chia được $AB$ thành $m + k$ phần bằng nhau. Khi tỉ số không viết được thành phân số (ví dụ $\\sqrt{2}$), cần một lập luận khác, vượt quá lớp 8.',
-      canh: { ten: 'thalesLuoi', moTa: 'Tam giác ABC, cạnh AB chia thành các phần bằng nhau. Qua mỗi vạch kẻ đường song song với BC; tam giác nhỏ trượt dọc AB cho thấy cạnh AC cũng bị chia thành các phần bằng nhau.',
+      canh: { ten: 'thalesLuoi', thuPha: true, moTa: 'Tam giác ABC, cạnh AB chia thành các phần bằng nhau. Qua mỗi vạch kẻ đường song song với BC; tam giác nhỏ trượt dọc AB cho thấy cạnh AC cũng bị chia thành các phần bằng nhau.',
         dongSo: function (p) { return '$AB$ chia thành $\\ca{' + p.m + '} + \\cb{' + p.k + '} = ' + (p.m + p.k) + '$ phần bằng nhau, $M$ ở vạch thứ $\\ca{' + p.m + '}$.'; } },
       buoc: [
         { t: 0, chu: 'Chia $AB$ thành $\\ca{m} + \\cb{k}$ phần bằng nhau. $M$ ở vạch thứ $\\ca{m}$, và $MN \\parallel BC$.' },
@@ -167,6 +167,12 @@
         loiGiai: ['Dù M ở đâu, hai tỉ số luôn bằng nhau. Cặp $\\frac{AM}{MB}$ và $\\frac{AN}{NC}$ cũng luôn bằng nhau. Đó chính là **định lí Thalès**.']
       }
     },
+    mucTieu: [
+      'Tính tỉ số của hai đoạn thẳng, nhớ đổi về cùng một đơn vị đo.',
+      'Giải thích được vì sao đường song song với một cạnh chia hai cạnh kia theo cùng một tỉ số, bằng cách chia cạnh thành các phần bằng nhau.',
+      'Lập đúng tỉ lệ thức Thalès (đoạn trên với đoạn dưới, hoặc đoạn trên với cả cạnh) và tính độ dài một đoạn.',
+      'Dùng định lí Thalès đảo để chứng minh hai đường thẳng song song.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Tỉ số của hai đoạn thẳng',
         noiDung: '**Tỉ số của hai đoạn thẳng** là tỉ số độ dài của chúng theo **cùng một đơn vị đo**.\n\nTỉ số của $AB$ và $CD$ kí hiệu là $\\frac{AB}{CD}$. Ví dụ $AB = 2$ cm, $CD = 3$ cm thì $\\frac{AB}{CD} = \\frac{2}{3}$.' },
@@ -175,6 +181,20 @@
         noiDung: 'Hai đoạn thẳng $AB$ và $CD$ gọi là **tỉ lệ** với hai đoạn thẳng $A\'B\'$ và $C\'D\'$ nếu có tỉ lệ thức\n\n$$\\frac{AB}{CD} = \\frac{A\'B\'}{C\'D\'} \\quad\\text{hay}\\quad \\frac{AB}{A\'B\'} = \\frac{CD}{C\'D\'}.$$' },
       { loai: 'dinhLi', tieuDe: 'Định lí Thalès (thuận)',
         noiDung: 'Nếu một đường thẳng **song song** với một cạnh của tam giác và cắt hai cạnh còn lại thì nó định ra trên hai cạnh đó những đoạn thẳng tương ứng tỉ lệ.\n\n**GT:** $\\triangle ABC$, $B\'C\' \\parallel BC$ ($B\' \\in AB$, $C\' \\in AC$).\n\n**KL:** $$\\frac{\\ca{AB\'}}{AB} = \\frac{\\ca{AC\'}}{AC};\\quad \\frac{\\ca{AB\'}}{\\cb{B\'B}} = \\frac{\\ca{AC\'}}{\\cb{C\'C}};\\quad \\frac{\\cb{B\'B}}{AB} = \\frac{\\cb{C\'C}}{AC}.$$' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $\\frac{AM}{MB} = \\frac{AN}{NC}$ (khi tỉ số là một phân số)?', config: {
+        de: 'Tam giác $ABC$, $M \\in AB$, $N \\in AC$, $MN \\parallel BC$, và $AB$ chia được thành $m + k$ phần bằng nhau với $M$ ở vạch thứ $m$. Xếp các bước theo đúng thứ tự lập luận.',
+        canh: { ten: 'thalesLuoi' },
+        buoc: [
+          { id: 'gt', chu: 'Chia $AB$ thành $m + k$ phần bằng nhau; $M$ ở vạch thứ $m$, $MN \\parallel BC$.', canh: { t: 0 } },
+          { id: 'ss', chu: 'Qua mỗi vạch trên $AB$, kẻ một đường song song với $BC$. Chúng cắt $AC$ tại các điểm chia.', can: ['gt'], canh: { t: 0.35 } },
+          { id: 'MN', chu: 'Qua $M$ chỉ có một đường song song với $BC$ (tiên đề Euclid), nên $MN$ là đường kẻ qua vạch thứ $m$: $N$ là điểm chia thứ $m$ trên $AC$.', can: ['ss'], canh: { t: 0.35 } },
+          { id: 'hbh', chu: 'Qua mỗi điểm chia trên $AC$, kẻ đường song song với $AB$ tới đường song song kế bên dưới. Hình tạo ra có hai cặp cạnh đối song song, là hình bình hành, nên đoạn vừa kẻ dài đúng bằng một phần của $AB$.', can: ['ss'], canh: { t: 0.85 } },
+          { id: 'gcg', chu: 'Các tam giác nhỏ dọc $AC$ bằng nhau (g.c.g): một cạnh bằng một phần của $AB$, hai góc kề cạnh đó bằng $\\widehat{A}$ và $\\widehat{B}$ (góc đồng vị).', can: ['hbh'], canh: { t: 0.85 } },
+          { id: 'deu', chu: 'Vậy các điểm chia cắt $AC$ thành $m + k$ khúc bằng nhau.', can: ['gcg'], canh: { t: 0.95 } },
+          { id: 'kl', chu: '$AN$ gồm $m$ khúc, $NC$ gồm $k$ khúc, nên $\\frac{AM}{MB} = \\frac{AN}{NC} = \\frac{m}{k}$.', can: ['MN', 'deu'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Hai cạnh bị chia thành cùng số phần bằng nhau, nên $\\frac{AM}{MB} = \\frac{AN}{NC}$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 10, -0.8], build: thuanBuild,
         tuChay: [{ diem: "B'", den: [0.4, 0.8], giay: 2 }, { cho: 1 }, { diem: "B'", den: [2.6, 5.2], giay: 2.5 }, { cho: 1 }, { diem: "B'", den: [1.2, 2.4], giay: 1.5 }] },
         chuThich: 'Kéo $B\'$. Đoạn **cam** ($AB\'$, $AC\'$) ở phía đỉnh $A$, đoạn **xanh** ($B\'B$, $C\'C$) ở phía đáy. Cam trên xanh của cạnh này luôn bằng cam trên xanh của cạnh kia.' },

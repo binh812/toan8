@@ -146,8 +146,11 @@
     nhin: {
       tieuDe: 'Hai thanh bằng nhau, gắn ở trung điểm: góc nào cũng vuông', loai: 'chungMinh',
       luuY: 'Kéo thanh "Góc giữa hai thanh": $x$ và $y$ đổi, nhưng $x + y$ luôn là $90^\\circ$. Chiều ngược lại (hình chữ nhật có hai đường chéo bằng nhau, cắt nhau tại trung điểm) đúng vì hình chữ nhật vừa là hình bình hành vừa là hình thang cân.',
-      canh: { ten: 'haiThanh', tuyChon: { chungMinh: true }, moTa: 'Hai thanh xanh bằng nhau AC và BD gắn ở trung điểm O. Tam giác ABC gồm hai tam giác cân; bốn góc x, x, y, y của nó được ghép thành nửa vòng tròn, phần của góc B đúng một góc vuông.',
-        dongSo: function (p) { return 'Lúc này $\\ca{x} = ' + so((180 - p.phi) / 2) + '^\\circ$, $\\cb{y} = ' + so(p.phi / 2) + '^\\circ$, và $\\ca{x} + \\cb{y} = 90^\\circ$.'; } },
+      canh: { ten: 'haiThanh', tuyChon: { chungMinh: true }, thuPha: true, moTa: 'Hai thanh xanh bằng nhau AC và BD gắn ở trung điểm O. Tam giác ABC gồm hai tam giác cân; bốn góc x, x, y, y của nó được ghép thành nửa vòng tròn, phần của góc B đúng một góc vuông.',
+        dongSo: function (p) {
+          if (p.lech) return 'Hai thanh dài khác nhau: không còn hai tam giác cân, nên không có hai góc $\\ca{x}$, hai góc $\\cb{y}$ nữa.';
+          return 'Lúc này $\\ca{x} = ' + so((180 - p.phi) / 2) + '^\\circ$, $\\cb{y} = ' + so(p.phi / 2) + '^\\circ$, và $\\ca{x} + \\cb{y} = 90^\\circ$.';
+        } },
       buoc: [
         { t: 0, chu: 'Hai thanh $AC$, $BD$ dài bằng nhau, gắn với nhau tại trung điểm $O$ của mỗi thanh. Vậy $OA = OB = OC = OD$.' },
         { t: 0.1, chu: 'Nối bốn đầu thanh, được tứ giác $ABCD$. Ta xem góc $B$.' },
@@ -199,6 +202,12 @@
         loiGiai: ['Bốn góc luôn bằng $90^\\circ$: tứ giác $ABCD$ luôn là **hình chữ nhật**.', 'Lí do: hai đường chéo (hai thanh tre) **bằng nhau** và **cắt nhau tại trung điểm mỗi đường**.']
       }
     },
+    mucTieu: [
+      'Giải thích được vì sao tứ giác có hai đường chéo bằng nhau và cắt nhau tại trung điểm mỗi đường thì có bốn góc vuông.',
+      'Dùng tính chất đường chéo của hình chữ nhật để tính độ dài.',
+      'Tính đường trung tuyến ứng với cạnh huyền của tam giác vuông, và dùng chiều ngược lại để nhận ra tam giác vuông.',
+      'Chọn đúng dấu hiệu để chứng minh một tứ giác là hình chữ nhật.'
+    ],
     lyThuyet: [
       { loai: 'dinhNghia', tieuDe: 'Hình chữ nhật',
         noiDung: '**Hình chữ nhật** là tứ giác có **bốn góc vuông**.\n\n**Chú ý.** Nếu một tứ giác có **ba góc vuông** thì góc còn lại cũng vuông ($360^\\circ - 3 \\cdot 90^\\circ = 90^\\circ$), và tứ giác đó là hình chữ nhật.' },
@@ -211,6 +220,21 @@
         chuThich: 'Kéo $A$ trên nửa đường tròn đường kính $BC$: góc $A$ luôn vuông và $\\cd{AM}$ luôn bằng nửa $\\cb{BC}$ (vì $A$, $B$, $C$ là ba đỉnh của một hình chữ nhật có tâm $M$).' },
       { loai: 'dinhLi', tieuDe: 'Dấu hiệu nhận biết (Định lí 2)',
         noiDung: 'a) **Hình bình hành có một góc vuông** là hình chữ nhật.\n\nb) **Hình bình hành có hai đường chéo bằng nhau** là hình chữ nhật.\n\nCùng với định nghĩa và chú ý: tứ giác có **ba góc vuông**; tứ giác có hai đường chéo **bằng nhau và cắt nhau tại trung điểm mỗi đường** cũng là hình chữ nhật.' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: hai đường chéo bằng nhau, cắt nhau tại trung điểm thì là hình chữ nhật', config: {
+        de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        canh: { ten: 'haiThanh', tuyChon: { chungMinh: true } },
+        buoc: [
+          { id: 'gt', chu: 'Tứ giác $ABCD$ có $AC = BD$, hai đường chéo cắt nhau tại trung điểm $O$ của mỗi đường.', canh: { t: 0 } },
+          { id: 'bang', chu: 'Mỗi đoạn $OA$, $OB$, $OC$, $OD$ bằng nửa một đường chéo, nên $OA = OB = OC = OD$.', can: ['gt'], canh: { t: 0.1 } },
+          { id: 'cOAB', chu: 'Tam giác $OAB$ cân tại $O$: $\\widehat{OAB} = \\widehat{OBA}$, gọi là $x$.', can: ['bang'], canh: { t: 0.3 } },
+          { id: 'cOBC', chu: 'Tam giác $OBC$ cân tại $O$: $\\widehat{OBC} = \\widehat{OCB}$, gọi là $y$.', can: ['bang'], canh: { t: 0.3 } },
+          { id: 'tong', chu: 'Tổng ba góc của tam giác $ABC$: $x + (x + y) + y = 180^\\circ$, nên $x + y = 90^\\circ$.', can: ['cOAB', 'cOBC'], canh: { t: 0.85 } },
+          { id: 'gocB', chu: 'Vậy $\\widehat{ABC} = x + y = 90^\\circ$.', can: ['tong'], canh: { t: 1 } },
+          { id: 'hbh', chu: 'Hai đường chéo cắt nhau tại trung điểm mỗi đường, nên $ABCD$ là hình bình hành.', can: ['gt'], canh: { t: 0.1 } },
+          { id: 'kl', chu: 'Hình bình hành $ABCD$ có một góc vuông nên là hình chữ nhật.', can: ['gocB', 'hbh'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Tứ giác có hai đường chéo bằng nhau và cắt nhau tại trung điểm mỗi đường là hình chữ nhật.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 9, 9.5, -1], build: kiemTraBuild,
         // Kéo D, B cho góc A vuông: hình bình hành thành hình chữ nhật (hai đường chéo cũng bằng nhau), rồi trả về.
         tuChay: [{ cho: 0.8 }, { diem: 'D', den: [1, 0], giay: 2 }, { diem: 'B', den: [7, 4], giay: 2 }, { cho: 2.5 },

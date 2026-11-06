@@ -77,7 +77,7 @@
     nhin: {
       tieuDe: 'Hai mảnh tam giác, tính diện tích theo hai cách', loai: 'chungMinh',
       luuY: 'Lập luận chỉ dùng công thức diện tích tam giác và tính chất điểm trên tia phân giác cách đều hai cạnh của góc (lớp 7), nên đúng với mọi tam giác. Đổi hai cạnh và góc $A$ để thử.',
-      canh: { ten: 'thalesPhanGiac', moTa: 'Tam giác ABC, đường phân giác AD chia tam giác thành hai mảnh ABD màu cam và ACD màu xanh. Hai mảnh chung đường cao AH; D cách đều hai cạnh AB và AC.',
+      canh: { ten: 'thalesPhanGiac', thuPha: true, moTa: 'Tam giác ABC, đường phân giác AD chia tam giác thành hai mảnh ABD màu cam và ACD màu xanh. Hai mảnh chung đường cao AH; D cách đều hai cạnh AB và AC.',
         dongSo: function (p, f) {
           var g = TOAN8.canh.lay('thalesPhanGiac').tinh(p, 1, {}), so = function (x) { return f(x).replace(',', '{,}'); };
           var tron = function (x) { return Math.abs(x * 100 - Math.round(x * 100)) > 1e-6 ? '\\approx' : '='; };
@@ -138,9 +138,28 @@
         loiGiai: ['Hai tỉ số luôn bằng nhau: $\\frac{DB}{DC} = \\frac{AB}{AC}$. Đó là **tính chất đường phân giác** của tam giác.']
       }
     },
+    mucTieu: [
+      'Giải thích được vì sao $\\frac{DB}{DC} = \\frac{AB}{AC}$ bằng cách tính diện tích hai mảnh tam giác theo hai cách.',
+      'Lập đúng tỉ lệ thức: đoạn nào trên $BC$ kề cạnh nào thì đi với cạnh đó.',
+      'Tính $DB$, $DC$ khi biết ba cạnh của tam giác.',
+      'Dùng chiều đảo để nhận ra một đoạn thẳng là đường phân giác.'
+    ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: 'Tính chất đường phân giác của tam giác',
         noiDung: 'Trong tam giác, đường phân giác của một góc chia cạnh đối diện thành hai đoạn thẳng **tỉ lệ với hai cạnh kề** hai đoạn ấy.\n\n**GT:** $\\triangle ABC$, $AD$ là đường phân giác của góc $BAC$ ($D \\in BC$).\n\n**KL:** $$\\frac{\\ca{DB}}{\\cb{DC}} = \\frac{\\ca{AB}}{\\cb{AC}}.$$' },
+      { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $\\frac{DB}{DC} = \\frac{AB}{AC}$?', config: {
+        de: 'Tam giác $ABC$, $AD$ là phân giác của góc $A$. Kẻ đường cao $AH$, và từ $D$ kẻ $DE \\perp AB$, $DF \\perp AC$ ($E \\in AB$, $F \\in AC$). Xếp các bước theo đúng thứ tự lập luận.',
+        canh: { ten: 'thalesPhanGiac' },
+        buoc: [
+          { id: 'gt', chu: '$AD$ là phân giác của góc $A$, $D \\in BC$. Kẻ $AH \\perp BC$, $DE \\perp AB$, $DF \\perp AC$.', canh: { t: 0 } },
+          { id: 'dt', chu: 'Diện tích tam giác bằng nửa tích một cạnh với đường cao ứng với cạnh đó.', canh: { t: 0 } },
+          { id: 'cao', chu: 'Hai tam giác $ABD$, $ACD$ chung đường cao $AH$: $\\frac{S_{ABD}}{S_{ACD}} = \\frac{\\frac{1}{2} AH \\cdot DB}{\\frac{1}{2} AH \\cdot DC} = \\frac{DB}{DC}$.', can: ['gt', 'dt'], canh: { t: 0.4 } },
+          { id: 'cach', chu: '$D$ nằm trên tia phân giác của góc $A$ nên cách đều hai cạnh của góc: $DE = DF$.', can: ['gt'], canh: { t: 0.75 } },
+          { id: 'day', chu: 'Lấy $AB$, $AC$ làm đáy: $\\frac{S_{ABD}}{S_{ACD}} = \\frac{\\frac{1}{2} DE \\cdot AB}{\\frac{1}{2} DF \\cdot AC} = \\frac{AB}{AC}$.', can: ['cach', 'dt'], canh: { t: 0.75 } },
+          { id: 'kl', chu: 'Cùng một tỉ số diện tích, tính hai cách, nên $\\frac{DB}{DC} = \\frac{AB}{AC}$.', can: ['cao', 'day'], canh: { t: 1 } }
+        ],
+        ketLuan: 'Đường phân giác $AD$ chia $BC$ thành hai đoạn tỉ lệ với hai cạnh kề: $\\frac{DB}{DC} = \\frac{AB}{AC}$.'
+      } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1, 8, 10, -0.8], build: tinhChatBuild },
         chuThich: 'Đoạn $DB$ nằm **kề** cạnh $AB$ (cùng màu cam); đoạn $DC$ kề cạnh $AC$ (cùng màu xanh). Kéo các đỉnh: hai tỉ số luôn bằng nhau.' },
       { loai: 'chuY', noiDung: '**Cách nhớ:** đoạn nào trên $BC$ chạm đỉnh $B$ thì đi với cạnh $AB$; đoạn chạm đỉnh $C$ đi với cạnh $AC$:\n\n$$\\frac{D\\ca{B}}{D\\cb{C}} = \\frac{A\\ca{B}}{A\\cb{C}}.$$\n\n**Hay nhầm:** viết ngược thành $\\frac{DB}{DC} = \\frac{AC}{AB}$ là **sai**.' },
