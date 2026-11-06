@@ -48,20 +48,25 @@
   function day(ds) { return ds.map(function (x, i) { return i === 0 ? so(x) : (x < 0 ? ' - ' : ' + ') + so(Math.abs(x)); }).join(''); }
   function cong(ds) { return ds.reduce(function (s, x) { return s + x; }, 0); }
   function laAm(dau) { return dau != null && dau < 0; }
-  var DAU = { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của b', pha: true };
+  var DAU = { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của b', pha: true, hienSo: function (v) { return v < 0 ? 'b < 0' : 'b > 0'; } };
+  var TIEU_DE_PHA = 'Thử số âm: hình không vẽ được, công thức vẫn đúng';
+  var VIEN_PHA = 'Viền đỏ đứt đánh dấu các khối có cạnh âm: không dựng được (khác mảnh âm ở bài 2, 3, là mảnh có thật được trừ đi).';
   function phaLapPhuong(a, b, dau) {
     var am = laAm(dau), bs = am ? -b : b, ve = Math.pow(a + bs, 3), kh = [a * a * a, 3 * a * a * bs, 3 * a * bs * bs, bs * bs * bs];
     var dong = '$(' + so(a) + ' + ' + soN(bs) + ')^3 = ' + so(ve) + '$ và $a^3 + 3a^2b + 3ab^2 + b^3 = ' + day(kh) + ' = ' + so(cong(kh)) + '$';
     if (!am) return { hong: false, chu: 'Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: ' + dong + '.' };
-    return { hong: true, chu: 'Hình hỏng: với $b = ' + so(bs) + '$, khối $a^2b = ' + so(a * a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * a * bs) + '$ và khối $b^3 = ' + so(bs * bs * bs) +
-      '$ có thể tích âm: không có khối nào như thế. Công thức thì không hỏng: ' + dong + '. Công thức có được bằng phép nhân nên đúng với mọi số; chỉ cách nhìn bằng thể tích mới cần $a$, $b$ dương.' };
+    return { hong: true, chiHinh: true, chu: 'Hình không dựng được: với $b = ' + so(bs) + '$, mọi khối có kích thước $b$ đều có một cạnh âm. Trong đó khối $a^2b = ' + so(a * a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * a * bs) +
+      '$ và khối $b^3 = ' + so(bs * bs * bs) + '$ còn có thể tích âm; khối $ab^2 = ' + so(a * bs * bs) + '$ thể tích dương nhưng cạnh vẫn âm. ' + VIEN_PHA +
+      ' Công thức thì vẫn đúng: ' + dong + '. Công thức có được bằng phép nhân nên đúng với mọi số; chỉ cách nhìn bằng thể tích mới cần $a$, $b$ dương.' };
   }
-  function phaHaiHieu(a, b, dau) {
+  // conGoc: khối góc còn trên hình chưa (đã bỏ thì không nhắc tới nó nữa)
+  function phaHaiHieu(a, b, dau, conGoc) {
     var am = laAm(dau), bs = am ? -b : b, tr = a * a * a - bs * bs * bs, r = a - bs, m = a * a + a * bs + bs * bs;
     var dong = '$a^3 - b^3 = ' + so(a * a * a) + ' - ' + soN(bs * bs * bs) + ' = ' + so(tr) + '$ và $(a - b)(a^2 + ab + b^2) = ' + so(r) + ' \\cdot ' + so(m) + ' = ' + so(r * m) + '$';
     if (!am) return { hong: false, chu: 'Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: ' + dong + '.' };
-    return { hong: true, chu: 'Hình hỏng: với $b = ' + so(bs) + '$, khối góc có cạnh âm, tấm giữa có mặt $ab = ' + so(a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * bs) +
-      '$ âm: không bỏ được, cũng không tách được tấm nào như thế. Công thức thì không hỏng: ' + dong + '. Chỉ cách nhìn bằng thể tích mới cần $a > b > 0$.' };
+    return { hong: true, chiHinh: true, chu: 'Hình không dựng được: với $b = ' + so(bs) + '$, ' + (conGoc ? 'không có khối góc nào cạnh âm để bỏ đi, và ' : '') +
+      'tấm giữa có mặt $ab = ' + so(a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * bs) + '$ âm, tấm nhỏ có cạnh âm: không có tấm nào như thế. ' + VIEN_PHA +
+      ' Công thức thì vẫn đúng: ' + dong + '. Với $b$ âm, $a^3 - b^3 = a^3 + |b|^3 = ' + so(a * a * a) + ' + ' + so(b * b * b) + '$: thành tổng hai lập phương, hình của nó ở Ví dụ 1. Chỉ cách nhìn bằng thể tích mới cần $a > b > 0$.' };
   }
   // (a−b)³: khối cạnh a; bỏ ba tấm a·a·b, trả lại ba thanh a·b·b (bị bỏ hai lần), bỏ khối b³ (bị trả lại hết). Mỗi khối con bị bỏ đúng một lần, trừ khối (a−b)³.
   function lapPhuongHieu(p, t) {
@@ -102,7 +107,7 @@
     var goc = hop(r, 0, r + g + nhac, b, b, b, { ten: 'goc', hien: 1 - bo });
     var G = 0.22 * a;
     return { kep: p.b != null && q.b !== p.b, dang: 'hieu', a: a, b: b, r: r, S: a, tam: tam, goc: goc, hop: tam.concat([goc]), bo: bo, tach: mo, nhanHien: C.muot((t - 0.75) / 0.15),
-      khung3: [[-G, 0, 0], [a, a + G, a + G + 0.45 * a]], pha: phaHaiHieu(a, b, p.dau) };
+      khung3: [[-G, 0, 0], [a, a + G, a + G + 0.45 * a]], pha: phaHaiHieu(a, b, p.dau, bo < 0.5) };
   }
   // a³ + b³ = (a + b)³ − 3·ab(a + b): sáu khối giữa ghép từng đôi thành ba hộp ab(a + b), bỏ đi thì còn a³ và b³
   var DOI = [[[1, 0, 0], [1, 0, 1]], [[0, 1, 0], [1, 1, 0]], [[0, 0, 1], [0, 1, 1]]];
@@ -144,7 +149,7 @@
     }).concat([{ tong: cum }]);
   }
   C.dangKi('xepChuNhat', {
-    thamSo: { x: { min: 1, max: 5, step: 0.5, md: 3, nhan: 'Giá trị x', mau: '--a' }, dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của x', pha: true } },
+    thamSo: { x: { min: 1, max: 5, step: 0.5, md: 3, nhan: 'Giá trị x', mau: '--a' }, dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của x', pha: true, hienSo: function (v) { return v < 0 ? 'x < 0' : 'x > 0'; } } },
     tinh: function (p, t, o) {
       var hang = bayRa(o.hang, p.x, 'xepChuNhat'), cot = bayRa(o.cot, p.x, 'xepChuNhat');
       var H = hang.pop().tong, W = cot.pop().tong;
@@ -188,9 +193,10 @@
       var L = doDai(c.dai, xs), s = '$' + tex(c.ten || '?') + ' = ' + so(L) + '$';
       if (L < 0 && !thay[s]) { thay[s] = true; ds.push(s); }
     });
+    var nhac0 = Math.abs(H) < 1e-9 || Math.abs(W) < 1e-9 ? ' Ở đây một cạnh bằng $0$ nên hai vế cùng bằng $0$; kéo thanh $x$ sang số khác để thử một trường hợp rõ hơn.' : '';
     if (!am) return { hong: false, amHang: amHang, amCot: amCot, chu: 'Với $x = ' + so(xs) + '$: ' + dong + '.' };
-    return { hong: true, amHang: amHang, amCot: amCot, chu: 'Hình hỏng: với $x = ' + so(xs) + '$' + (ds.length ? ', cạnh ' + ds.join(' và ') + ' âm, mà độ dài không thể âm, nên không có mảnh nào để xếp' : '') +
-      '. Phân tích thì không hỏng: ' + dong + '. Đẳng thức đúng với mọi $x$; chỉ cách xếp hình mới cần $x > 0$.' };
+    return { hong: true, chiHinh: true, amHang: amHang, amCot: amCot, chu: 'Hình không dựng được: với $x = ' + so(xs) + '$' + (ds.length ? ', cạnh ' + ds.join(' và ') + ' âm, mà độ dài không thể âm, nên không có mảnh nào để xếp' : '') +
+      '. Viền đỏ đứt đánh dấu các mảnh có cạnh âm (khác mảnh âm ở bài 2, 3, là mảnh có thật được trừ đi). Phân tích thì vẫn đúng: ' + dong + '.' + nhac0 + ' Đẳng thức đúng với mọi $x$; chỉ cách xếp hình mới cần $x > 0$.' };
   }
 
   /* ---------- Phần vẽ ---------- */
@@ -225,6 +231,7 @@
     ];
     mat.forEach(function (m) {
       var diem = C.diem(m.p.map(chieu));
+      if (tuy.pha) { C.mk('polygon', { points: diem, fill: 'var(--sai)', 'fill-opacity': 0.14, stroke: 'var(--sai)', 'stroke-width': 3, 'stroke-dasharray': '6 4', 'vector-effect': 'non-scaling-stroke' }, g); return; }
       if (tuy.thieu) { C.mk('polygon', { points: diem, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 1.6, 'stroke-dasharray': '5 4', 'vector-effect': 'non-scaling-stroke' }, g); return; }
       C.mk('polygon', { points: diem, fill: 'var(--mat)' }, g);
       C.mk('polygon', { points: diem, fill: mauVar(mau), 'fill-opacity': m.dam * (tuy.nhat ? 0.45 : 1), stroke: 'var(--muc)', 'stroke-width': 1.2, 'stroke-linejoin': 'round', 'vector-effect': 'non-scaling-stroke',
@@ -275,7 +282,7 @@
         if (h.an) return;
         gh.setAttribute('data-soi', h.loai);
         // Thử phá: khối có cạnh b âm thì viền đỏ đứt, vì không có khối nào như thế
-        if (k.pha && k.pha.hong && h.nB > 0) veHop(gh, h, '--sai', { thieu: true });
+        if (k.pha && k.pha.hong && h.nB > 0) veHop(gh, h, '--sai', { pha: true });
         var q = choNhan(h), giua = h.nB === 1 || h.nB === 2;
         // o.anGiua: chưa làm đúng thì sáu khối giữa ghi dấu hỏi, để em tự đếm và tính; o.anNhan: cả tám khối
         var s = (o.anNhan || (o.anGiua && giua)) && !giai ? '?' : n[h.loai];
@@ -324,18 +331,18 @@
       var gh = veHop(svg, h, soi ? '--sai' : MAU_TAM[i]);
       gh.setAttribute('data-soi', h.ten);
       // Thử phá: tấm có cạnh b âm thì viền đỏ đứt
-      if (k.pha && k.pha.hong && i > 0) veHop(gh, h, '--sai', { thieu: true });
+      if (k.pha && k.pha.hong && i > 0) veHop(gh, h, '--sai', { pha: true });
     });
     if (k.goc.hien > 0.01) {
       var gg = veHop(svg, k.goc, '--tg', { mo: k.goc.hien, net: k.bo > 0.2 });
       gg.setAttribute('data-soi', 'goc');
-      if (k.pha && k.pha.hong) veHop(gg, k.goc, '--sai', { thieu: true });
+      if (k.pha && k.pha.hong) veHop(gg, k.goc, '--sai', { pha: true });
       var qg = tamChieu(k.goc);
       C.chu(svg, qg[0], qg[1], (k.bo > 0.2 ? 'bỏ ' : '') + n.b3, c2 * 0.85, '--sai', { opacity: k.goc.hien });
     }
     // Cạnh dày a − b của từng tấm tô đỏ khi đã tách
     var a = k.a, r = k.r, b = k.b, T1 = k.tam[0], T2 = k.tam[1], T3 = k.tam[2];
-    var g = C.mk('g', { opacity: k.nhanHien, 'data-soi': 'day' }, svg);
+    var g = C.mk('g', { opacity: k.nhanHien * (k.pha && k.pha.hong ? 0.25 : 1), 'data-soi': 'day' }, svg);
     canh3(g, [T1.x + T1.w, T1.y, 0], [T1.x + T1.w, T1.y, r], '--sai');
     canh3(g, [T2.x, T2.y, T2.z + T2.h], [T2.x + T2.w, T2.y, T2.z + T2.h], '--sai');
     canh3(g, [T3.x + T3.w, T3.y, T3.z + T3.h], [T3.x + T3.w, T3.y + T3.d, T3.z + T3.h], '--sai');
@@ -382,7 +389,7 @@
     });
     // Thử phá: mảnh có cạnh âm thì viền đỏ đứt, vì không có mảnh nào như thế
     (k.phaManh || []).forEach(function (m) {
-      C.mk('rect', Object.assign({ x: m.x, y: m.y, width: m.w, height: m.h, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2.5, 'stroke-dasharray': '7 4' }, net), svg);
+      var e = 0.12 * co; C.mk('rect', Object.assign({ x: m.x + e, y: m.y + e, width: m.w - 2 * e, height: m.h - 2 * e, fill: 'var(--sai)', 'fill-opacity': 0.12, stroke: 'var(--sai)', 'stroke-width': 3, 'stroke-dasharray': '7 4' }, net), svg);
     });
     // Mảnh bỏ đi: phủ nền rồi kẻ viền đỏ đứt; mảnh bị bỏ hai lần thì trả lại một lần
     k.manh.filter(function (m) { return !m.coSan; }).forEach(function (m) {
@@ -436,6 +443,9 @@
   // Đề đặt tên cạnh riêng (tenA, tenB) thì hình chỉ là mô hình: thẻ nói bằng chữ, không ghi số đo của hình.
   // Nhãn đang bị giấu (anNhan, anGiua, anB, anTam, anCanh) mà em chưa giải thì thẻ cũng không nói điều đó.
   var m$ = function (s) { return '$' + s + '$'; };
+  C.lay('lapPhuong').tieuDePha = TIEU_DE_PHA;
+  C.lay('haiLapPhuong').tieuDePha = TIEU_DE_PHA;
+  C.lay('xepChuNhat').tieuDePha = 'Thử số âm: hình không vẽ được, phân tích vẫn đúng';
   C.lay('lapPhuong').soi = function (k, p, o) {
     if (k.dang !== 'tong') return {};
     var n = tenMac(o), giai = p.trangThai === 'giai', coSo = !o.tenA && !o.tenB, a = k.a, b = k.b;
@@ -456,6 +466,7 @@
     });
     ra.canh = { tieuDe: 'Cạnh khối lớn', chu: 'Mỗi cạnh gồm một đoạn ' + m$(A) + ' và một đoạn ' + m$(B) + '. Cắt theo các chỗ chia thì được $2 \\cdot 2 \\cdot 2 = 8$ khối, và thể tích khối lớn bằng tổng tám khối đó.' +
       (coSo ? ' Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: $(a + b)^3 = ' + so(Math.pow(a + b, 3)) + '$.' : '') };
+    if (p.dau != null && p.dau < 0) Object.keys(ra).forEach(function (kh) { ra[kh].chu += ' (Hình vẽ theo độ dài $|b| = ' + so(k.b) + '$; với $b$ âm xem ô báo vàng.)'; });
     return ra;
   };
   C.lay('haiLapPhuong').soi = function (k, p, o) {
@@ -473,6 +484,7 @@
     ra.goc = { tieuDe: 'Khối góc', chu: 'Khối lập phương nhỏ cạnh ' + m$(B) + ', thể tích ' + m$(tex(n.b3) + so1(b * b * b)) + '. Bỏ nó đi thì phần còn lại có thể tích ' + m$(tex(n.a3) + ' - ' + tex(n.b3) + so1(a * a * a - b * b * b)) + '.' };
     ra.day = { tieuDe: 'Bề dày', chu: giau ? 'Ba cạnh tô đỏ là bề dày của ba tấm: đọc độ dài của chúng trên hình.'
       : 'Ba cạnh tô đỏ cùng dài ' + m$(tex(n.hieu) + so1(r)) + ': cạnh ' + m$(A) + ' bỏ đi đoạn ' + m$(B) + ' của khối góc. Ba tấm cùng dày nên tổng thể tích là ' + m$(H + '(' + tex(n.a2) + ' + ' + tex(n.ab) + ' + ' + tex(n.b2) + ')') + '.' };
+    if (p.dau != null && p.dau < 0) Object.keys(ra).forEach(function (kh) { ra[kh].chu += ' (Hình vẽ theo độ dài $|b| = ' + so(k.b) + '$; với $b$ âm xem ô báo vàng.)'; });
     return ra;
   };
   C.lay('xepChuNhat').soi = function (k, p, o) {
@@ -497,6 +509,7 @@
     ra.khung = { tieuDe: 'Hình chữ nhật sau khi ghép', chu: lo || k.ket < 0.5 ? 'Các mảnh ghép khít thành hình chữ nhật này. Hai cạnh của nó là hai nhân tử cần tìm.'
       : 'Diện tích bằng tổng các mảnh và cũng bằng tích hai cạnh ' + m$(o.tenCao ? tex(o.tenCao) : ten(o.hang)) + ' và ' + m$(o.tenRong ? tex(o.tenRong) : ten(o.cot)) + ': hai cạnh là hai nhân tử.' +
         (coSo ? ' ' + voi + 'tổng các mảnh $' + so(k.dienTich) + ' = ' + so(k.H) + ' \\cdot ' + so(k.W) + '$.' : '') };
+    if (p.dau != null && p.dau < 0) Object.keys(ra).forEach(function (kh) { ra[kh].chu += ' (Hình vẽ theo độ dài $|x| = ' + so(p.x) + '$; với $x$ âm xem ô báo vàng.)'; });
     return ra;
   };
 })(typeof module === 'object' && module.exports ? require('./loi.js') : window.TOAN8.canh);

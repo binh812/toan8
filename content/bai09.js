@@ -23,11 +23,11 @@
     nhin: {
       tieuDe: 'Xếp các mảnh thành một hình chữ nhật', loai: 'chungMinh',
       luuY: 'Hình đúng khi $x$ dương. Nhân phá ngoặc $2x(x + 3)$ cho thấy kết quả đúng với mọi $x$.',
-      canh: { ten: 'xepChuNhat', thuPha: true, tuyChon: { hang: [{ ten: '2x', dai: [2, 0] }], cot: [{ ten: 'x', dai: X }, { ten: '3', dai: 3 }], o: [['2x²', '6x']], tenRong: 'x + 3' },
+      canh: { ten: 'xepChuNhat', thuPha: true, thamSo: { x: 2 }, tuyChon: { hang: [{ ten: '2x', dai: [2, 0] }], cot: [{ ten: 'x', dai: X }, { ten: '3', dai: 3 }], o: [['2x²', '6x']], tenRong: 'x + 3' },
         moTa: 'Hai mảnh hình chữ nhật có diện tích 2x bình phương và 6x, cùng có cạnh 2x, ghép lại thành hình chữ nhật cạnh 2x và x cộng 3.',
-        dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
+        dongSo: (function (g) { return function (p, f) { var s = g(p, f); return p.dau < 0 ? '(Hình vẽ theo độ dài dương $|x| = ' + String(p.x).replace('.', '{,}') + '$.) ' + s : s; }; })(function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (v) { return String(Math.round(v * 1000) / 1000).replace('.', '{,}'); };
-          return '$\\ca{' + so(2 * p.x * p.x) + '} + \\cc{' + so(6 * p.x) + '} = ' + so(2 * p.x * p.x + 6 * p.x) + ' = ' + so(2 * p.x) + ' \\cdot ' + so(p.x + 3) + '$'; } },
+          return '$\\ca{' + so(2 * p.x * p.x) + '} + \\cc{' + so(6 * p.x) + '} = ' + so(2 * p.x * p.x + 6 * p.x) + ' = ' + so(2 * p.x) + ' \\cdot ' + so(p.x + 3) + '$'; }) },
       buoc: [
         { t: 0, chu: 'Hai mảnh hình chữ nhật có diện tích $\\ca{2x^2}$ và $\\cc{6x}$. Cạnh của chúng còn là dấu hỏi.' },
         { t: 0.1, chu: 'Viết mỗi diện tích thành tích có chung một thừa số: $\\ca{2x^2} = 2x\\cdot x$ và $\\cc{6x} = 2x\\cdot 3$. Hai mảnh cùng có một cạnh $2x$; đẩy chúng sát nhau theo cạnh đó.' },

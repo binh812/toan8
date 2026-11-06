@@ -30,7 +30,7 @@ test('hcnNhanXPha nhân: x dương thì không hỏng; x âm thì hỏng, hai v�
     coSo(d.chu, (x + 2) * (x + 3), 'x = ' + x);
     const h = tinh('hcnNhanXPha', { x, dau: -1 }, 1, o), xs = -x;
     assert.strictEqual(h.pha.hong, true);
-    assert.ok(h.pha.chu.startsWith('Hình hỏng'), h.pha.chu);
+    assert.ok(h.pha.chu.startsWith('Hình không dựng được') && h.pha.chiHinh === true, h.pha.chu);
     coSo(h.pha.chu, xs, 'x âm');
     const ve = (xs + 2) * (xs + 3), cong = xs * xs + 3 * xs + 2 * xs + 6;
     assert.ok(Math.abs(ve - cong) < 1e-9);
@@ -182,4 +182,38 @@ test('soi giữ kín điều đề còn giấu: anAb, anGiua, anTam, anCanh', ()
   const o9 = { hang: [{ ten: '3', dai: 3 }], cot: [{ ten: 'x', dai: [1, 0] }, { ten: '4', dai: 4 }], o: [['3x', '12']], tenRong: 'x + 4', anCanh: true };
   const s9 = soi('xepChuNhat', { x: 5 }, 1, o9);
   assert.ok(!/x \+ 4|Cạnh chung/.test(Object.values(s9).map(m => m.chu).join(' ')));
+});
+
+test('thử phá chương I, II: chỉ hình hỏng (chiHinh), công thức vẫn đúng; có tiêu đề nhóm và cách ghi thanh riêng', () => {
+  const ca = [['hcnNhanXPha', { x: 4 }, { hang: 'x+2', cot: 'x+3' }], ['manhVuong', { a: 4, b: 2 }, { dang: 'tong' }], ['lapPhuong', { a: 3, b: 2 }, { dang: 'tong' }],
+    ['haiLapPhuong', { a: 3, b: 1.5 }, { dang: 'hieu' }], ['xepChuNhat', { x: 2 }, { hang: [{ ten: '2x', dai: [2, 0] }], cot: [{ ten: 'x', dai: [1, 0] }, { ten: '3', dai: 3 }] }]];
+  ca.forEach(([ten, p, o]) => {
+    const c = canh.lay(ten), d = c.thamSo.dau;
+    assert.ok(/Thử số âm/.test(c.tieuDePha), ten);
+    assert.ok(/< 0/.test(d.hienSo(-1)) && /> 0/.test(d.hienSo(1)), ten);
+    const md = tinh(ten, Object.assign({ dau: 1 }, p), 1, o).pha, am = tinh(ten, Object.assign({ dau: -1 }, p), 1, o).pha;
+    assert.ok(!md.hong && !md.chiHinh, ten);
+    assert.ok(am.hong && am.chiHinh && /vẫn đúng/.test(am.chu) && /Viền đỏ đứt/.test(am.chu), ten + ': ' + am.chu);
+    // Thẻ soi nói rõ số đo là của hình vẽ theo độ dài dương
+    const k = tinh(ten, Object.assign({ dau: -1 }, p), 1, o), sv = c.soi(k, Object.assign({ dau: -1 }, p), o);
+    Object.values(sv).forEach(m => assert.ok(/Hình vẽ theo độ dài/.test(m.chu), ten));
+  });
+});
+
+test('manhVuong: chỉ nói "cắt bớt hai dải" khi |b| < a', () => {
+  assert.ok(/hai dải/.test(tinh('manhVuong', { a: 4, b: 2, dau: -1 }, 1, { dang: 'tong' }).pha.chu));
+  assert.ok(!/hai dải/.test(tinh('manhVuong', { a: 1, b: 6, dau: -1 }, 1, { dang: 'tong' }).pha.chu));
+  assert.ok(!/hai dải/.test(tinh('manhVuong', { a: 3, b: 3, dau: -1 }, 1, { dang: 'tong' }).pha.chu));
+});
+
+test('hcnNhanXPha chia: chưa chạy tới cuối thì ô thử phá không nói thương', () => {
+  const o = { chia: '2x', dt: '6x^2+4x' };
+  [1, -1].forEach(dau => assert.ok(!/66 : 6|= 11|-7/.test(tinh('hcnNhanXPha', { x: 3, dau }, 0, o).pha.chu)));
+});
+
+test('một cạnh bằng 0 khi lật dấu thì có câu nhắc thử số khác; haiLapPhuong đã bỏ góc thì không nhắc khối góc', () => {
+  assert.ok(/cạnh bằng \$0\$/.test(tinh('hcnNhanXPha', { x: 3, dau: -1 }, 1, { hang: 'x+2', cot: 'x+3' }).pha.chu));
+  assert.ok(!/cạnh bằng \$0\$/.test(tinh('hcnNhanXPha', { x: 4, dau: -1 }, 1, { hang: 'x+2', cot: 'x+3' }).pha.chu));
+  assert.ok(/khối góc/.test(tinh('haiLapPhuong', { a: 3, b: 1.5, dau: -1 }, 0, { dang: 'hieu' }).pha.chu));
+  assert.ok(!/khối góc/.test(tinh('haiLapPhuong', { a: 3, b: 1.5, dau: -1 }, 1, { dang: 'hieu' }).pha.chu));
 });

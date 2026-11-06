@@ -20,8 +20,9 @@
     var am = dau != null && dau < 0, bs = am ? -b : b, ve = (a + bs) * (a + bs), ab2 = 2 * a * bs;
     var dong = '$(' + so(a) + ' + ' + soN(bs) + ')^2 = ' + so(ve) + '$ và $a^2 + 2ab + b^2 = ' + so(a * a) + (ab2 < 0 ? ' - ' : ' + ') + so(Math.abs(ab2)) + ' + ' + so(bs * bs) + ' = ' + so(ve) + '$';
     if (!am) return { hong: false, chu: 'Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: ' + dong + '.' };
-    return { hong: true, chu: 'Hình hỏng: với $b = ' + so(bs) + '$, mảnh $ab = ' + so(a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * bs) + '$ có diện tích âm, mảnh $b^2$ có cạnh âm: không có mảnh nào như thế. ' +
-      'Công thức thì không hỏng: ' + dong + '. Với $b$ âm, $(a + b)^2$ chính là bình phương của một hiệu, $(' + so(a) + ' - ' + so(b) + ')^2$: hình vuông $a^2$ bị cắt bớt hai dải, như hình ở phần Suy ra.' };
+    var cuoi = a + bs > 0 ? ' Với $b$ âm, $(a + b)^2$ chính là bình phương của một hiệu, $(' + so(a) + ' - ' + so(b) + ')^2$: hình vuông $a^2$ bị cắt bớt hai dải, như hình ở phần Suy ra.' : '';
+    return { hong: true, chiHinh: true, chu: 'Hình không dựng được: với $b = ' + so(bs) + '$, mảnh $ab = ' + so(a) + ' \\cdot ' + soN(bs) + ' = ' + so(a * bs) + '$ có diện tích âm, mảnh $b^2$ có cạnh âm: không có mảnh nào như thế. ' +
+      'Viền đỏ đứt đánh dấu các mảnh có cạnh âm (khác mảnh âm ở bài 2, 3, là mảnh có thật được trừ đi). Công thức thì vẫn đúng: ' + dong + '.' + cuoi };
   }
   function hieu(p, t) {
     var q = hopLe(p), a = q.a, b = q.b, r = a - b;
@@ -42,7 +43,7 @@
   }
   C.dangKi('manhVuong', {
     thamSo: { a: { min: 1, max: 6, step: 0.5, md: 4, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 6, step: 0.5, md: 2, nhan: 'Cạnh b', mau: '--b' },
-      dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của b', pha: true } },
+      dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của b', pha: true, hienSo: function (v) { return v < 0 ? 'b < 0' : 'b > 0'; } } },
     trangThai: { thieuHaiManh: true, thieuMotManh: true, thieuManhB: true },
     tinh: function (p, t, o) {
       var dang = (o && o.dang) || 'tong';
@@ -83,7 +84,7 @@
       });
       // Thử phá: mảnh có cạnh b âm thì viền đỏ đứt, vì không có mảnh nào như thế
       if (k.pha && k.pha.hong) k.manh.forEach(function (m) {
-        if (m.ten !== 'a2' && !m.an) C.mk('polygon', { points: C.diem(m.dinh), fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2.5, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '7 4' }, svg);
+        if (m.ten !== 'a2' && !m.an) C.mk('polygon', { points: C.diem(m.dinh), fill: 'var(--sai)', 'fill-opacity': 0.12, stroke: 'var(--sai)', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke', 'stroke-dasharray': '7 4' }, svg);
       });
       var g = lech * (1 - C.muot((t - 0.1) / 0.7)), gc = C.mk('g', { 'data-soi': 'canh' }, svg);
       C.chu(gc, a / 2, -g - d * 0.35, tenA, co, '--a', nhCanh);
@@ -125,8 +126,15 @@
   // Soi (dạng tổng): ba loại mảnh và cạnh hình vuông lớn. Đề đặt tên cạnh riêng (tenA, tenB) thì hình chỉ là mô hình, không ghi số đo.
   // o.anAb mà em chưa giải: không nói diện tích mảnh giữa.
   function tex(s) { return String(s).replace(/−/g, '-').replace(/²/g, '^2').replace(/³/g, '^3').replace(/·/g, ' \\cdot '); }
+  C.lay('manhVuong').tieuDePha = 'Thử số âm: hình không vẽ được, công thức vẫn đúng';
   C.lay('manhVuong').soi = function (k, p, o) {
     if ((o.dang || 'tong') !== 'tong') return {};
+    var ra = soiTong(k, p, o);
+    // Đang thử số âm: số đo trong thẻ là của hình đang vẽ (b dương)
+    if (p.dau != null && p.dau < 0) Object.keys(ra).forEach(function (kh) { ra[kh].chu += ' (Hình vẽ theo độ dài $|b| = ' + so(k.b) + '$; với $b$ âm xem ô báo vàng.)'; });
+    return ra;
+  };
+  function soiTong(k, p, o) {
     var a = k.a, b = k.b, nh = o.nhan || {}, A = tex(o.tenA || 'a'), B = tex(o.tenB || 'b'), coSo = !o.tenA && !o.tenB;
     var vab = o.anAb && p.trangThai !== 'giai', ab = tex(nh.ab || (A + B)), a2 = tex(nh.a2 || A + '^2'), b2 = tex(nh.b2 || B + '^2');
     var voi = function (s, x) { return coSo ? ' Với $a = ' + so(a) + '$, $b = ' + so(b) + '$: $' + s + ' = ' + so(x) + '$.' : ''; };

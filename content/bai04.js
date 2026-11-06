@@ -20,8 +20,8 @@ TOAN8.bai(anKetQua({
   nhin: {
     tieuDe: 'Nhân hai đa thức là tính diện tích hình chữ nhật', loai: 'chungMinh',
     luuY: 'Hình chứng minh khi $x$ dương (kéo thanh để đổi $x$): diện tích cả hình bằng tổng diện tích bốn mảnh. Với số bất kì quy tắc vẫn đúng, vì nó chỉ dùng tính chất phân phối: $(x + 2)(x + 3) = x(x + 3) + 2(x + 3)$.',
-    canh: Object.assign(hcn('x+2', 'x+3'), { ten: 'hcnNhanXPha', thuPha: true, moTa:'Hình chữ nhật cạnh x cộng 2 và x cộng 3, cắt thành bốn mảnh: x bình phương, 3x, 2x và 6.',
-      dongSo: function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: cả hình $(' + so(x) + ' + 2)(' + so(x) + ' + 3) = ' + so((x + 2) * (x + 3)) + '$; bốn mảnh $' + so(x * x) + ' + ' + so(3 * x) + ' + ' + so(2 * x) + ' + 6 = ' + so(x * x + 5 * x + 6) + '$.'; } }),
+    canh: Object.assign(hcn('x+2', 'x+3'), { ten: 'hcnNhanXPha', thuPha: true, thamSo: { x: 4 }, moTa:'Hình chữ nhật cạnh x cộng 2 và x cộng 3, cắt thành bốn mảnh: x bình phương, 3x, 2x và 6.',
+      dongSo: (function (g) { return function (p, f) { var s = g(p, f); return p.dau < 0 ? '(Hình vẽ theo độ dài dương $|x| = ' + String(p.x).replace('.', '{,}') + '$.) ' + s : s; }; })(function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: cả hình $(' + so(x) + ' + 2)(' + so(x) + ' + 3) = ' + so((x + 2) * (x + 3)) + '$; bốn mảnh $' + so(x * x) + ' + ' + so(3 * x) + ' + ' + so(2 * x) + ' + 6 = ' + so(x * x + 5 * x + 6) + '$.'; }) }),
     buoc: [
       { t: 0, chu: 'Hình chữ nhật có hai cạnh $x + 2$ và $x + 3$, nên diện tích là $(x + 2)(x + 3)$.' },
       { t: 0.1, chu: 'Cắt mỗi cạnh ở chỗ nối hai đoạn. Hình chia thành $2 \\cdot 2 = 4$ mảnh chữ nhật.' },

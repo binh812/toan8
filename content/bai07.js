@@ -31,9 +31,9 @@
       tieuDe: 'Tách khối lập phương thành 8 khối', loai: 'chungMinh',
       luuY: 'Hình đúng khi $a$, $b$ dương. Nhân $(a+b)^2$ với $(a+b)$ cho thấy công thức đúng với mọi số. Lập phương của một hiệu có hình riêng ở Ví dụ 2.',
       canh: { ten: 'lapPhuong', thuPha: true, tuyChon: { dang: 'tong' }, moTa: 'Khối lập phương cạnh a cộng b, mỗi cạnh chia thành đoạn a và đoạn b, tách ra thành tám khối hộp: một khối a mũ ba, ba khối a bình phương b, ba khối a b bình phương, một khối b mũ ba.',
-        dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
+        dongSo: (function (g) { return function (p, f) { var s = g(p, f); return p.dau < 0 ? '(Hình vẽ theo độ dài dương $|b| = ' + String(p.b).replace('.', '{,}') + '$.) ' + s : s; }; })(function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); };
-          return '$\\ca{' + so(p.a * p.a * p.a) + '} + 3 \\cdot \\cc{' + so(p.a * p.a * p.b) + '} + 3 \\cdot \\cd{' + so(p.a * p.b * p.b) + '} + \\cb{' + so(p.b * p.b * p.b) + '} = ' + so(Math.pow(p.a + p.b, 3)) + '$\n$(' + so(p.a) + ' + ' + so(p.b) + ')^3 = ' + so(Math.pow(p.a + p.b, 3)) + '$'; } },
+          return '$\\ca{' + so(p.a * p.a * p.a) + '} + 3 \\cdot \\cc{' + so(p.a * p.a * p.b) + '} + 3 \\cdot \\cd{' + so(p.a * p.b * p.b) + '} + \\cb{' + so(p.b * p.b * p.b) + '} = ' + so(Math.pow(p.a + p.b, 3)) + '$\n$(' + so(p.a) + ' + ' + so(p.b) + ')^3 = ' + so(Math.pow(p.a + p.b, 3)) + '$'; }) },
       buoc: [
         { t: 0, chu: 'Khối lập phương cạnh $\\ca{a} + \\cb{b}$. Mỗi cạnh chia thành một đoạn $\\ca{a}$ và một đoạn $\\cb{b}$.' },
         { t: 0.1, chu: 'Cắt theo các đường chia rồi tách ra: được $8$ khối hộp. Không khối nào đổi kích thước.' },
@@ -101,14 +101,15 @@
         de: 'Xếp các bước theo đúng thứ tự lập luận (với $a$, $b$ dương). Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
         canh: { ten: 'lapPhuong', tuyChon: { dang: 'tong' } },
         buoc: [
-          { id: 'gt', chu: 'Khối lập phương cạnh $a + b$ có thể tích $(a + b)^3$.', canh: { t: 0 } },
+          { id: 'gt', chu: 'Dựng khối lập phương cạnh $a + b$.', canh: { t: 0 } },
+          { id: 'tt', chu: 'Thể tích khối lập phương đó là $(a + b)^3$.', can: ['gt'], canh: { t: 0 } },
           { id: 'cat', chu: 'Chia mỗi cạnh thành một đoạn $a$ và một đoạn $b$, cắt theo các chỗ chia: được $2 \\cdot 2 \\cdot 2 = 8$ khối hộp.', can: ['gt'], canh: { t: 0.55 } },
-          { id: 'the', chu: 'Mỗi khối hộp có ba cạnh, mỗi cạnh là $a$ hoặc $b$; thể tích của nó là tích ba cạnh.', can: ['cat'], canh: { t: 0.6 } },
-          { id: 'dau', chu: 'Ba cạnh đều là $a$ chỉ có $1$ khối, thể tích $a^3$; ba cạnh đều là $b$ cũng chỉ có $1$ khối, thể tích $b^3$.', can: ['the'], canh: { t: 1 } },
-          { id: 'a2b', chu: 'Đúng một cạnh là $b$: cạnh đó nằm theo một trong ba chiều, nên có $3$ khối $a^2b$.', can: ['the'], canh: { t: 1 } },
-          { id: 'ab2', chu: 'Đúng một cạnh là $a$: cạnh đó nằm theo một trong ba chiều, nên có $3$ khối $ab^2$.', can: ['the'], canh: { t: 1 } },
+          { id: 'the', chu: 'Mỗi khối hộp có ba kích thước (dài, rộng, cao), mỗi kích thước là $a$ hoặc $b$; thể tích của nó là tích ba kích thước.', can: ['cat'], canh: { t: 0.6 } },
+          { id: 'dau', chu: 'Ba kích thước đều là $a$: chỉ có $1$ khối, thể tích $a^3$; ba kích thước đều là $b$: cũng chỉ $1$ khối, thể tích $b^3$.', can: ['the'], canh: { t: 1 } },
+          { id: 'a2b', chu: 'Đúng một kích thước là $b$: nó nằm theo một trong ba chiều, nên có $3$ khối $a^2b$.', can: ['the'], canh: { t: 1 } },
+          { id: 'ab2', chu: 'Đúng một kích thước là $a$: nó nằm theo một trong ba chiều, nên có $3$ khối $ab^2$.', can: ['the'], canh: { t: 1 } },
           { id: 'cong', chu: 'Tám khối ghép khít thành khối lớn, nên thể tích khối lớn bằng tổng tám khối: $a^3 + 3a^2b + 3ab^2 + b^3$.', can: ['dau', 'a2b', 'ab2'], canh: { t: 1 } },
-          { id: 'kl', chu: 'Vậy $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$.', can: ['gt', 'cong'], canh: { t: 1 } }
+          { id: 'kl', chu: 'Vậy $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$.', can: ['tt', 'cong'], canh: { t: 1 } }
         ],
         ketLuan: 'Cùng một khối lập phương, tính thể tích hai cách: $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$.'
       } },

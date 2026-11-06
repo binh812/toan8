@@ -340,7 +340,7 @@
       var gt = '$' + bien + ' ' + bangT(giaTri(d.mu, v)) + '$';
       if (h.loai === 'so') chu = 'Ô vuông cạnh $1$: hạng tử chỉ có số, mỗi ô là $1$.';
       else if (h.loai === 'the') chu = 'Thẻ ghi phần biến $' + bien + '$: có hơn ba thừa số chữ nên không vẽ thành khối được.';
-      else if (h.loai === 'thanh') chu = 'Thanh dài $' + f[0] + '$, rộng $1$, nên giá trị là $' + f[0] + '$. Với ' + voi + ': ' + gt + '.';
+      else if (h.loai === 'thanh') chu = 'Thanh dài $' + f[0] + '$, rộng $1$, nên giá trị là $' + f[0] + '$, ở đây ' + voi + '.';
       else chu = (h.loai === 'tam' ? 'Tấm có hai cạnh ' : 'Khối có ba cạnh ') + f.map(function (c) { return '$' + c + '$'; }).join(', ') +
         ', nên ' + (h.loai === 'tam' ? 'diện tích' : 'thể tích') + ' là $' + f.join(' \\cdot ') + ' = ' + bien + '$. Với ' + voi + ': ' + gt + '.';
       if (hien) {
@@ -586,7 +586,7 @@
       if (!chia) { b.chu(W / 2, -0.75 * co, tenTren, co); b.chu(-0.4 * co, H / 2, tenTrai, co, 'end'); }
       var yTong = H + 1.3 * co;
       b.chu(0, yTong, tong, 1.05 * co, 'start');
-      var pha = phaHcn(p, v, hang, cot, dt, chia);
+      var pha = phaHcn(p, v, hang, cot, dt, chia, ket);
       return { o: o2, W: W, H: H, co: co, cat: cat, ket: ket, chia: chia, thuc: thuc, canhTren: canhTren, canhTrai: canhTrai, tenTren: tenTren, tenTrai: tenTrai,
         tong: { s: tren ? '' : tong, y: yTong, duoc: !chia || chiaHet }, khung: b.hop(0.45 * co), dienTich: thuc ? W * H : null,
         hang: hang, cot: cot, dt: dt || null, v: v, pha: pha,
@@ -594,19 +594,23 @@
     }
   });
   // Thử phá cho hcnNhan: x âm thì có đoạn cạnh âm, hình không còn là hình chữ nhật thật; nhưng tính lại hai vế vẫn bằng nhau
-  function phaHcn(p, v, hang, cot, dt, chia) {
+  // Câu chung cho thử phá chương I, II: viền đỏ đứt ở đây khác mảnh âm ở bài 2, 3
+  var VIEN_PHA = 'Viền đỏ đứt đánh dấu mảnh có cạnh âm: không dựng được (khác mảnh âm ở bài 2, 3, là mảnh có thật được trừ đi).';
+  // ket: hình đã chạy tới cuối chưa. Phép chia: chưa tới cuối thì không nói thương, kẻo lộ điều phần Khám phá đang hỏi.
+  function phaHcn(p, v, hang, cot, dt, chia, ket) {
     var am = p.dau != null && p.dau < 0, vs = { x: am ? -v.x : v.x, y: v.y, z: v.z };
     var gt = function (d) { return giaTriDon(d, vs); };
     var coY = hang.concat(cot, dt || []).some(function (d) { return d.mu.y; });
     var voi = '$x = ' + soT(vs.x) + '$' + (coY ? ', $y = ' + soT(vs.y) + '$' : '');
     var nhom = function (ds) { return ds.length > 1 ? '(' + texDa(ds) + ')' : texDon(ds[0]); };
-    var dong;
+    var dong, coKhong = false, chuaToi = chia && ket < 0.5;
     if (chia) {
       var B = hang[0], S = cong(dt.map(gt)), Q = cong(cot.map(gt));
       dong = '$' + nhom(dt) + ' : ' + texNgoac(B) + ' = ' + soN(S) + ' : ' + soN(gt(B)) + ' = ' + soT(S / gt(B)) + '$' + (am ? ', và cạnh trên tìm được trên hình, tính lại với $x = ' + soT(vs.x) + '$, cũng bằng $' + soT(Q) + '$' : ', đúng bằng độ dài cạnh trên');
     } else {
       var L = cong(hang.map(gt)), T = cong(cot.map(gt)), oS = [];
       hang.forEach(function (h) { cot.forEach(function (c) { oS.push(gt(h) * gt(c)); }); });
+      coKhong = Math.abs(L) < 1e-9 || Math.abs(T) < 1e-9;
       dong = '$' + nhom(hang) + nhom(cot) + ' = ' + soN(L) + ' \\cdot ' + soN(T) + ' = ' + soT(L * T) + '$, tổng các mảnh $' + texTong(oS) + ' = ' + soT(cong(oS)) + '$';
     }
     var amHang = hang.map(function (d) { return gt(d) < 0; }), amCot = cot.map(function (d) { return gt(d) < 0; }), thay = {}, ds = [];
@@ -615,9 +619,13 @@
       var s = '$' + texDon(d) + ' = ' + soT(gt(d)) + '$';
       if (am && d.mu.x && gt(d) < 0 && !thay[s]) { thay[s] = true; ds.push(s); }
     });
-    if (!am) return { hong: false, amHang: amHang, amCot: amCot, chu: 'Với ' + voi + ': ' + dong + '.' };
-    return { hong: true, amHang: amHang, amCot: amCot, chu: 'Hình hỏng: với ' + voi + (ds.length ? ', đoạn ' + ds.join(' và ') + ' âm, mà độ dài không thể âm, nên không có hình chữ nhật nào như thế' : '') +
-      '. ' + (chia ? 'Phép chia' : 'Phép nhân') + ' thì không hỏng: ' + dong + '. Quy tắc dựa vào tính chất phân phối nên đúng với mọi $x$; chỉ cách nhìn bằng diện tích mới cần $x > 0$.' };
+    var nhac0 = coKhong ? ' Ở đây một cạnh bằng $0$ nên hai vế cùng bằng $0$; kéo thanh $x$ sang số khác để thử một trường hợp rõ hơn.' : '';
+    if (!am) return { hong: false, amHang: amHang, amCot: amCot, chu: chuaToi
+      ? 'Với ' + voi + ' mọi đoạn cạnh đều dương, nên hình dựng được. Chạy hình tới cuối để so hai cách tính.'
+      : 'Với ' + voi + ': ' + dong + '.' };
+    return { hong: true, chiHinh: true, amHang: amHang, amCot: amCot, chu: 'Hình không dựng được: với ' + voi + (ds.length ? ', đoạn ' + ds.join(' và ') + ' âm, mà độ dài không thể âm, nên không có hình chữ nhật nào như thế' : '') +
+      '. ' + VIEN_PHA + ' ' + (chuaToi ? 'Chạy hình tới cuối để thấy phép chia vẫn đúng.'
+        : (chia ? 'Phép chia' : 'Phép nhân') + ' thì vẫn đúng: ' + dong + '.' + nhac0 + ' Quy tắc dựa vào tính chất phân phối nên đúng với mọi $x$; chỉ cách nhìn bằng diện tích mới cần $x > 0$.') };
   }
   C.lay('hcnNhan').ve = function (svg, k, p, t, o) {
     // o.anNhan: chưa giải thì cạnh cần tìm và dòng tổng ghi dấu ?
@@ -648,7 +656,7 @@
     });
     // Thử phá: ô có đoạn cạnh âm thì viền đỏ đứt, vì không có ô nào như thế
     (k.phaO || []).forEach(function (c) {
-      C.mk('rect', Object.assign({ x: c.x + 0.04 * co, y: c.y + 0.04 * co, width: c.w - 0.08 * co, height: c.h - 0.08 * co, fill: 'none', stroke: 'var(--sai)', 'stroke-width': 2.5, 'stroke-dasharray': '7 4' }, NET), svg);
+      C.mk('rect', Object.assign({ x: c.x + 0.1 * co, y: c.y + 0.1 * co, width: c.w - 0.2 * co, height: c.h - 0.2 * co, fill: 'var(--sai)', 'fill-opacity': 0.12, stroke: 'var(--sai)', 'stroke-width': 3, 'stroke-dasharray': '7 4' }, NET), svg);
     });
     // Đường cắt
     if (cat > 0) {
@@ -723,6 +731,8 @@
       }
       ra.tong = { tieuDe: k.chia ? 'Thương' : 'Tổng các mảnh', chu: chuT };
     }
+    // Đang thử số âm: số đo trong thẻ là của hình đang vẽ (x dương)
+    if (p.dau != null && p.dau < 0) Object.keys(ra).forEach(function (kh) { ra[kh].chu += ' (Hình vẽ theo độ dài $|x| = ' + soT(v.x) + '$; với $x$ âm xem ô báo vàng.)'; });
     return ra;
   };
 
@@ -733,10 +743,11 @@
   C.lay('hcnNhanX').soi = function (k, p, o) { return hcn.soi(k, p, o); };
   // Cảnh của phần Nhìn bài 4, 5: như hcnNhanX, thêm thanh Thử phá đổi x thành số âm.
   // Hình vẫn vẽ theo x dương (độ dài không âm được), k.pha tính lại hai vế với x âm.
-  C.dangKi('hcnNhanXPha', { thamSo: { x: hcn.thamSo.x, dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của x', pha: true } }, trangThai: hcn.trangThai,
+  C.dangKi('hcnNhanXPha', { thamSo: { x: hcn.thamSo.x, dau: { min: -1, max: 1, step: 2, md: 1, nhan: 'Dấu của x', pha: true, hienSo: function (v) { return v < 0 ? 'x < 0' : 'x > 0'; } } }, trangThai: hcn.trangThai,
     tinh: function (p, t, o) { return hcn.tinh(Object.assign({ y: hcn.thamSo.y.md }, p), t, o); } });
   C.lay('hcnNhanXPha').ve = function (svg, k, p, t, o) { return hcn.ve(svg, k, p, t, o); };
   C.lay('hcnNhanXPha').soi = function (k, p, o) { return hcn.soi(k, p, o); };
+  C.lay('hcnNhanXPha').tieuDePha = 'Thử số âm: hình không vẽ được, quy tắc vẫn đúng';
 
   // Cho test và nội dung dùng lại
   C.daiSo = { docDon: docDon, docDa: docDa, chuDon: chuDon, chuDa: chuDa, nhanDon: nhanDon, chiaDon: chiaDon, gon: gon, giaTri: giaTri, bacDon: bacDon, khoa: khoa };

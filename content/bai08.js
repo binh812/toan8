@@ -18,13 +18,13 @@ TOAN8.bai({
     tieuDe: 'Khối lập phương bỏ một góc, còn lại ba tấm', loai: 'chungMinh',
     luuY: 'Hình đúng khi $a > b > 0$. Nhân phá ngoặc cho thấy công thức đúng với mọi số. Tổng hai lập phương có được khi thay $b$ bởi $-b$; hình của nó ở Ví dụ 1.',
     canh: { ten: 'haiLapPhuong', thuPha: true, tuyChon: { dang: 'hieu' }, moTa: 'Khối lập phương cạnh a bỏ đi khối nhỏ cạnh b ở một góc. Phần còn lại tách thành ba tấm cùng dày a trừ b, mặt lần lượt là a bình phương, a b, b bình phương.',
-      dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
+      dongSo: (function (g) { return function (p, f) { var s = g(p, f); return p.dau < 0 ? '(Hình vẽ theo độ dài dương $|b| = ' + String(p.b).replace('.', '{,}') + '$.) ' + s : s; }; })(function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); }, b = Math.max(0.5, Math.min(p.b, p.a - 0.5));
-        return '$\\ca{' + so(p.a * p.a * p.a) + '} - \\cb{' + so(b * b * b) + '} = ' + so(p.a * p.a * p.a - b * b * b) + '$\n$(' + so(p.a) + ' - ' + so(b) + ')(\\ca{' + so(p.a * p.a) + '} + \\cc{' + so(p.a * b) + '} + \\cb{' + so(b * b) + '}) = ' + so(p.a * p.a * p.a - b * b * b) + '$'; } },
+        return '$\\ca{' + so(p.a * p.a * p.a) + '} - \\cb{' + so(b * b * b) + '} = ' + so(p.a * p.a * p.a - b * b * b) + '$\n$(' + so(p.a) + ' - ' + so(b) + ')(\\ca{' + so(p.a * p.a) + '} + \\cc{' + so(p.a * b) + '} + \\cb{' + so(b * b) + '}) = ' + so(p.a * p.a * p.a - b * b * b) + '$'; }) },
     buoc: [
       { t: 0, chu: 'Khối lập phương cạnh $\\ca{a}$, thể tích $\\ca{a}^3$. Ở một góc là khối nhỏ cạnh $\\cb{b}$.' },
       { t: 0.1, chu: 'Bỏ khối nhỏ đi. Phần còn lại có thể tích $\\ca{a}^3 - \\cb{b}^3$.' },
-      { t: 0.4, chu: 'Tách phần còn lại thành ba tấm. Không cắt thêm, không đổi kích thước.' },
+      { t: 0.4, chu: 'Cắt phần còn lại thành ba tấm, không thêm bớt gì.' },
       { t: 0.75, chu: 'Cả ba tấm cùng dày $\\ca{a} - \\cb{b}$ (cạnh tô đỏ). Mặt của chúng là $\\ca{a}\\cdot\\ca{a}$, $\\ca{a}\\cdot\\cb{b}$ và $\\cb{b}\\cdot\\cb{b}$.' }
     ],
     ketLuan: 'Ba tấm cùng dày $a - b$, mặt cộng lại là $a^2 + ab + b^2$: $$\\ca{a}^3 - \\cb{b}^3 = (\\ca{a} - \\cb{b})(\\ca{a^2} + \\cc{ab} + \\cb{b^2})$$',
@@ -109,7 +109,7 @@ TOAN8.bai({
       buoc: [
         { id: 'gt', chu: 'Khối lập phương cạnh $a$ có thể tích $a^3$; ở một góc là khối nhỏ cạnh $b$.', canh: { t: 0 } },
         { id: 'bo', chu: 'Bỏ khối nhỏ đi: phần còn lại có thể tích $a^3 - b^3$.', can: ['gt'], canh: { t: 0.35 } },
-        { id: 'tach', chu: 'Tách phần còn lại thành ba tấm, không cắt thêm, không đổi kích thước.', can: ['bo'], canh: { t: 0.75 } },
+        { id: 'tach', chu: 'Cắt phần còn lại thành ba tấm, không thêm bớt gì.', can: ['bo'], canh: { t: 0.75 } },
         { id: 'day', chu: 'Cả ba tấm cùng dày $a - b$: cạnh $a$ bỏ đi đoạn $b$ của khối nhỏ.', can: ['tach'], canh: { t: 1 } },
         { id: 'mat', chu: 'Mặt của ba tấm là $a \\cdot a$, $a \\cdot b$ và $b \\cdot b$.', can: ['tach'], canh: { t: 1 } },
         { id: 'the', chu: 'Thể tích một tấm bằng mặt nhân bề dày, nên ba tấm có tổng thể tích $(a - b)(a^2 + ab + b^2)$.', can: ['day', 'mat'], canh: { t: 1 } },

@@ -22,7 +22,7 @@ TOAN8.bai(anKetQua({
     luuY: 'Hình chứng minh khi $x$ dương (kéo thanh để đổi $x$): mỗi mảnh là hình chữ nhật có một cạnh $2x$, nên cạnh kia bằng diện tích chia $2x$. Với số bất kì, kiểm lại bằng phép nhân: $2x(3x + 2) = 6x^2 + 4x$. Tổng quát, $(A + B) : C = A : C + B : C$ vì $C \\cdot (A : C + B : C) = A + B$.',
     canh: Object.assign(chia('6x^2+4x', '2x'), { ten: 'hcnNhanXPha', thuPha: true, moTa:'Hình chữ nhật có một cạnh 2x, gồm hai mảnh diện tích 6x bình phương và 4x. Cạnh trên của mỗi mảnh lần lượt hiện ra.',
       // Dòng số không biết t nên không ghi cạnh trên (kẻo lộ kết quả từ đầu); chỉ cho số để em tự chia thử
-      dongSo: function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: mảnh trái có diện tích $6x^2 = ' + so(6 * x * x) + '$, cạnh trái $2x = ' + so(2 * x) + '$. Cạnh trên dài bao nhiêu?'; } }),
+      dongSo: (function (g) { return function (p, f) { var s = g(p, f); return p.dau < 0 ? '(Hình vẽ theo độ dài dương $|x| = ' + String(p.x).replace('.', '{,}') + '$.) ' + s : s; }; })(function (p) { var x = p.x; return 'Với $x = ' + so(x) + '$: mảnh trái có diện tích $6x^2 = ' + so(6 * x * x) + '$, cạnh trái $2x = ' + so(2 * x) + '$. Cạnh trên dài bao nhiêu?'; }) }),
     buoc: [
       { t: 0, chu: 'Hình chữ nhật có cạnh trái $2x$, gồm hai mảnh có diện tích $6x^2$ và $4x$. Cạnh trên của mỗi mảnh chưa biết.' },
       { t: 0.15, chu: 'Mảnh trái: diện tích $6x^2$, một cạnh $2x$, nên cạnh kia là $6x^2 : 2x = 3x$ (vì $2x \\cdot 3x = 6x^2$).' },
