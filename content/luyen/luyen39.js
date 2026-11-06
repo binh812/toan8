@@ -8,12 +8,17 @@
     return { widget: 'hinhChop', config: { day: 4, a: a, h: h, an: true, thanhTruot: false, trai: false, hienTrungDoan: true, tenChan: 'O', tenGiua: 'M' } };
   }
 
+  // Hình giải theo chính số của đề (js/canh/hinhChop.js): trải phẳng thành hình chữ nhật p × d, hoặc đổ nước sang hình hộp cùng đáy, cùng cao
+  function trai(a, d, ten, dong, ghiChu) { return { widget: 'canh', config: { ten: 'traiChop', tuyChon: { n: 4, ten: ten, dong: dong }, thamSo: { a: a, d: d }, chiXem: true, t: 1, ghiChu: ghiChu } }; }
+  function nuoc(a, h, ten) { return { widget: 'canh', config: { ten: 'doNuoc', tuyChon: { n: 4, ten: ten, tenLang: 'hình hộp' }, thamSo: { a: a, h: h }, chiXem: true, t: 1 } }; }
+
   TOAN8.luyen(39, [
     { ten: 'Diện tích xung quanh', muc: 1, sinh: function (r, cc) {
       var a = r.so(2, 15), d = r.so(Math.ceil(a / 2) + 1, a + 8), kq = 2 * a * d;
       return {
         de: 'Hình chóp tứ giác đều $S.ABCD$ có cạnh đáy $' + a + '$ cm, trung đoạn $SM = ' + d + '$ cm. Tính diện tích xung quanh (cm²).',
         hinh: hinh(a, null, d),
+        hinhGiai: trai(a, d, { a: String(a), d: String(d), p: String(2 * a) }, 'Sxq = ' + 2 * a + ' · ' + d + ' = ' + kq),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$S_{xq} = p \\cdot d$ với $p$ là **nửa chu vi** đáy, $d$ là trung đoạn.', 'Đáy là hình vuông cạnh $' + a + '$: $p = \\frac{4 \\cdot ' + a + '}{2} = ' + 2 * a + '$.'],
         loiGiai: ['$p = \\frac{4 \\cdot ' + a + '}{2} = ' + 2 * a + '$ (cm).', '$S_{xq} = ' + 2 * a + ' \\cdot ' + d + ' = ' + kq + '$'],
@@ -27,6 +32,7 @@
       return {
         de: vat + ' có dạng hình chóp tứ giác đều, cạnh đáy $' + a + '$ cm, trung đoạn $' + d + '$ cm. Tính diện tích bìa cần để làm **toàn bộ** hộp (diện tích toàn phần, cm²), coi mép dán không đáng kể.',
         hinh: hinh(a, null, d),
+        hinhGiai: trai(a, d, { a: String(a), d: String(d), p: String(2 * a) }, 'Sxq = ' + 2 * a + ' · ' + d + ' = ' + sxq, 'Bốn mặt bên ghép thành hình chữ nhật; còn cộng thêm mặt đáy ' + a + ' × ' + a + '.'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Diện tích toàn phần $=$ diện tích xung quanh $+$ diện tích đáy.', '$S_{xq} = p \\cdot d$; đáy là hình vuông nên $S_{đáy} = ' + a + '^2$.'],
         loiGiai: ['$S_{xq} = \\frac{4 \\cdot ' + a + '}{2} \\cdot ' + d + ' = ' + sxq + '$ (cm²); $S_{đáy} = ' + a + '^2 = ' + a * a + '$ (cm²).',
@@ -45,6 +51,7 @@
       return {
         de: de,
         hinh: hinh(a, h),
+        hinhGiai: nuoc(a, h, { a: String(a), h: String(h) }),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$V = \\frac{1}{3} S_{đáy} \\cdot h$, đáy là hình vuông.', theoChuVi ? 'Tìm cạnh đáy từ chu vi trước: cạnh $=$ chu vi $: 4$.' : '$S_{đáy} = ' + a + '^2$.'],
         loiGiai: (theoChuVi ? ['Cạnh đáy $= ' + 4 * a + ' : 4 = ' + a + '$ (' + vat[1] + ').'] : []).concat([

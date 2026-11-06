@@ -7,6 +7,10 @@
     if (h == null) { var r0 = a / (2 * Math.sqrt(3)); h = Math.sqrt(Math.max(d * d - r0 * r0, 0.01)); }
     return { widget: 'hinhChop', config: { day: 3, a: a, h: h, an: true, thanhTruot: false, trai: false, hienTrungDoan: true, tenChan: 'O', tenGiua: 'M' } };
   }
+  // Hình giải theo chính số của đề (js/canh/hinhChop.js): trải phẳng thành hình chữ nhật p × d, hoặc đổ nước sang lăng trụ cùng đáy, cùng cao
+  function sv(x) { return String(Math.round(x * 100) / 100).replace('.', ','); }
+  function trai(a, d, ten, dong) { return { widget: 'canh', config: { ten: 'traiChop', tuyChon: { n: 3, ten: ten, dong: dong }, thamSo: { a: a, d: d }, chiXem: true, t: 1 } }; }
+  function nuoc(a, h, ten, ghiDay) { return { widget: 'canh', config: { ten: 'doNuoc', tuyChon: { n: 3, ten: ten, ghiDay: ghiDay }, thamSo: { a: a, h: h }, chiXem: true, t: 1 } }; }
   var VAT = ['Một chiếc chóp trang trí', 'Một chiếc đèn ngủ', 'Một hộp quà', 'Một mô hình kim tự tháp mini'];
 
   TOAN8.luyen(38, [
@@ -15,6 +19,7 @@
       return {
         de: 'Hình chóp tam giác đều $S.ABC$ có cạnh đáy $' + a + '$ cm, trung đoạn $SM = ' + d + '$ cm. Tính diện tích xung quanh (cm²).',
         hinh: hinh(a, d),
+        hinhGiai: trai(a, d, { a: String(a), d: String(d), p: sv(p) }, 'Sxq = ' + sv(p) + ' · ' + d + ' = ' + sv(kq)),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$S_{xq} = p \\cdot d$, với $p$ là **nửa chu vi** đáy và $d$ là trung đoạn.', 'Nửa chu vi đáy: $p = \\frac{3 \\cdot ' + a + '}{2}$.'],
         loiGiai: ['$p = \\frac{3 \\cdot ' + a + '}{2} = ' + cc.so(p) + '$ (cm).', '$S_{xq} = p \\cdot d = ' + cc.so(p) + ' \\cdot ' + d + ' = ' + cc.so(kq) + '$'],
@@ -28,6 +33,7 @@
       return {
         de: vat + ' có dạng hình chóp tam giác đều, diện tích đáy $' + S + '$ cm² và chiều cao $' + h + '$ cm. Tính thể tích của nó (cm³).',
         hinh: hinh(a, null, h),
+        hinhGiai: nuoc(a, h, { a: '', h: String(h) }, 'đáy ' + S + ' cm²'),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$V = \\frac{1}{3} S_{đáy} \\cdot h$.', 'Nhân diện tích đáy với chiều cao rồi chia cho $3$.'],
         loiGiai: ['$V = \\frac{1}{3} \\cdot ' + S + ' \\cdot ' + h + '$', '$V = ' + cc.so(kq) + '$'],
@@ -39,6 +45,7 @@
         var a = r.so(2, 10) * 2, d = r.so(Math.ceil(a / 2), a + 6), sxq = 1.5 * a * d;
         return {
           de: 'Một hình chóp tam giác đều có trung đoạn $' + d + '$ cm và diện tích xung quanh $' + cc.so(sxq) + '$ cm². Tính độ dài cạnh đáy (cm).',
+          hinhGiai: trai(a, d, { a: '?', d: String(d), p: sv(1.5 * a) }, sv(sxq) + ' = ' + sv(1.5 * a) + ' · ' + d),
           dapAn: { kieu: 'so', gt: a },
           goiY: ['$S_{xq} = p \\cdot d$ nên nửa chu vi $p = S_{xq} : d$.', 'Nửa chu vi đáy tam giác đều là $\\frac{3a}{2}$, nên $a = \\frac{2p}{3}$.'],
           loiGiai: ['$p = ' + cc.so(sxq) + ' : ' + d + ' = ' + cc.so(1.5 * a) + '$ (cm).', 'Chu vi đáy $= 2p = ' + 3 * a + '$ (cm), nên cạnh đáy $= ' + 3 * a + ' : 3 = ' + a + '$'],
@@ -48,6 +55,7 @@
       var h = r.so(3, 12), S = r.so(2, 15) * (h % 3 === 0 ? 2 : 3), V = S * h / 3; // V nguyên
       return {
         de: 'Một hình chóp tam giác đều có thể tích $' + cc.so(V) + '$ cm³ và chiều cao $' + h + '$ cm. Tính diện tích đáy (cm²).',
+        hinhGiai: nuoc(Math.sqrt(4 * S / Math.sqrt(3)), h, { a: '', h: String(h) }, 'đáy ? cm²'),
         dapAn: { kieu: 'so', gt: S },
         goiY: ['$V = \\frac{1}{3} S \\cdot h$ nên $S = \\frac{3V}{h}$.', 'Nhân thể tích với $3$ rồi chia cho chiều cao.'],
         loiGiai: ['$S = \\frac{3V}{h} = \\frac{3 \\cdot ' + cc.so(V) + '}{' + h + '}$', '$S = ' + S + '$'],
