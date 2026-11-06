@@ -12,6 +12,14 @@
     });
     return out;
   }
+  // Hình lời giải: sơ đồ đoạn (mỗi vế là một đoạn) theo chính số của đề. m(hệ số x, số, nhãn) là một mảnh.
+  function m(x, so, nhan) { return { x: x, so: so, nhan: nhan }; }
+  function lap(n, manh) { var ds = []; for (var i = 0; i < n; i++) ds.push(manh); return ds; }
+  function hg(tenTren, tren, tenDuoi, duoi, them) {
+    var tuyChon = Object.assign({ tenTren: tenTren, tren: tren, tenDuoi: tenDuoi, duoi: duoi, hienX: true }, them && them.tuyChon);
+    return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, ten: 'soDoDoan' }, them, { tuyChon: tuyChon }) };
+  }
+  var X_BAT_KI = 'Hình vẽ với một giá trị x bất kì.';
   var TEN = ['An', 'Bình', 'Chi', 'Dũng', 'Hà', 'Khoa', 'Lan', 'Minh', 'Nga', 'Phúc'];
 
   TOAN8.luyen(26, [
@@ -22,6 +30,7 @@
         return {
           de: 'Một người đi xe đạp $' + t + '$ giờ với vận tốc $x$ (km/h), rồi đi bộ thêm $' + d + '$ km. Viết biểu thức biểu thị tổng quãng đường người đó đã đi (km).',
           dapAn: { kieu: 'bieuThuc', gt: t + 'x+' + d },
+          hinhGiai: hg('Xe đạp ' + t + ' giờ, rồi đi bộ', lap(t, m(1, 0, 'x')).concat([m(0, d, String(d))]), null, null, { tuyChon: { x: 10, hienX: false }, ghiChu: 'Mỗi đoạn x là quãng đường đi trong 1 giờ. ' + X_BAT_KI }),
           goiY: ['Quãng đường = vận tốc $\\times$ thời gian.', 'Đoạn đi xe đạp dài $' + t + '\\cdot x$ km; cộng thêm đoạn đi bộ.'],
           loiGiai: ['Đi xe đạp: $' + t + 'x$ (km); đi bộ: $' + d + '$ (km).', 'Tổng quãng đường: $' + t + 'x + ' + d + '$'],
           loiThuongGap: [{ gt: 'x+' + (t + d), giaiThich: 'Đi $' + t + '$ giờ với vận tốc $x$ thì được $' + t + 'x$ km (nhân), không phải $x + ' + t + '$.' }]
@@ -32,6 +41,7 @@
         return {
           de: 'Giá mỗi ' + vat + ' là $x$ nghìn đồng. Hôm nay giá mỗi ' + vat + ' tăng thêm $' + th + '$ nghìn đồng. Viết biểu thức biểu thị số tiền (nghìn đồng) phải trả khi mua $' + n + '$ ' + vat + ' hôm nay.',
           dapAn: { kieu: 'bieuThuc', gt: n + '(x+' + th + ')' },
+          hinhGiai: hg('Tiền mua ' + n + ' ' + vat, lap(n, m(1, th, 'x + ' + th)), null, null, { tuyChon: { x: 10, hienX: false }, ghiChu: 'Mỗi đoạn là giá mới của một ' + vat + '. ' + X_BAT_KI }),
           goiY: ['Giá mới của mỗi ' + vat + ' là $x + ' + th + '$ (nghìn đồng).', 'Số tiền = giá mỗi ' + vat + ' $\\times$ số lượng.'],
           loiGiai: ['Giá mới mỗi ' + vat + ': $x + ' + th + '$.', 'Số tiền phải trả: $' + n + '(x + ' + th + ') = ' + n + 'x + ' + n * th + '$'],
           loiThuongGap: [{ gt: n + 'x+' + th, giaiThich: 'Mỗi ' + vat + ' đều tăng $' + th + '$ nghìn nên phải nhân **cả** $x + ' + th + '$ với $' + n + '$: $' + n + '(x + ' + th + ')$.' }]
@@ -42,6 +52,7 @@
         return {
           de: 'Hiện nay con $x$ tuổi, tuổi mẹ gấp $' + k + '$ lần tuổi con. Viết biểu thức biểu thị **tổng** số tuổi của hai mẹ con sau $' + y + '$ năm nữa.',
           dapAn: { kieu: 'bieuThuc', gt: (k + 1) + 'x+' + 2 * y },
+          hinhGiai: hg('Con + mẹ sau ' + y + ' năm', [m(1, y, 'x + ' + y), m(k, y, k + 'x + ' + y)], null, null, { tuyChon: { x: 10, hienX: false }, ghiChu: 'Cả hai đoạn đều có thêm ' + y + ' năm. ' + X_BAT_KI }),
           goiY: ['Tuổi mẹ hiện nay là $' + k + 'x$. Sau $' + y + '$ năm, **mỗi người** thêm $' + y + '$ tuổi.', 'Cộng $(x + ' + y + ')$ với $(' + k + 'x + ' + y + ')$.'],
           loiGiai: ['Sau $' + y + '$ năm: con $x + ' + y + '$, mẹ $' + k + 'x + ' + y + '$.', 'Tổng: $(x + ' + y + ') + (' + k + 'x + ' + y + ') = ' + (k + 1) + 'x + ' + 2 * y + '$'],
           loiThuongGap: [{ gt: (k + 1) + 'x+' + y, giaiThich: 'Sau $' + y + '$ năm **cả hai** mẹ con đều thêm $' + y + '$ tuổi, nên tổng tăng $' + 2 * y + '$.' }]
@@ -51,6 +62,7 @@
       return {
         de: 'Một mảnh vườn hình chữ nhật có chiều dài $x$ (m), chiều rộng ngắn hơn chiều dài $' + h + '$ m. Viết biểu thức biểu thị chu vi mảnh vườn (m).',
         dapAn: { kieu: 'bieuThuc', gt: '4x-' + 2 * h },
+        hinhGiai: hg('Dài + rộng + dài + rộng', [m(1, 0, 'x'), m(1, -h, 'x − ' + h), m(1, 0, 'x'), m(1, -h, 'x − ' + h)], null, null, { tuyChon: { x: h + 8, hienX: false }, ghiChu: X_BAT_KI }),
         goiY: ['Chiều rộng là $x - ' + h + '$ (m).', 'Chu vi hình chữ nhật $= 2\\cdot($dài $+$ rộng$)$.'],
         loiGiai: ['Chiều rộng: $x - ' + h + '$ (m).', 'Chu vi: $2(x + x - ' + h + ') = 4x - ' + 2 * h + '$'],
         loiThuongGap: [{ gt: '2x-' + h, giaiThich: 'Em mới cộng dài với rộng (nửa chu vi). Chu vi phải nhân thêm $2$.' }]
@@ -63,6 +75,7 @@
         return {
           de: 'Chị ' + r.chon(['Linh', 'Hoa', 'Thảo', 'Yến']) + ' được thưởng Tết bằng $' + th + '$ tháng lương. Tổng thu nhập một năm (lương $12$ tháng và thưởng Tết) là $' + T + '$ triệu đồng. Lương mỗi tháng của chị là bao nhiêu triệu đồng?',
           dapAn: { kieu: 'so', gt: x },
+          hinhGiai: hg('Lương 12 tháng + thưởng', [m(12, 0, '12x'), m(th, 0, (th === 1 ? '' : th) + 'x')], 'Thu nhập cả năm', [m(0, T, String(T))]),
           goiY: ['Gọi $x$ (triệu đồng) là lương một tháng. Thưởng Tết là $' + heSo(th) + 'x$.', 'Lập phương trình $12x + ' + heSo(th) + 'x = ' + T + '$.'],
           loiGiai: ['Gọi $x$ (triệu đồng) là lương một tháng, $x > 0$.', '$12x + ' + heSo(th) + 'x = ' + T + '$', '$' + (12 + th) + 'x = ' + T + '$', '$x = ' + x + '$'],
           loiThuongGap: loc([{ gt: T / 12, giaiThich: 'Thu nhập gồm $12$ tháng lương **và** $' + th + '$ tháng thưởng, tức là $' + (12 + th) + '$ lần lương tháng.' }], x)
@@ -74,6 +87,7 @@
         return {
           de: 'Lớp 8A có $' + N + '$ học sinh, số học sinh nữ nhiều hơn số học sinh nam là $' + hon + '$ bạn. Lớp 8A có bao nhiêu học sinh ' + (hoiNu ? 'nữ' : 'nam') + '?',
           dapAn: { kieu: 'so', gt: kq },
+          hinhGiai: hg('Nam + nữ', [m(1, 0, 'x'), m(1, hon, 'x + ' + hon)], 'Cả lớp', [m(0, N, String(N))]),
           goiY: ['Gọi $x$ là số học sinh nam ($x$ nguyên dương) thì số học sinh nữ là $x + ' + hon + '$.', 'Lập phương trình $x + (x + ' + hon + ') = ' + N + '$.'],
           loiGiai: ['Gọi $x$ là số học sinh nam, $x$ nguyên dương. Số học sinh nữ: $x + ' + hon + '$.', '$x + x + ' + hon + ' = ' + N + '$, nên $2x = ' + (N - hon) + '$, $x = ' + nam + '$.',
             hoiNu ? 'Số học sinh nữ: $' + nam + ' + ' + hon + ' = ' + kq + '$' : 'Số học sinh nam: $x = ' + kq + '$'],
@@ -84,6 +98,7 @@
       return {
         de: 'Hai thùng chứa tất cả $' + T2 + '$ lít dầu. Thùng thứ nhất chứa gấp $' + k + '$ lần thùng thứ hai. Thùng thứ hai chứa bao nhiêu lít dầu?',
         dapAn: { kieu: 'so', gt: x2 },
+        hinhGiai: hg('Thùng hai + thùng một', [m(1, 0, 'x'), m(k, 0, k + 'x')], 'Cả hai thùng', [m(0, T2, String(T2))]),
         goiY: ['Gọi $x$ (lít) là số dầu ở thùng thứ hai thì thùng thứ nhất có $' + k + 'x$ lít.', 'Lập phương trình $x + ' + k + 'x = ' + T2 + '$.'],
         loiGiai: ['Gọi $x$ (lít) là số dầu ở thùng thứ hai, $x > 0$. Thùng thứ nhất: $' + k + 'x$.', '$x + ' + k + 'x = ' + T2 + '$, tức là $' + (k + 1) + 'x = ' + T2 + '$', '$x = ' + x2 + '$'],
         loiThuongGap: loc([{ gt: T2 / k, giaiThich: '$x + ' + k + 'x = ' + (k + 1) + 'x$ (cộng cả $x$ của thùng thứ hai), không phải $' + k + 'x$.' }, { gt: k * x2, giaiThich: 'Đó là số dầu ở thùng **thứ nhất**.' }], x2)
@@ -98,6 +113,7 @@
         return {
           de: nguoi + ' hơn ' + ten + ' $' + d + '$ tuổi. Sau $' + n + '$ năm nữa tuổi ' + nguoi.toLowerCase() + ' gấp $' + k + '$ lần tuổi ' + ten + '. Hiện nay ' + ten + ' bao nhiêu tuổi?',
           dapAn: { kieu: 'so', gt: c },
+          hinhGiai: hg('Tuổi ' + nguoi.toLowerCase() + ' sau ' + n + ' năm', [m(1, d + n, 'x + ' + (d + n))], k + ' lần tuổi ' + ten + ' sau ' + n + ' năm', lap(k, m(1, n, 'x + ' + n))),
           goiY: ['Gọi $x$ là tuổi ' + ten + ' hiện nay thì tuổi ' + nguoi.toLowerCase() + ' là $x + ' + d + '$.', 'Sau $' + n + '$ năm: $x + ' + (d + n) + ' = ' + k + '(x + ' + n + ')$.'],
           loiGiai: ['Gọi $x$ (tuổi) là tuổi ' + ten + ' hiện nay, $x$ nguyên dương. Tuổi ' + nguoi.toLowerCase() + ': $x + ' + d + '$.',
             'Sau $' + n + '$ năm: $x + ' + d + ' + ' + n + ' = ' + k + '(x + ' + n + ')$', '$x + ' + (d + n) + ' = ' + k + 'x + ' + k * n + '$' + (k === 2 ? '' : ', nên $' + (k - 1) + 'x = ' + (d + n - k * n) + '$'),
@@ -114,6 +130,7 @@
       return {
         de: 'Hiện nay tuổi ' + nguoi.toLowerCase() + ' gấp $' + k2 + '$ lần tuổi ' + ten + '. Sau $' + y + '$ năm nữa, tổng số tuổi của hai người là $' + S + '$. Hỏi hiện nay ' + ten + ' bao nhiêu tuổi?',
         dapAn: { kieu: 'so', gt: x },
+        hinhGiai: hg('Hai người sau ' + y + ' năm', [m(1, y, 'x + ' + y), m(k2, y, k2 + 'x + ' + y)], 'Tổng số tuổi', [m(0, S, String(S))]),
         goiY: ['Gọi $x$ là tuổi ' + ten + ' hiện nay thì tuổi ' + nguoi.toLowerCase() + ' là $' + k2 + 'x$.', 'Sau $' + y + '$ năm **cả hai** người đều thêm $' + y + '$ tuổi: $(x + ' + y + ') + (' + k2 + 'x + ' + y + ') = ' + S + '$.'],
         loiGiai: ['Gọi $x$ (tuổi) là tuổi ' + ten + ' hiện nay, $x$ nguyên dương. Tuổi ' + nguoi.toLowerCase() + ': $' + k2 + 'x$.',
           '$(x + ' + y + ') + (' + k2 + 'x + ' + y + ') = ' + S + '$', '$' + (k2 + 1) + 'x + ' + 2 * y + ' = ' + S + '$, nên $' + (k2 + 1) + 'x = ' + (S - 2 * y) + '$', '$x = ' + x + '$'],
@@ -132,6 +149,7 @@
         return {
           de: 'Một ' + xe[0] + ' xuất phát lúc $' + gio + '$ giờ với vận tốc $' + v1 + '$ km/h. Sau đó $' + h + '$ giờ, một ' + xe[1] + ' xuất phát từ cùng chỗ, đi cùng đường với vận tốc $' + v2 + '$ km/h. Hỏi ' + xe[1] + ' đi bao nhiêu giờ thì đuổi kịp ' + xe[0] + '?',
           dapAn: { kieu: 'so', gt: t },
+          hinhGiai: hg(xe[1].charAt(0).toUpperCase() + xe[1].slice(1) + ' đi (km)', [m(v2, 0, v2 + 'x')], xe[0].charAt(0).toUpperCase() + xe[0].slice(1) + ' đi (km)', [m(0, v1 * h, String(v1 * h)), m(v1, 0, v1 + 'x')], { tuyChon: { donVi: ' giờ' } }),
           goiY: ['Gọi $x$ (giờ) là thời gian ' + xe[1] + ' đi đến lúc đuổi kịp. Khi đó ' + xe[0] + ' đã đi $x + ' + h + '$ giờ.', 'Đuổi kịp khi hai quãng đường bằng nhau: $' + v2 + 'x = ' + v1 + '(x + ' + h + ')$.'],
           loiGiai: ['Gọi $x$ (giờ) là thời gian ' + xe[1] + ' đi, $x > 0$.', '$' + v2 + 'x = ' + v1 + '(x + ' + h + ')$, tức là $' + v2 + 'x = ' + v1 + 'x + ' + v1 * h + '$',
             '$' + (v2 - v1) + 'x = ' + v1 * h + '$', '$x = ' + t + '$'],
@@ -144,6 +162,7 @@
       return {
         de: 'Hai thành phố A và B cách nhau $' + D + '$ km. Cùng một lúc, một xe đi từ A về B với vận tốc $' + a + '$ km/h và một xe đi từ B về A với vận tốc $' + b + '$ km/h. ' + (hoiCach ? 'Chỗ hai xe gặp nhau cách A bao nhiêu ki-lô-mét?' : 'Sau bao nhiêu giờ hai xe gặp nhau?'),
         dapAn: { kieu: 'so', gt: kq },
+        hinhGiai: hg('Xe từ A + xe từ B (km)', [m(a, 0, a + 'x'), m(b, 0, b + 'x')], 'Quãng đường AB', [m(0, D, D + ' km')], { tuyChon: { donVi: ' giờ' } }),
         goiY: ['Gọi $x$ (giờ) là thời gian từ lúc xuất phát đến lúc gặp nhau. Hai xe đi được $' + a + 'x$ và $' + b + 'x$ km.', 'Lúc gặp nhau, **tổng** hai quãng đường bằng $' + D + '$ km.'],
         loiGiai: ['Gọi $x$ (giờ) là thời gian đến lúc gặp nhau, $x > 0$.', '$' + a + 'x + ' + b + 'x = ' + D + '$, tức là $' + (a + b) + 'x = ' + D + '$, nên $x = ' + tg + '$.',
           hoiCach ? 'Chỗ gặp cách A: $' + a + '\\cdot ' + tg + ' = ' + kq + '$' : 'Hai xe gặp nhau sau $x = ' + tg + '$'],
@@ -161,6 +180,7 @@
       return {
         de: 'Một ' + vat + ' hình chữ nhật có chu vi $' + P + '$ m, chiều dài hơn chiều rộng $' + hon + '$ m. Tính ' + muc + '.',
         dapAn: { kieu: 'so', gt: kq },
+        hinhGiai: hg('Rộng + dài + rộng + dài', [m(1, 0, 'x'), m(1, hon, 'x + ' + hon), m(1, 0, 'x'), m(1, hon, 'x + ' + hon)], 'Chu vi', [m(0, P, P + ' m')], { tuyChon: { donVi: ' m' } }),
         goiY: ['Gọi $x$ (m) là chiều rộng thì chiều dài là $x + ' + hon + '$. Nửa chu vi là $' + P / 2 + '$ m.', 'Lập phương trình $x + (x + ' + hon + ') = ' + P / 2 + '$.'],
         loiGiai: ['Gọi $x$ (m) là chiều rộng, $x > 0$. Chiều dài: $x + ' + hon + '$.', '$2(x + x + ' + hon + ') = ' + P + '$, nên $2x + ' + hon + ' = ' + P / 2 + '$, $2x = ' + (P / 2 - hon) + '$, $x = ' + rong + '$.',
           hoi === 'rong' ? 'Chiều rộng: $x = ' + rong + '$' : hoi === 'dai' ? 'Chiều dài: $' + rong + ' + ' + hon + ' = ' + dai + '$' : 'Chiều dài $' + dai + '$ m. Diện tích: $' + dai + '\\cdot ' + rong + ' = ' + kq + '$'],

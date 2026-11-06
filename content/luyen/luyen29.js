@@ -19,6 +19,9 @@
     ds.forEach(function (l) { if (l.gt !== ans && out.every(function (o) { return o.gt !== l.gt; })) out.push(l); });
     return out;
   }
+  // Hình lời giải: bậc thang cho hệ số góc, tịnh tiến cho đường song song, theo chính số của đề
+  function hgDt(tuyChon, ghiChu) { return { widget: 'canh', config: { ten: 'duongThang', chiXem: true, t: 1, tuyChon: Object.assign({ tiLe: false }, tuyChon), ghiChu: ghiChu || 'Hai trục có thể khác tỉ lệ.' } }; }
+  function songSong(a, b1, b2, diem) { return hgDt({ duong: [{ a: a, b: b1 }, { a: a, b: b2, mau: '--cc' }], tinhTien: { tu: 0, den: 1 }, diem: diem || [] }); }
   function cong(b) { return (b >= 0 ? '+ ' : '- ') + Math.abs(b); }
 
   TOAN8.luyen(29, [
@@ -28,6 +31,7 @@
         var a = r.khac0(-7, 7), b = r.khac0(-9, 9);
         return {
           de: 'Hệ số góc của đường thẳng $y = ' + cc.daThuc([[b, ''], [a, 'x']]) + '$ là bao nhiêu?',
+          hinhGiai: hgDt({ duong: [{ a: a, b: b }], bac: [{ duong: 0, tu: 0, soBuoc: 1, nhan: true }] }),
           dapAn: { kieu: 'so', gt: a },
           goiY: ['Viết lại về dạng $y = ax + b$ (hạng tử chứa $x$ đứng trước).', 'Hệ số góc là hệ số **của $x$**, lấy cả dấu.'],
           loiGiai: ['$y = ' + cc.daThuc([[b, ''], [a, 'x']]) + ' = ' + lin(cc, a, b) + '$', 'Hệ số góc: $a = ' + a + '$'],
@@ -39,6 +43,7 @@
       var hs = cc.phanSo(p, k);
       return {
         de: 'Hệ số góc của đường thẳng $y = \\frac{' + lin(cc, p, q) + '}{' + k + '}$ là bao nhiêu?',
+        hinhGiai: hgDt({ duong: [{ a: p / k, b: q / k }], bac: [{ duong: 0, tu: 0, soBuoc: 1, dx: k, nhan: true }] }, 'Sang phải ' + k + ' thì đứng ' + p + ', nên sang phải 1 thì đứng ' + p + ' : ' + k + '. Hai trục có thể khác tỉ lệ.'),
         dapAn: { kieu: 'so', gt: hs.ascii },
         goiY: ['Chia **từng hạng tử** của tử cho $' + k + '$ để đưa về dạng $y = ax + b$.', 'Ví dụ: $\\frac{3x + 1}{2} = \\frac{3}{2}x + \\frac{1}{2}$ có hệ số góc $\\frac{3}{2}$. Nhớ rút gọn phân số.'],
         loiGiai: ['$y = \\frac{' + lin(cc, p, q) + '}{' + k + '} = \\frac{' + p + '}{' + k + '}x ' + (q > 0 ? '+ ' : '- ') + cc.phanSo(Math.abs(q), k).tex + '$', 'Hệ số góc: $a = ' + hs.tex + '$'],
@@ -54,6 +59,7 @@
       var gt = ds.findIndex(function (d) { return d.a === dung; });
       return {
         de: 'Đường thẳng nào dưới đây tạo với trục $Ox$ một **góc ' + (tu ? 'tù' : 'nhọn') + '**?',
+        hinhGiai: hgDt({ tiLe: true, khung: [-6, 6, -7, 7], duong: as.map(function (a, i) { return { a: a, b: bs[i], mau: i ? '--nhat' : '--a' }; }), goc: [0] }, 'Đường cam đi ' + (dung > 0 ? 'lên' : 'xuống') + ' từ trái sang phải; ba đường xám đi ' + (dung > 0 ? 'xuống' : 'lên') + '.'),
         dapAn: { kieu: 'chon', gt: gt, luaChon: ds.map(function (d) { return d.tex; }) },
         goiY: ['Góc tạo bởi đường thẳng $y = ax + b$ và trục $Ox$ là góc nhọn khi $a > 0$, là góc tù khi $a < 0$.', 'Tìm hệ số của $x$ (cả dấu) trong từng đường thẳng.'],
         loiGiai: ['Chỉ có ' + ds[gt].tex + ' có hệ số góc $a = ' + dung + (tu ? ' < 0' : ' > 0') + '$, các đường còn lại có $a ' + (tu ? '> 0' : '< 0') + '$.', 'Vậy đáp án là ' + ds[gt].tex + '.']
@@ -69,6 +75,7 @@
       var ds = r.xaoTron([dung, cap(c, b1, a, b1), cap(a, b1, -a, b2), trung]), gt = ds.indexOf(dung);
       return {
         de: 'Cặp đường thẳng nào dưới đây **song song** với nhau?',
+        hinhGiai: songSong(a, b1, b2),
         dapAn: { kieu: 'chon', gt: gt, luaChon: ds },
         goiY: ['Hai đường thẳng $y = ax + b$ và $y = a\'x + b\'$ song song khi $a = a\'$ **và** $b \\ne b\'$.', 'Thu gọn từng đường về dạng $y = ax + b$ rồi so sánh. Cùng $a$, cùng $b$ là **trùng** nhau.'],
         loiGiai: [dung + ': cùng hệ số góc $' + a + '$, khác tung độ gốc ($' + b1 + ' \\ne ' + b2 + '$) nên song song.',
@@ -82,6 +89,7 @@
         var p = r.khac0(-5, 5), m = a - p;
         var hs = 'm ' + cong(p);
         return {
+          hinhGiai: songSong(a, c, q),
           de: 'Tìm $m$ để đường thẳng $y = (' + hs + ')x ' + cong(q) + '$ $(m \\ne ' + (-p) + ')$ song song với đường thẳng $y = ' + lin(cc, a, c) + '$.',
           dapAn: { kieu: 'so', gt: m },
           goiY: ['Song song khi hai hệ số góc bằng nhau (và hai tung độ gốc khác nhau: $' + q + ' \\ne ' + c + '$).', 'Giải $' + hs + ' = ' + a + '$.'],
@@ -93,6 +101,7 @@
       var k = r.chon([2, 3, 4, 5]), m2 = r.khac0(-4, 4), d = m2 * (k - 1);
       if (m2 + d === 0) { m2 = Math.abs(m2) || 1; d = m2 * (k - 1); }
       return {
+        hinhGiai: songSong(k * m2, c, q),
         de: 'Cho hai hàm số bậc nhất $y = ' + k + 'mx ' + cong(q) + '$ và $y = (m ' + cong(d) + ')x ' + cong(c) + '$. Tìm $m$ để đồ thị của chúng là hai đường thẳng song song.',
         dapAn: { kieu: 'so', gt: m2 },
         goiY: ['Song song khi $' + k + 'm = m ' + cong(d) + '$ (và $' + q + ' \\ne ' + c + '$, luôn đúng).', 'Chuyển $m$ sang vế trái rồi giải. Nhớ kiểm tra hai hệ số góc khác $0$.'],
@@ -106,6 +115,7 @@
       if (loai === 'Ox') {
         var x0 = r.khac0(-4, 4), bb = -a * x0, kq = lin(cc, a, bb);
         return {
+          hinhGiai: hgDt({ duong: [{ a: a, b: bb }], bac: [{ duong: 0, tu: x0, soBuoc: -x0, nhan: Math.abs(x0) <= 3 }], diem: [{ x: x0, y: 0, ten: '(' + x0 + '; 0)' }, { x: 0, y: bb, ten: 'b' }] }),
           de: 'Tìm hàm số bậc nhất có đồ thị là đường thẳng có hệ số góc $' + a + '$ và cắt trục hoành tại điểm có hoành độ bằng $' + x0 + '$.',
           dapAn: { kieu: 'bieuThuc', gt: kq },
           goiY: ['Cắt trục hoành tại hoành độ $' + x0 + '$ nghĩa là đi qua điểm $(' + x0 + '; 0)$.', 'Thay vào $y = ' + heSo(a) + 'x + b$: $0 = ' + a + '\\cdot ' + ng(x0) + ' + b$.'],
@@ -116,6 +126,7 @@
       }
       var kq2 = lin(cc, a, b);
       return {
+        hinhGiai: hgDt({ duong: [{ a: a, b: b }], bac: [{ duong: 0, tu: t, soBuoc: -t, nhan: true }], diem: [{ x: t, y: y, ten: 'M' }, { x: 0, y: b, ten: 'b' }] }),
         de: 'Tìm hàm số bậc nhất có đồ thị là đường thẳng có hệ số góc $' + a + '$ và đi qua điểm $(' + t + '; ' + y + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq2 },
         goiY: ['Hàm số có dạng $y = ' + heSo(a) + 'x + b$.', 'Thay $x = ' + t + '$, $y = ' + y + '$: $' + y + ' = ' + a + '\\cdot ' + ng(t) + ' + b$.'],
@@ -129,6 +140,7 @@
       do { b = r.khac0(-7, 7); } while (b === c);
       var y = a * t + b, kq = lin(cc, a, b);
       return {
+        hinhGiai: songSong(a, c, b, [{ x: t, y: y, ten: 'M' }]),
         de: 'Tìm hàm số bậc nhất có đồ thị song song với đường thẳng $y = ' + lin(cc, a, c) + '$ và đi qua điểm $(' + t + '; ' + y + ')$.',
         dapAn: { kieu: 'bieuThuc', gt: kq },
         goiY: ['Song song nên cùng hệ số góc: $y = ' + heSo(a) + 'x + b$ với $b \\ne ' + c + '$.', 'Thay $x = ' + t + '$, $y = ' + y + '$ để tìm $b$.'],

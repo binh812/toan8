@@ -2,8 +2,58 @@
 (function () {
   'use strict';
 
+  // Cấu hình hình cho "Nhìn là hiểu": máy hàm số (x vào, đúng một y ra, mỗi cặp thành một điểm) và mặt phẳng toạ độ
+  function may(f, cacX, nhanF, them) {
+    var c = Object.assign({}, them);
+    c.ten = 'mayHamSo';
+    c.tuyChon = Object.assign({ f: f, cacX: cacX, nhanF: nhanF }, them && them.tuyChon);
+    return c;
+  }
+  function mp(tuyChon, them) { return Object.assign({ ten: 'duongThang', tuyChon: tuyChon }, them); }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  var GIAI = { trangThai: 'giai' };
+
   TOAN8.bai({
     id: 27, ten: 'Khái niệm hàm số và đồ thị của hàm số', sgk: { tap: 2, trang: 40 },
+
+    nhin: {
+      tieuDe: 'Máy hàm số: mỗi $x$ vào, đúng một $y$ ra', loai: 'minhHoa',
+      luuY: 'Đây là định nghĩa nên không cần chứng minh. Hình cho năm giá trị của $x$; đồ thị đầy đủ gồm điểm $(x; f(x))$ với **mọi** $x$.',
+      canh: may({ a: 2, b: -1 }, [-2, -1, 0, 1, 2], 'f(x) = 2x − 1', { giay: 16, moTa: 'Máy nhận số x, nhân 2 rồi trừ 1, trả ra y; mỗi cặp x, y thành một điểm trên mặt phẳng toạ độ.' }),
+      buoc: [
+        { t: 0, chu: 'Máy nhận một số $\\ca{x}$ và làm đúng một việc: nhân $2$ rồi trừ $1$.' },
+        { t: 0.1, chu: 'Cho $x = -2$ vào, máy trả ra $\\cb{y} = -5$. Cặp $(-2; -5)$ thành một điểm.' },
+        { t: 0.45, chu: 'Mỗi $x$ cho **đúng một** $y$, nên trên mỗi đường dọc chỉ có một điểm.' },
+        { t: 0.95, chu: 'Tất cả các điểm $(x; f(x))$ gộp lại là **đồ thị** của hàm số.' }
+      ],
+      ketLuan: '$y$ là hàm số của $x$ khi mỗi $\\ca{x}$ cho **đúng một** $\\cb{y}$. Đồ thị là tập hợp các điểm $(\\ca{x}; \\cb{f(x)})$.',
+      dung: {
+        tieuDe: 'Máy trả ra số nào?', tuBai: '27.1',
+        canh: may({ a: 4, b: -1 }, [0, 1, 2], 'f(x) = 4x − 1', { t: 1, tuyChon: { hoi: 2 }, moTa: 'Máy f(x) = 4x trừ 1 đã cho ra hai điểm; ô dấu hỏi là f(2).' }),
+        moiThu: 'Gõ $f(2)$. Hình sẽ đặt điểm $(2; \\ldots)$ theo số em gõ, cạnh hai điểm máy đã cho ra.',
+        phanUng: [{ gt: 9, thamSo: { thu: 9 }, loi: 'Máy **trừ** $1$, em đã cộng $1$.' }],
+        soBatKi: function (v) {
+          var so = function (n) { return String(Math.round(n * 1000) / 1000).replace('.', '{,}'); };
+          return { thamSo: { thu: v }, loi: 'Điểm $(2; ' + so(v) + ')$ không theo nhịp của hai điểm kia: cứ $x$ tăng $1$ thì máy cho $y$ tăng $4$ (từ $-1$ lên $3$). Thay $x = 2$ vào $4x - 1$.' };
+        },
+        dungChu: '$f(2) = 4 \\cdot 2 - 1 = 7$: lại tăng $4$ so với $f(1) = 3$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng vẫn là cái máy đó',
+        baDe: [
+          { tuBai: '27.2', canh: may({ k: 12 }, [2, 3, 4, 6, -4], 'f(x) = 12 : x', { tuyChon: { hoi: 4 } }), tenNut: 'Cho x vào máy',
+            phanUng: [{ gt: 3, thamSo: { thu: 3 }, loi: '$12$ chia cho số **âm** thì được số âm.' }],
+            dungChu: '$12 : (-4) = -3$.', saiChu: 'Máy chia $12$ cho $x$. Thay $x = -4$, nhớ dấu.' },
+          { tuBai: '27.6', canh: may({ k: 6 }, [-3, 4], 'f(x) = 6 : x', { tuyChon: { an: true, nguoc: { y: -6 } } }), tenNut: 'Cho x vào máy',
+            dungChu: '$f(-3) = -2$; $f(-1) = -6$; $f(4) = 1{,}5$.', saiChu: 'Hai ô đầu và cuối: cho $x$ vào máy. Ô giữa thì ngược lại: tìm $x$ để máy ra $-6$ (đường nét đứt).' },
+          { tuBai: '27.8', canh: may({ a: 0.5, b: 1 }, [-2, 0, 2], 'f(x) = x : 2 + 1', { tuyChon: { nguoc: { y: 4 } } }), tenNut: 'Cho x vào máy',
+            phanUng: [{ gt: 3, thamSo: { thu: 3 }, loi: 'Máy nhận $3$ thì ra $2{,}5$, chưa tới $4$. $\\frac{1}{2}x = 3$ nghĩa là **một nửa** của $x$ bằng $3$.' },
+              { gt: 10, thamSo: { thu: 10 }, loi: 'Máy nhận $10$ thì ra $6$, vượt quá $4$. Chuyển $1$ sang vế phải phải đổi dấu: $\\frac{1}{2}x = 3$.' }],
+            dungChu: 'Máy nhận $6$ thì ra $6 : 2 + 1 = 4$.', saiChu: 'Cứ $x$ tăng $2$ thì $y$ tăng $1$. Từ điểm $(2; 2)$, đi tiếp tới khi $y = 4$.' }
+        ],
+        cachNhan: 'Biết $x$, tìm $y$: cho $x$ vào máy. Biết $y$, tìm $x$: tìm số $x$ nào cho vào máy thì ra đúng $y$, tức là giải một phương trình.'
+      }
+    },
 
     khamPha: {
       nhiemVu: 'Đây là **mặt phẳng toạ độ** $Oxy$. Em hãy **kéo điểm $M$** đi khắp nơi. Con số đứng trước trong ngoặc là **hoành độ** (đọc trên trục ngang $Ox$), con số đứng sau là **tung độ** (đọc trên trục dọc $Oy$). Thử đưa $M$ đến điểm $(-3; 2)$, rồi đến $(2; -3)$: hai điểm này có trùng nhau không?',
@@ -41,21 +91,21 @@
     ],
 
     viDu: [
-      { de: 'Cho hàm số $y = f(x) = 2x - 3$. Lập bảng giá trị của $y$ khi $x$ lần lượt bằng $-2; -1; 0; 1; 2$.', buoc: [
-        { lam: '$f(-2) = 2\\cdot(-2) - 3 = -7$; $\\;f(-1) = 2\\cdot(-1) - 3 = -5$', vi: 'Thay từng giá trị của $x$ vào công thức. Số âm đặt trong ngoặc.' },
-        { lam: '$f(0) = -3$; $\\;f(1) = -1$; $\\;f(2) = 1$', vi: 'Tính tương tự.' },
+      { de: 'Cho hàm số $y = f(x) = 2x - 3$. Lập bảng giá trị của $y$ khi $x$ lần lượt bằng $-2; -1; 0; 1; 2$.', canh: may({ a: 2, b: -3 }, [-2, -1, 0, 1, 2], 'f(x) = 2x − 3'), buoc: [
+        { lam: '$f(-2) = 2\\cdot(-2) - 3 = -7$; $\\;f(-1) = 2\\cdot(-1) - 3 = -5$', vi: 'Thay từng giá trị của $x$ vào công thức. Số âm đặt trong ngoặc.', canh: { t: 0.44 } },
+        { lam: '$f(0) = -3$; $\\;f(1) = -1$; $\\;f(2) = 1$', vi: 'Tính tương tự.', canh: { t: 0.96 } },
         { lam: '$$\\begin{array}{c|c|c|c|c|c} x & -2 & -1 & 0 & 1 & 2 \\\\ \\hline y & -7 & -5 & -3 & -1 & 1 \\end{array}$$', vi: 'Ghi kết quả thành bảng. Mỗi $x$ cho đúng một $y$.' } ] },
-      { de: 'Cho bảng: $x$ lần lượt là $1; 2; 3; 2$ và $y$ tương ứng là $4; 5; 6; 7$. Đại lượng $y$ có phải là hàm số của $x$ không?', buoc: [
+      { de: 'Cho bảng: $x$ lần lượt là $1; 2; 3; 2$ và $y$ tương ứng là $4; 5; 6; 7$. Đại lượng $y$ có phải là hàm số của $x$ không?', canh: may({ bang: [[1, 4], [2, 5], [3, 6], [2, 7]] }, null, 'đọc trong bảng'), buoc: [
         { lam: 'Với $x = 2$, bảng cho **hai** giá trị $y = 5$ và $y = 7$.', vi: 'Soát xem có giá trị $x$ nào xuất hiện hai lần với hai $y$ khác nhau.' },
         { lam: 'Vậy $y$ **không** phải là hàm số của $x$.', vi: 'Hàm số đòi hỏi mỗi $x$ chỉ cho **một** $y$.' } ] },
-      { de: 'Cho hàm số $y = f(x) = \\frac{6}{x}$. Tính $f(-3)$ và $f(2)$.', buoc: [
+      { de: 'Cho hàm số $y = f(x) = \\frac{6}{x}$. Tính $f(-3)$ và $f(2)$.', canh: may({ k: 6 }, [-3, 2], 'f(x) = 6 : x'), buoc: [
         { lam: '$f(-3) = \\frac{6}{-3} = -2$', vi: 'Thay $x = -3$ vào công thức.' },
         { lam: '$f(2) = \\frac{6}{2} = 3$', vi: 'Thay $x = 2$.' } ] },
-      { de: 'Cho các điểm $P(-3; 4)$, $Q(2; -1)$, $R(0; -3)$. Mỗi điểm nằm ở đâu trên mặt phẳng toạ độ?', buoc: [
-        { lam: '$P(-3; 4)$: hoành độ âm, tung độ dương $\\Rightarrow$ góc phần tư thứ **II**.', vi: 'Trái và trên.' },
-        { lam: '$Q(2; -1)$: hoành độ dương, tung độ âm $\\Rightarrow$ góc phần tư thứ **IV**.', vi: 'Phải và dưới.' },
-        { lam: '$R(0; -3)$: hoành độ bằng $0$ $\\Rightarrow$ nằm **trên trục tung**.', vi: 'Điểm có hoành độ $0$ không thuộc góc phần tư nào.' } ] },
-      { de: 'Ô tô đi quãng đường $120$ km với vận tốc $v$ (km/h) không đổi. Viết công thức tính thời gian $t$ (giờ). $t$ có phải hàm số của $v$ không? Tính $t$ khi $v = 40$.', buoc: [
+      { de: 'Cho các điểm $P(-3; 4)$, $Q(2; -1)$, $R(0; -3)$. Mỗi điểm nằm ở đâu trên mặt phẳng toạ độ?', canh: mp({ khung: [-5, 5, -5, 5], gocPhanTu: true, diem: [{ x: -3, y: 4, ten: 'P', chieu: true }, { x: 2, y: -1, ten: 'Q', chieu: true, an: true }, { x: 0, y: -3, ten: 'R', an: 'giai' }] }), buoc: [
+        { lam: '$P(-3; 4)$: hoành độ âm, tung độ dương $\\Rightarrow$ góc phần tư thứ **II**.', vi: 'Trái và trên.', canh: { t: 0 } },
+        { lam: '$Q(2; -1)$: hoành độ dương, tung độ âm $\\Rightarrow$ góc phần tư thứ **IV**.', vi: 'Phải và dưới.', canh: { t: 0.95 } },
+        { lam: '$R(0; -3)$: hoành độ bằng $0$ $\\Rightarrow$ nằm **trên trục tung**.', vi: 'Điểm có hoành độ $0$ không thuộc góc phần tư nào.', canh: { t: 1, trangThai: 'giai' } } ] },
+      { de: 'Ô tô đi quãng đường $120$ km với vận tốc $v$ (km/h) không đổi. Viết công thức tính thời gian $t$ (giờ). $t$ có phải hàm số của $v$ không? Tính $t$ khi $v = 40$.', canh: may({ k: 120 }, [20, 40, 60], 't = 120 : v', { tuyChon: { bien: 'v', tenHam: 't' } }), buoc: [
         { lam: '$t = \\frac{120}{v}$', vi: 'Thời gian $=$ quãng đường $:$ vận tốc.' },
         { lam: 'Mỗi giá trị $v$ cho đúng một giá trị $t$, nên $t$ là hàm số của $v$.', vi: 'Đúng định nghĩa hàm số.' },
         { lam: 'Khi $v = 40$: $t = \\frac{120}{40} = 3$ (giờ).', vi: 'Thay số vào công thức.' } ] }
@@ -75,13 +125,13 @@
     ],
 
     baiTap: [
-      { id: '27.1', muc: 1, de: 'Cho hàm số $f(x) = 4x - 1$. Tính $f(2)$.',
+      { id: '27.1', hinhGiai: hg(may({ a: 4, b: -1 }, [0, 1, 2], 'f(x) = 4x − 1')), muc: 1, de: 'Cho hàm số $f(x) = 4x - 1$. Tính $f(2)$.',
         dapAn: { kieu: 'so', gt: 7 },
         goiY: ['$f(2)$ là giá trị của hàm số khi $x = 2$.', 'Thay $x = 2$: $4\\cdot 2 - 1$.'],
         loiGiai: ['$f(2) = 4\\cdot 2 - 1 = 7$'],
         loiThuongGap: [{ gt: 9, giaiThich: 'Công thức là $4x \\mathbf{-} 1$: $8 - 1 = 7$, không phải $8 + 1$.' }] },
 
-      { id: '27.2', muc: 1, de: 'Cho hàm số $y = f(x) = \\frac{12}{x}$. Tính $f(-4)$.',
+      { id: '27.2', hinhGiai: hg(may({ k: 12 }, [2, 3, 4, 6, -4], 'f(x) = 12 : x')), muc: 1, de: 'Cho hàm số $y = f(x) = \\frac{12}{x}$. Tính $f(-4)$.',
         dapAn: { kieu: 'so', gt: -3 },
         goiY: ['Thay $x = -4$ vào công thức.', 'Dương chia âm được số âm.'],
         loiGiai: ['$f(-4) = \\frac{12}{-4} = -3$'],
@@ -101,13 +151,13 @@
         goiY: ['Trục hoành là trục **nằm ngang** $Ox$.', 'Điểm trên trục hoành có **tung độ bằng 0**.'],
         loiGiai: ['$C(3; 0)$ có tung độ $0$ nên nằm trên trục hoành.', '$B(0; -2)$ có hoành độ $0$ nên nằm trên trục **tung**, không phải trục hoành. Đáp án: $C$.'] },
 
-      { id: '27.5', muc: 2, de: 'Điểm $N(-2; -5)$ nằm ở góc phần tư thứ mấy? (gõ một số từ 1 đến 4)',
+      { id: '27.5', hinhGiai: hg(mp({ khung: [-6, 6, -6, 6], gocPhanTu: true, diem: [{ x: -2, y: -5, ten: 'N', chieu: true }] })), muc: 2, de: 'Điểm $N(-2; -5)$ nằm ở góc phần tư thứ mấy? (gõ một số từ 1 đến 4)',
         dapAn: { kieu: 'so', gt: 3 },
         goiY: ['Xét dấu hoành độ và tung độ.', 'Hoành độ âm: bên trái; tung độ âm: phía dưới.'],
         loiGiai: ['Hoành độ $-2 < 0$, tung độ $-5 < 0$.', '$N$ ở góc dưới bên trái, là góc phần tư thứ III.', 'Đáp số: góc phần tư $= 3$'],
         loiThuongGap: [{ gt: 2, giaiThich: 'Góc phần tư II có tung độ **dương** (phía trên). $N$ có tung độ âm nên ở góc III.' }, { gt: 4, giaiThich: 'Góc phần tư IV có hoành độ **dương** (bên phải). $N$ có hoành độ âm.' }] },
 
-      { id: '27.6', muc: 2, de: 'Cho hàm số $y = f(x) = \\frac{6}{x}$. Hoàn thành các giá trị còn thiếu.',
+      { id: '27.6', hinhGiai: hg(may({ k: 6 }, [-3, -1, 4], 'f(x) = 6 : x')), muc: 2, de: 'Cho hàm số $y = f(x) = \\frac{6}{x}$. Hoàn thành các giá trị còn thiếu.',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: '$f(-3) =$', kieu: 'so', gt: -2, loiThuongGap: [{ gt: 2, giaiThich: '$6 : (-3)$ là số âm.' }] },
           { nhan: 'Giá trị $x$ để $f(x) = -6$: $x =$', kieu: 'so', gt: -1, loiThuongGap: [{ gt: -36, giaiThich: 'Từ $\\frac{6}{x} = -6$ suy ra $x = 6 : (-6) = -1$.' }] },
@@ -115,24 +165,24 @@
         goiY: ['Tính $f(-3)$ và $f(4)$ bằng cách thay số vào $\\frac{6}{x}$.', 'Muốn $\\frac{6}{x} = -6$ thì $x = 6 : (-6)$.'],
         loiGiai: ['$f(-3) = \\frac{6}{-3} = -2$.', '$\\frac{6}{x} = -6$ khi $x = 6 : (-6) = -1$.', '$f(4) = \\frac{6}{4} = 1{,}5$.'] },
 
-      { id: '27.7', muc: 2, de: 'Cho bảng: $x$ lần lượt là $-2; -1; 0; 1; 2$ và $y$ tương ứng đều bằng $3$. Đại lượng $y$ **có phải** là hàm số của $x$ không?',
+      { id: '27.7', hinhGiai: hg(may({ bang: [[-2, 3], [-1, 3], [0, 3], [1, 3], [2, 3]] }, null, 'y = 3 với mọi x')), muc: 2, de: 'Cho bảng: $x$ lần lượt là $-2; -1; 0; 1; 2$ và $y$ tương ứng đều bằng $3$. Đại lượng $y$ **có phải** là hàm số của $x$ không?',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Kiểm tra: có giá trị $x$ nào ứng với **hai** giá trị $y$ khác nhau không?', 'Nhiều $x$ cùng cho một $y$ thì không vi phạm định nghĩa.'],
         loiGiai: ['Mỗi giá trị của $x$ cho đúng một giá trị $y = 3$.', 'Vậy $y$ **là** hàm số của $x$ (gọi là hàm hằng). Chọn **Đúng**.'] },
 
-      { id: '27.8', muc: 2, de: 'Cho hàm số $f(x) = \\frac{1}{2}x + 1$. Tìm $x$ sao cho $f(x) = 4$.',
+      { id: '27.8', hinhGiai: hg(may({ a: 0.5, b: 1 }, [-2, 0, 2], 'f(x) = x : 2 + 1', { tuyChon: { nguoc: { y: 4 } }, thamSo: GIAI })), muc: 2, de: 'Cho hàm số $f(x) = \\frac{1}{2}x + 1$. Tìm $x$ sao cho $f(x) = 4$.',
         dapAn: { kieu: 'so', gt: 6 },
         goiY: ['Giải phương trình $\\frac{1}{2}x + 1 = 4$.', '$\\frac{1}{2}x = 3$, nhân hai vế với $2$.'],
         loiGiai: ['$\\frac{1}{2}x + 1 = 4$', '$\\frac{1}{2}x = 3$', '$x = 6$'],
         loiThuongGap: [{ gt: 3, giaiThich: '$\\frac{1}{2}x = 3$ nghĩa là **một nửa** của $x$ bằng $3$, nên $x = 6$.' }, { gt: 10, giaiThich: 'Chuyển $1$ sang vế phải phải đổi dấu: $\\frac{1}{2}x = 4 - 1 = 3$, không phải $4 + 1$.' }] },
 
-      { id: '27.9', muc: 2, de: 'Nhiệt độ $T$ ($^{\\circ}$C) tại thời điểm $t$ (giờ) trong một ngày cho bởi bảng:\n\n$$\\begin{array}{c|c|c|c|c|c|c} t & 0 & 4 & 8 & 12 & 16 & 20 \\\\ \\hline T & 22 & 21 & 25 & 31 & 29 & 26 \\end{array}$$\n\nNhiệt độ lúc $12$ giờ cao hơn lúc $4$ giờ bao nhiêu độ?',
+      { id: '27.9', khongHinh: 'Chỉ cần đọc hai ô trong bảng rồi trừ, hình không giúp thêm.', muc: 2, de: 'Nhiệt độ $T$ ($^{\\circ}$C) tại thời điểm $t$ (giờ) trong một ngày cho bởi bảng:\n\n$$\\begin{array}{c|c|c|c|c|c|c} t & 0 & 4 & 8 & 12 & 16 & 20 \\\\ \\hline T & 22 & 21 & 25 & 31 & 29 & 26 \\end{array}$$\n\nNhiệt độ lúc $12$ giờ cao hơn lúc $4$ giờ bao nhiêu độ?',
         dapAn: { kieu: 'so', gt: 10 },
         goiY: ['Đọc $T(12)$ và $T(4)$ trong bảng.', 'Tính hiệu $T(12) - T(4)$.'],
         loiGiai: ['$T(12) = 31$, $T(4) = 21$.', '$T(12) - T(4) = 31 - 21 = 10$'],
         loiThuongGap: [{ gt: 8, giaiThich: 'Em đọc nhầm cột: lúc $4$ giờ nhiệt độ là $21$, lúc $12$ giờ là $31$.' }] },
 
-      { id: '27.10', muc: 3, de: 'Một bể chứa $1200$ lít nước. Mở vòi xả, mỗi phút chảy ra $x$ lít thì thời gian xả hết bể là $t = \\frac{1200}{x}$ (phút).',
+      { id: '27.10', khongHinh: 'Thay số vào công thức có sẵn; số lớn nên vẽ đồ thị không giúp thêm.', muc: 3, de: 'Một bể chứa $1200$ lít nước. Mở vòi xả, mỗi phút chảy ra $x$ lít thì thời gian xả hết bể là $t = \\frac{1200}{x}$ (phút).',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Thời gian xả hết bể khi $x = 40$ (phút)', kieu: 'so', gt: 30, loiThuongGap: [{ gt: 48000, giaiThich: 'Phải chia $1200$ cho $40$.' }] },
           { nhan: 'Lưu lượng $x$ để xả hết bể trong $24$ phút (lít/phút)', kieu: 'so', gt: 50, loiThuongGap: [{ gt: 28800, giaiThich: 'Từ $\\frac{1200}{x} = 24$ suy ra $x = 1200 : 24$.' }] }] },
@@ -146,7 +196,7 @@
         loiGiai: ['$AB = 3 - (-2) = 5$ (cm), $BC = 1 - (-3) = 4$ (cm).', '$S = \\frac{1}{2}\\cdot 5\\cdot 4 = 10$'],
         loiThuongGap: [{ gt: 20, giaiThich: 'Diện tích tam giác vuông là **một nửa** tích hai cạnh góc vuông.' }, { gt: 2, giaiThich: '$AB = 3 - (-2) = 5$, không phải $3 - 2 = 1$. Khoảng cách phải lấy số lớn trừ số bé (cẩn thận số âm).' }] },
 
-      { id: '27.12', muc: 3, de: 'Điểm $M$ nằm trên **trục tung**, cách gốc $O$ một khoảng $4$ đơn vị và ở **phía dưới** trục hoành. Tìm toạ độ của $M$.',
+      { id: '27.12', hinhGiai: hg(mp({ khung: [-5, 5, -6, 5], gocPhanTu: true, diem: [{ x: 0, y: -4, ten: 'M', chieu: true }] })), muc: 3, de: 'Điểm $M$ nằm trên **trục tung**, cách gốc $O$ một khoảng $4$ đơn vị và ở **phía dưới** trục hoành. Tìm toạ độ của $M$.',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Hoành độ của $M$', kieu: 'so', gt: 0, loiThuongGap: [{ gt: -4, giaiThich: '$M$ nằm **trên trục tung** nên hoành độ bằng $0$.' }] },
           { nhan: 'Tung độ của $M$', kieu: 'so', gt: -4, loiThuongGap: [{ gt: 4, giaiThich: '$M$ ở **phía dưới** trục hoành nên tung độ âm.' }] }] },

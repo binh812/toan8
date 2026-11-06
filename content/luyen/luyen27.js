@@ -2,6 +2,17 @@
 (function () {
   'use strict';
   var LA_MA = ['', 'I', 'II', 'III', 'IV'];
+  // Hình lời giải: máy hàm số và mặt phẳng toạ độ theo chính số của đề
+  function chu(v) { return (v < 0 ? '−' : '') + String(Math.abs(v)).replace('.', ','); }
+  function vietHam(a, b) {
+    var ax = a === 1 ? 'x' : a === -1 ? '−x' : chu(a) + 'x';
+    return 'f(x) = ' + ax + (b ? (b > 0 ? ' + ' : ' − ') + chu(Math.abs(b)) : '');
+  }
+  function mayCua(h) { return h.k == null ? { f: { a: h.p, b: h.q }, nhan: vietHam(h.p, h.q) } : { f: { k: h.k }, nhan: 'f(x) = ' + chu(h.k) + ' : x' }; }
+  function hgMay(f, cacX, nhanF, them) {
+    var tuyChon = Object.assign({ f: f, cacX: cacX, nhanF: nhanF }, them && them.tuyChon);
+    return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, ten: 'mayHamSo' }, them, { tuyChon: tuyChon }) };
+  }
   function ng(v) { return v < 0 ? '(' + v + ')' : String(v); }
   function heSo(a) { return a === 1 ? '' : a === -1 ? '-' : String(a); }
   function lin(cc, a, b) { return cc.daThuc([[a, 'x'], [b, '']]); }
@@ -44,6 +55,7 @@
       }
       return {
         de: 'Cho hàm số $y = f(x) = ' + h.tex + '$. Tính $f(' + t + ')$.',
+        hinhGiai: hgMay(mayCua(h).f, [t], mayCua(h).nhan),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['$f(' + t + ')$ là giá trị của hàm số khi $x = ' + t + '$.', 'Thay $x = ' + t + '$ vào công thức (số âm đặt trong ngoặc).'],
         loiGiai: ['$f(' + t + ') = ' + h.thay(t) + ' = ' + kq + '$'],
@@ -67,6 +79,7 @@
     { ten: 'Góc phần tư', muc: 1, sinh: function (r) {
       var x = r.khac0(-9, 9), y = r.khac0(-9, 9), ten = r.chon(['A', 'B', 'M', 'N', 'P']), g = gocPhanTu(x, y), gs = gocPhanTu(y, x);
       return {
+        hinhGiai: { widget: 'canh', config: { ten: 'duongThang', chiXem: true, t: 1, tuyChon: { gocPhanTu: true, diem: [{ x: x, y: y, ten: ten, chieu: true }] } } },
         de: 'Điểm $' + ten + '(' + x + '; ' + y + ')$ nằm ở góc phần tư thứ mấy? (gõ một số từ $1$ đến $4$)',
         dapAn: { kieu: 'so', gt: g },
         goiY: ['Hoành độ (số đứng trước) cho biết điểm ở bên trái hay bên phải $Oy$; tung độ (số đứng sau) cho biết ở trên hay dưới $Ox$.',
@@ -101,6 +114,7 @@
       var fy = nua ? p * y0 / 2 + q : p * y0 + q;
       return {
         de: 'Cho hàm số $f(x) = ' + tex + '$. Tìm $x$ sao cho $f(x) = ' + y0 + '$.',
+        hinhGiai: hgMay({ a: nua ? p / 2 : p, b: q }, [0], vietHam(nua ? p / 2 : p, q), { tuyChon: { nguoc: { y: y0 } }, thamSo: { trangThai: 'giai' }, ghiChu: 'Tìm x để máy ra đúng ' + chu(y0) + ' (đường nét đứt).' }),
         dapAn: { kieu: 'so', gt: x0 },
         goiY: ['$f(x) = ' + y0 + '$ nghĩa là $' + tex + ' = ' + y0 + '$: một phương trình ẩn $x$.', 'Chuyển $' + q + '$ sang vế phải (đổi dấu) rồi chia cho hệ số của $x$.'],
         loiGiai: ['$' + tex + ' = ' + y0 + '$', '$' + hs + 'x = ' + (y0 - q) + '$', '$x = ' + x0 + '$'].filter(function (d, i, m) { return d !== m[i - 1]; }),
@@ -130,6 +144,7 @@
       return {
         de: 'Cho bảng giá trị:\n\n$$\\begin{array}{c|' + cot + '} x & ' + xs.join(' & ') + ' \\\\ \\hline y & ' + ys.join(' & ') + ' \\end{array}$$\n\nĐại lượng $y$ **có phải** là hàm số của $x$ không?',
         dapAn: { kieu: 'dungSai', gt: la },
+        hinhGiai: hgMay({ bang: xs.map(function (x, i) { return [x, ys[i]]; }) }, null, 'đọc trong bảng', { ghiChu: la ? 'Mỗi đường dọc chỉ có một điểm.' : 'Một đường dọc có hai điểm: một x ứng với hai y.' }),
         goiY: ['$y$ là hàm số của $x$ khi **mỗi** giá trị của $x$ chỉ ứng với **một** giá trị của $y$.', 'Xem có giá trị $x$ nào xuất hiện hai lần mà $y$ khác nhau không.'],
         loiGiai: [ghi]
       };
@@ -140,6 +155,7 @@
       xs.sort(function (a, b) { return a - b; });
       return {
         de: 'Cho hàm số $y = f(x) = ' + h.tex + '$. Hoàn thành các giá trị còn thiếu.',
+        hinhGiai: hgMay(mayCua(h).f, xs, mayCua(h).nhan),
         dapAn: { kieu: 'nhieuO', o: xs.map(function (t) {
           var v = h.f(t);
           return { nhan: 'Khi $x = ' + t + '$: $y =$', kieu: 'so', gt: v,

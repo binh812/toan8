@@ -12,6 +12,14 @@
   }
   // bỏ dòng lặp liền nhau (khi hệ số bằng 1, "x = 6" rồi lại "x = 6")
   function boLap(ds) { return ds.filter(function (d, i) { return d !== ds[i - 1]; }); }
+  // Hình lời giải: cái cân của bài 25 theo chính số của đề (v = một vế: hệ số x và số)
+  function v(x, so) { return { x: x, so: so }; }
+  function b2(tr, ph) { return { trai: tr, phai: ph }; }
+  function hg(tr, ph, buoc, them) {
+    var tuyChon = Object.assign({ trai: tr, phai: ph, buoc: buoc }, them && them.tuyChon);
+    return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, ten: 'caiCan' }, them, { tuyChon: tuyChon }) };
+  }
+  var SAU_BO_NGOAC = 'Hình bắt đầu từ lúc đã bỏ dấu ngoặc.';
   var GHI =' (Nếu vô nghiệm, em gõ **vô nghiệm**; nếu mọi số đều là nghiệm, gõ **vô số nghiệm**.)';
 
   TOAN8.luyen(25, [
@@ -25,6 +33,7 @@
         de: 'Giải phương trình $' + ve + ' = 0$.',
         dapAn: { kieu: 'nghiem', gt: [x0] },
         goiY: ['Quy tắc chuyển vế: chuyển hạng tử tự do sang vế phải và **đổi dấu** nó.', 'Được $' + heSo(a) + 'x = ' + (-b) + '$. Chia hai vế cho hệ số của $x$.'],
+        hinhGiai: hg(v(a, b), v(0, 0), [b2(v(a, 0), v(0, -b)), b2(v(1, 0), v(0, x0))]),
         loiGiai: ['$' + heSo(a) + 'x = ' + (-b) + '$ (chuyển $' + b + '$ sang vế phải, đổi dấu)', '$x = ' + (-b) + ' : ' + ng(a) + '$', '$x = ' + x0 + '$'],
         loiThuongGap: ltg
       };
@@ -39,6 +48,7 @@
       return {
         de: '$x = ' + t + '$ có phải là nghiệm của phương trình $' + trai + ' = ' + phai + '$ không?',
         dapAn: { kieu: 'dungSai', gt: tr === ph },
+        hinhGiai: hg(v(p, c), v(q, d), [], { thamSo: { thu: t }, ghiChu: 'Cân thay x = ' + t + ' vào hai đĩa.' }),
         goiY: ['Thay $x = ' + t + '$ vào **từng vế** rồi tính riêng.', 'Hai vế bằng nhau thì $x = ' + t + '$ là nghiệm; khác nhau thì không.'],
         loiGiai: ['Vế trái: $' + heSo(p) + (Math.abs(p) === 1 ? '' : '\\cdot ') + ng(t) + (c ? (c > 0 ? ' + ' : ' - ') + Math.abs(c) : '') + ' = ' + tr + '$.',
           'Vế phải: $' + heSo(q) + (Math.abs(q) === 1 ? '' : '\\cdot ') + ng(t) + (d ? (d > 0 ? ' + ' : ' - ') + Math.abs(d) : '') + ' = ' + ph + '$.',
@@ -56,6 +66,7 @@
         de: 'Giải phương trình $' + lin(cc, a, b) + ' = 0$ (nghiệm viết dạng phân số tối giản).',
         dapAn: { kieu: 'nghiem', gt: [-b / a] },
         goiY: ['Chuyển $' + b + '$ sang vế phải, nhớ đổi dấu.', 'Chia hai vế cho $' + a + '$ rồi rút gọn phân số (chú ý dấu).'],
+        hinhGiai: hg(v(a, b), v(0, 0), [b2(v(a, 0), v(0, -b)), b2(v(1, 0), v(0, -b / a))]),
         loiGiai: boLap(['$' + heSo(a) + 'x = ' + (-b) + '$', '$x = ' + (-b) + ' : ' + ng(a) + '$', '$x = ' + kq.tex + '$']),
         loiThuongGap: ltg
       };
@@ -78,6 +89,7 @@
       return {
         de: 'Giải phương trình $' + de + '$.',
         dapAn: { kieu: 'nghiem', gt: [x0] },
+        hinhGiai: hg(v(a - b, -c), v(d, d * e), [b2(v(h, 0), v(0, d * e + c)), b2(v(1, 0), v(0, x0))], { ghiChu: SAU_BO_NGOAC }),
         goiY: ['Bỏ dấu ngoặc trước: trước $(' + trong + ')$ là dấu trừ nên **đổi dấu** mọi hạng tử trong ngoặc' + (d > 1 ? '; nhân $' + d + '$ vào từng hạng tử của ngoặc bên phải' : '') + '.',
           'Chuyển hạng tử chứa $x$ sang trái, số sang phải, thu gọn rồi chia cho hệ số của $x$.'],
         loiGiai: boLap(['$' + heSo(a) + 'x ' +(cc.daThuc([[-b, 'x'], [-c, '']])).replace(/^([^-])/, '+$1') + ' = ' + sau + '$',
@@ -138,6 +150,8 @@
       }
       return {
         de: 'Giải phương trình $' + trai + ' = ' + phai + '$.' + GHI,
+        hinhGiai: hg(v(k, k * p - q), v(m, s), [b2(v(k - m, 0), v(0, c))].concat(loai === 'mot' ? [b2(v(1, 0), v(0, x0))] : []),
+          { ghiChu: SAU_BO_NGOAC + (loai === 'mot' ? '' : loai === 'vo' ? ' Hai đĩa lệch với mọi x: vô nghiệm.' : ' Hai đĩa luôn thăng bằng: mọi x đều là nghiệm.') }),
         dapAn: d,
         goiY: ['Bỏ ngoặc, rồi chuyển hạng tử chứa $x$ sang trái, số sang phải.', 'Thu gọn được dạng $Ax = C$. Nếu $A = 0$ thì xem $C$ có bằng $0$ không.'],
         loiGiai: boLap(dong),
@@ -155,6 +169,7 @@
       return {
         de: 'Tìm $m$ để phương trình $' + trai + ' = ' + phai + '$ nhận $x = ' + t + '$ làm nghiệm.',
         dapAn: { kieu: 'so', gt: m },
+        hinhGiai: hg(v(1, a * t), v(0, c * t + dd), [b2(v(1, 0), v(0, m))], { tuyChon: { bien: 'm' }, ghiChu: 'Đã thay x = ' + t + '; ẩn còn lại là m.' }),
         goiY: ['$x = ' + t + '$ là nghiệm nghĩa là thay $x = ' + t + '$ vào thì hai vế bằng nhau.', 'Thay vào được một phương trình ẩn $m$: $' + heSo(a) + (Math.abs(a) === 1 ? '' : '\\cdot ') + ng(t) + ' + m = ' + heSo(c) + (Math.abs(c) === 1 ? '' : '\\cdot ') + ng(t) + (dd ? (dd > 0 ? ' + ' : ' - ') + Math.abs(dd) : '') + '$.'],
         loiGiai: ['Thay $x = ' + t + '$: $' + (a * t) + ' + m = ' + (c * t + dd) + '$', '$m = ' + (c * t + dd) + ' - ' + ng(a * t) + '$', '$m = ' + m + '$'],
         loiThuongGap: ltg

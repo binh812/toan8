@@ -1,4 +1,4 @@
-// Cái cân: phương trình ax + b = cx + d. Số dương là quả nặng, số âm là bóng bay kéo lên. Lệch = vế trái − vế phải khi thay x.
+// Cái cân: phương trình ax + b = cx + d (ẩn mặc định là x, đổi bằng tuyChon.bien). Số dương là quả nặng, số âm là bóng bay kéo lên. Lệch = vế trái − vế phải khi thay x.
 (function (C) {
   'use strict';
   function nghiemCua(s) {
@@ -23,9 +23,9 @@
 
   /* ---------- Phần vẽ: khung 100 × 70, trục ở giữa ---------- */
   var O = 5.2, MOI_HANG = 6;
-  function viet(v) {
+  function viet(v, bien) {
     // Viết như trong đề: 7 − 2x thay vì −2x + 7
-    var tx = v.x ? (Math.abs(v.x) === 1 ? '' : C.fmt(Math.abs(v.x))) + 'x' : '', ts = v.so ? C.fmt(Math.abs(v.so)) : '';
+    var tx = v.x ? (Math.abs(v.x) === 1 ? '' : C.fmt(Math.abs(v.x))) + (bien || 'x') : '', ts = v.so ? C.fmt(Math.abs(v.so)) : '';
     if (v.x < 0 && v.so > 0) return ts + ' − ' + tx;
     var ra = tx ? (v.x < 0 ? '−' : '') + tx : '';
     if (ts) ra += ra ? (v.so < 0 ? ' − ' : ' + ') + ts : (v.so < 0 ? '−' : '') + ts;
@@ -44,21 +44,21 @@
     tach(Math.abs(v.so), v.so > 0 ? nang : bong, false);
     return { nang: nang, bong: bong };
   }
-  function veDia(svg, cx, cy, v, xAm) {
+  function veDia(svg, cx, cy, v, xAm, bien) {
     var vat = vatCua(v, xAm), mk = C.mk;
     mk('path', { d: 'M' + (cx - 17) + ' ' + cy + 'H' + (cx + 17) + 'L' + (cx + 13) + ' ' + (cy + 3) + 'H' + (cx - 13) + 'Z', fill: 'var(--tg)' }, svg);
     var tungHang = function (i) { return { x: cx - (MOI_HANG - 1) * O / 2 + (i % MOI_HANG) * O, h: Math.floor(i / MOI_HANG) }; };
     vat.nang.forEach(function (ten, i) {
       var q = tungHang(i), y = cy - O - q.h * O;
       mk('rect', { x: q.x - O / 2 + 0.2, y: y + 0.2, width: O - 0.4, height: O - 0.4, rx: 0.5, fill: /x/.test(ten) ? 'var(--a)' : ten === '10' ? 'var(--muc)' : 'var(--tg)' }, svg);
-      C.chu(svg, q.x, y + O / 2, ten, ten.length > 2 ? 1.7 : 2.9, null, { style: 'fill:var(--mat)' });
+      C.chu(svg, q.x, y + O / 2, bien ? ten.replace('x', bien) : ten, ten.length > 2 ? 1.7 : 2.9, null, { style: 'fill:var(--mat)' });
     });
     var dinhVat = cy - O * Math.ceil(vat.nang.length / MOI_HANG);
     vat.bong.forEach(function (ten, i) {
       var q = tungHang(i), y = dinhVat - 8 - q.h * O;
       mk('line', { x1: q.x, y1: y + O / 2 - 0.2, x2: q.x, y2: dinhVat, stroke: 'var(--nhat)', 'stroke-width': 0.2 }, svg);
       mk('circle', { cx: q.x, cy: y, r: O / 2 - 0.1, fill: 'var(--b)', 'fill-opacity': 0.85 }, svg);
-      C.chu(svg, q.x, y, ten, ten.length > 2 ? 1.6 : 2.2, null, { style: 'fill:var(--mat)' });
+      C.chu(svg, q.x, y, bien ? ten.replace('x', bien) : ten, ten.length > 2 ? 1.6 : 2.2, null, { style: 'fill:var(--mat)' });
     });
   }
   C.lay('caiCan').ve = function (svg, k, p, t, o) {
@@ -78,13 +78,13 @@
       mk('line', { x1: d.x, y1: d.y, x2: d.x - 16, y2: d.y + treo, stroke: 'var(--nhat)', 'stroke-width': 0.25 }, svg);
       mk('line', { x1: d.x, y1: d.y, x2: d.x + 16, y2: d.y + treo, stroke: 'var(--nhat)', 'stroke-width': 0.25 }, svg);
     });
-    veDia(svg, trai.x, trai.y + treo, k.trai, !!k.xAm);
-    veDia(svg, phai.x, phai.y + treo, k.phai, !!k.xAm);
+    veDia(svg, trai.x, trai.y + treo, k.trai, !!k.xAm, o.bien);
+    veDia(svg, phai.x, phai.y + treo, k.phai, !!k.xAm, o.bien);
     var bang = Math.abs(k.lech) < 1e-9;
     // Số đã làm tròn thì ghi ≈, không ghi =
     var tron = [k.trai.x, k.trai.so, k.phai.x, k.phai.so].some(function (n) { return Math.abs(n * 100 - Math.round(n * 100)) > 1e-9; });
-    C.chu(svg, tam, 73, gia ? 'Hai đĩa là hai vế nào?' : viet(k.trai) + (bang ? (tron ? ' ≈ ' : ' = ') : ' ≠ ') + viet(k.phai), 4.4, bang ? null : '--sai');
-    if (k.xAm && !gia && k.thu == null) C.chu(svg, tam, 18, 'x âm nên khối x cũng kéo lên', 3.2, '--nhat');
+    C.chu(svg, tam, 73, gia ? 'Hai đĩa là hai vế nào?' : viet(k.trai, o.bien) + (bang ? (tron ? ' ≈ ' : ' = ') : ' ≠ ') + viet(k.phai, o.bien), 4.4, bang ? null : '--sai');
+    if (k.xAm && !gia && k.thu == null) C.chu(svg, tam, 18, (o.bien || 'x') + ' âm nên khối ' + (o.bien || 'x') + ' cũng kéo lên', 3.2, '--nhat');
     if (k.thu != null) {
       var x = k.thu, vt = k.trai.x * x + k.trai.so, vp = k.phai.x * x + k.phai.so;
       C.chu(svg, trai.x, trai.y + treo + 7, C.fmt(vt), 3.4, bang ? '--cc' : '--sai');

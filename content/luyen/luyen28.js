@@ -18,8 +18,12 @@
     return out;
   }
 
+  // Hình lời giải: đường thẳng và bậc thang (sang ngang 1 thì đứng a) theo chính số của đề
+  function hgDt(tuyChon, ghiChu) { return { widget: 'canh', config: { ten: 'duongThang', chiXem: true, t: 1, tuyChon: Object.assign({ tiLe: false }, tuyChon), ghiChu: tuyChon.tiLe ? ghiChu : ghiChu || 'Hai trục có thể khác tỉ lệ.' } }; }
+  function bacTu0(a, b, t) { return { duong: [{ a: a, b: b }], bac: [{ duong: 0, tu: 0, soBuoc: t, nhan: Math.abs(t) <= 3 }] }; }
+
   TOAN8.luyen(28, [
-    { ten: 'Nhận biết hàm số bậc nhất', muc: 1, sinh: function (r, cc) {
+    { ten: 'Nhận biết hàm số bậc nhất', muc: 1, khongHinh: 'Nhận dạng công thức: thu gọn về dạng ax + b là đủ, hình không giúp thêm.', sinh: function (r, cc) {
       var a = r.so(2, 6), b = r.khac0(-7, 7), c = r.so(2, 5), k = r.so(2, 5);
       var dung = r.chon([
         '$y = ' + Math.abs(b) + ' - ' + a + 'x$',
@@ -47,6 +51,7 @@
       else { var c = r.chon([2, 3, 4, 5, -2, -3]), p = r.khac0(-5, 5); a = c; b = c * p; tex = c + '(x ' + (p > 0 ? '+ ' : '- ') + Math.abs(p) + ')'; }
       return {
         de: 'Xác định các hệ số $a$, $b$ của hàm số bậc nhất $y = ' + tex + '$.',
+        hinhGiai: hgDt(Object.assign(bacTu0(a, b, 1), { diem: [{ x: 0, y: b, ten: 'b' }] }), 'Cắt trục tung tại b; sang phải 1 thì đứng a. Hai trục có thể khác tỉ lệ.'),
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: '$a =$', kieu: 'so', gt: a, loiThuongGap: loc([{ gt: b, giaiThich: '$a$ là hệ số **của $x$**, còn $' + b + '$ là hạng tử tự do $b$.' }, { gt: -a, giaiThich: 'Hệ số lấy **cả dấu**: $a = ' + a + '$.' }], a) },
           { nhan: '$b =$', kieu: 'so', gt: b, loiThuongGap: loc(loai === 'ngoac' ? [{ gt: b / a, giaiThich: 'Phải nhân $' + a + '$ vào **mọi** hạng tử trong ngoặc: $b = ' + a + '\\cdot ' + ng(b / a) + ' = ' + b + '$.' }, { gt: a, giaiThich: '$' + a + '$ là hệ số $a$.' }]
@@ -59,6 +64,7 @@
       var a = r.khac0(-5, 5), b = r.so(-9, 9), t = r.khac0(-5, 5), kq = a * t + b;
       return {
         de: 'Cho hàm số $y = ' + lin(cc, a, b) + '$. Tính giá trị của $y$ khi $x = ' + t + '$.',
+        hinhGiai: hgDt(Object.assign(bacTu0(a, b, t), { diem: [{ x: t, y: kq, ten: '', chieu: true }] })),
         dapAn: { kieu: 'so', gt: kq },
         goiY: ['Thay $x = ' + t + '$ vào công thức.', 'Số âm đặt trong ngoặc; nhân trước, cộng trừ sau.'],
         loiGiai: ['$y = ' + thay(a, b, t) + ' = ' + kq + '$'],
@@ -69,6 +75,7 @@
     { ten: 'Giao điểm với hai trục', muc: 1, sinh: function (r, cc) {
       var x0 = r.khac0(-5, 5), a = r.chon([1, 2, 3, -1, -2, -3]), b = -a * x0;
       return {
+        hinhGiai: hgDt({ tiLe: true, duong: [{ a: a, b: b }], diem: [{ x: 0, y: b, ten: 'P' }, { x: x0, y: 0, ten: 'Q' }] }),
         de: 'Đường thẳng $y = ' + lin(cc, a, b) + '$ cắt trục tung tại $P$ và cắt trục hoành tại $Q$. Tìm tung độ của $P$ và hoành độ của $Q$.',
         dapAn: { kieu: 'nhieuO', o: [
           { nhan: 'Tung độ của $P$', kieu: 'so', gt: b, loiThuongGap: loc([{ gt: x0, giaiThich: '$' + x0 + '$ là hoành độ của $Q$. Với $P$ trên trục tung, cho $x = 0$: $y = ' + b + '$.' }], b) },
@@ -83,6 +90,7 @@
       if (!la && r.dau() > 0 && a * t - b !== y) y0 = a * t - b; // sai thường gặp: nhầm dấu b
       if (!la && y0 === y) y0 = y + 1;
       return {
+        hinhGiai: hgDt(Object.assign(bacTu0(a, b, t), { diem: [{ x: t, y: y0, ten: ten }] })),
         de: 'Điểm $' + ten + '(' + t + '; ' + y0 + ')$ có thuộc đồ thị của hàm số $y = ' + lin(cc, a, b) + '$ không?',
         dapAn: { kieu: 'dungSai', gt: y0 === y },
         goiY: ['Thay hoành độ $x = ' + t + '$ vào công thức.', 'So sánh kết quả với tung độ $' + y0 + '$ của $' + ten + '$.'],
@@ -95,6 +103,7 @@
       if (r.dau() > 0) {
         return {
           de: 'Cho hàm số bậc nhất $y = ax ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$. Tìm $a$, biết đồ thị đi qua điểm $(' + t + '; ' + y + ')$.',
+          hinhGiai: hgDt(Object.assign(bacTu0(a, b, t), { diem: [{ x: 0, y: b, ten: 'P' }, { x: t, y: y, ten: 'M' }] }), 'Từ P đi ' + Math.abs(t) + ' bậc tới M. Hai trục có thể khác tỉ lệ.'),
           dapAn: { kieu: 'so', gt: a },
           goiY: ['Thay $x = ' + t + '$, $y = ' + y + '$ vào công thức.', '$' + y + ' = ' + heSo(t) + 'a ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$. Giải ra $a$.'],
           loiGiai: ['$' + y + ' = a\\cdot ' + ng(t) + ' ' + (b > 0 ? '+ ' : '- ') + Math.abs(b) + '$', '$' + heSo(t) + 'a = ' + (y - b) + '$', '$a = ' + a + '$'].filter(function (d, i, m) { return d !== m[i - 1]; }),
@@ -103,6 +112,7 @@
       }
       return {
         de: 'Cho hàm số bậc nhất $y = ' + heSo(a) + 'x + b$. Tìm $b$, biết đồ thị đi qua điểm $(' + t + '; ' + y + ')$.',
+        hinhGiai: hgDt({ duong: [{ a: a, b: b }], bac: [{ duong: 0, tu: t, soBuoc: -t, nhan: Math.abs(t) <= 3 }], diem: [{ x: t, y: y, ten: 'M' }, { x: 0, y: b, ten: 'b' }] }, 'Từ M đi bậc thang về tới trục tung. Hai trục có thể khác tỉ lệ.'),
         dapAn: { kieu: 'so', gt: b },
         goiY: ['Thay $x = ' + t + '$, $y = ' + y + '$ vào công thức.', '$' + y + ' = ' + (a * t) + ' + b$. Giải ra $b$.'],
         loiGiai: ['$' + y + ' = ' + thay(a, 0, t) + ' + b$, tức là $' + y + ' = ' + a * t + ' + b$', '$b = ' + y + ' - ' + ng(a * t) + '$', '$b = ' + b + '$'],
