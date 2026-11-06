@@ -169,7 +169,7 @@
     },
     mucTieu: [
       'Tính tỉ số của hai đoạn thẳng, nhớ đổi về cùng một đơn vị đo.',
-      'Giải thích được vì sao đường song song với một cạnh chia hai cạnh kia theo cùng một tỉ số, bằng cách chia cạnh thành các phần bằng nhau.',
+      'Giải thích được vì sao đường song song với một cạnh chia hai cạnh kia theo cùng một tỉ số, bằng cách chia cạnh thành các phần bằng nhau (khi tỉ số là một phân số).',
       'Lập đúng tỉ lệ thức Thalès (đoạn trên với đoạn dưới, hoặc đoạn trên với cả cạnh) và tính độ dài một đoạn.',
       'Dùng định lí Thalès đảo để chứng minh hai đường thẳng song song.'
     ],

@@ -142,7 +142,7 @@
       'Giải thích được vì sao $\\frac{DB}{DC} = \\frac{AB}{AC}$ bằng cách tính diện tích hai mảnh tam giác theo hai cách.',
       'Lập đúng tỉ lệ thức: đoạn nào trên $BC$ kề cạnh nào thì đi với cạnh đó.',
       'Tính $DB$, $DC$ khi biết ba cạnh của tam giác.',
-      'Dùng chiều đảo để nhận ra một đoạn thẳng là đường phân giác.'
+      'Biết chiều đảo: nếu $D$ chia $BC$ theo tỉ số $\\frac{AB}{AC}$ thì $AD$ là đường phân giác.'
     ],
     lyThuyet: [
       { loai: 'dinhLi', tieuDe: 'Tính chất đường phân giác của tam giác',

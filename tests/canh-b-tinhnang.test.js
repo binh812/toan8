@@ -48,14 +48,18 @@ test('thử phá không đổi hành vi cũ: ở md, kết quả trùng với l�
   });
 });
 
-test('gocTuGiac lõm: bốn góc đo được hụt đúng 2(∠CBD + ∠CDB) so với 360°, và chỗ hở trên vòng đúng bằng phần hụt', () => {
+test('gocTuGiac lõm: định lí vẫn đúng với góc trong ở C (> 180°), chỉ cách kẻ BD hỏng nên báo vàng (chiHinh)', () => {
   for (const lom of [1.125, 1.25]) {
     const k = tinh('gocTuGiac', voi('gocTuGiac', { lom }), 1, { dang: 'chia' }), P = k.P;
-    const b2 = doGoc(P[2], P[1], P[3]), d2 = doGoc(P[1], P[3], P[2]);
-    GAN(k.pha.tong, 360 - 2 * (b2 + d2), 'tổng góc');
-    assert.ok(k.pha.hut > 10, 'phải hụt rõ');
-    GAN(k.ho.goc, k.pha.hut, 'chỗ hở');
-    assert.match(k.pha.chu, new RegExp(String(Math.round(k.pha.tong))));
+    assert.ok(k.g[2] > 180, 'góc trong ở C lớn hơn 180°');
+    GAN(k.g[2], 360 - doGoc(P[1], P[2], P[3]), 'góc trong = 360° − góc nhỏ');
+    GAN(k.g.reduce((s, x) => s + x, 0), 360, 'tổng bốn góc trong');
+    assert.strictEqual(k.gTron.reduce((s, x) => s + x, 0), 360, 'bản làm tròn cộng lại 360');
+    GAN(k.ho.goc, 0, 'vòng ghép kín, không hở');
+    GAN(k.dinh[2].goc, k.g[2], 'quạt ở C là góc trong');
+    assert.ok(k.pha.hong && k.pha.chiHinh, 'báo vàng');
+    assert.match(k.pha.chu, new RegExp(k.gTron[2] + '\\^\\\\circ'));
+    assert.match(k.pha.chu, /360/); assert.match(k.pha.chu, /SGK chỉ xét tứ giác lồi/);
   }
   const thang = tinh('gocTuGiac', voi('gocTuGiac', { lom: 1 }), 1, { dang: 'chia' });
   assert.ok(thang.pha.hong && thang.pha.thangHang, 'lom = 1: B, C, D thẳng hàng');

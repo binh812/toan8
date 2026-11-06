@@ -216,7 +216,7 @@
           { id: 'ccc', chu: '$\\triangle ABC = \\triangle ADC$ (c.c.c): $AB = AD$, $CB = CD$, cạnh $AC$ chung.', can: ['gt'], canh: { t: 0.5 } },
           { id: 'pg', chu: 'Suy ra $\\widehat{BAC} = \\widehat{DAC}$ và $\\widehat{BCA} = \\widehat{DCA}$: $AC$ là phân giác của góc $A$ và góc $C$.', can: ['ccc'], canh: { t: 0.5 } }
         ],
-        ketLuan: 'Trong hình thoi, hai đường chéo vuông góc với nhau và là phân giác các góc.'
+        ketLuan: 'Trong hình thoi, $AC \\perp BD$, và $AC$ là phân giác của góc $A$ và góc $C$ (tương tự, $BD$ là phân giác của góc $B$ và góc $D$).'
       } },
       { loai: 'hinh', widget: 'geo', config: { bbox: [-1.5, 8.6, 9.5, -0.6], build: thoiBuild,
         // Kéo A cho OA = OB: hình thoi thành hình vuông; kéo tiếp cho thoi dẹt; rồi trả về.

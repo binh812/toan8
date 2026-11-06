@@ -193,7 +193,7 @@
       { loai: 'dinhLi', tieuDe: 'Tính chất đường trung bình',
         noiDung: 'Đường trung bình của tam giác **song song** với cạnh thứ ba và **bằng nửa** cạnh đó.\n\n**GT:** $\\triangle ABC$, $AD = DB$, $AE = EC$ ($D \\in AB$, $E \\in AC$); $F$ là trung điểm của $BC$.\n\n**KL:** $DE \\parallel BC$; $$\\ca{DE} = \\frac{1}{2}BC = \\ca{BF}.$$' },
       { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $MN \\parallel BC$ và $MN = \\frac{1}{2}BC$?', config: {
-        de: 'Tam giác $ABC$, $M$ và $N$ là trung điểm của $AB$ và $AC$. Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
+        de: 'Tam giác $ABC$, $M$ và $N$ là trung điểm của $AB$ và $AC$ (trong định lí ở trên, hai điểm này tên là $D$ và $E$). Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
         canh: { ten: 'thalesTrungBinh' },
         buoc: [
           { id: 'gt', chu: '$M$, $N$ là trung điểm của $AB$, $AC$. Lấy $M\'$ trên tia đối của tia $NM$ sao cho $NM\' = NM$.', canh: { t: 0.7 } },

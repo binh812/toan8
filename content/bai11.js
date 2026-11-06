@@ -231,15 +231,16 @@
         noiDung: '**Định lí 1.** Trong hình thang cân, **hai cạnh bên bằng nhau**: $\\ca{AD} = \\ca{BC}$.\n\n**Định lí 2.** Trong hình thang cân, **hai đường chéo bằng nhau**: $\\cd{AC} = \\cd{BD}$.\n\n(Chứng minh Định lí 2: $\\triangle ACD = \\triangle BDC$ (c.g.c) vì $AD = BC$, $\\widehat{ADC} = \\widehat{BCD}$, $DC$ chung.)' },
       { loai: 'lapCM', tieuDe: 'Lắp chứng minh: vì sao $AD = BC$ và $AC = BD$?', config: {
         de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$, $AB < CD$). Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói còn thiếu bước nào.',
-        canh: { ten: 'thangCan', tuyChon: { cheo: true, dinh: 'E', goc: { D: '', C: '' } } },
+        // E hiện từ bước kéo dài hai cạnh bên (t = 0,05), hai đường chéo từ bước c.g.c (t = 0,1); gập hình (t > 0,2) chỉ ở bước cuối
+        canh: { ten: 'thangCan', tuyChon: { cheo: true, cheoTu: 0.1, dinh: 'E', dinhTu: 0.05, goc: { D: '', C: '' } } },
         buoc: [
           { id: 'gt', chu: 'Hình thang $ABCD$ có $AB \\parallel CD$, $AB < CD$ và $\\widehat{D} = \\widehat{C}$.', canh: { t: 0 } },
-          { id: 'E', chu: 'Kéo dài $DA$ và $CB$, chúng cắt nhau tại $E$ (vì $AB < CD$).', can: ['gt'], canh: { t: 0 } },
-          { id: 'EDC', chu: 'Tam giác $EDC$ có $\\widehat{D} = \\widehat{C}$ nên cân tại $E$: $ED = EC$.', can: ['E'], canh: { t: 0 } },
-          { id: 'dongVi', chu: '$AB \\parallel CD$ nên $\\widehat{EAB} = \\widehat{EDC}$ và $\\widehat{EBA} = \\widehat{ECD}$ (hai cặp góc đồng vị).', can: ['E'], canh: { t: 0 } },
-          { id: 'EAB', chu: 'Suy ra $\\widehat{EAB} = \\widehat{EBA}$: tam giác $EAB$ cân tại $E$, $EA = EB$.', can: ['dongVi'], canh: { t: 0 } },
-          { id: 'ben', chu: '$AD = ED - EA = EC - EB = BC$.', can: ['EDC', 'EAB'], canh: { t: 0.6 } },
-          { id: 'cgc', chu: '$\\triangle ACD = \\triangle BDC$ (c.g.c): $AD = BC$, $\\widehat{ADC} = \\widehat{BCD}$, cạnh $DC$ chung.', can: ['ben'], canh: { t: 0.8 } },
+          { id: 'E', chu: 'Kéo dài $DA$ và $CB$, chúng cắt nhau tại $E$ (vì $AB < CD$).', can: ['gt'], canh: { t: 0.05 } },
+          { id: 'EDC', chu: 'Tam giác $EDC$ có $\\widehat{D} = \\widehat{C}$ nên cân tại $E$: $ED = EC$.', can: ['E'], canh: { t: 0.05 } },
+          { id: 'dongVi', chu: '$AB \\parallel CD$ nên $\\widehat{EAB} = \\widehat{EDC}$ và $\\widehat{EBA} = \\widehat{ECD}$ (hai cặp góc đồng vị).', can: ['E'], canh: { t: 0.05 } },
+          { id: 'EAB', chu: 'Suy ra $\\widehat{EAB} = \\widehat{EBA}$: tam giác $EAB$ cân tại $E$, $EA = EB$.', can: ['dongVi'], canh: { t: 0.05 } },
+          { id: 'ben', chu: '$AD = ED - EA = EC - EB = BC$.', can: ['EDC', 'EAB'], canh: { t: 0.05 } },
+          { id: 'cgc', chu: '$\\triangle ACD = \\triangle BDC$ (c.g.c): $AD = BC$, $\\widehat{ADC} = \\widehat{BCD}$, cạnh $DC$ chung.', can: ['ben'], canh: { t: 0.1 } },
           { id: 'cheo', chu: 'Vậy $AC = BD$.', can: ['cgc'], canh: { t: 1 } }
         ],
         ketLuan: 'Trong hình thang cân, $AD = BC$ và $AC = BD$.'

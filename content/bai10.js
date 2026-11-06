@@ -155,7 +155,8 @@
       luuY: 'Hình vẽ tứ giác lồi. Ở tứ giác lồi, đường chéo $BD$ luôn nằm bên trong nên chia góc $B$ và góc $D$ làm hai phần. Kéo hai thanh để đổi hình: cách ghép vẫn đúng.',
       canh: { ten: 'gocTuGiac', tuyChon: { dang: 'chia' }, thuPha: true, moTa: 'Tứ giác ABCD có bốn góc tô bốn màu. Đường chéo BD chia nó thành hai tam giác; sáu góc của hai tam giác được đặt quanh một điểm và lấp kín một vòng tròn.',
         dongSo: function (p) {
-          var g = lamTron(TOAN8.canh.lay('gocTuGiac').tinh(p, 0, { dang: 'chia' }).g);
+          // Dùng đúng bản làm tròn của cảnh, để số ở đây khớp số trên hình và trong thẻ soi
+          var g = TOAN8.canh.lay('gocTuGiac').tinh(p, 0, { dang: 'chia' }).gTron;
           return 'Đo bốn góc: $\\ca{\\widehat{A}} \\approx ' + g[0] + '^\\circ$, $\\cb{\\widehat{B}} \\approx ' + g[1] + '^\\circ$, $\\cc{\\widehat{C}} \\approx ' + g[2] + '^\\circ$, $\\widehat{D} \\approx ' + g[3] + '^\\circ$. Cộng lại: $' + (g[0] + g[1] + g[2] + g[3]) + '^\\circ$.';
         } },
       buoc: [

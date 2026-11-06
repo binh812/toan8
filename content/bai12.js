@@ -234,6 +234,7 @@
           { id: 'sl2', chu: '$AD \\parallel BC$ nên $\\widehat{BCA} = \\widehat{DAC}$ (so le trong).', can: ['gt'], canh: { t: 0.1 } },
           { id: 'gcg', chu: '$\\triangle ABC = \\triangle CDA$ (g.c.g): hai cặp góc đó và cạnh $AC$ chung.', can: ['sl1', 'sl2'], canh: { t: 1 } },
           { id: 'canh', chu: 'Suy ra $AB = CD$, $BC = DA$ và $\\widehat{B} = \\widehat{D}$.', can: ['gcg'], canh: { t: 1 } },
+          { id: 'gocA', chu: '$\\widehat{A} = \\widehat{BAC} + \\widehat{CAD} = \\widehat{DCA} + \\widehat{BCA} = \\widehat{C}$.', can: ['sl1', 'sl2'], canh: { t: 0.1 } },
           { id: 'sl3', chu: '$AB \\parallel CD$ nên $\\widehat{ABD} = \\widehat{CDB}$ (so le trong).', can: ['gt'], canh: { t: 0 } },
           { id: 'oab', chu: 'Gọi $O$ là giao điểm hai đường chéo. $\\triangle OAB = \\triangle OCD$ (g.c.g): $\\widehat{OAB} = \\widehat{OCD}$, $AB = CD$, $\\widehat{OBA} = \\widehat{ODC}$.', can: ['sl1', 'canh', 'sl3'], canh: { t: 0 } },
           { id: 'kl', chu: 'Suy ra $OA = OC$ và $OB = OD$: hai đường chéo cắt nhau tại trung điểm mỗi đường.', can: ['oab'], canh: { t: 0 } }
