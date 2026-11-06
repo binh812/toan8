@@ -170,7 +170,7 @@ async function main() {
     });
     can(phong.than && /Be Vietnam Pro/.test(phong.body), 'phông thân chưa nạp: ' + JSON.stringify(phong));
     can(/Bricolage/.test(phong.tieuDe), 'phông tiêu đề chưa dùng: ' + phong.tieuDe);
-    can(await page.evaluate(() => !!document.querySelector('a[href="#/bai/35/khamPha"] .hinh-nho svg') && !document.querySelector('a[href="#/bai/1/khamPha"] .hinh-nho')), 'thẻ bài 35 phải có hình nhỏ, bài 1 thì không');
+    can(await page.evaluate(() => Object.values(TOAN8.lessons).every(L => !!document.querySelector('a[href="#/bai/' + L.id + '/khamPha"] .hinh-nho svg') === !!L.nhin)), 'thẻ bài có nhin phải có hình nhỏ, bài chưa có thì không');
     can(await page.evaluate(() => getComputedStyle(document.querySelector('.hinh-nho .c-chu')).display === 'none'), 'hình nhỏ không hiện chữ li ti');
     await chup('trang-chu');
 
@@ -212,10 +212,13 @@ async function main() {
     }
 
     // Bài chưa có nhin giữ nguyên
-    await moBai('#/bai/1/khamPha');
-    can(await page.evaluate(() => document.querySelector('.tabs a').textContent.includes('Khám phá') && !document.querySelector('.nhin-nhin')), 'bài 1 phải giữ nguyên Khám phá');
+    const chuaCo = await page.evaluate(() => (Object.values(TOAN8.lessons).filter(L => !L.nhin)[0] || {}).id);
+    if (chuaCo) {
+      await moBai('#/bai/' + chuaCo + '/khamPha');
+      can(await page.evaluate(() => document.querySelector('.tabs a').textContent.includes('Khám phá') && !document.querySelector('.nhin-nhin')), 'bài ' + chuaCo + ' chưa có nhin phải giữ nguyên Khám phá');
+    }
 
-    console.log('Đã kiểm bài 6, 35, 25 và bài 1.');
+    console.log('Đã kiểm ' + coNhin.length + ' bài có Nhìn là hiểu.');
   } finally { await browser.close(); }
   if (loi.length) { console.log(loi.join('\n')); process.exitCode = 1; } else console.log('Không có lỗi.');
 }
