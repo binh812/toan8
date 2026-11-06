@@ -61,6 +61,9 @@
   }
   function bo(t, i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4]]; }
   function ds(x) { return String(x).replace('.', ','); } // số trên hình (chữ thường)
+  // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 12): quay nửa hình bình hành nửa vòng quanh tâm, theo chính số của đề
+  function hg(them) { return { widget: 'canh', config: { ten: 'quayHBH', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them } }; }
+  var VAI = ['A', 'B', 'C', 'D'];
 
   TOAN8.luyen(12, [
     { ten: 'Góc của hình bình hành', muc: 1, sinh: function (r) {
@@ -78,7 +81,12 @@
           ? { gt: 180 - v, giaiThich: 'Hai góc đối của hình bình hành **bằng** nhau, không phải bù nhau.' }
           : { gt: v, giaiThich: 'Góc $' + t[j] + '$ kề với góc $' + t[i] + '$ (chung một cạnh) nên **bù** với nó. Góc bằng góc $' + t[i] + '$ là góc đối.' }]),
         hinh: hinhTG({ diem: hbh(t, 6.5, r.chon([3.5, 4, 4.5]), g), vong: t,
-          goc: [bo(t, i), bo(t, j).concat([{ mau: XANH }])], soGoc: [bo(t, i).concat([v + '°', xa(v)]), bo(t, j).concat(['?', 1, XANH])] })
+          goc: [bo(t, i), bo(t, j).concat([{ mau: XANH }])], soGoc: [bo(t, i).concat([v + '°', xa(v)]), bo(t, j).concat(['?', 1, XANH])] }),
+        // Cắt theo đường chéo không đi qua đỉnh đã biết, quay nửa vòng: góc đã biết rơi vào góc đối
+        hinhGiai: hg((function () {
+          var goc = {}; goc[VAI[i]] = v + '°'; goc[VAI[(i + 2) % 4]] = { cuoi: v + '°' }; goc[VAI[j]] = { dau: '?', giai: kq + '°' };
+          return { a: 6.5, b: 4, g: g, ten: t, cat: i % 2 === 0 ? 'BD' : 'AC', goc: goc };
+        })())
       };
     } },
     { ten: 'Hai đường chéo cắt nhau tại trung điểm', muc: 1, sinh: function (r, cc) {
@@ -104,7 +112,10 @@
         goiY: ['Trong hình bình hành, hai đường chéo cắt nhau tại **trung điểm** của mỗi đường.', hoiAC ? '$' + t[0] + t[2] + ' = 2 \\cdot O' + t[0] + '$.' : '$O' + t[1] + ' = ' + t[1] + t[3] + ' : 2$.'],
         loiGiai: lg, loiThuongGap: boTrung(kq, ltg),
         hinh: hinhTG({ diem: D, vong: t, canh: [[t[0], t[2], { mau: TIM, day: 2 }], [t[1], t[3], { mau: TIM, day: 2 }]], nhan: nhan,
-          lechTen: { O: [0, -18] }, ghiChu: hoiAC ? null : t[1] + t[3] + ' = ' + ds(2 * ob) + ' cm' })
+          lechTen: { O: [0, -18] }, ghiChu: hoiAC ? null : t[1] + t[3] + ' = ' + ds(2 * ob) + ' cm' }),
+        hinhGiai: { widget: 'canh', config: { ten: 'quayHBH', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, ghiChu: 'Hình không theo tỉ lệ.',
+          tuyChon: { a: 6, b: 3.5, g: 60, cheo: true, ten: t, cat: hoiAC ? 'AC' : 'BD',
+            nhan: hoiAC ? { OA: ds(oa), OC: { dau: '?', giai: ds(oa) } } : { BD: ds(2 * ob), OB: { dau: '?', giai: ds(ob) } } } } }
       };
     } },
     { ten: 'Chu vi hình bình hành', muc: 1, sinh: function (r) {
@@ -117,10 +128,11 @@
         loiGiai: ['$' + t[0] + t[1] + ' = ' + t[3] + t[2] + ' = ' + a + '$ cm, $' + t[1] + t[2] + ' = ' + t[3] + t[0] + ' = ' + b + '$ cm (cạnh đối).',
           'Chu vi $= 2 \\cdot (' + a + ' + ' + b + ') = ' + P + '$ (cm)'],
         loiThuongGap: boTrung(P, [{ gt: a + b, giaiThich: '$' + (a + b) + '$ cm mới là **nửa** chu vi (tổng hai cạnh kề). Hình bình hành có bốn cạnh: nhân đôi.' }]),
-        hinh: hinhTG({ diem: hbh(t, a * s, b * s, g), vong: t, nhan: [[t[3], t[2], a + ' cm'], [t[3], t[0], b + ' cm']] })
+        hinh: hinhTG({ diem: hbh(t, a * s, b * s, g), vong: t, nhan: [[t[3], t[2], a + ' cm'], [t[3], t[0], b + ' cm']] }),
+        hinhGiai: hg({ a: a, b: b, g: g, ten: t, nhan: { CD: a + ' cm', DA: b + ' cm', AB: { dau: '?', cuoi: a + ' cm' }, BC: { dau: '?', cuoi: b + ' cm' } } })
       };
     } },
-    { ten: 'Phân giác cắt cạnh đối', muc: 2, sinh: function (r) {
+    { ten: 'Phân giác cắt cạnh đối', muc: 2, khongHinh: 'Đề đã có hình theo đúng số đo; lời giải dựa vào tam giác cân, cảnh quay nửa vòng không giúp thêm.', sinh: function (r) {
       var L = r.so(6, 14), S = r.so(Math.max(3, Math.ceil(L / 3)), L - 2), g = r.so(10, 14) * 5, kq = L - S, D;
       var veD = r.dau() > 0, de, lg, hinh;
       if (veD) { // phân giác góc D cắt AB tại E: AE = AD
@@ -172,10 +184,13 @@
       return {
         de: de, dapAn: { kieu: 'so', gt: kq },
         goiY: ['Hai góc kề một cạnh của hình bình hành bù nhau: $' + G(t[0]) + ' + ' + G(t[1]) + ' = 180^\\circ$.', 'Tìm $' + G(t[0]) + '$, $' + G(t[1]) + '$ rồi dùng: các góc đối bằng nhau.'],
-        loiGiai: lg, loiThuongGap: boTrung(kq, ltg)
+        loiGiai: lg, loiThuongGap: boTrung(kq, ltg),
+        // Góc quá nhọn thì hình dẹt, chữ chồng nhau: vẽ góc ít nhất 45° và ghi rõ không theo tỉ lệ
+        hinhGiai: (function (h) { if (nho < 45) h.config.ghiChu = 'Hình không theo tỉ lệ.'; return h; })(
+          hg({ a: 5.5, b: 4.5, g: Math.max(nho, 45), cat: 'BD', ten: t, goc: { A: lon + '°', B: nho + '°', C: { cuoi: lon + '°' }, D: nho + '°' } }))
       };
     } },
-    { ten: 'Nhận biết hình bình hành theo góc', muc: 2, sinh: function (r) {
+    { ten: 'Nhận biết hình bình hành theo góc', muc: 2, khongHinh: 'Đề đã có hình với số đo ba góc; lời giải là phép tính góc thứ tư. Khi tứ giác không phải hình bình hành thì quay nửa vòng không trùng khít, cảnh này không vẽ được.', sinh: function (r) {
       var gA, gB, gC, gD, P, la, lan = 0;
       do {
         la = r.dau() > 0;

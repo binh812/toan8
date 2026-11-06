@@ -53,6 +53,11 @@
     canh: [['E', 'F', { mau: LA, day: 4 }], ['F', 'G', { mau: LA, day: 4 }], ['G', 'H', { mau: LA, day: 4 }], ['H', 'E', { mau: LA, day: 4 }]],
     nhan: [['D', 'C', '16 m', false, 2], ['D', 'A', '12 m', false, 3]] });
 
+  // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
+  function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
+  function kt(them, moTa) { return { ten: 'khungThoi', tuyChon: them, moTa: moTa }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+
   // ---------- Hình động ----------
   var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
   function fmt(v) { return (Math.round(v * 10) / 10).toString().replace('.', ','); }
@@ -129,6 +134,51 @@
 
   TOAN8.bai({
     id: 14, ten: 'Hình thoi và hình vuông', sgk: { tap: 1, trang: 67 },
+    nhin: {
+      tieuDe: 'Bóp khung bốn thanh bằng nhau: hai đường chéo vẫn vuông góc', loai: 'chungMinh',
+      luuY: 'Lúc bóp qua góc $A = 90^\\circ$, khung là hình vuông: hai đường chéo vừa vuông góc vừa bằng nhau. Lập luận dùng tính chất đường trung trực đã học ở lớp 7: điểm cách đều hai đầu đoạn thẳng thì nằm trên trung trực của đoạn đó.',
+      canh: { ten: 'khungThoi', tuyChon: { dang: 'bop' }, moTa: 'Khung bốn thanh dài bằng nhau ABCD được bóp lại; hai đường chéo AC và BD luôn vuông góc tại O. A và C cùng cách đều B và D nên AC là trung trực của BD.',
+        dongSo: function (p) { return 'Góc $A$ đổi từ $' + p.g + '^\\circ$ tới $' + (180 - p.g) + '^\\circ$, góc giữa hai đường chéo vẫn là $90^\\circ$.'; } },
+      buoc: [
+        { t: 0, chu: 'Khung $ABCD$ gồm bốn thanh dài bằng nhau, nối bằng bản lề ở bốn đỉnh: một hình thoi.' },
+        { t: 0.1, chu: 'Bóp khung lại. Hình đổi dạng, nhưng góc giữa hai đường chéo vẫn vuông.' },
+        { t: 0.55, chu: 'Vì sao? $\\ca{AB} = \\ca{AD}$ (hai thanh cam): $A$ cách đều $B$ và $D$, nên $A$ nằm trên đường trung trực của $BD$.' },
+        { t: 0.75, chu: '$\\cb{CB} = \\cb{CD}$ (hai thanh xanh): $C$ cũng cách đều $B$ và $D$, nên cũng nằm trên trung trực đó.' },
+        { t: 0.9, chu: 'Hai điểm $A$, $C$ xác định một đường thẳng: $AC$ chính là trung trực của $BD$ (nét đứt đỏ). Vậy $AC \\perp BD$ tại trung điểm $O$. Hình đối xứng qua $AC$ nên $AC$ còn chia đôi góc $A$ và góc $C$.' }
+      ],
+      ketLuan: 'Trong hình thoi, hai đường chéo **vuông góc** với nhau và là **phân giác** các góc: $$AC \\perp BD, \\qquad \\widehat{BAC} = \\widehat{DAC}$$',
+      dung: {
+        tieuDe: 'Đường chéo chia đôi góc', tuBai: '14.6',
+        canh: kt({ gA: 60, s: 5, thuGoc: 'BAC', goc: { B: '120°', A: { dau: '', cuoi: '60°' }, BAC: { dau: '?', giai: '30°' } } }, 'Hình thoi ABCD có góc B 120 độ; hỏi góc BAC giữa cạnh AB và đường chéo AC.'),
+        moiThu: 'Góc $A$ và góc $B$ kề cạnh $AB$ nên bù nhau; đường chéo $AC$ chia đôi góc $A$. Gõ số đo góc $BAC$; nếu sai, hình sẽ vẽ tia đỏ lệch khỏi $AB$ đúng góc em gõ.',
+        phanUng: [
+          { gt: 60, loi: '$60^\\circ$ là cả góc $BAD$. Đường chéo $AC$ chia nó làm hai phần bằng nhau.' },
+          { gt: 120, loi: 'Góc $BAD$ kề với góc $ABC$ (chung cạnh $AB$) nên **bù** với nó, không bằng nó.' },
+          { gt: 90, loi: '$90^\\circ$ là góc giữa hai đường chéo, ở tại $O$. Góc $BAC$ ở đỉnh $A$.' }
+        ],
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 1, loi: 'Số đo góc phải lớn hơn $0^\\circ$.' };
+          if (v >= 90) return { thamSo: { thu: v }, t: 1, loi: 'Góc $BAC$ chỉ là một nửa góc $A$ của hình thoi, nên nhỏ hơn $90^\\circ$.' };
+          return { thamSo: { thu: v }, t: 1, loi: v < 30 ? 'Tia đỏ lệch $' + so(v) + '^\\circ$ khỏi $AB$ chưa tới đường chéo $AC$.' : 'Tia đỏ lệch $' + so(v) + '^\\circ$ khỏi $AB$ đã vượt qua đường chéo $AC$.' };
+        },
+        dungChu: '$\\widehat{BAD} = 180^\\circ - 120^\\circ = 60^\\circ$, đường chéo $AC$ chia đôi: $30^\\circ$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng hai đường chéo vẫn làm việc của chúng',
+        baDe: [
+          { tuBai: '14.3', canh: kt({ gA: 70, s: 5, goc: { BAC: '35°', A: { dau: '?', giai: '70°' } } }, 'Hình thoi ABCD có góc BAC 35 độ; hỏi góc BAD.'), tenNut: 'Vẽ hai đường chéo',
+            phanUng: [{ gt: 17.5, loi: '$35^\\circ$ đã là **một nửa** góc $A$. Đường chéo chia đôi góc, nên cả góc gấp đôi.' }],
+            dungChu: '$\\widehat{BAD} = 2 \\cdot 35^\\circ = 70^\\circ$.', saiChu: 'Đường chéo $AC$ chia góc $A$ thành hai nửa bằng nhau.' },
+          { tuBai: '14.7', canh: kt({ gA: 60, s: 8, to: 'ABD', thuDoan: 'BD', goc: { A: '60°' }, nhan: { AB: '8 cm', BD: { dau: '?', giai: '8 cm' } } }, 'Hình thoi ABCD cạnh 8 cm, góc A 60 độ; hỏi đường chéo BD.'), tenNut: 'Vẽ hai đường chéo',
+            phanUng: [{ gt: 4, loi: '$4$ cm là $OB$, nửa đường chéo. Cả $BD$ là cạnh của tam giác $ABD$.' }, { gt: 16, loi: '$BD$ là một cạnh của tam giác $ABD$, không phải tổng hai cạnh $AB + AD$.' }],
+            dungChu: 'Tam giác $ABD$ có $AB = AD$ và góc $A = 60^\\circ$ nên là tam giác đều: $BD = 8$ cm.', saiChu: 'Xem tam giác $ABD$: hai cạnh bằng nhau, góc xen giữa $60^\\circ$.' },
+          { tuBai: '14.11', canh: kt({ dang: 'dienTich', d1: 16, d2: 12, nhan: { d1: '16 m', d2: '12 m' }, nhanDT: { dau: '?', giai: '96 m²' } }, 'Vườn hình chữ nhật 16 m nhân 12 m, nối trung điểm bốn cạnh được luống hoa hình thoi. Bốn tam giác ở góc trượt vào lấp kín hình thoi.'), tenNut: 'Đẩy bốn góc vào',
+            phanUng: [{ gt: 192, loi: '$192$ m² là diện tích cả mảnh vườn. Bốn tam giác ở góc vừa khít lấp đầy luống hoa: luống hoa chỉ là **một nửa**.' }, { gt: 48, loi: 'Luống hoa bằng nửa mảnh vườn: $192 : 2$, không phải $192 : 4$.' }],
+            dungChu: 'Bốn góc lấp kín luống hoa, nên luống hoa bằng nửa vườn: $\\frac{1}{2} \\cdot 16 \\cdot 12 = 96$ m².', saiChu: 'Bấm nút: bốn tam giác ở góc vườn lấp vừa khít luống hoa.' }
+        ],
+        cachNhan: 'Thấy hình thoi (bốn cạnh bằng nhau): vẽ hai đường chéo. Chúng vuông góc, cắt nhau tại trung điểm và chia đôi các góc; hình thoi tách thành bốn tam giác vuông bằng nhau.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Đây là **máy nhận dạng**: $ABCD$ luôn là hình bình hành (kéo $A$, $B$, $D$; các đỉnh bám vào điểm lưới, $C$ tự đi theo).\n\nMáy kiểm tra trực tiếp: hai cạnh kề $AB$, $AD$ có bằng nhau không; góc $A$ có vuông không; hai đường chéo có vuông góc, có bằng nhau không. Em hãy kéo để tạo ra **hình thoi**, **hình chữ nhật** và **hình vuông**.',
       widget: 'geo',
@@ -163,20 +213,22 @@
       { loai: 'chuY', noiDung: '**Sơ đồ ghi nhớ.**\n- Hình bình hành $+$ (hai cạnh kề bằng nhau **hoặc** hai đường chéo vuông góc) $\\Rightarrow$ **hình thoi**.\n- Hình bình hành $+$ (một góc vuông **hoặc** hai đường chéo bằng nhau) $\\Rightarrow$ **hình chữ nhật**.\n- Hình chữ nhật $+$ dấu hiệu của hình thoi, hoặc hình thoi $+$ dấu hiệu của hình chữ nhật $\\Rightarrow$ **hình vuông**.\n\n**Hay nhầm:** "tứ giác có hai đường chéo vuông góc là hình thoi" là **sai** (hình "cái diều" cũng có hai đường chéo vuông góc). Phải là **hình bình hành** có hai đường chéo vuông góc.' }
     ],
     viDu: [
-      { de: 'Hình thoi $ABCD$ có cạnh $AB = 5$ cm. Tính chu vi.', buoc: [
-        { lam: '$AB = BC = CD = DA = 5$ cm', vi: 'Hình thoi có bốn cạnh bằng nhau.' },
-        { lam: 'Chu vi $= 4 \\cdot 5 = 20$ (cm)', vi: 'Bốn cạnh bằng nhau nên chu vi bằng bốn lần một cạnh.' } ] },
-      { de: 'Hình thoi $ABCD$ có $\\widehat{A} = 70^\\circ$. Tính $\\widehat{BAC}$ và $\\widehat{ABD}$.', buoc: [
-        { lam: '$\\widehat{BAC} = \\frac{70^\\circ}{2} = 35^\\circ$', vi: 'Đường chéo $AC$ là phân giác của góc $A$.' },
-        { lam: '$\\widehat{B} = 180^\\circ - 70^\\circ = 110^\\circ$', vi: 'Hình thoi là hình bình hành: hai góc kề cạnh $AB$ bù nhau.' },
-        { lam: '$\\widehat{ABD} = \\frac{110^\\circ}{2} = 55^\\circ$', vi: 'Đường chéo $BD$ là phân giác của góc $B$.' } ] },
-      { de: 'Hai đường tròn tâm $A$ và tâm $C$ có cùng bán kính, cắt nhau tại $B$ và $D$. Tứ giác $ABCD$ là hình gì? Vì sao $AC \\perp BD$?', buoc: [
-        { lam: '$AB = AD = CB = CD$ (cùng bằng bán kính).', vi: '$B$, $D$ nằm trên cả hai đường tròn có cùng bán kính.' },
-        { lam: '$ABCD$ có bốn cạnh bằng nhau nên là **hình thoi**.', vi: 'Định nghĩa hình thoi.' },
-        { lam: 'Do đó $AC \\perp BD$.', vi: 'Hai đường chéo của hình thoi vuông góc (Định lí 1a).' } ] },
-      { de: 'Hình vuông $ABCD$ có hai đường chéo cắt nhau tại $O$. Tính $\\widehat{AOB}$ và $\\widehat{OAB}$.', buoc: [
-        { lam: '$\\widehat{AOB} = 90^\\circ$', vi: 'Hai đường chéo của hình vuông vuông góc với nhau.' },
-        { lam: '$\\widehat{OAB} = \\frac{90^\\circ}{2} = 45^\\circ$', vi: 'Đường chéo $AC$ là phân giác của góc vuông $A$.' } ] }
+      { de: 'Hình thoi $ABCD$ có cạnh $AB = 5$ cm. Tính chu vi.', canh: kt({ gA: 70, s: 5, nhan: { AB: '5 cm' } }), buoc: [
+        { lam: '$AB = BC = CD = DA = 5$ cm', vi: 'Hình thoi có bốn cạnh bằng nhau (bốn vạch giống nhau trên hình).', canh: { t: 0 } },
+        { lam: 'Chu vi $= 4 \\cdot 5 = 20$ (cm)', vi: 'Bốn cạnh bằng nhau nên chu vi bằng bốn lần một cạnh.', canh: { t: 0 } } ] },
+      { de: 'Hình thoi $ABCD$ có $\\widehat{A} = 70^\\circ$. Tính $\\widehat{BAC}$ và $\\widehat{ABD}$.',
+        canh: kt({ gA: 70, s: 5, loCuoi: true, goc: { A: '70°', BAC: { dau: '?', cuoi: '35°' }, ABD: { dau: '?', giai: '55°' } } }), buoc: [
+        { lam: '$\\widehat{BAC} = \\frac{70^\\circ}{2} = 35^\\circ$', vi: 'Đường chéo $AC$ là phân giác của góc $A$.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{B} = 180^\\circ - 70^\\circ = 110^\\circ$', vi: 'Hình thoi là hình bình hành: hai góc kề cạnh $AB$ bù nhau.', canh: { t: 0.95 } },
+        { lam: '$\\widehat{ABD} = \\frac{110^\\circ}{2} = 55^\\circ$', vi: 'Đường chéo $BD$ là phân giác của góc $B$.', canh: { t: 1 } } ] },
+      { de: 'Hai đường tròn tâm $A$ và tâm $C$ có cùng bán kính, cắt nhau tại $B$ và $D$. Tứ giác $ABCD$ là hình gì? Vì sao $AC \\perp BD$?', canh: kt({ gA: 80, s: 4, tron: true }), buoc: [
+        { lam: '$AB = AD = CB = CD$ (cùng bằng bán kính).', vi: '$B$, $D$ nằm trên cả hai đường tròn có cùng bán kính.', canh: { t: 0 } },
+        { lam: '$ABCD$ có bốn cạnh bằng nhau nên là **hình thoi**.', vi: 'Định nghĩa hình thoi.', canh: { t: 0.4 } },
+        { lam: 'Do đó $AC \\perp BD$.', vi: 'Hai đường chéo của hình thoi vuông góc (Định lí 1a): $A$ và $C$ cùng cách đều $B$, $D$.', canh: { t: 1 } } ] },
+      { de: 'Hình vuông $ABCD$ có hai đường chéo cắt nhau tại $O$. Tính $\\widehat{AOB}$ và $\\widehat{OAB}$.',
+        canh: kt({ gA: 90, s: 5, loCuoi: true, goc: { AOB: { dau: '?', cuoi: '90°' }, BAC: { dau: '?', giai: '45°' } } }), buoc: [
+        { lam: '$\\widehat{AOB} = 90^\\circ$', vi: 'Hai đường chéo của hình vuông vuông góc với nhau.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{OAB} = \\frac{90^\\circ}{2} = 45^\\circ$', vi: 'Đường chéo $AC$ là phân giác của góc vuông $A$.', canh: { t: 1 } } ] }
     ],
     viDuMo: [
       { de: 'Một hình thoi có chu vi $28$ cm. Tính độ dài mỗi cạnh (cm).', buoc: [
@@ -190,11 +242,11 @@
           dapAn: { kieu: 'dungSai', gt: true } } ] }
     ],
     baiTap: [
-      { id: '14.1', muc: 1, de: 'Theo định nghĩa, hình thoi là:',
+      { id: '14.1', khongHinh: 'Câu hỏi định nghĩa, không có số đo để vẽ.', muc: 1, de: 'Theo định nghĩa, hình thoi là:',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Tứ giác có bốn cạnh bằng nhau', 'Tứ giác có hai đường chéo vuông góc', 'Tứ giác có hai cạnh kề bằng nhau', 'Tứ giác có bốn góc bằng nhau'] },
         goiY: ['Nhớ lại định nghĩa trong phần Lý thuyết.', 'Tứ giác có bốn góc bằng nhau là hình chữ nhật.'],
         loiGiai: ['Hình thoi là tứ giác có **bốn cạnh bằng nhau**.'] },
-      { id: '14.2', muc: 1, de: 'Một hình thoi có cạnh dài $6$ cm. Tính chu vi của nó (cm).',
+      { id: '14.2', hinhGiai: hg(kt({ gA: 65, s: 6, nhan: { AB: '6 cm', BC: '6 cm', CD: '6 cm', DA: '6 cm' } })), muc: 1, de: 'Một hình thoi có cạnh dài $6$ cm. Tính chu vi của nó (cm).',
         dapAn: { kieu: 'so', gt: 24 },
         goiY: ['Hình thoi có bốn cạnh bằng nhau.'],
         loiGiai: ['Chu vi $= 4 \\cdot 6 = 24$'],
@@ -204,11 +256,11 @@
         goiY: ['Đường chéo $AC$ là phân giác của góc $BAD$.'],
         loiGiai: ['$AC$ là phân giác của góc $A$ nên $\\widehat{BAD} = 2 \\cdot \\widehat{BAC}$.', '$\\widehat{BAD} = 2 \\cdot 35^\\circ = 70^\\circ$'],
         loiThuongGap: [{ gt: 17.5, giaiThich: '$35^\\circ$ là **một nửa** góc $A$, nên phải nhân đôi.' }] },
-      { id: '14.4', muc: 1, de: 'Hình nào dưới đây **chắc chắn** là hình vuông?',
+      { id: '14.4', khongHinh: 'Câu chọn dấu hiệu nhận biết, mỗi phương án là một hình khác nhau; không có số đo.', muc: 1, de: 'Hình nào dưới đây **chắc chắn** là hình vuông?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Hình chữ nhật có hai cạnh kề bằng nhau', 'Hình thoi có hai cạnh kề bằng nhau', 'Hình bình hành có hai đường chéo bằng nhau', 'Tứ giác có hai đường chéo vuông góc'] },
         goiY: ['Hình vuông = vừa là hình chữ nhật, vừa là hình thoi.', 'Hình thoi thì vốn đã có hai cạnh kề bằng nhau, điều kiện đó không thêm gì mới.'],
         loiGiai: ['Hình chữ nhật có hai cạnh kề bằng nhau là hình vuông (Định lí 4a).', 'Hình thoi có hai cạnh kề bằng nhau chỉ là hình thoi; hình bình hành có hai đường chéo bằng nhau chỉ là hình chữ nhật; tứ giác có hai đường chéo vuông góc có thể là hình "cái diều".'] },
-      { id: '14.5', muc: 2, de: 'Hình bình hành $ABCD$ có hai đường chéo $AC \\perp BD$ là hình gì?',
+      { id: '14.5', khongHinh: 'Câu nhận biết theo dấu hiệu, không có số đo; khung bốn thanh ở phần Nhìn đã cho thấy hai đường chéo vuông góc.', muc: 2, de: 'Hình bình hành $ABCD$ có hai đường chéo $AC \\perp BD$ là hình gì?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Hình chữ nhật', 'Hình thoi', 'Hình vuông', 'Hình thang cân'] },
         goiY: ['Xem lại dấu hiệu nhận biết hình thoi.', 'Chưa có góc vuông nên chưa chắc là hình vuông.'],
         loiGiai: ['Hình bình hành có hai đường chéo vuông góc là **hình thoi** (Định lí 2b).', 'Muốn là hình vuông cần thêm, chẳng hạn, một góc vuông.'] },
@@ -222,7 +274,7 @@
         goiY: ['Tam giác $ABD$ có $AB = AD$: là tam giác cân. Góc ở đỉnh bằng $60^\\circ$ thì sao?', 'Tam giác cân có một góc $60^\\circ$ là tam giác đều.'],
         loiGiai: ['$AB = AD$ (cạnh hình thoi) nên $\\triangle ABD$ cân tại $A$, lại có $\\widehat{A} = 60^\\circ$ nên $\\triangle ABD$ đều.', '$BD = AB = 8$'],
         loiThuongGap: [{ gt: 4, giaiThich: '$4$ cm là $OB$ (nửa đường chéo). Cả đường chéo $BD$ bằng cạnh tam giác đều $ABD$.' }] },
-      { id: '14.8', muc: 2, de: 'Khẳng định "Hình thoi có hai đường chéo bằng nhau là hình vuông" đúng hay sai?',
+      { id: '14.8', khongHinh: 'Câu đúng/sai về dấu hiệu, lời giải là chuỗi lập luận, không có số đo.', muc: 2, de: 'Khẳng định "Hình thoi có hai đường chéo bằng nhau là hình vuông" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Hình thoi là hình bình hành. Hình bình hành có hai đường chéo bằng nhau là hình gì?'],
         loiGiai: ['Hình thoi là hình bình hành; có hai đường chéo bằng nhau nên là hình chữ nhật.', 'Vừa là hình chữ nhật vừa là hình thoi nên là hình vuông. Khẳng định **đúng**.'] },

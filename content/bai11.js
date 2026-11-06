@@ -79,6 +79,20 @@
     canh: [['A', 'C', { mau: TIM, day: 2, net: 2 }], ['B', 'D', { mau: TIM, day: 2, net: 2 }]],
     ghiChu: 'AB // CD, AD = BC nhưng AC ≠ BD' });
 
+  // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
+  function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
+  function tc(them, moTa) { return { ten: 'thangCan', tuyChon: them, moTa: moTa }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  // Hình thang cân 11.9: tam giác ABC cân tại A (góc A 40°), DE cắt AB, AC tại 0,42 cạnh tính từ A
+  var TAM_GIAC = { dl: 8, gocDay: 70, h: 4 * Math.tan(rad(70)) * 0.58, dinh: 'A', ten: ['D', 'E', 'C', 'B'] };
+  // Hình cho ví dụ 2 (hình thang thường, Â = 110°, D̂ = 70°) và ví dụ 3 (AB = AD, góc ABD = 35°)
+  var A2v = toi([0, 0], 70, 4);
+  var hVD2 = hinhTG({ diem: { A: A2v, B: [A2v[0] + 4, A2v[1]], C: [9, 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'],
+    goc: [['D', 'A', 'B', { mau: XANH }], ['A', 'D', 'C', { mau: XANH }]], soGoc: [['D', 'A', 'B', '?', 1, XANH], ['A', 'D', 'C', '?', 1.3, XANH]], ghiChu: 'Góc A hơn góc D 40°' });
+  var A3v = toi([0, 0], 70, 4), B3v = [A3v[0] + 4, A3v[1]];
+  var hVD3 = hinhTG({ diem: { A: A3v, B: B3v, C: [B3v[0] + 4 * Math.cos(rad(70)), 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'],
+    vach: { AB: 1, DA: 1 }, canh: [['B', 'D', { mau: TIM, day: 2 }]], goc: [['A', 'B', 'D']], soGoc: [['A', 'B', 'D', '35°', 1.6]] });
+
   // ---------- Hình động ----------
   var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
   function fmt(v) { return (Math.round(v * 10) / 10).toString().replace('.', ','); }
@@ -136,6 +150,56 @@
 
   TOAN8.bai({
     id: 11, ten: 'Hình thang cân', sgk: { tap: 1, trang: 52 },
+    nhin: {
+      tieuDe: 'Gập theo trục: hai nửa hình thang cân trùng khít', loai: 'chungMinh',
+      luuY: 'Kéo hai thanh để đổi đáy nhỏ và chiều cao: lần gập nào cũng trùng khít, vì lập luận chỉ dùng $\\widehat{D} = \\widehat{C}$ và $AB \\parallel CD$.',
+      canh: { ten: 'thangCan', tuyChon: { cheo: true, goc: { D: '', C: '' } }, moTa: 'Hình thang cân ABCD, đáy lớn DC ở dưới. Đường nét đứt là trục. Hình được lật qua trục: cạnh AD trùng BC, đường chéo AC trùng BD.',
+        dongSo: function (p) {
+          var k = TOAN8.canh.lay('thangCan').tinh(p, 0, {}), ben = Math.hypot(k.A[0], k.A[1]), cheo = Math.hypot(k.C[0] - k.A[0], k.A[1]);
+          return 'Đo: $\\ca{AD} = \\ca{BC} \\approx ' + so(ben) + '$; $\\cb{AC} = \\cb{BD} \\approx ' + so(cheo) + '$; $\\cc{\\widehat{D}} = \\cc{\\widehat{C}} \\approx ' + Math.round(k.gocDay) + '^\\circ$.';
+        } },
+      buoc: [
+        { t: 0, chu: 'Hình thang $ABCD$ có $AB \\parallel CD$ và hai góc ở đáy $\\cc{\\widehat{D}} = \\cc{\\widehat{C}}$: đó là hình thang cân. Nét đứt là đường trung trực của đáy $DC$.' },
+        { t: 0.2, chu: 'Gập hình theo nét đứt. $D$ rơi đúng vào $C$, vì nét đứt là trung trực của $DC$.' },
+        { t: 0.5, chu: 'Vì $\\widehat{D} = \\widehat{C}$, cạnh $DA$ rơi đúng lên tia $CB$. Đáy $AB$ vuông góc với nét đứt nên gập xong vẫn nằm trên chính nó.' },
+        { t: 1, chu: 'Vậy $A$ rơi đúng vào $B$: cạnh bên $\\ca{AD}$ trùng $\\ca{BC}$, đường chéo $\\cb{AC}$ trùng $\\cb{BD}$.' }
+      ],
+      ketLuan: 'Trong hình thang cân: $$\\ca{AD} = \\ca{BC}, \\qquad \\cb{AC} = \\cb{BD}$$',
+      dung: {
+        tieuDe: 'Hai đoạn hai bên đường cao bằng nhau', tuBai: '11.7',
+        canh: tc({ dl: 14, dn: 6, h: 5, duongCao: true, nhan: { AB: '6 cm', DC: '14 cm', DH: { dau: '?', giai: '4' } } },
+          'Hình thang cân ABCD, đáy nhỏ AB 6 cm, đáy lớn DC 14 cm, hai đường cao AH và BK. Gập theo trục thì đoạn DH trùng đoạn KC.'),
+        moiThu: 'Gập theo trục: đoạn $DH$ trùng đoạn $KC$, còn ở giữa $HK = AB = 6$. Gõ độ dài $DH$; nếu sai, hình sẽ đặt hai đoạn đỏ dài đúng như em gõ ở hai đầu đáy.',
+        phanUng: [
+          { gt: 8, loi: '$14 - 6 = 8$ là tổng **hai** đoạn $DH$ và $KC$. Gập lại thì hai đoạn bằng nhau, nên mỗi đoạn chỉ bằng một nửa.' },
+          { gt: 7, loi: '$7$ là nửa đáy lớn, tính tới trục giữa. Từ $H$ tới trục còn nửa đáy nhỏ $3$ cm nữa.' },
+          { gt: 20, loi: 'Đáy nhỏ nằm **bên trong** đáy lớn: phải lấy $14 - 6$, không cộng.' }
+        ],
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 1, loi: 'Độ dài phải lớn hơn $0$.' };
+          return { thamSo: { thu: v }, t: 1, loi: 2 * v + 6 < 14 ? 'Hai đoạn đỏ cộng với $HK = 6$ chưa phủ hết đáy $14$ cm: còn hở ở giữa.' : 'Hai đoạn đỏ cộng với $HK = 6$ đã dài hơn đáy $14$ cm: chúng chồng lên nhau.' };
+        },
+        dungChu: '$DH + 6 + KC = 14$ và $DH = KC$, nên $DH = 8 : 2 = 4$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng vẫn gập được theo trục',
+        baDe: [
+          { tuBai: '11.11', canh: tc({ dl: 18, dn: 10, canhBen: 9, nhan: { AB: '10', DC: '18', AD: { dau: '?', giai: '9' }, BC: { dau: '?', giai: '9' } } },
+            'Khung ảnh hình thang cân, hai đáy 10 cm và 18 cm, hai cạnh bên chưa biết.'), tenNut: 'Gập theo trục',
+            phanUng: [{ gt: 18, loi: '$46 - 28 = 18$ là tổng **hai** cạnh bên. Gập lại thì hai cạnh bên trùng nhau, mỗi cạnh một nửa.' }, { gt: 4, loi: '$4$ là phần đáy lớn thò ra mỗi bên ($\\frac{18 - 10}{2}$), không phải cạnh bên.' }],
+            dungChu: 'Hai cạnh bên bằng nhau, tổng là $46 - (10 + 18) = 18$, mỗi cạnh $9$ cm.', saiChu: 'Chu vi gồm hai đáy và hai cạnh bên bằng nhau.' },
+          { tuBai: '11.2', canh: tc({ dl: 8, gocDay: 55, h: 3.5, goc: { C: '55°', D: { dau: '', cuoi: '55°' }, A: { dau: '?', giai: '125°' } } },
+            'Hình thang cân ABCD có góc C 55 độ; hỏi góc A.'), tenNut: 'Gập theo trục',
+            phanUng: [{ gt: 55, loi: 'Gập lại, góc $C$ trùng góc $D$ (cùng kề đáy lớn), không trùng góc $A$. Góc $A$ và góc $D$ kề cạnh bên $AD$ nên bù nhau.' }, { gt: 35, loi: 'Góc $A$ là góc tù ở đáy nhỏ. Nó bù với góc $D$: $180^\\circ - 55^\\circ$.' }],
+            dungChu: '$\\widehat{D} = \\widehat{C} = 55^\\circ$, nên $\\widehat{A} = 180^\\circ - 55^\\circ = 125^\\circ$.', saiChu: 'Gập theo trục để thấy góc $D$ bằng góc nào, rồi dùng: hai góc kề một cạnh bên bù nhau.' },
+          { tuBai: '11.9', canh: tc(Object.assign({ goc: { S: '40°', A: { dau: '?', giai: '110°' }, D: { dau: '', cuoi: '70°' }, C: { dau: '', cuoi: '70°' } } }, TAM_GIAC),
+            'Tam giác ABC cân tại A, góc A 40 độ; DE song song BC tạo hình thang DECB. Hỏi góc BDE.'), tenNut: 'Gập theo trục',
+            phanUng: [{ gt: 70, loi: '$70^\\circ$ là góc $B$ (và góc $ADE$ đồng vị với nó). Góc $BDE$ kề bù với góc $ADE$.' }, { gt: 140, loi: '$140^\\circ$ là tổng hai góc $B$ và $C$. Gập lại, hai góc này trùng nhau, mỗi góc $70^\\circ$.' }],
+            dungChu: '$\\widehat{B} = \\widehat{C} = (180^\\circ - 40^\\circ) : 2 = 70^\\circ$, nên $\\widehat{BDE} = 180^\\circ - 70^\\circ = 110^\\circ$.', saiChu: 'Gập theo trục: góc $B$ trùng góc $C$. Tìm góc $B$ trước.' }
+        ],
+        cachNhan: 'Thấy hình thang cân, hay tam giác cân bị cắt bởi một đường song song với đáy: gập theo trục giữa. Cạnh bên, góc ở đáy, đường chéo, hai đoạn hai bên đường cao đều trùng nhau từng đôi.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Đây là một **hình thang cân** $ABCD$ ($AB \\parallel CD$). Kéo đỉnh $A$ hoặc $D$: đỉnh $B$, $C$ tự di chuyển theo, **đối xứng** với $A$, $D$ qua trục nét đứt.\n\nEm hãy so sánh: hai góc ở đáy $\\cb{\\widehat{D}}$, $\\cb{\\widehat{C}}$; hai cạnh bên $\\ca{AD}$, $\\ca{BC}$; hai đường chéo $\\cd{AC}$, $\\cd{BD}$.',
       widget: 'geo',
@@ -164,22 +228,24 @@
         chuThich: 'Phản ví dụ: hình thang $ABCD$ có hai cạnh bên bằng nhau nhưng **không** cân.' }
     ],
     viDu: [
-      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $\\widehat{C} = 65^\\circ$. Tính các góc còn lại.', buoc: [
-        { lam: '$\\widehat{D} = \\widehat{C} = 65^\\circ$', vi: 'Hình thang cân có hai góc kề đáy $CD$ bằng nhau.' },
-        { lam: '$\\widehat{A} = 180^\\circ - \\widehat{D} = 180^\\circ - 65^\\circ = 115^\\circ$', vi: 'Hai góc kề cạnh bên $AD$ bù nhau.' },
-        { lam: '$\\widehat{B} = \\widehat{A} = 115^\\circ$', vi: 'Hai góc kề đáy $AB$ cũng bằng nhau.' } ] },
-      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có $\\widehat{A} - \\widehat{D} = 40^\\circ$. Tính $\\widehat{A}$ và $\\widehat{D}$.', buoc: [
+      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $\\widehat{C} = 65^\\circ$. Tính các góc còn lại.',
+        canh: tc({ dl: 8, gocDay: 65, h: 3.5, loCuoi: true, goc: { C: '65°', D: { dau: '?', cuoi: '65°' }, A: { dau: '?', giai: '115°' }, B: { dau: '?', giai: '115°' } } }), buoc: [
+        { lam: '$\\widehat{D} = \\widehat{C} = 65^\\circ$', vi: 'Hình thang cân có hai góc kề đáy $CD$ bằng nhau: gập theo trục thì góc $D$ trùng góc $C$.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{A} = 180^\\circ - \\widehat{D} = 180^\\circ - 65^\\circ = 115^\\circ$', vi: 'Hai góc kề cạnh bên $AD$ bù nhau.', canh: { t: 1 } },
+        { lam: '$\\widehat{B} = \\widehat{A} = 115^\\circ$', vi: 'Hai góc kề đáy $AB$ cũng bằng nhau.', canh: { t: 1 } } ] },
+      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có $\\widehat{A} - \\widehat{D} = 40^\\circ$. Tính $\\widehat{A}$ và $\\widehat{D}$.', hinh: hVD2, buoc: [
         { lam: '$\\widehat{A} + \\widehat{D} = 180^\\circ$', vi: 'Hai góc kề cạnh bên $AD$ của hình thang bù nhau.' },
         { lam: '$\\widehat{A} = (180^\\circ + 40^\\circ) : 2 = 110^\\circ$', vi: 'Biết tổng và hiệu: số lớn $= ($tổng $+$ hiệu$) : 2$.' },
         { lam: '$\\widehat{D} = 180^\\circ - 110^\\circ = 70^\\circ$', vi: 'Lấy tổng trừ góc vừa tìm.' } ] },
-      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $AB = AD$ và $\\widehat{ABD} = 35^\\circ$. Tính các góc của hình thang.', buoc: [
+      { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $AB = AD$ và $\\widehat{ABD} = 35^\\circ$. Tính các góc của hình thang.', hinh: hVD3, buoc: [
         { lam: '$\\widehat{ADB} = \\widehat{ABD} = 35^\\circ$', vi: '$AB = AD$ nên tam giác $ABD$ cân tại $A$: hai góc ở đáy $BD$ bằng nhau.' },
         { lam: '$\\widehat{BDC} = \\widehat{ABD} = 35^\\circ$', vi: '$AB \\parallel CD$ nên đây là hai góc so le trong.' },
         { lam: '$\\widehat{D} = \\widehat{ADB} + \\widehat{BDC} = 70^\\circ$, nên $\\widehat{C} = 70^\\circ$', vi: 'Hình thang cân: hai góc kề đáy $CD$ bằng nhau.' },
         { lam: '$\\widehat{A} = \\widehat{B} = 180^\\circ - 70^\\circ = 110^\\circ$', vi: 'Hai góc kề một cạnh bên bù nhau.' } ] },
-      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có hai đường chéo $AC = BD = 7$ cm và cạnh bên $AD = 5$ cm. Tính $BC$.', buoc: [
-        { lam: 'Hình thang $ABCD$ có $AC = BD$ nên là hình thang cân.', vi: 'Dấu hiệu nhận biết (Định lí 3): hình thang có hai đường chéo bằng nhau.' },
-        { lam: '$BC = AD = 5$ cm', vi: 'Hình thang cân có hai cạnh bên bằng nhau (Định lí 1).' } ] }
+      { de: 'Hình thang $ABCD$ ($AB \\parallel CD$) có hai đường chéo $AC = BD = 7$ cm và cạnh bên $AD = 5$ cm. Tính $BC$.',
+        canh: tc({ dl: 8, dn: 3, canhBen: 5, cheo: true, loCuoi: true, nhan: { AC: '7', BD: '7', AD: '5', BC: { dau: '?', giai: '5' } } }), buoc: [
+        { lam: 'Hình thang $ABCD$ có $AC = BD$ nên là hình thang cân.', vi: 'Dấu hiệu nhận biết (Định lí 3): hình thang có hai đường chéo bằng nhau.', canh: { t: 0.5 } },
+        { lam: '$BC = AD = 5$ cm', vi: 'Hình thang cân có hai cạnh bên bằng nhau (Định lí 1): gập theo trục thì $AD$ trùng $BC$.', canh: { t: 1 } } ] }
     ],
     viDuMo: [
       { de: 'Hình thang cân $ABCD$ ($AB \\parallel CD$) có $\\widehat{A} = 105^\\circ$. Tính $\\widehat{D}$ (độ).', buoc: [
@@ -194,7 +260,7 @@
           loiThuongGap: [{ gt: 19, giaiThich: 'Em mới cộng một cạnh bên. Hình thang có **hai** cạnh bên, mỗi cạnh $5$ cm.' }] } ] }
     ],
     baiTap: [
-      { id: '11.1', muc: 1, de: 'Hình thang cân là hình thang có tính chất nào dưới đây (theo **định nghĩa**)?',
+      { id: '11.1', khongHinh: 'Câu hỏi định nghĩa, không có số đo; hình gập theo trục ở phần Nhìn đã cho thấy.', muc: 1, de: 'Hình thang cân là hình thang có tính chất nào dưới đây (theo **định nghĩa**)?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Có hai cạnh bên bằng nhau', 'Có hai góc kề một đáy bằng nhau', 'Có một góc vuông', 'Có hai cạnh đáy bằng nhau'] },
         goiY: ['Nhớ lại định nghĩa trong phần Lý thuyết.', 'Cẩn thận: "hai cạnh bên bằng nhau" chưa đủ để là hình thang cân.'],
         loiGiai: ['Theo định nghĩa: **hình thang cân là hình thang có hai góc kề một đáy bằng nhau**.', 'Hình thang có hai cạnh bên bằng nhau có thể là hình bình hành.'] },
@@ -239,7 +305,7 @@
         dapAn: { kieu: 'nhieuO', o: [{ nhan: '$ED =$', kieu: 'so', gt: 6 }, { nhan: '$AD =$', kieu: 'so', gt: 6 }] },
         goiY: ['$AB \\parallel CD$ nên $\\widehat{BAE} = \\widehat{AED}$ (so le trong). Mà $\\widehat{BAE} = \\widehat{DAE}$ (phân giác). Tam giác $ADE$ thế nào?', 'Tam giác $ADE$ cân tại $D$: $AD = DE$. Tương tự $BC = CE$. Mà $AD = BC$.'],
         loiGiai: ['$\\widehat{AED} = \\widehat{BAE}$ (so le trong) $= \\widehat{DAE}$ (phân giác), nên $\\triangle ADE$ cân tại $D$: $DE = AD$.', 'Tương tự $\\triangle BCE$ cân tại $C$: $CE = BC$. Mà $AD = BC$ (hình thang cân) nên $DE = CE = 12 : 2 = 6$ cm.', 'Vậy $ED = 6$ cm và $AD = DE = 6$ cm.'] },
-      { id: '11.11', muc: 3, de: 'Một khung ảnh có dạng hình thang cân, chu vi $46$ cm, hai đáy dài $10$ cm và $18$ cm. Tính độ dài mỗi cạnh bên của khung (cm).',
+      { id: '11.11', hinhGiai: hg(tc({ dl: 18, dn: 10, canhBen: 9, nhan: { AB: '10 cm', DC: '18 cm', AD: { dau: '?', giai: '9 cm' }, BC: { dau: '?', giai: '9 cm' } } })), muc: 3, de: 'Một khung ảnh có dạng hình thang cân, chu vi $46$ cm, hai đáy dài $10$ cm và $18$ cm. Tính độ dài mỗi cạnh bên của khung (cm).',
         dapAn: { kieu: 'so', gt: 9 },
         goiY: ['Chu vi = tổng hai đáy + hai cạnh bên, mà hai cạnh bên bằng nhau.', 'Hai cạnh bên có tổng $46 - (10 + 18)$.'],
         loiGiai: ['Hai cạnh bên bằng nhau, tổng của chúng là $46 - (10 + 18) = 18$ (cm).', 'Mỗi cạnh bên: $18 : 2 = 9$'],

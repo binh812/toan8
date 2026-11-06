@@ -63,6 +63,15 @@
     goc: [['B', 'A', 'C', VUONG], ['M', 'N', 'A', VUONG], ['A', 'P', 'M', VUONG]],
     nhan: [['B', 'C', 'BC = 10 cm', false, 1.2]], lechTen: { N: [0, -18], P: [-18, 0] } });
 
+  // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
+  function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
+  function ht(them, moTa) { return { ten: 'haiThanh', tuyChon: them, moTa: moTa }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  // Góc giữa hai đường chéo của hình chữ nhật dài a, rộng b (góc nhìn cạnh a từ tâm)
+  function gocCheo(a, b) { return 2 * Math.atan2(a, b) * 180 / Math.PI; }
+  var hVD3 = hinhTG({ diem: { A: [0, 4], B: [7, 4], C: [7, 0], D: [0, 0] }, vong: ['A', 'B', 'C', 'D'], goc: [['B', 'A', 'D', VUONG]],
+    soGoc: [['A', 'B', 'C', '?', 1, XANH], ['B', 'C', 'D', '?', 1, XANH], ['C', 'D', 'A', '?', 1, XANH]], ghiChu: 'Hình bình hành có góc A vuông' });
+
   // ---------- Hình động ----------
   var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
   function fmt(v) { return (Math.round(v * 10) / 10).toString().replace('.', ','); }
@@ -134,6 +143,50 @@
 
   TOAN8.bai({
     id: 13, ten: 'Hình chữ nhật', sgk: { tap: 1, trang: 64 },
+    nhin: {
+      tieuDe: 'Hai thanh bằng nhau, gắn ở trung điểm: góc nào cũng vuông', loai: 'chungMinh',
+      luuY: 'Kéo thanh "Góc giữa hai thanh": $x$ và $y$ đổi, nhưng $x + y$ luôn là $90^\\circ$. Chiều ngược lại (hình chữ nhật có hai đường chéo bằng nhau, cắt nhau tại trung điểm) đúng vì hình chữ nhật vừa là hình bình hành vừa là hình thang cân.',
+      canh: { ten: 'haiThanh', tuyChon: { chungMinh: true }, moTa: 'Hai thanh xanh bằng nhau AC và BD gắn ở trung điểm O. Tam giác ABC gồm hai tam giác cân; bốn góc x, x, y, y của nó được ghép thành nửa vòng tròn, phần của góc B đúng một góc vuông.',
+        dongSo: function (p) { return 'Lúc này $\\ca{x} = ' + so((180 - p.phi) / 2) + '^\\circ$, $\\cb{y} = ' + so(p.phi / 2) + '^\\circ$, và $\\ca{x} + \\cb{y} = 90^\\circ$.'; } },
+      buoc: [
+        { t: 0, chu: 'Hai thanh $AC$, $BD$ dài bằng nhau, gắn với nhau tại trung điểm $O$ của mỗi thanh. Vậy $OA = OB = OC = OD$.' },
+        { t: 0.1, chu: 'Nối bốn đầu thanh, được tứ giác $ABCD$. Ta xem góc $B$.' },
+        { t: 0.25, chu: '$OA = OB$ nên tam giác $OAB$ cân: hai góc ở đáy bằng nhau, gọi là $\\ca{x}$. $OB = OC$ nên tam giác $OBC$ cân, hai góc ở đáy là $\\cb{y}$.' },
+        { t: 0.45, chu: 'Tam giác $ABC$ có ba góc: $\\ca{x}$ ở $A$, $\\ca{x} + \\cb{y}$ ở $B$, $\\cb{y}$ ở $C$. Đặt bốn phần sát nhau: chúng ghép đủ nửa vòng, $180^\\circ$.' },
+        { t: 0.9, chu: 'Hai phần $\\ca{x}$ ghép với hai phần $\\cb{y}$ được $180^\\circ$, nên phần của góc $B$ là $\\ca{x} + \\cb{y} = 90^\\circ$. Làm như vậy ở mỗi đỉnh: bốn góc đều vuông.' }
+      ],
+      ketLuan: 'Tứ giác có hai đường chéo **bằng nhau** và **cắt nhau tại trung điểm mỗi đường** là hình chữ nhật: $$\\widehat{A} = \\widehat{B} = \\widehat{C} = \\widehat{D} = 90^\\circ$$',
+      dung: {
+        tieuDe: 'Đặt thêm một đỉnh, tam giác vuông thành hình chữ nhật', tuBai: '13.3',
+        canh: ht({ dang: 'trungTuyen', ab: 9, ac: 12, thuDoan: 'AM', nhan: { BC: '15 cm', AM: { dau: '?', giai: '7,5 cm' } } },
+          'Tam giác ABC vuông tại A, cạnh huyền BC 15 cm, M là trung điểm BC. Kéo dài AM thêm một đoạn bằng nó tới D: ABDC là hình chữ nhật.'),
+        moiThu: 'Kéo dài $AM$ thêm một đoạn bằng nó tới $D$: hai thanh $AD$ và $BC$ cắt nhau tại trung điểm $M$. Gõ độ dài $AM$; nếu sai, hình sẽ vẽ từ $A$ một đoạn đỏ dài đúng như em gõ.',
+        phanUng: [
+          { gt: 15, loi: '$15$ là cả thanh $BC$, cũng là cả thanh $AD$. $M$ là trung điểm nên $AM$ chỉ bằng một nửa thanh.' },
+          { gt: 30, loi: 'Ngược rồi: $AM$ là **nửa** thanh $AD = BC$, không phải gấp đôi.' }
+        ],
+        soBatKi: function (v) {
+          if (v <= 0) return { t: 1, loi: 'Độ dài phải lớn hơn $0$.' };
+          return { thamSo: { thu: v }, t: 1, loi: v < 7.5 ? 'Đoạn đỏ dài $' + so(v) + '$ cm từ $A$ chưa tới trung điểm $M$ của $BC$.' : 'Đoạn đỏ dài $' + so(v) + '$ cm từ $A$ đã đi quá trung điểm $M$.' };
+        },
+        dungChu: 'Hình chữ nhật $ABDC$ có hai đường chéo bằng nhau: $AD = BC = 15$. $M$ là trung điểm của $AD$, nên $AM = 15 : 2 = 7{,}5$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng hai thanh vẫn nấp trong hình',
+        baDe: [
+          { tuBai: '13.2', canh: ht({ phi: gocCheo(9.6, 7.2), L: 6, nhan: { AC: '12 cm', OB: { dau: '?', giai: '6 cm' } } }, 'Hình chữ nhật ABCD, đường chéo AC 12 cm, O là giao điểm hai đường chéo.'), tenNut: 'Tìm hai thanh',
+            phanUng: [{ gt: 12, loi: '$12$ là cả thanh $BD$ (bằng thanh $AC$). $OB$ chỉ là nửa thanh.' }, { gt: 24, loi: '$OB$ là **nửa** thanh $BD$, mà $BD = AC = 12$.' }],
+            dungChu: '$BD = AC = 12$, $O$ là trung điểm nên $OB = 6$ cm.', saiChu: 'Hai thanh $AC$, $BD$ bằng nhau và gắn ở trung điểm $O$.' },
+          { tuBai: '13.8', canh: ht({ phi: 120, goc: { AOB: '120°', OAB: { dau: '?', giai: '30°' } }, to: 'OAB' }, 'Hình chữ nhật ABCD, góc AOB giữa hai đường chéo bằng 120 độ.'), tenNut: 'Tìm hai thanh',
+            phanUng: [{ gt: 60, loi: '$60^\\circ$ là tổng **hai** góc ở đáy của tam giác cân $OAB$. Mỗi góc một nửa.' }, { gt: 120, loi: '$120^\\circ$ là góc ở đỉnh $O$. Góc $OAB$ là góc ở đáy của tam giác cân $OAB$.' }],
+            dungChu: '$OA = OB$ (hai nửa thanh) nên $\\widehat{OAB} = (180^\\circ - 120^\\circ) : 2 = 30^\\circ$.', saiChu: 'Hai nửa thanh $OA$, $OB$ bằng nhau: tam giác $OAB$ cân tại $O$.' },
+          { tuBai: '13.7', canh: ht({ dang: 'trungTuyen', bc: 8, gocB: 32, vuongA: false, nhan: { BC: '8 cm', AM: '4 cm' }, goc: { A: { dau: '?', giai: '90°' } } }, 'Tam giác ABC, M là trung điểm BC, BC 8 cm, AM 4 cm. Hỏi góc BAC.'), tenNut: 'Tìm hai thanh',
+            phanUng: [{ gt: 60, loi: 'Kéo dài $AM$ thêm $4$ cm tới $D$: hai thanh $AD$, $BC$ đều dài $8$ cm và cắt nhau tại trung điểm. Tứ giác $ABDC$ là hình gì?' }, { gt: 45, loi: 'Hai thanh bằng nhau cắt nhau tại trung điểm tạo ra hình chữ nhật: góc ở đỉnh $A$ là góc gì?' }],
+            dungChu: '$AD = BC = 8$ và cắt nhau tại trung điểm $M$: $ABDC$ là hình chữ nhật, nên $\\widehat{BAC} = 90^\\circ$.', saiChu: 'Kéo dài $AM$ thêm một đoạn bằng nó: hai thanh bằng nhau, cắt nhau tại trung điểm.' }
+        ],
+        cachNhan: 'Thấy hai đoạn bằng nhau cắt nhau tại trung điểm của mỗi đoạn (hai đường chéo hình chữ nhật, hay trung tuyến bằng nửa cạnh): đó là hai thanh của một hình chữ nhật. Bốn nửa thanh bằng nhau, bốn góc ở đỉnh đều vuông.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Hai **thanh tre** xanh dài bằng nhau được gắn với nhau tại **trung điểm** $O$ của mỗi thanh. Bốn đầu mút $A$, $B$, $C$, $D$ tạo thành một tứ giác.\n\nKéo đầu mút $A$ hoặc $B$ để xoay thanh tre. Em hãy quan sát số đo bốn góc của tứ giác $ABCD$.',
       widget: 'geo',
@@ -165,16 +218,18 @@
       { loai: 'chuY', noiDung: '**Hay nhầm:** "tứ giác có hai đường chéo bằng nhau là hình chữ nhật" là **sai**! Hình thang cân cũng có hai đường chéo bằng nhau. Phải là **hình bình hành** có hai đường chéo bằng nhau (hoặc hai đường chéo bằng nhau **và** cắt nhau tại trung điểm mỗi đường).' }
     ],
     viDu: [
-      { de: 'Hình chữ nhật $ABCD$ có hai đường chéo cắt nhau tại $O$, $AC = 10$ cm. Tính $BD$ và $OA$.', buoc: [
-        { lam: '$BD = AC = 10$ cm', vi: 'Hai đường chéo của hình chữ nhật bằng nhau.' },
-        { lam: '$OA = AC : 2 = 5$ cm', vi: 'Hai đường chéo cắt nhau tại trung điểm mỗi đường.' } ] },
-      { de: 'Tam giác $ABC$ vuông tại $A$ có cạnh huyền $BC = 13$ cm, $M$ là trung điểm $BC$. Tính $AM$.', buoc: [
-        { lam: '$AM$ là trung tuyến ứng với cạnh huyền $BC$.', vi: '$M$ là trung điểm của cạnh huyền.' },
-        { lam: '$AM = \\frac{BC}{2} = \\frac{13}{2} = 6{,}5$ (cm)', vi: 'Trung tuyến ứng với cạnh huyền bằng nửa cạnh huyền.' } ] },
-      { de: 'Hình bình hành $ABCD$ có $\\widehat{A} = 90^\\circ$. Tính các góc còn lại. $ABCD$ là hình gì?', buoc: [
+      { de: 'Hình chữ nhật $ABCD$ có hai đường chéo cắt nhau tại $O$, $AC = 10$ cm. Tính $BD$ và $OA$.',
+        canh: ht({ phi: 70, L: 5, loCuoi: true, nhan: { AC: '10 cm', BD: { dau: '?', cuoi: '10 cm' }, OA: { dau: '?', giai: '5 cm' } } }), buoc: [
+        { lam: '$BD = AC = 10$ cm', vi: 'Hai đường chéo của hình chữ nhật bằng nhau: hai thanh dài như nhau.', canh: { t: 0.9 } },
+        { lam: '$OA = AC : 2 = 5$ cm', vi: 'Hai đường chéo cắt nhau tại trung điểm mỗi đường.', canh: { t: 1 } } ] },
+      { de: 'Tam giác $ABC$ vuông tại $A$ có cạnh huyền $BC = 13$ cm, $M$ là trung điểm $BC$. Tính $AM$.',
+        canh: ht({ dang: 'trungTuyen', bc: 13, gocB: 40, loCuoi: true, nhan: { BC: '13 cm', AM: { dau: '?', giai: '6,5 cm' } } }), buoc: [
+        { lam: '$AM$ là trung tuyến ứng với cạnh huyền $BC$.', vi: '$M$ là trung điểm của cạnh huyền. Kéo dài $AM$ thêm một đoạn bằng nó tới $D$: $ABDC$ là hình chữ nhật.', canh: { t: 0.9 } },
+        { lam: '$AM = \\frac{BC}{2} = \\frac{13}{2} = 6{,}5$ (cm)', vi: 'Trung tuyến ứng với cạnh huyền bằng nửa cạnh huyền (nửa thanh $AD = BC$).', canh: { t: 1 } } ] },
+      { de: 'Hình bình hành $ABCD$ có $\\widehat{A} = 90^\\circ$. Tính các góc còn lại. $ABCD$ là hình gì?', hinh: hVD3, buoc: [
         { lam: '$\\widehat{C} = \\widehat{A} = 90^\\circ$; $\\widehat{B} = \\widehat{D} = 180^\\circ - 90^\\circ = 90^\\circ$', vi: 'Góc đối bằng nhau; hai góc kề một cạnh bù nhau.' },
         { lam: '$ABCD$ có bốn góc vuông nên là hình chữ nhật.', vi: 'Đây chính là dấu hiệu "hình bình hành có một góc vuông".' } ] },
-      { de: 'Hình chữ nhật $ABCD$ có chu vi $36$ cm. $M$ là trung điểm cạnh $BC$ và $MA \\perp MD$. Tính $AB$ và $BC$.', buoc: [
+      { de: 'Hình chữ nhật $ABCD$ có chu vi $36$ cm. $M$ là trung điểm cạnh $BC$ và $MA \\perp MD$. Tính $AB$ và $BC$.', hinh: h10, buoc: [
         { lam: '$\\triangle ABM = \\triangle DCM$ (c.g.c) nên $MA = MD$.', vi: '$AB = DC$, $\\widehat{B} = \\widehat{C} = 90^\\circ$, $MB = MC$.' },
         { lam: '$\\triangle AMD$ vuông cân tại $M$, nên $\\widehat{MAD} = 45^\\circ$, suy ra $\\widehat{BMA} = \\widehat{MAD} = 45^\\circ$.', vi: 'Tam giác vuông có hai cạnh góc vuông bằng nhau là vuông cân; $AD \\parallel BC$ cho hai góc so le trong.' },
         { lam: '$\\triangle ABM$ vuông cân tại $B$: $AB = BM = \\frac{BC}{2}$, tức $BC = 2AB$.', vi: 'Tam giác vuông có một góc $45^\\circ$ là tam giác vuông cân.' },
@@ -193,7 +248,7 @@
           loiThuongGap: [{ gt: 2.5, giaiThich: 'Ngược rồi: $AM$ là **nửa** $BC$, nên $BC$ gấp đôi $AM$.' }] } ] }
     ],
     baiTap: [
-      { id: '13.1', muc: 1, de: 'Theo định nghĩa, hình chữ nhật là:',
+      { id: '13.1', khongHinh: 'Câu hỏi định nghĩa, không có số đo để vẽ.', muc: 1, de: 'Theo định nghĩa, hình chữ nhật là:',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['Tứ giác có bốn góc vuông', 'Tứ giác có hai đường chéo bằng nhau', 'Tứ giác có hai góc vuông', 'Hình thang có một góc vuông'] },
         goiY: ['Nhớ lại định nghĩa trong phần Lý thuyết.', 'Hình thang có một góc vuông (hình thang vuông) chưa chắc là hình chữ nhật.'],
         loiGiai: ['Hình chữ nhật là tứ giác có **bốn góc vuông**.'] },
@@ -207,15 +262,16 @@
         goiY: ['$AM$ là trung tuyến ứng với cạnh huyền.', 'Trung tuyến ứng với cạnh huyền bằng nửa cạnh huyền.'],
         loiGiai: ['$AM = \\frac{BC}{2} = \\frac{15}{2} = 7{,}5$'],
         loiThuongGap: [{ gt: 15, giaiThich: 'Trung tuyến ứng với cạnh huyền chỉ bằng **một nửa** cạnh huyền.' }] },
-      { id: '13.4', muc: 1, de: 'Khẳng định "Tứ giác có ba góc vuông là hình chữ nhật" đúng hay sai?',
+      { id: '13.4', khongHinh: 'Lời giải chỉ là một phép tính $360^\\circ - 3 \\cdot 90^\\circ$, không cần hình.', muc: 1, de: 'Khẳng định "Tứ giác có ba góc vuông là hình chữ nhật" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: true },
         goiY: ['Tính góc thứ tư bằng định lí tổng các góc của tứ giác.'],
         loiGiai: ['Góc thứ tư bằng $360^\\circ - 3 \\cdot 90^\\circ = 90^\\circ$.', 'Tứ giác có bốn góc vuông nên là hình chữ nhật. Khẳng định **đúng**.'] },
-      { id: '13.5', muc: 2, de: 'Hình bình hành $ABCD$ cần thêm điều kiện nào dưới đây để trở thành hình chữ nhật?',
+      { id: '13.5', khongHinh: 'Câu chọn dấu hiệu nhận biết, không có số đo; hình hai thanh ở phần Nhìn đã cho thấy dấu hiệu đường chéo.', muc: 2, de: 'Hình bình hành $ABCD$ cần thêm điều kiện nào dưới đây để trở thành hình chữ nhật?',
         dapAn: { kieu: 'chon', gt: 2, luaChon: ['$AB = BC$', '$AC \\perp BD$', '$AC = BD$', '$AC$ là tia phân giác của góc $A$'] },
         goiY: ['Dấu hiệu: hình bình hành có **một góc vuông** hoặc có **hai đường chéo bằng nhau**.', 'Các điều kiện còn lại không bảo đảm có góc vuông (chúng cho một hình khác, sẽ học ở bài Hình thoi).'],
         loiGiai: ['Hình bình hành có hai đường chéo bằng nhau là hình chữ nhật (Định lí 2b). Chọn $AC = BD$.', 'Ba điều kiện kia ($AB = BC$, $AC \\perp BD$, đường chéo là phân giác) không làm cho góc của hình bình hành thành góc vuông: chúng cho **hình thoi** (bài sau).'] },
-      { id: '13.6', muc: 2, de: 'Khẳng định "Tứ giác có hai đường chéo bằng nhau là hình chữ nhật" đúng hay sai?',
+      { id: '13.6', hinhGiai: { widget: 'canh', config: { ten: 'thangCan', chiXem: true, t: 0, tuyChon: { dl: 8, dn: 3, h: 3.5, cheo: true },
+        ghiChu: 'Phản ví dụ: hình thang cân có hai đường chéo bằng nhau nhưng không có góc vuông.' } }, muc: 2, de: 'Khẳng định "Tứ giác có hai đường chéo bằng nhau là hình chữ nhật" đúng hay sai?',
         dapAn: { kieu: 'dungSai', gt: false },
         goiY: ['Nhớ lại: hình thang cân có hai đường chéo thế nào?'],
         loiGiai: ['Hình thang cân (không có góc vuông) cũng có hai đường chéo bằng nhau nhưng không phải hình chữ nhật.', 'Khẳng định **sai**. Cần thêm điều kiện hai đường chéo cắt nhau tại trung điểm mỗi đường.'] },

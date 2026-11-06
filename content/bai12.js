@@ -60,6 +60,20 @@
     canh: [['A', 'E', { mau: CAM, day: 3 }]], goc: [['B', 'A', 'E', { r: 1.0 }], ['E', 'A', 'D', { r: 1.2 }]],
     nhan: [['A', 'B', '4 cm'], ['A', 'D', '7 cm', true], ['E', 'C', '?', false, 1, XANH]] });
 
+  // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
+  function so(x) { return String(Math.round(x * 100) / 100).replace('.', '{,}'); }
+  function qh(them, moTa) { return { ten: 'quayHBH', tuyChon: them, moTa: moTa }; }
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  // Ví dụ 3: hai đường chéo dài 10 và 6 (nửa là 5 và 3); ví dụ 4: AB = 8, AD = 5, phân giác góc D
+  var A3v = toi([0, 0], 160, 5), B3v = toi([0, 0], 70, 3);
+  var hVD3 = hinhTG({ diem: { A: A3v, B: B3v, C: [-A3v[0], -A3v[1]], D: [-B3v[0], -B3v[1]], O: [0, 0] }, vong: ['A', 'B', 'C', 'D'],
+    canh: [['A', 'C', { mau: TIM, day: 2 }], ['B', 'D', { mau: TIM, day: 2 }]],
+    nhan: [['O', 'A', '?', false, 0.8, XANH], ['O', 'B', '?', true, 0.8, XANH]], lechTen: { O: [0, -18] }, ghiChu: 'AC = 10 cm, BD = 6 cm' });
+  var A4v = toi([0, 0], 60, 5);
+  var hVD4 = hinhTG({ diem: { A: A4v, B: cong(A4v, [8, 0]), C: [8, 0], D: [0, 0], E: cong(A4v, [5, 0]) }, vong: ['A', 'B', 'C', 'D'],
+    canh: [['D', 'E', { mau: CAM, day: 3 }]], goc: [['A', 'D', 'E', { r: 1.1 }], ['E', 'D', 'C', { r: 1.3 }]],
+    nhan: [['D', 'A', '5 cm'], ['D', 'C', '8 cm', true]] });
+
   // ---------- Hình động ----------
   var LBL = { fontSize: 20, offset: [8, 10], cssStyle: 'font-weight:700' };
   function fmt(v) { return (Math.round(v * 10) / 10).toString().replace('.', ','); }
@@ -134,6 +148,53 @@
 
   TOAN8.bai({
     id: 12, ten: 'Hình bình hành', sgk: { tap: 1, trang: 57 },
+    nhin: {
+      tieuDe: 'Quay nửa vòng: nửa hình bình hành trùng khít nửa kia', loai: 'chungMinh',
+      luuY: 'Cắt theo đường chéo $BD$ và quay như vậy, em được thêm $\\widehat{A} = \\widehat{C}$. Lập luận này chính là $\\triangle ABC = \\triangle CDA$ (g.c.g) trong SGK, chỉ khác là em nhìn thấy nó.',
+      canh: { ten: 'quayHBH', tuyChon: { cheo: true }, moTa: 'Hình bình hành ABCD, O là trung điểm đường chéo AC. Tam giác ABC được cắt ra và quay nửa vòng quanh O, rơi đúng vào tam giác CDA.',
+        dongSo: function (p) { return 'Đo: $\\ca{AB} = \\ca{CD} = 6$; $\\cb{AD} = \\cb{BC} = ' + so(p.b) + '$; $\\cc{\\widehat{B}} = \\cc{\\widehat{D}} = ' + p.g + '^\\circ$.'; } },
+      buoc: [
+        { t: 0, chu: 'Hình bình hành $ABCD$: $AB \\parallel CD$ và $AD \\parallel BC$. $O$ là trung điểm của đường chéo $AC$.' },
+        { t: 0.1, chu: 'Cắt theo đường chéo $AC$, tách tam giác $ABC$ ra.' },
+        { t: 0.25, chu: 'Quay tam giác $ABC$ nửa vòng quanh $O$. Vì $OA = OC$, đỉnh $A$ đi tới đúng chỗ $C$, đỉnh $C$ đi tới đúng chỗ $A$.' },
+        { t: 0.55, chu: 'Quay thì góc giữ nguyên. Mà $\\widehat{BAC} = \\widehat{DCA}$ và $\\widehat{BCA} = \\widehat{DAC}$ (so le trong), nên cạnh $\\ca{AB}$ nằm lên đường $CD$, cạnh $\\cb{CB}$ nằm lên đường $AD$.' },
+        { t: 1, chu: 'Hai cạnh đó gặp nhau ở $D$: đỉnh $B$ rơi đúng vào $D$. Tam giác $ABC$ trùng khít tam giác $CDA$.' }
+      ],
+      ketLuan: '$$\\ca{AB} = \\ca{CD},\\quad \\cb{BC} = \\cb{DA},\\quad \\cc{\\widehat{B}} = \\cc{\\widehat{D}}$$ $B$ quay nửa vòng quanh $O$ thì tới $D$, nên $OB = OD$: hai đường chéo cắt nhau tại trung điểm mỗi đường.',
+      dung: {
+        tieuDe: 'Quay nửa vòng cho biết hai cạnh còn lại', tuBai: '12.3',
+        canh: qh({ a: 9, b: 5, g: 65, nhan: { AB: '9 cm', DA: '5 cm', CD: { dau: '?', cuoi: '9 cm' }, BC: { dau: '?', cuoi: '5 cm' } } },
+          'Hình bình hành ABCD có AB 9 cm, AD 5 cm; hai cạnh CD và BC chưa ghi.'),
+        moiThu: 'Đề chỉ cho hai cạnh. Quay nửa vòng thì $AB$ nằm lên $CD$, $BC$ nằm lên $DA$. Gõ chu vi; nếu thiếu cạnh nào, hình sẽ tô đỏ cạnh đó.',
+        phanUng: [
+          { gt: 14, trangThai: 'thieu-CD-BC', loi: 'Em mới cộng $AB + AD$, mới đi nửa vòng quanh hình. Còn hai cạnh đỏ $CD = 9$ và $BC = 5$.' },
+          { gt: 18, trangThai: 'thieu-BC-DA', loi: 'Em mới tính hai cạnh dài $9$ cm. Còn hai cạnh đỏ, mỗi cạnh $5$ cm.' },
+          { gt: 10, trangThai: 'thieu-AB-CD', loi: 'Em mới tính hai cạnh ngắn $5$ cm. Còn hai cạnh đỏ, mỗi cạnh $9$ cm.' },
+          { gt: 23, trangThai: 'thieu-BC', loi: 'Còn thiếu cạnh đỏ $BC = 5$ cm.' },
+          { gt: 19, trangThai: 'thieu-CD', loi: 'Còn thiếu cạnh đỏ $CD = 9$ cm.' },
+          { gt: 45, loi: '$9 \\cdot 5$ là phép nhân hai cạnh. Chu vi là **tổng** độ dài bốn cạnh.' }
+        ],
+        dungChu: '$9 + 5 + 9 + 5 = 2 \\cdot (9 + 5) = 28$.', saiChu: 'Chu vi là tổng bốn cạnh. Quay nửa vòng cho thấy $CD = AB$ và $BC = AD$.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng mỗi phần đều có "bạn" đối diện qua O',
+        baDe: [
+          { tuBai: '12.4', de: 'Hình bình hành $ABCD$ có hai đường chéo cắt nhau tại $O$, $OA = 4$ cm. Tính $AC$ (cm).', dapAn: { kieu: 'so', gt: 8 },
+            goiY: ['Quay nửa vòng quanh $O$, $A$ đi tới $C$: $OC = OA$.'], loiGiai: ['$O$ là trung điểm của $AC$ nên $OC = OA = 4$ cm.', '$AC = OA + OC = 4 + 4 = 8$'],
+            loiThuongGap: [{ gt: 2, giaiThich: '$OA$ là **một nửa** $AC$, nên phải nhân đôi chứ không chia đôi.' }],
+            canh: qh({ a: 6, b: 3.5, g: 60, cheo: true, nhan: { OA: '4', OC: { dau: '?', cuoi: '4' } } }, 'Hình bình hành ABCD có hai đường chéo cắt nhau tại O, OA bằng 4.'), tenNut: 'Quay nửa vòng',
+            phanUng: [{ gt: 2, loi: '$OA$ là **một nửa** $AC$: quay nửa vòng, $OA$ nằm lên $OC$. Cả đường chéo là hai nửa.' }, { gt: 4, loi: '$4$ là $OA$, mới là nửa đường chéo. Còn nửa $OC$ nữa.' }],
+            dungChu: '$OC = OA = 4$, nên $AC = 8$ cm.', saiChu: 'Quay nửa vòng quanh $O$ thì $A$ tới $C$. Vậy $OC$ bằng bao nhiêu?' },
+          { tuBai: '12.9', canh: qh({ a: 6, b: 3.5, g: 60, cat: 'BD', goc: { A: '2x', B: 'x', C: { dau: '?', cuoi: '2x', giai: '120°' } } }, 'Hình bình hành ABCD có góc A gấp đôi góc B. Cắt theo đường chéo BD rồi quay nửa vòng.'), tenNut: 'Quay nửa vòng',
+            phanUng: [{ gt: 60, loi: '$60^\\circ$ là góc $B$. Quay nửa vòng, góc $A$ rơi đúng vào góc $C$: $\\widehat{C} = \\widehat{A} = 2 \\cdot 60^\\circ$.' }, { gt: 90, loi: 'Hai góc kề cạnh $AB$ bù nhau: $2x + x = 180^\\circ$. Tìm $x$ trước.' }],
+            dungChu: '$2x + x = 180^\\circ$ nên $x = 60^\\circ$, và $\\widehat{C} = \\widehat{A} = 120^\\circ$.', saiChu: 'Góc $A$ và góc $B$ kề cạnh $AB$ nên bù nhau. Quay nửa vòng thì góc $A$ trùng góc $C$.' },
+          { tuBai: '12.10', canh: qh({ dang: 'baDiem' }, 'Ba điểm A, B, C không thẳng hàng. Quay tam giác ABC nửa vòng quanh trung điểm một cạnh để được đỉnh thứ tư D.'), tenNut: 'Quay quanh trung điểm AC',
+            phanUng: [{ gt: 1, loi: 'Đó mới là một vị trí, khi $AC$ là đường chéo. Đường chéo còn có thể là $AB$, hoặc $BC$.' }, { gt: 2, loi: 'Thử đủ ba cạnh $AB$, $BC$, $CA$: mỗi cạnh làm đường chéo cho một điểm $D$.' }],
+            dungChu: 'Quay quanh trung điểm $AC$, $AB$, $BC$: ba vị trí $D$ khác nhau.', saiChu: 'Mỗi đoạn $AB$, $BC$, $CA$ đều có thể là một đường chéo.' }
+        ],
+        cachNhan: 'Hình bình hành quay nửa vòng quanh giao điểm hai đường chéo thì trùng chính nó. Mỗi phần có một "bạn" đối diện qua $O$: cạnh đối, góc đối, hai nửa đường chéo bằng nhau từng đôi.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Đây là **hình bình hành** $ABCD$. Kéo $A$, $B$ hoặc $D$ (đỉnh $C$ tự đi theo để các cạnh đối luôn song song). $O$ là giao điểm hai đường chéo.\n\nEm hãy so sánh: các cặp cạnh đối; góc $A$ với góc $C$; đoạn $\\ca{OA}$ với $\\ca{OC}$, đoạn $\\cd{OB}$ với $\\cd{OD}$.',
       widget: 'geo',
@@ -168,17 +229,19 @@
         chuThich: 'Máy kiểm tra: kéo bốn đỉnh (chúng bám vào điểm lưới). Em hãy tạo một hình bình hành, rồi thử tạo một hình thang cân để thấy nó **không** đạt.' }
     ],
     viDu: [
-      { de: 'Cho hình bình hành $ABCD$ có $\\widehat{A} = 70^\\circ$. Tính các góc còn lại.', buoc: [
-        { lam: '$\\widehat{C} = \\widehat{A} = 70^\\circ$', vi: 'Hai góc đối của hình bình hành bằng nhau.' },
-        { lam: '$\\widehat{B} = 180^\\circ - 70^\\circ = 110^\\circ$', vi: 'Hai góc kề cạnh $AB$ bù nhau ($AD \\parallel BC$).' },
-        { lam: '$\\widehat{D} = \\widehat{B} = 110^\\circ$', vi: 'Cặp góc đối còn lại.' } ] },
-      { de: 'Hình bình hành $ABCD$ có $AB = 7$ cm, $BC = 4$ cm. Tính chu vi.', buoc: [
-        { lam: '$CD = AB = 7$ cm, $AD = BC = 4$ cm', vi: 'Các cạnh đối của hình bình hành bằng nhau.' },
-        { lam: 'Chu vi $= 2 \\cdot (7 + 4) = 22$ (cm)', vi: 'Chu vi bằng hai lần tổng hai cạnh kề.' } ] },
-      { de: 'Hình bình hành $ABCD$ có hai đường chéo cắt nhau tại $O$, $AC = 10$ cm, $BD = 6$ cm. Tính $OA$ và $OB$.', buoc: [
+      { de: 'Cho hình bình hành $ABCD$ có $\\widehat{A} = 70^\\circ$. Tính các góc còn lại.',
+        canh: qh({ a: 6, b: 3.5, g: 110, cat: 'BD', loCuoi: true, goc: { A: '70°', C: { dau: '?', cuoi: '70°' }, B: { dau: '?', giai: '110°' }, D: { dau: '?', giai: '110°' } } }), buoc: [
+        { lam: '$\\widehat{C} = \\widehat{A} = 70^\\circ$', vi: 'Hai góc đối của hình bình hành bằng nhau: quay nửa vòng, góc $A$ rơi đúng vào góc $C$.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{B} = 180^\\circ - 70^\\circ = 110^\\circ$', vi: 'Hai góc kề cạnh $AB$ bù nhau ($AD \\parallel BC$).', canh: { t: 1 } },
+        { lam: '$\\widehat{D} = \\widehat{B} = 110^\\circ$', vi: 'Cặp góc đối còn lại.', canh: { t: 1 } } ] },
+      { de: 'Hình bình hành $ABCD$ có $AB = 7$ cm, $BC = 4$ cm. Tính chu vi.',
+        canh: qh({ a: 7, b: 4, g: 65, loCuoi: true, nhan: { AB: '7', BC: '4', CD: { dau: '?', cuoi: '7' }, DA: { dau: '?', cuoi: '4' } } }), buoc: [
+        { lam: '$CD = AB = 7$ cm, $AD = BC = 4$ cm', vi: 'Các cạnh đối của hình bình hành bằng nhau: quay nửa vòng, $AB$ nằm lên $CD$, $BC$ nằm lên $DA$.', canh: { t: 1 } },
+        { lam: 'Chu vi $= 2 \\cdot (7 + 4) = 22$ (cm)', vi: 'Chu vi bằng hai lần tổng hai cạnh kề.', canh: { t: 1 } } ] },
+      { de: 'Hình bình hành $ABCD$ có hai đường chéo cắt nhau tại $O$, $AC = 10$ cm, $BD = 6$ cm. Tính $OA$ và $OB$.', hinh: hVD3, buoc: [
         { lam: '$OA = AC : 2 = 5$ cm', vi: 'Hai đường chéo cắt nhau tại trung điểm mỗi đường, nên $O$ là trung điểm của $AC$.' },
         { lam: '$OB = BD : 2 = 3$ cm', vi: '$O$ cũng là trung điểm của $BD$.' } ] },
-      { de: 'Hình bình hành $ABCD$ có $AB = 8$ cm, $AD = 5$ cm. Tia phân giác của góc $D$ cắt cạnh $AB$ tại $E$. Tính $AE$ và $EB$.', buoc: [
+      { de: 'Hình bình hành $ABCD$ có $AB = 8$ cm, $AD = 5$ cm. Tia phân giác của góc $D$ cắt cạnh $AB$ tại $E$. Tính $AE$ và $EB$.', hinh: hVD4, buoc: [
         { lam: '$\\widehat{AED} = \\widehat{EDC}$', vi: '$AB \\parallel CD$ nên đây là hai góc so le trong.' },
         { lam: '$\\widehat{EDC} = \\widehat{ADE}$, nên $\\widehat{AED} = \\widehat{ADE}$', vi: '$DE$ là phân giác góc $D$.' },
         { lam: '$\\triangle ADE$ cân tại $A$: $AE = AD = 5$ cm', vi: 'Tam giác có hai góc bằng nhau là tam giác cân; cạnh đối diện hai góc đó bằng nhau.' },
@@ -197,7 +260,7 @@
           loiThuongGap: [{ gt: 1.75, giaiThich: '$OA$ là **một nửa** $AC$, nên phải nhân đôi chứ không chia đôi.' }] } ] }
     ],
     baiTap: [
-      { id: '12.1', muc: 1, de: 'Hình bình hành là tứ giác có tính chất nào (theo **định nghĩa**)?',
+      { id: '12.1', khongHinh: 'Câu hỏi định nghĩa, không có số đo để vẽ.', muc: 1, de: 'Hình bình hành là tứ giác có tính chất nào (theo **định nghĩa**)?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Có hai cạnh đối song song', 'Có các cạnh đối song song', 'Có hai đường chéo bằng nhau', 'Có hai cạnh kề bằng nhau'] },
         goiY: ['Chú ý chữ "các": **cả hai** cặp cạnh đối.', 'Tứ giác chỉ có **một** cặp cạnh đối song song là hình thang.'],
         loiGiai: ['Hình bình hành là tứ giác có **các** cạnh đối song song (cả hai cặp).', 'Chỉ một cặp cạnh đối song song thì mới là hình thang.'] },
@@ -205,7 +268,7 @@
         dapAn: { kieu: 'nhieuO', o: [{ nhan: '$\\widehat{B} =$', kieu: 'so', gt: 65 }, { nhan: '$\\widehat{C} =$', kieu: 'so', gt: 115 }, { nhan: '$\\widehat{D} =$', kieu: 'so', gt: 65 }] },
         goiY: ['Góc đối bằng nhau: $\\widehat{C} = \\widehat{A}$.', 'Hai góc kề một cạnh bù nhau: $\\widehat{B} = 180^\\circ - \\widehat{A}$.'],
         loiGiai: ['$\\widehat{C} = \\widehat{A} = 115^\\circ$ (góc đối).', '$\\widehat{B} = 180^\\circ - 115^\\circ = 65^\\circ$ (hai góc kề cạnh $AB$ bù nhau).', '$\\widehat{D} = \\widehat{B} = 65^\\circ$.'] },
-      { id: '12.3', muc: 1, de: 'Hình bình hành $ABCD$ có $AB = 9$ cm, $AD = 5$ cm. Tính chu vi của nó (cm).',
+      { id: '12.3', hinhGiai: hg(qh({ a: 9, b: 5, g: 65, nhan: { AB: '9 cm', DA: '5 cm', CD: { dau: '?', cuoi: '9 cm' }, BC: { dau: '?', cuoi: '5 cm' } } })), muc: 1, de: 'Hình bình hành $ABCD$ có $AB = 9$ cm, $AD = 5$ cm. Tính chu vi của nó (cm).',
         dapAn: { kieu: 'so', gt: 28 },
         goiY: ['Các cạnh đối bằng nhau: $CD = AB$, $BC = AD$.', 'Chu vi $= 2 \\cdot (AB + AD)$.'],
         loiGiai: ['$CD = AB = 9$ cm, $BC = AD = 5$ cm.', 'Chu vi $= 2 \\cdot (9 + 5) = 28$'],
@@ -214,7 +277,7 @@
         dapAn: { kieu: 'nhieuO', o: [{ nhan: '$AC =$', kieu: 'so', gt: 8 }, { nhan: '$BD =$', kieu: 'so', gt: 5 }] },
         goiY: ['$O$ là trung điểm của mỗi đường chéo.', '$AC = 2 \\cdot OA$, $BD = 2 \\cdot OB$.'],
         loiGiai: ['$O$ là trung điểm của $AC$ nên $AC = 2 \\cdot 4 = 8$ (cm).', '$O$ là trung điểm của $BD$ nên $BD = 2 \\cdot 2{,}5 = 5$ (cm).'] },
-      { id: '12.5', muc: 2, de: 'Tứ giác $ABCD$ nào dưới đây **chắc chắn** là hình bình hành?',
+      { id: '12.5', khongHinh: 'Câu chọn dấu hiệu: em tính góc thứ tư bằng số rồi so các góc đối; mỗi phương án là một hình khác nhau.', muc: 2, de: 'Tứ giác $ABCD$ nào dưới đây **chắc chắn** là hình bình hành?',
         dapAn: { kieu: 'chon', gt: 0, luaChon: ['$\\widehat{A} = 100^\\circ$, $\\widehat{B} = 80^\\circ$, $\\widehat{C} = 100^\\circ$', '$\\widehat{A} = \\widehat{C} = 75^\\circ$, $\\widehat{D} = 90^\\circ$', '$AB \\parallel CD$ và $AD = BC$', '$AC = BD$'] },
         goiY: ['Với hai phương án đầu, tính góc thứ tư rồi xem các góc đối có bằng nhau không.', 'Phương án "$AB \\parallel CD$, $AD = BC$" có thể là hình thang cân.'],
         loiGiai: ['Phương án 1: $\\widehat{D} = 360^\\circ - 280^\\circ = 80^\\circ = \\widehat{B}$ và $\\widehat{A} = \\widehat{C}$: các góc đối bằng nhau nên là **hình bình hành**.', 'Phương án 2: $\\widehat{B} = 360^\\circ - 240^\\circ = 120^\\circ \\ne \\widehat{D}$. Phương án 3 có thể là hình thang cân. Phương án 4 có thể là hình thang cân.'] },
@@ -232,17 +295,17 @@
         goiY: ['$AD \\parallel BC$ nên $\\widehat{BEA} = \\widehat{EAD} = \\widehat{BAE}$. Tam giác $ABE$ cân tại $B$.', '$BE = AB = 4$; $BC = AD = 7$.'],
         loiGiai: ['$AD \\parallel BC$ nên $\\widehat{BEA} = \\widehat{EAD}$ (so le trong) $= \\widehat{BAE}$ (phân giác). Vậy $\\triangle ABE$ cân tại $B$: $BE = AB = 4$ cm.', '$BC = AD = 7$ cm.', '$EC = BC - BE = 7 - 4 = 3$'],
         loiThuongGap: [{ gt: 4, giaiThich: '$4$ cm là $BE$. Đề hỏi $EC = BC - BE$.' }] },
-      { id: '12.9', muc: 2, de: 'Hình bình hành $ABCD$ có $\\widehat{A} = 2\\widehat{B}$. Tính $\\widehat{C}$ (độ).',
+      { id: '12.9', hinhGiai: hg(qh({ a: 6, b: 3.5, g: 60, cat: 'BD', goc: { A: '120°', B: '60°', C: { dau: '?', cuoi: '2x', giai: '120°' } } })), muc: 2, de: 'Hình bình hành $ABCD$ có $\\widehat{A} = 2\\widehat{B}$. Tính $\\widehat{C}$ (độ).',
         dapAn: { kieu: 'so', gt: 120 },
         goiY: ['$\\widehat{A} + \\widehat{B} = 180^\\circ$, tức $2\\widehat{B} + \\widehat{B} = 180^\\circ$.', '$\\widehat{C} = \\widehat{A}$ (góc đối).'],
         loiGiai: ['$\\widehat{A} + \\widehat{B} = 180^\\circ$ nên $3\\widehat{B} = 180^\\circ$, $\\widehat{B} = 60^\\circ$, $\\widehat{A} = 120^\\circ$.', '$\\widehat{C} = \\widehat{A} = 120^\\circ$'],
         loiThuongGap: [{ gt: 60, giaiThich: '$60^\\circ$ là $\\widehat{B}$ (và $\\widehat{D}$). $\\widehat{C}$ đối với $\\widehat{A}$ nên bằng $120^\\circ$.' }] },
-      { id: '12.10', muc: 3, de: 'Cho ba điểm $A$, $B$, $C$ không thẳng hàng. Có **bao nhiêu** điểm $D$ để bốn điểm $A$, $B$, $C$, $D$ là bốn đỉnh của một hình bình hành?',
+      { id: '12.10', hinhGiai: hg(qh({ dang: 'baDiem' })), muc: 3, de: 'Cho ba điểm $A$, $B$, $C$ không thẳng hàng. Có **bao nhiêu** điểm $D$ để bốn điểm $A$, $B$, $C$, $D$ là bốn đỉnh của một hình bình hành?',
         dapAn: { kieu: 'so', gt: 3 },
         goiY: ['Mỗi đoạn $AB$, $BC$, $CA$ đều có thể là một **đường chéo** của hình bình hành.', 'Ví dụ $AC$ là đường chéo: $D$ đối xứng với $B$ qua trung điểm $AC$. Còn hai trường hợp nữa.'],
         loiGiai: ['Hai đường chéo cắt nhau tại trung điểm mỗi đường. Chọn đường chéo là $AC$, $AB$ hoặc $BC$; mỗi cách cho một điểm $D$ (đối xứng với đỉnh còn lại qua trung điểm đường chéo).', 'Ba điểm này khác nhau, nên: $\\text{số điểm } D = 3$'],
         loiThuongGap: [{ gt: 1, giaiThich: 'Em mới xét hình bình hành $ABCD$ theo đúng thứ tự. Đường chéo có thể là $AC$, $AB$ hoặc $BC$: có ba vị trí.' }] },
-      { id: '12.11', muc: 3, de: 'Một sợi dây xích được chia thành bốn đoạn: hai đoạn dài bằng nhau, hai đoạn ngắn bằng nhau, đoạn dài và đoạn ngắn xen kẽ. Móc hai đầu lại và căng thành tứ giác $ABCD$ (đỉnh ở các điểm chia) có $\\widehat{A} = 65^\\circ$. Tính $\\widehat{B}$ (độ).',
+      { id: '12.11', hinhGiai: hg(qh({ a: 6, b: 3.5, g: 115, cat: 'BD', goc: { A: '65°', C: { cuoi: '65°' }, B: { dau: '?', giai: '115°' } } })), muc: 3, de: 'Một sợi dây xích được chia thành bốn đoạn: hai đoạn dài bằng nhau, hai đoạn ngắn bằng nhau, đoạn dài và đoạn ngắn xen kẽ. Móc hai đầu lại và căng thành tứ giác $ABCD$ (đỉnh ở các điểm chia) có $\\widehat{A} = 65^\\circ$. Tính $\\widehat{B}$ (độ).',
         dapAn: { kieu: 'so', gt: 115 },
         goiY: ['Tứ giác $ABCD$ có các cạnh đối bằng nhau: đó là hình gì?', 'Trong hình bình hành, hai góc kề một cạnh bù nhau.'],
         loiGiai: ['Đoạn dài, đoạn ngắn xen kẽ nên $AB = CD$, $BC = DA$: tứ giác có các cạnh đối bằng nhau là **hình bình hành** (Định lí 2a).', '$\\widehat{B} = 180^\\circ - \\widehat{A} = 180^\\circ - 65^\\circ = 115^\\circ$'],

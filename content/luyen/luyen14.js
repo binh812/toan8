@@ -39,6 +39,8 @@
   function vuong4(t) { return [0, 1, 2, 3].map(function (i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4], VUONG]; }); }
   function d(x) { return x + '^\\circ'; }
   function ds(x) { return String(x).replace('.', ','); }
+  // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 14): khung bốn thanh bằng nhau và hai đường chéo, theo chính số của đề
+  function hg(them, ghiChu) { return { widget: 'canh', config: { ten: 'khungThoi', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them, ghiChu: ghiChu } }; }
   function boTrung(gt, ds) {
     var da = [gt];
     return ds.filter(function (l) {
@@ -53,7 +55,7 @@
   TOAN8.luyen(14, [
     { ten: 'Chu vi hình thoi, hình vuông', muc: 1, sinh: function (r) {
       var t = r.chon(TEN), laThoi = r.dau() > 0, s = r.so(3, 15), P = 4 * s, xuoi = r.dau() > 0, kq = xuoi ? P : s, ten = laThoi ? 'hình thoi' : 'hình vuông';
-      var D = laThoi ? thoiGoc(t, 5, r.chon([60, 70, 80, 100, 110])) : vuong(t, 5);
+      var gTh = laThoi ? r.chon([60, 70, 80, 100, 110]) : 90, D = laThoi ? thoiGoc(t, 5, gTh) : vuong(t, 5), chuS = xuoi ? s + ' cm' : { dau: '?', giai: s + ' cm' };
       delete D.O;
       return {
         de: xuoi ? 'Một ' + ten + ' $' + t.join('') + '$ có cạnh dài $' + s + '$ cm (hình). Tính chu vi của nó (cm).'
@@ -64,7 +66,8 @@
         loiThuongGap: boTrung(kq, xuoi ? [{ gt: 2 * s, giaiThich: 'Chu vi là tổng **bốn** cạnh: $4 \\cdot ' + s + '$.' }, { gt: s * s, giaiThich: 'Em tính $' + s + ' \\cdot ' + s + '$ (giống diện tích hình vuông). Chu vi là $4 \\cdot ' + s + '$.' }]
           : [{ gt: P / 2, giaiThich: 'Em chia cho $2$. ' + (laThoi ? 'Hình thoi' : 'Hình vuông') + ' có **bốn** cạnh bằng nhau: chia cho $4$.' }]),
         hinh: hinhTG({ diem: D, vong: t, vach: vach4(t), goc: laThoi ? null : vuong4(t),
-          nhan: [[t[0], t[1], xuoi ? s + ' cm' : '?', false, 1, xuoi ? '#212529' : XANH]] })
+          nhan: [[t[0], t[1], xuoi ? s + ' cm' : '?', false, 1, xuoi ? '#212529' : XANH]] }),
+        hinhGiai: hg({ gA: gTh, s: s, ten: t, nhan: { AB: chuS, BC: { giai: s + ' cm' }, CD: { giai: s + ' cm' }, DA: { giai: s + ' cm' } } })
       };
     } },
     { ten: 'Đường chéo là phân giác', muc: 1, sinh: function (r) {
@@ -82,7 +85,8 @@
         hinh: hinhTG({ diem: thoiGoc(t, 5, 2 * a), vong: t, vach: vach4(t), canh: cheo(t),
           goc: xuoi ? [[t[1], t[0], t[2]], [t[1], t[0], t[3], { mau: XANH, r: 0.9 }]] : [[t[1], t[0], t[3]], [t[1], t[0], t[2], { mau: XANH, r: 1.1 }]],
           soGoc: xuoi ? [[t[1], t[0], t[2], a + '°', 1.9], [t[3], t[0], t[2], '?', 1.6, XANH]] : [[t[1], t[0], t[3], 2 * a + '°', 1.4], [t[1], t[0], t[2], '?', 2.2, XANH]],
-          lechTen: { O: [10, -16] } })
+          lechTen: { O: [10, -16] } }),
+        hinhGiai: hg({ gA: 2 * a, s: 5, ten: t, goc: xuoi ? { BAC: a + '°', A: { dau: '?', giai: 2 * a + '°' } } : { A: 2 * a + '°', BAC: { dau: '?', giai: a + '°' } } })
       };
     } },
     { ten: 'Góc hình thoi qua đường chéo', muc: 2, sinh: function (r) {
@@ -98,7 +102,8 @@
           '$' + t[0] + t[2] + '$ là phân giác góc $' + t[0] + '$: $\\widehat{' + t[1] + t[0] + t[2] + '} = ' + d(180 - b) + ' : 2 = ' + d(kq) + '$'],
         loiThuongGap: boTrung(kq, [{ gt: 180 - b, giaiThich: '$' + d(180 - b) + '$ là cả góc $' + t[0] + '$. Đường chéo $' + t[0] + t[2] + '$ chia đôi góc đó.' }, { gt: b / 2, giaiThich: '$' + d(b / 2) + '$ là một nửa góc $' + t[1] + '$, không phải nửa góc $' + t[0] + '$.' }]),
         hinh: hinhTG({ diem: thoiGoc(t, 5, 180 - b), vong: t, vach: vach4(t), canh: cheo(t),
-          goc: [[t[0], t[1], t[2]], [t[1], t[0], t[2], { mau: XANH }]], soGoc: [[t[0], t[1], t[2], b + '°', b < 90 ? 1.6 : 1], [t[1], t[0], t[2], '?', 2, XANH]], lechTen: { O: [10, -16] } })
+          goc: [[t[0], t[1], t[2]], [t[1], t[0], t[2], { mau: XANH }]], soGoc: [[t[0], t[1], t[2], b + '°', b < 90 ? 1.6 : 1], [t[1], t[0], t[2], '?', 2, XANH]], lechTen: { O: [10, -16] } }),
+        hinhGiai: hg({ gA: 180 - b, s: 5, ten: t, goc: { B: b + '°', A: { giai: (180 - b) + '°' }, BAC: { dau: '?', giai: kq + '°' } } })
       };
     } },
     { ten: 'Diện tích hình thoi', muc: 2, sinh: function (r, cc) {
@@ -111,7 +116,9 @@
           '$S = \\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + ' = ' + cc.so(S) + '$ (cm²)'],
         loiThuongGap: boTrung(S, [{ gt: d1 * d2, giaiThich: 'Em quên nhân $\\frac{1}{2}$. Diện tích hình thoi bằng **nửa** tích hai đường chéo.' }, { gt: d1 * d2 / 4, giaiThich: 'Em nhân hai **nửa** đường chéo với nhau ($' + cc.so(d1 / 2) + ' \\cdot ' + cc.so(d2 / 2) + '$). Công thức dùng cả hai đường chéo: $\\frac{1}{2} \\cdot ' + d1 + ' \\cdot ' + d2 + '$.' }]),
         hinh: hinhTG({ diem: thoi(t, d1 * f / 2, d2 * f / 2), vong: t, vach: vach4(t), canh: cheo(t, 2), goc: [[t[1], 'O', t[2], VUONG]],
-          nhan: [['O', t[2], d1 + ' cm', false, 1.2, TIM], ['O', t[1], d2 + ' cm', false, 1.6, TIM]], lechTen: { O: [12, -14] } })
+          nhan: [['O', t[2], d1 + ' cm', false, 1.2, TIM], ['O', t[1], d2 + ' cm', false, 1.6, TIM]], lechTen: { O: [12, -14] } }),
+        // Bốn tam giác ở góc hình chữ nhật d1 × d2 trượt vào lấp kín hình thoi: diện tích bằng nửa
+        hinhGiai: hg({ dang: 'dienTich', d1: d1, d2: d2, nhan: { d1: d1 + ' cm', d2: d2 + ' cm' }, nhanDT: { dau: '?', giai: ds(S) + ' cm²' } })
       };
     } },
     { ten: 'Hình thoi có một góc 60°', muc: 2, sinh: function (r, cc) {
@@ -129,7 +136,9 @@
           : [{ gt: s / 2, giaiThich: '$' + cc.so(s / 2) + '$ cm là $O' + t[1] + '$ (nửa đường chéo). Cả đường chéo $' + t[1] + t[3] + '$ bằng cạnh tam giác đều.' }]),
         hinh: hinhTG({ diem: thoiGoc(t, 5, 60), vong: t, vach: vach4(t), canh: [[t[1], t[3], { mau: TIM, day: 3, net: 2 }]],
           goc: gocB ? [[t[2], t[3], t[0]]] : [[t[1], t[0], t[3]]], soGoc: gocB ? [[t[2], t[3], t[0], '120°', 0.8]] : [[t[1], t[0], t[3], '60°', 1.4]],
-          nhan: [[t[0], t[1], s + ' cm'], hoiNua ? ['O', t[1], '?', false, 1.2, XANH] : [t[1], t[3], '?', false, 1.2, XANH]], lechTen: { O: [12, -14] } })
+          nhan: [[t[0], t[1], s + ' cm'], hoiNua ? ['O', t[1], '?', false, 1.2, XANH] : [t[1], t[3], '?', false, 1.2, XANH]], lechTen: { O: [12, -14] } }),
+        hinhGiai: hg({ gA: 60, s: s, ten: t, to: 'ABD', goc: gocB ? { D: '120°', A: { giai: '60°' } } : { A: '60°' },
+          nhan: hoiNua ? { AB: s + ' cm', OB: { dau: '?', giai: ds(s / 2) + ' cm' } } : { AB: s + ' cm', BD: { dau: '?', giai: s + ' cm' } } })
       };
     } },
     { ten: 'Đường chéo hình vuông', muc: 1, sinh: function (r, cc) {
@@ -141,7 +150,8 @@
           goiY: ['Hình vuông là hình chữ nhật: hai đường chéo bằng nhau và cắt nhau tại trung điểm mỗi đường.', '$O' + t[3] + ' = ' + t[1] + t[3] + ' : 2$, mà $' + t[1] + t[3] + ' = ' + t[0] + t[2] + '$.'],
           loiGiai: ['$' + t[1] + t[3] + ' = ' + t[0] + t[2] + ' = ' + x + '$ cm (hai đường chéo bằng nhau), $O$ là trung điểm của $' + t[1] + t[3] + '$.', '$O' + t[3] + ' = ' + x + ' : 2 = ' + cc.so(x / 2) + '$'],
           loiThuongGap: boTrung(x / 2, [{ gt: x, giaiThich: '$O' + t[3] + '$ chỉ là **nửa** đường chéo.' }]),
-          hinh: hinhTG({ diem: vuong(t, 6), vong: t, vach: vach4(t), canh: cheo(t), goc: vuong4(t), nhan: [[t[0], 'O', x + ' cm', false, 1.2, TIM], ['O', t[3], '?', false, 1, XANH]], lechTen: { O: [16, 0] } })
+          hinh: hinhTG({ diem: vuong(t, 6), vong: t, vach: vach4(t), canh: cheo(t), goc: vuong4(t), nhan: [[t[0], 'O', x + ' cm', false, 1.2, TIM], ['O', t[3], '?', false, 1, XANH]], lechTen: { O: [16, 0] } }),
+          hinhGiai: hg({ gA: 90, s: 5, ten: t, nhan: { AC: x + ' cm', OD: { dau: '?', giai: ds(x / 2) + ' cm' } } }, 'Hình không theo tỉ lệ.')
         };
       }
       var kq = hoiGoc === 1 ? 90 : 45, hoi = hoiGoc === 1 ? t[0] + 'O' + t[1] : 'O' + t[0] + t[1];
@@ -154,7 +164,8 @@
           : ['$' + t[0] + t[2] + '$ là phân giác của góc vuông $' + t[0] + '$.', '$\\widehat{' + hoi + '} = 90^\\circ : 2 = 45^\\circ$'],
         loiThuongGap: hoiGoc === 1 ? [{ gt: 45, giaiThich: 'Hai đường chéo của hình vuông **vuông góc** với nhau.' }] : [{ gt: 90, giaiThich: '$90^\\circ$ là cả góc $' + t[0] + '$; đường chéo chia đôi nó.' }],
         hinh: hinhTG({ diem: vuong(t, 6), vong: t, vach: vach4(t), canh: cheo(t), goc: vuong4(t).concat([hoiGoc === 1 ? [t[0], 'O', t[1], { mau: XANH }] : ['O', t[0], t[1], { mau: XANH }]]),
-          soGoc: [hoiGoc === 1 ? [t[0], 'O', t[1], '?', 0.6, XANH] : ['O', t[0], t[1], '?', 1.1, XANH]], lechTen: { O: [16, 0] } })
+          soGoc: [hoiGoc === 1 ? [t[0], 'O', t[1], '?', 0.6, XANH] : ['O', t[0], t[1], '?', 1.1, XANH]], lechTen: { O: [16, 0] } }),
+        hinhGiai: hg({ gA: 90, s: 5, ten: t, goc: hoiGoc === 1 ? { AOB: { dau: '?', giai: '90°' } } : { A: '90°', BAC: { dau: '?', giai: '45°' } } })
       };
     } },
     { ten: 'Luống hoa hình thoi', muc: 3, sinh: function (r) {

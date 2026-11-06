@@ -128,12 +128,75 @@
     G.label(-0.8, 5.9, 'Tứ giác ABCD: 180° + 180° = 360°', { fontSize: 16, cssStyle: 'font-weight:700' });
   };
 
+  // ---------- Cấu hình cảnh cho "Nhìn là hiểu" ----------
+  function so(x) { return String(x).replace('.', '{,}'); }
+  function vong(goc, them) { return { ten: 'gocTuGiac', tuyChon: Object.assign({ goc: goc }, them || {}) }; }
+  // Hình ở lời giải: đã ghép xong và hiện đáp án
+  function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1, thamSo: { trangThai: 'giai' } }, c) }; }
+  // Em gõ một số đo: hình đặt góc đó vào chỗ hở (n góc bằng nhau thì n quạt), để thấy còn hở hay bị đè
+  function datGoc(ho, n) {
+    return function (v) {
+      if (v <= 0) return { t: 1, loi: 'Số đo góc phải lớn hơn $0^\\circ$.' };
+      var ten = n > 1 ? n + ' góc $' + so(v) + '^\\circ$' : 'Góc $' + so(v) + '^\\circ$';
+      if (v >= 180) return { thamSo: { thu: v }, t: 1, loi: 'Góc của tứ giác lồi luôn nhỏ hơn $180^\\circ$. Nhìn hình: phần đỏ đè lên các góc khác.' };
+      return { thamSo: { thu: v }, t: 1, loi: n * v < ho ? ten + ' chưa lấp kín chỗ hở: các góc chưa khép được một vòng.' : ten + ' đè lên góc khác: các góc vượt quá một vòng $360^\\circ$.' };
+    };
+  }
+  var dieuDiem = (function () { var P = dieu(120, 50, 2.6); return [P.A, P.B, P.C, P.D]; })();
+
   var hinhCheo = hinhTG({ diem: { A: [0, 2.4], B: [3.2, 0], C: [6.5, 2.2], D: [2.6, 4.6] }, vong: ['A', 'B', 'C', 'D'],
     canh: [['A', 'C', { mau: TIM, day: 2, net: 2 }], ['B', 'D', { mau: TIM, day: 2, net: 2 }], ['A', 'B', { mau: CAM, day: 4 }], ['C', 'D', { mau: CAM, day: 4 }]],
     ghiChu: 'Cặp cạnh đối AB, CD (cam) – hai đường chéo AC, BD (tím)' });
 
   TOAN8.bai({
     id: 10, ten: 'Tứ giác', sgk: { tap: 1, trang: 48 },
+    nhin: {
+      tieuDe: 'Kẻ một đường chéo: các góc ghép đủ một vòng', loai: 'chungMinh',
+      luuY: 'Hình vẽ tứ giác lồi. Ở tứ giác lồi, đường chéo $BD$ luôn nằm bên trong nên chia góc $B$ và góc $D$ làm hai phần. Kéo hai thanh để đổi hình: cách ghép vẫn đúng.',
+      canh: { ten: 'gocTuGiac', tuyChon: { dang: 'chia' }, moTa: 'Tứ giác ABCD có bốn góc tô bốn màu. Đường chéo BD chia nó thành hai tam giác; sáu góc của hai tam giác được đặt quanh một điểm và lấp kín một vòng tròn.',
+        dongSo: function (p) {
+          var g = lamTron(TOAN8.canh.lay('gocTuGiac').tinh(p, 0, { dang: 'chia' }).g);
+          return 'Đo bốn góc: $\\ca{\\widehat{A}} \\approx ' + g[0] + '^\\circ$, $\\cb{\\widehat{B}} \\approx ' + g[1] + '^\\circ$, $\\cc{\\widehat{C}} \\approx ' + g[2] + '^\\circ$, $\\widehat{D} \\approx ' + g[3] + '^\\circ$. Cộng lại: $' + (g[0] + g[1] + g[2] + g[3]) + '^\\circ$.';
+        } },
+      buoc: [
+        { t: 0, chu: 'Tứ giác $ABCD$, mỗi góc một màu. Bên phải là một vòng tròn còn trống.' },
+        { t: 0.1, chu: 'Kẻ đường chéo $BD$. Tứ giác tách thành hai tam giác $ABD$ và $CBD$. Góc $B$ và góc $D$ mỗi góc bị chia làm hai phần.' },
+        { t: 0.25, chu: 'Đặt ba góc của tam giác $ABD$ sát nhau: chúng ghép thành một góc bẹt, tức $180^\\circ$ (tổng ba góc của một tam giác, em đã học ở lớp 7).' },
+        { t: 0.6, chu: 'Ba góc của tam giác $CBD$ lấp nửa vòng còn lại, thêm $180^\\circ$.' },
+        { t: 1, chu: 'Hai phần của góc $B$ nằm sát nhau, hai phần của góc $D$ cũng vậy. Cả vòng tròn chính là bốn góc $\\ca{A}$, $\\cb{B}$, $\\cc{C}$, $D$ của tứ giác.' }
+      ],
+      ketLuan: 'Bốn góc của tứ giác lấp kín đúng một vòng: $$\\widehat{A} + \\widehat{B} + \\widehat{C} + \\widehat{D} = 180^\\circ + 180^\\circ = 360^\\circ$$',
+      dung: {
+        tieuDe: 'Góc D chính là chỗ còn hở', tuBai: '10.3',
+        canh: Object.assign(vong([100, 70, 110, 80], { an: [3] }), { moTa: 'Tứ giác có ba góc 100 độ, 70 độ, 110 độ. Ba góc này được ghép quanh một điểm, còn hở một phần vòng tròn.' }),
+        moiThu: 'Bốn góc phải khép kín đúng một vòng. Ba góc đã biết để lại một chỗ hở: đó là góc $D$. Gõ số đo góc $D$; nếu sai, hình sẽ đặt đúng góc em gõ vào chỗ hở.',
+        phanUng: [
+          { gt: -100, loi: 'Em lấy $180^\\circ - 280^\\circ$. Bốn góc của tứ giác lấp kín cả một vòng $360^\\circ$, không phải nửa vòng $180^\\circ$.' },
+          { gt: 280, loi: '$280^\\circ$ là tổng **ba** góc đã biết. Góc $D$ là phần còn hở của vòng tròn: lấy $360^\\circ$ trừ đi tổng đó.' }
+        ],
+        soBatKi: datGoc(80, 1),
+        dungChu: '$100^\\circ + 70^\\circ + 110^\\circ + 80^\\circ = 360^\\circ$: bốn góc khép kín một vòng.'
+      },
+      suyRa: {
+        tieuDe: 'Đề đổi, nhưng các góc vẫn phải khép kín một vòng',
+        baDe: [
+          { tuBai: '10.5', canh: Object.assign(vong([90, 115, 80, 75], { ten: ['M', 'N', 'P', 'Q'], an: [3], ngoai: { i: 1, nhan: '65°' }, nhan: { 1: { dau: '', cuoi: '115°' } } }),
+            { moTa: 'Tứ giác MNPQ có góc M 90 độ, góc P 80 độ, góc ngoài tại N 65 độ. Bấm nút để ghép các góc trong quanh một điểm.' }), tenNut: 'Ghép các góc trong',
+            phanUng: [{ gt: 125, loi: 'Em lấy góc ngoài $65^\\circ$ làm góc $N$ của tứ giác. Góc trong tại $N$ kề bù với nó: $180^\\circ - 65^\\circ = 115^\\circ$.' }],
+            soBatKi: datGoc(75, 1),
+            dungChu: '$90^\\circ + 115^\\circ + 80^\\circ + 75^\\circ = 360^\\circ$.', saiChu: 'Đổi góc ngoài sang góc trong trước: $180^\\circ - 65^\\circ$. Rồi xem chỗ hở còn lại.' },
+          { tuBai: '10.7', canh: { ten: 'gocTuGiac', tuyChon: { diem: dieuDiem, an: [1, 3], bang: true }, moTa: 'Hình cái diều ABCD có góc A 120 độ, góc C 50 độ; góc B và góc D bằng nhau.' }, tenNut: 'Ghép các góc',
+            phanUng: [{ gt: 190, loi: '$190^\\circ$ là chỗ hở dành cho **cả hai** góc $B$ và $D$. Hai góc bằng nhau chia đôi chỗ hở đó.' }],
+            soBatKi: datGoc(190, 2),
+            dungChu: '$120^\\circ + 50^\\circ + 95^\\circ + 95^\\circ = 360^\\circ$.', saiChu: 'Chỗ hở là $360^\\circ - (120^\\circ + 50^\\circ)$, chia đều cho hai góc bằng nhau.' },
+          { tuBai: '10.8', canh: Object.assign(vong([60, 90, 90, 120], { phan: [2, 3, 3, 4], nhan: ['2x', '3x', '3x', { dau: '4x', giai: '120°' }] }),
+            { moTa: 'Tứ giác có bốn góc tỉ lệ 2, 3, 3, 4. Mỗi góc chia thành các phần bằng nhau.' }), tenNut: 'Chia vòng thành phần bằng nhau',
+            phanUng: [{ gt: 30, loi: '$30^\\circ$ là **một phần** $x$. Góc lớn nhất gồm $4$ phần.' }, { gt: 90, loi: 'Em chia $360^\\circ$ cho $4$ góc. Nhưng các góc không bằng nhau: vòng tròn có $2 + 3 + 3 + 4 = 12$ phần bằng nhau.' }],
+            dungChu: 'Vòng tròn có $12$ phần, mỗi phần $30^\\circ$; góc lớn nhất có $4$ phần: $120^\\circ$.', saiChu: 'Đếm xem cả vòng tròn có bao nhiêu phần bằng nhau, rồi tìm cỡ một phần.' }
+        ],
+        cachNhan: 'Biết vài góc của tứ giác, hỏi góc còn lại: ghép các góc quanh một điểm, chúng phải khép kín đúng một vòng $360^\\circ$. Gặp góc ngoài thì đổi sang góc trong trước.'
+      }
+    },
     khamPha: {
       nhiemVu: 'Kéo bốn đỉnh $A$, $B$, $C$, $D$ để thay đổi hình tứ giác. Mỗi góc có một màu, số đo của nó hiện ở dòng trên cùng.\n\nEm hãy để ý **dòng tổng** bên dưới: dù tứ giác méo thế nào (miễn là còn **lồi**), tổng bốn góc có thay đổi không?',
       widget: 'geo',
@@ -162,20 +225,22 @@
       { loai: 'chuY', noiDung: '**Cách tìm góc còn lại:** $\\widehat{D} = 360^\\circ - (\\widehat{A} + \\widehat{B} + \\widehat{C})$.\n\n**Hay nhầm 1 – nhớ nhầm $180^\\circ$.** $180^\\circ$ là tổng ba góc của **tam giác**. Tứ giác là $360^\\circ$.\n\n**Hay nhầm 2 – lấy góc ngoài làm góc trong.** Nếu hình cho góc **ngoài** tại một đỉnh (góc tạo bởi một cạnh và phần kéo dài của cạnh kề), thì góc trong của tứ giác tại đỉnh đó $= 180^\\circ -$ góc ngoài.' }
     ],
     viDu: [
-      { de: 'Cho tứ giác $ABCD$ có $\\widehat{A} = 105^\\circ$, $\\widehat{B} = 95^\\circ$, $\\widehat{C} = 70^\\circ$. Tính $\\widehat{D}$.', buoc: [
-        { lam: '$\\widehat{A} + \\widehat{B} + \\widehat{C} + \\widehat{D} = 360^\\circ$', vi: 'Định lí tổng các góc của một tứ giác.' },
-        { lam: '$\\widehat{D} = 360^\\circ - (105^\\circ + 95^\\circ + 70^\\circ)$', vi: 'Lấy $360^\\circ$ trừ đi tổng ba góc đã biết.' },
-        { lam: '$\\widehat{D} = 360^\\circ - 270^\\circ = 90^\\circ$', vi: 'Tính tổng trong ngoặc trước: $105 + 95 + 70 = 270$.' } ] },
-      { de: 'Tứ giác $EFGH$ có $\\widehat{E} = \\widehat{G} = 90^\\circ$ và $\\widehat{H} = 65^\\circ$. Tính $\\widehat{F}$.', buoc: [
-        { lam: '$\\widehat{F} = 360^\\circ - (\\widehat{E} + \\widehat{G} + \\widehat{H})$', vi: 'Tổng bốn góc là $360^\\circ$, biết ba góc thì tìm được góc thứ tư.' },
-        { lam: '$\\widehat{F} = 360^\\circ - (90^\\circ + 90^\\circ + 65^\\circ) = 360^\\circ - 245^\\circ = 115^\\circ$', vi: 'Thay số rồi tính.' } ] },
-      { de: 'Tứ giác $EFGH$ có $\\widehat{F} = 60^\\circ$, $\\widehat{G} = 70^\\circ$ và $\\widehat{H} = \\widehat{E} + 20^\\circ$. Tính $\\widehat{E}$ và $\\widehat{H}$.', buoc: [
-        { lam: '$\\widehat{E} + \\widehat{H} = 360^\\circ - (60^\\circ + 70^\\circ) = 230^\\circ$', vi: 'Hai góc chưa biết có tổng bằng $360^\\circ$ trừ hai góc đã biết.' },
-        { lam: '$\\widehat{E} + (\\widehat{E} + 20^\\circ) = 230^\\circ$, nên $2\\widehat{E} = 210^\\circ$', vi: 'Thay $\\widehat{H} = \\widehat{E} + 20^\\circ$ vào tổng.' },
-        { lam: '$\\widehat{E} = 105^\\circ$; $\\widehat{H} = 105^\\circ + 20^\\circ = 125^\\circ$', vi: 'Chia đôi rồi cộng thêm $20^\\circ$. Thử lại: $105 + 125 + 60 + 70 = 360$ ✓.' } ] },
-      { de: 'Tứ giác $RSUV$ có $\\widehat{V} = 90^\\circ$. Góc ngoài tại đỉnh $U$ bằng $60^\\circ$, góc ngoài tại đỉnh $S$ bằng $110^\\circ$. Tính góc $R$.', buoc: [
-        { lam: '$\\widehat{U} = 180^\\circ - 60^\\circ = 120^\\circ$; $\\widehat{S} = 180^\\circ - 110^\\circ = 70^\\circ$', vi: 'Góc trong và góc ngoài tại cùng một đỉnh là hai góc **kề bù**, tổng bằng $180^\\circ$.' },
-        { lam: '$\\widehat{R} = 360^\\circ - (90^\\circ + 120^\\circ + 70^\\circ) = 80^\\circ$', vi: 'Bây giờ đã đủ ba góc **trong**, dùng định lí tổng bốn góc.' } ] }
+      { de: 'Cho tứ giác $ABCD$ có $\\widehat{A} = 105^\\circ$, $\\widehat{B} = 95^\\circ$, $\\widehat{C} = 70^\\circ$. Tính $\\widehat{D}$.', canh: vong([105, 95, 70, 90], { an: [3], loCuoi: true }), buoc: [
+        { lam: '$\\widehat{A} + \\widehat{B} + \\widehat{C} + \\widehat{D} = 360^\\circ$', vi: 'Định lí tổng các góc của một tứ giác.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{D} = 360^\\circ - (105^\\circ + 95^\\circ + 70^\\circ)$', vi: 'Lấy $360^\\circ$ trừ đi tổng ba góc đã biết.', canh: { t: 0.95 } },
+        { lam: '$\\widehat{D} = 360^\\circ - 270^\\circ = 90^\\circ$', vi: 'Tính tổng trong ngoặc trước: $105 + 95 + 70 = 270$.', canh: { t: 1 } } ] },
+      { de: 'Tứ giác $EFGH$ có $\\widehat{E} = \\widehat{G} = 90^\\circ$ và $\\widehat{H} = 65^\\circ$. Tính $\\widehat{F}$.', canh: vong([90, 115, 90, 65], { ten: ['E', 'F', 'G', 'H'], an: [1], loCuoi: true }), buoc: [
+        { lam: '$\\widehat{F} = 360^\\circ - (\\widehat{E} + \\widehat{G} + \\widehat{H})$', vi: 'Tổng bốn góc là $360^\\circ$, biết ba góc thì tìm được góc thứ tư.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{F} = 360^\\circ - (90^\\circ + 90^\\circ + 65^\\circ) = 360^\\circ - 245^\\circ = 115^\\circ$', vi: 'Thay số rồi tính.', canh: { t: 1 } } ] },
+      { de: 'Tứ giác $EFGH$ có $\\widehat{F} = 60^\\circ$, $\\widehat{G} = 70^\\circ$ và $\\widehat{H} = \\widehat{E} + 20^\\circ$. Tính $\\widehat{E}$ và $\\widehat{H}$.',
+        canh: vong([105, 60, 70, 125], { ten: ['E', 'F', 'G', 'H'], an: [0, 3], loCuoi: true, nhanHo: { dau: '?', cuoi: '230°' } }), buoc: [
+        { lam: '$\\widehat{E} + \\widehat{H} = 360^\\circ - (60^\\circ + 70^\\circ) = 230^\\circ$', vi: 'Hai góc chưa biết có tổng bằng $360^\\circ$ trừ hai góc đã biết: đó là chỗ hở trên vòng tròn.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{E} + (\\widehat{E} + 20^\\circ) = 230^\\circ$, nên $2\\widehat{E} = 210^\\circ$', vi: 'Thay $\\widehat{H} = \\widehat{E} + 20^\\circ$ vào tổng.', canh: { t: 0.95 } },
+        { lam: '$\\widehat{E} = 105^\\circ$; $\\widehat{H} = 105^\\circ + 20^\\circ = 125^\\circ$', vi: 'Chia đôi rồi cộng thêm $20^\\circ$. Thử lại: $105 + 125 + 60 + 70 = 360$ ✓.', canh: { t: 1 } } ] },
+      { de: 'Tứ giác $RSUV$ có $\\widehat{V} = 90^\\circ$. Góc ngoài tại đỉnh $U$ bằng $60^\\circ$, góc ngoài tại đỉnh $S$ bằng $110^\\circ$. Tính góc $R$.',
+        canh: vong([80, 70, 120, 90], { ten: ['R', 'S', 'U', 'V'], an: [0], loCuoi: true, ngoai: [{ i: 1, nhan: '110°' }, { i: 2, nhan: '60°' }], nhan: { 1: { dau: '', cuoi: '70°' }, 2: { dau: '', cuoi: '120°' } } }), buoc: [
+        { lam: '$\\widehat{U} = 180^\\circ - 60^\\circ = 120^\\circ$; $\\widehat{S} = 180^\\circ - 110^\\circ = 70^\\circ$', vi: 'Góc trong và góc ngoài tại cùng một đỉnh là hai góc **kề bù**, tổng bằng $180^\\circ$.', canh: { t: 0.9 } },
+        { lam: '$\\widehat{R} = 360^\\circ - (90^\\circ + 120^\\circ + 70^\\circ) = 80^\\circ$', vi: 'Bây giờ đã đủ ba góc **trong**, dùng định lí tổng bốn góc.', canh: { t: 1 } } ] }
     ],
     viDuMo: [
       { de: 'Cho tứ giác $ABCD$ có $\\widehat{A} = 75^\\circ$, $\\widehat{B} = 115^\\circ$, $\\widehat{C} = 100^\\circ$. Tính $\\widehat{D}$ (độ).', buoc: [
@@ -191,11 +256,11 @@
           loiThuongGap: [{ gt: 36, giaiThich: '$36^\\circ$ mới là $x$ (góc nhỏ nhất). Góc lớn nhất là $4x$.' }] } ] }
     ],
     baiTap: [
-      { id: '10.1', muc: 1, de: 'Cho bốn đoạn thẳng $AB$, $BC$, $CD$, $DA$. Trường hợp nào dưới đây hình đó **không** phải là tứ giác?',
+      { id: '10.1', khongHinh: 'Câu về định nghĩa tứ giác: chỉ cần hình dung ba điểm thẳng hàng, không có số để tính.', muc: 1, de: 'Cho bốn đoạn thẳng $AB$, $BC$, $CD$, $DA$. Trường hợp nào dưới đây hình đó **không** phải là tứ giác?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Không có ba điểm nào trong $A$, $B$, $C$, $D$ thẳng hàng', 'Ba điểm $B$, $C$, $D$ thẳng hàng ($C$ nằm giữa $B$ và $D$)', 'Tứ giác có một góc tù', 'Hai đường chéo cắt nhau'] },
         goiY: ['Định nghĩa: không có **hai đoạn thẳng nào nằm trên cùng một đường thẳng**.', 'Nếu $B$, $C$, $D$ thẳng hàng thì hai đoạn $BC$ và $CD$ ra sao?'],
         loiGiai: ['Khi $B$, $C$, $D$ thẳng hàng, hai đoạn $BC$ và $CD$ nằm trên cùng một đường thẳng.', 'Hình nhận được trông như tam giác $ABD$, **không** phải tứ giác.'] },
-      { id: '10.2', muc: 1, de: 'Hai đường chéo của tứ giác $MNPQ$ là cặp đoạn thẳng nào?',
+      { id: '10.2', khongHinh: 'Câu gọi tên đường chéo theo thứ tự đỉnh; hình đường chéo đã có ở phần Lý thuyết.', muc: 1, de: 'Hai đường chéo của tứ giác $MNPQ$ là cặp đoạn thẳng nào?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['$MN$ và $PQ$', '$MP$ và $NQ$', '$MQ$ và $NP$', '$MN$ và $NP$'] },
         goiY: ['Đường chéo nối hai đỉnh **đối nhau** (không cùng thuộc một cạnh).', 'Đi vòng $M \\to N \\to P \\to Q$: đỉnh đối của $M$ là đỉnh cách nó một đỉnh.'],
         loiGiai: ['Các cặp đỉnh đối nhau: $M$ và $P$; $N$ và $Q$.', 'Vậy hai đường chéo là $MP$ và $NQ$. ($MN$, $PQ$ là cặp **cạnh đối**.)'] },
@@ -212,7 +277,9 @@
         dapAn: { kieu: 'so', gt: 75 },
         goiY: ['$65^\\circ$ là góc **ngoài** tại $N$. Góc trong $\\widehat{MNP}$ kề bù với nó.', '$\\widehat{N} = 180^\\circ - 65^\\circ = 115^\\circ$. Rồi dùng tổng bốn góc.'],
         loiGiai: ['$\\widehat{MNP} = 180^\\circ - 65^\\circ = 115^\\circ$ (hai góc kề bù).', '$\\widehat{Q} = 360^\\circ - (90^\\circ + 115^\\circ + 80^\\circ) = 360^\\circ - 285^\\circ$', '$\\widehat{Q} = 75^\\circ$'],
-        loiThuongGap: [{ gt: 125, giaiThich: 'Em lấy luôn góc ngoài $65^\\circ$ làm góc $N$ của tứ giác. Góc trong tại $N$ là $180^\\circ - 65^\\circ = 115^\\circ$.' }] },
+        loiThuongGap: [{ gt: 125, hinh: { widget: 'canh', config: { ten: 'gocTuGiac', chiXem: true, t: 1, thamSo: { thu: 125 }, ghiChu: 'Phần đỏ là góc 125° em tìm: nó đè lên góc khác, bốn góc vượt quá một vòng.',
+          tuyChon: { goc: [90, 115, 80, 75], ten: ['M', 'N', 'P', 'Q'], an: [3], ngoai: { i: 1, nhan: '65°' } } } },
+          giaiThich: 'Em lấy luôn góc ngoài $65^\\circ$ làm góc $N$ của tứ giác. Góc trong tại $N$ là $180^\\circ - 65^\\circ = 115^\\circ$.' }] },
       { id: '10.6', muc: 2, de: 'Tứ giác $EFGH$ trong hình có $\\widehat{F} = 70^\\circ$, $\\widehat{G} = 60^\\circ$ và $\\widehat{H} = \\widehat{E} + 30^\\circ$. Tính $\\widehat{E}$ và $\\widehat{H}$ (độ).', hinh: h6,
         dapAn: { kieu: 'nhieuO', o: [{ nhan: '$\\widehat{E} =$', kieu: 'so', gt: 100 }, { nhan: '$\\widehat{H} =$', kieu: 'so', gt: 130 }] },
         goiY: ['Tính tổng $\\widehat{E} + \\widehat{H}$ trước: $360^\\circ - (70^\\circ + 60^\\circ)$.', '$\\widehat{E} + \\widehat{E} + 30^\\circ = 230^\\circ$, giải ra $\\widehat{E}$.'],
@@ -222,22 +289,22 @@
         goiY: ['Hai góc $B$ và $D$ bằng nhau, tổng của chúng là $360^\\circ - (120^\\circ + 50^\\circ)$.', 'Chia đôi tổng đó.'],
         loiGiai: ['$\\widehat{B} + \\widehat{D} = 360^\\circ - (120^\\circ + 50^\\circ) = 190^\\circ$', 'Vì $\\widehat{B} = \\widehat{D}$ nên $\\widehat{B} = 190^\\circ : 2 = 95^\\circ$'],
         loiThuongGap: [{ gt: 190, giaiThich: '$190^\\circ$ là tổng của **hai** góc $B$ và $D$. Còn phải chia đôi.' }] },
-      { id: '10.8', muc: 2, de: 'Bốn góc $A$, $B$, $C$, $D$ của một tứ giác tỉ lệ với $2 : 3 : 3 : 4$. Tính góc lớn nhất của tứ giác (độ).',
+      { id: '10.8', hinhGiai: hg(vong([60, 90, 90, 120], { phan: [2, 3, 3, 4], nhan: ['2x', '3x', '3x', { dau: '4x', giai: '120°' }] })), muc: 2, de: 'Bốn góc $A$, $B$, $C$, $D$ của một tứ giác tỉ lệ với $2 : 3 : 3 : 4$. Tính góc lớn nhất của tứ giác (độ).',
         dapAn: { kieu: 'so', gt: 120 },
         goiY: ['Đặt các góc là $2x$, $3x$, $3x$, $4x$.', '$2x + 3x + 3x + 4x = 12x = 360^\\circ$.'],
         loiGiai: ['$2x + 3x + 3x + 4x = 360^\\circ$, tức $12x = 360^\\circ$, $x = 30^\\circ$', 'Góc lớn nhất: $4x = 4 \\cdot 30^\\circ = 120^\\circ$'],
         loiThuongGap: [{ gt: 30, giaiThich: '$30^\\circ$ mới là $x$. Góc lớn nhất ứng với phần $4$: $4x$.' }, { gt: 90, giaiThich: 'Em chia $360^\\circ$ cho $4$ (số góc). Phải chia cho tổng số phần $2 + 3 + 3 + 4 = 12$.' }] },
-      { id: '10.9', muc: 3, de: 'Một tứ giác có **nhiều nhất** bao nhiêu góc tù?',
+      { id: '10.9', hinhGiai: hg(vong([100, 100, 100, 60])), muc: 3, de: 'Một tứ giác có **nhiều nhất** bao nhiêu góc tù?',
         dapAn: { kieu: 'so', gt: 3 },
         goiY: ['Góc tù lớn hơn $90^\\circ$. Nếu cả bốn góc đều tù thì tổng sẽ thế nào so với $360^\\circ$?', 'Thử tìm một tứ giác có ba góc tù, ví dụ $100^\\circ, 100^\\circ, 100^\\circ$ và góc thứ tư?'],
         loiGiai: ['Nếu cả bốn góc đều tù thì tổng lớn hơn $4 \\cdot 90^\\circ = 360^\\circ$: vô lí. Vậy không thể có $4$ góc tù.', 'Tứ giác có các góc $100^\\circ, 100^\\circ, 100^\\circ, 60^\\circ$ (tổng $360^\\circ$) có ba góc tù.', 'Vậy: $\\text{số góc tù nhiều nhất} = 3$'],
         loiThuongGap: [{ gt: 2, giaiThich: 'Vẫn có tứ giác có **ba** góc tù, ví dụ $100^\\circ, 100^\\circ, 100^\\circ, 60^\\circ$.' }, { gt: 4, giaiThich: 'Bốn góc tù thì tổng lớn hơn $360^\\circ$, không thể có.' }] },
-      { id: '10.10', muc: 3, de: 'Tứ giác $ABCD$ có $\\widehat{A} = 70^\\circ$, $\\widehat{B} = 80^\\circ$. Tia phân giác của góc $C$ và góc $D$ cắt nhau tại $I$. Tính góc $CID$ (độ).',
+      { id: '10.10', khongHinh: 'Đề không cho hình; lời giải tính trong tam giác $ICD$, em tự vẽ tứ giác và hai tia phân giác để theo dõi.', muc: 3, de: 'Tứ giác $ABCD$ có $\\widehat{A} = 70^\\circ$, $\\widehat{B} = 80^\\circ$. Tia phân giác của góc $C$ và góc $D$ cắt nhau tại $I$. Tính góc $CID$ (độ).',
         dapAn: { kieu: 'so', gt: 75 },
         goiY: ['Tính $\\widehat{C} + \\widehat{D}$ trước.', 'Trong tam giác $ICD$: $\\widehat{ICD} + \\widehat{IDC} = \\frac{\\widehat{C} + \\widehat{D}}{2}$, rồi dùng tổng ba góc tam giác.'],
         loiGiai: ['$\\widehat{C} + \\widehat{D} = 360^\\circ - (70^\\circ + 80^\\circ) = 210^\\circ$', 'Vì $CI$, $DI$ là phân giác: $\\widehat{ICD} + \\widehat{IDC} = \\frac{210^\\circ}{2} = 105^\\circ$', 'Trong tam giác $ICD$: $\\widehat{CID} = 180^\\circ - 105^\\circ = 75^\\circ$'],
         loiThuongGap: [{ gt: 105, giaiThich: '$105^\\circ$ là tổng hai góc $\\widehat{ICD} + \\widehat{IDC}$. Góc $CID$ bằng $180^\\circ$ trừ đi tổng đó.' }] },
-      { id: '10.11', muc: 2, de: 'Khẳng định nào dưới đây là **đúng**?',
+      { id: '10.11', khongHinh: 'Câu chọn khẳng định đúng; lời giải thử từng khẳng định bằng số đo cụ thể.', muc: 2, de: 'Khẳng định nào dưới đây là **đúng**?',
         dapAn: { kieu: 'chon', gt: 1, luaChon: ['Tứ giác nào cũng có ít nhất một góc tù', 'Nếu tứ giác có ba góc nhọn thì góc còn lại là góc tù', 'Nếu tứ giác có hai góc tù thì hai góc còn lại phải là góc nhọn', 'Không có tứ giác nào có ba góc tù'] },
         goiY: ['Thử từng khẳng định với các ví dụ cụ thể: hình chữ nhật, tứ giác có góc $100^\\circ, 100^\\circ, 90^\\circ, 70^\\circ$…', 'Ba góc nhọn có tổng nhỏ hơn $3 \\cdot 90^\\circ = 270^\\circ$. Góc còn lại lớn hơn bao nhiêu?'],
         loiGiai: ['Ba góc nhọn có tổng nhỏ hơn $270^\\circ$, nên góc còn lại lớn hơn $360^\\circ - 270^\\circ = 90^\\circ$: là góc tù. Khẳng định thứ hai **đúng**.', 'Các khẳng định khác sai: hình chữ nhật không có góc tù; tứ giác $100^\\circ, 100^\\circ, 90^\\circ, 70^\\circ$ có một góc vuông; tứ giác $100^\\circ, 100^\\circ, 100^\\circ, 60^\\circ$ có ba góc tù.'] }

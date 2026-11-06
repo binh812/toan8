@@ -54,6 +54,9 @@
   }
   function vachBen(t) { var o = {}; o[t[1] + t[2]] = 1; o[t[3] + t[0]] = 1; return o; }
   function bo(t, i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4]]; }
+  // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 11): gập hình thang cân theo trục, theo chính số của đề
+  function hg(them) { return { widget: 'canh', config: { ten: 'thangCan', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them } }; }
+  var VAI = ['A', 'B', 'C', 'D'];
 
   TOAN8.luyen(11, [
     { ten: 'Góc của hình thang cân', muc: 1, sinh: function (r) {
@@ -76,7 +79,11 @@
           ? { gt: 180 - v, giaiThich: 'Hai góc $' + t[i] + '$, $' + t[j] + '$ cùng kề một đáy nên **bằng** nhau, không phải bù nhau.' }
           : { gt: v, giaiThich: 'Góc $' + t[j] + '$ không bằng góc $' + t[i] + '$. Hai góc kề một cạnh bên thì **bù** nhau.' }]),
         hinh: hinhTG({ diem: thangCan(t, 9, g, h), vong: t, vach: vachBen(t),
-          goc: [bo(t, i), bo(t, j).concat([{ mau: XANH }])], soGoc: [bo(t, i).concat([v + '°', xa(v)]), bo(t, j).concat(['?', 1, XANH])] })
+          goc: [bo(t, i), bo(t, j).concat([{ mau: XANH }])], soGoc: [bo(t, i).concat([v + '°', xa(v)]), bo(t, j).concat(['?', 1, XANH])] }),
+        hinhGiai: hg((function () {
+          var goc = {}; goc[VAI[i]] = v + '°'; goc[VAI[j]] = { dau: '?', giai: kq + '°' };
+          return { dl: 9, gocDay: g, h: h, ten: t, goc: goc };
+        })())
       };
     } },
     { ten: 'Chu vi hình thang cân', muc: 1, sinh: function (r) {
@@ -89,7 +96,8 @@
           'Chu vi $= ' + a + ' + ' + b + ' + ' + c + ' + ' + c + ' = ' + P + '$ (cm)'],
         loiThuongGap: boTrung(P, [{ gt: a + b + c, giaiThich: 'Em mới cộng **một** cạnh bên. Hình thang có hai cạnh bên, mỗi cạnh $' + c + '$ cm.' }]),
         hinh: hinhTG({ diem: thangCanCanh(t, a, b, c), vong: t, vach: vachBen(t),
-          nhan: [[t[0], t[1], a + ' cm', true], [t[3], t[2], b + ' cm'], [t[3], t[0], c + ' cm']] })
+          nhan: [[t[0], t[1], a + ' cm', true], [t[3], t[2], b + ' cm'], [t[3], t[0], c + ' cm']] }),
+        hinhGiai: hg({ dl: b, dn: a, canhBen: c, ten: t, nhan: { AB: a + ' cm', DC: b + ' cm', AD: c + ' cm', BC: { dau: '?', giai: c + ' cm' } } })
       };
     } },
     { ten: 'Đường cao hình thang cân', muc: 2, sinh: function (r) {
@@ -109,7 +117,8 @@
           ? [{ gt: 2 * e, giaiThich: '$' + 2 * e + '$ cm là tổng $' + t[3] + 'H + K' + t[2] + '$ ở **hai** bên. Hình thang cân đối xứng nên chia đôi.' }]
           : [{ gt: e, giaiThich: '$' + e + '$ cm là $' + t[3] + 'H$. Đề hỏi $' + t[2] + 'H = ' + t[3] + t[2] + ' - ' + t[3] + 'H$.' }, { gt: b - 2 * e, giaiThich: 'Em trừ cả hai phần thừa. $' + t[2] + 'H$ chỉ thiếu phần $' + t[3] + 'H$ ở một bên.' }]),
         hinh: hinhTG({ diem: D, vong: t, vach: vachBen(t), canh: [[t[0], 'H', { mau: TIM, day: 2, net: 2 }]], goc: [[t[0], 'H', t[2], XAM]],
-          nhan: [[t[0], t[1], a + ' cm', true], [t[3], t[2], b + ' cm', false, 1.4], hoiD ? [t[3], 'H', '?', true, 0.8, XANH] : ['H', t[2], '?', true, 0.8, XANH]], lechTen: { H: [0, -18] } })
+          nhan: [[t[0], t[1], a + ' cm', true], [t[3], t[2], b + ' cm', false, 1.4], hoiD ? [t[3], 'H', '?', true, 0.8, XANH] : ['H', t[2], '?', true, 0.8, XANH]], lechTen: { H: [0, -18] } }),
+        hinhGiai: hg({ dl: b, dn: a, h: h, duongCao: true, ten: t, nhan: hoiD ? { AB: a + ' cm', DC: b + ' cm', DH: { dau: '?', giai: e + ' cm' } } : { AB: a + ' cm', DC: b + ' cm', DH: e + ' cm', HC: { dau: '?', giai: kq + ' cm' } } })
       };
     } },
     { ten: 'Tam giác cân cắt bởi đường song song', muc: 2, sinh: function (r) {
@@ -127,7 +136,12 @@
         loiThuongGap: boTrung(kq, [{ gt: B, giaiThich: '$' + d(B) + '$ là góc $A' + hoi[1] + hoi[2] + '$ (đồng vị với $\\widehat{' + hoi[0] + '}$). Góc $' + hoi.join('') + '$ kề bù với nó.' }]),
         hinh: hinhTG({ diem: { A: A, B: Bp, C: C, D: Dp, E: E }, vong: ['A', 'B', 'C'], vach: { AB: 1, CA: 1 },
           canh: [['D', 'E', { mau: TIM, day: 4 }]], goc: [['B', 'A', 'C'], [hoi[0], hoi[1], hoi[2], { mau: XANH }]],
-          soGoc: [['B', 'A', 'C', al + '°', al < 70 ? 1.2 : 0.9], [hoi[0], hoi[1], hoi[2], '?', 0.8, XANH]], lechTen: { D: [-16, 8], E: [16, 8] } })
+          soGoc: [['B', 'A', 'C', al + '°', al < 70 ? 1.2 : 0.9], [hoi[0], hoi[1], hoi[2], '?', 0.8, XANH]], lechTen: { D: [-16, 8], E: [16, 8] } }),
+        hinhGiai: hg((function () {
+          var goc = { S: al + '°', D: B + '°', C: B + '°' };
+          goc[hoi[0] === 'B' ? 'A' : 'B'] = { dau: '?', giai: kq + '°' };
+          return { dl: 8, gocDay: B, h: A[1] * (1 - k), dinh: 'A', ten: ['D', 'E', 'C', 'B'], goc: goc };
+        })())
       };
     } },
     { ten: 'Hình thang cân có cạnh bên bằng đáy nhỏ', muc: 3, sinh: function (r) {

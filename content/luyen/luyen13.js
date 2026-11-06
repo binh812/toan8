@@ -38,6 +38,8 @@
     o.O = [0, 0];
     return o;
   }
+  // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 13): hai thanh bằng nhau gắn ở trung điểm, theo chính số của đề
+  function hg(them, ghiChu) { return { widget: 'canh', config: { ten: 'haiThanh', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: them, ghiChu: ghiChu } }; }
   function vuong4(t) { return [0, 1, 2, 3].map(function (i) { return [t[(i + 3) % 4], t[i], t[(i + 1) % 4], VUONG]; }); }
   // Tam giác ABC vuông tại A, cạnh huyền BC = a nằm ngang, góc B = gB; M là trung điểm BC.
   function tgVuong(a, gB) {
@@ -83,7 +85,8 @@
         de: de, dapAn: { kieu: 'so', gt: kq },
         goiY: ['Trong hình chữ nhật, hai đường chéo **bằng nhau** và cắt nhau tại **trung điểm** mỗi đường.', 'Vậy $O' + t[0] + ' = O' + t[1] + ' = O' + t[2] + ' = O' + t[3] + '$ = một nửa đường chéo.'],
         loiGiai: lg, loiThuongGap: boTrung(kq, ltg),
-        hinh: hinhTG({ diem: D, vong: t, canh: [[t[0], t[2], { mau: TIM, day: 2 }], [t[1], t[3], { mau: TIM, day: 2 }]], goc: vuong4(t), nhan: nhan, ghiChu: ghi, lechTen: { O: [0, -18] } })
+        hinh: hinhTG({ diem: D, vong: t, canh: [[t[0], t[2], { mau: TIM, day: 2 }], [t[1], t[3], { mau: TIM, day: 2 }]], goc: vuong4(t), nhan: nhan, ghiChu: ghi, lechTen: { O: [0, -18] } }),
+        hinhGiai: hg({ phi: al, L: x, ten: t, nhan: loai ? { AC: ds(2 * x) + ' cm', OB: { dau: '?', giai: ds(x) + ' cm' } } : { OA: ds(x) + ' cm', BD: { dau: '?', giai: ds(2 * x) + ' cm' } } })
       };
     } },
     { ten: 'Trung tuyến ứng với cạnh huyền', muc: 1, sinh: function (r, cc) {
@@ -100,7 +103,8 @@
         loiThuongGap: boTrung(kq, hoiAM ? [{ gt: a, giaiThich: 'Trung tuyến $AM$ chỉ bằng **nửa** cạnh huyền, không bằng cả cạnh huyền.' }]
           : [{ gt: a / 4, giaiThich: '$AM$ là nửa $BC$ nên $BC$ gấp đôi $AM$ (nhân 2, không chia 2).' }]),
         hinh: hinhTG({ diem: D, vong: ['A', 'B', 'C'], canh: [['A', 'M', { mau: TIM, day: 3 }], ['B', 'M', { vach: 1 }], ['M', 'C', { vach: 1 }]], goc: [['B', 'A', 'C', VUONG]],
-          nhan: hoiAM ? [['A', 'M', '?', true, 1, XANH]] : [['A', 'M', ds(a / 2) + ' cm', true, 1, TIM]], ghiChu: 'BC = ' + (hoiAM ? a + ' cm' : '?'), lechTen: { M: [0, -18] } })
+          nhan: hoiAM ? [['A', 'M', '?', true, 1, XANH]] : [['A', 'M', ds(a / 2) + ' cm', true, 1, TIM]], ghiChu: 'BC = ' + (hoiAM ? a + ' cm' : '?'), lechTen: { M: [0, -18] } }),
+        hinhGiai: hg({ dang: 'trungTuyen', bc: a, gocB: gB, nhan: hoiAM ? { BC: a + ' cm', AM: { dau: '?', giai: ds(a / 2) + ' cm' } } : { AM: ds(a / 2) + ' cm', BC: { dau: '?', giai: a + ' cm' } } })
       };
     } },
     { ten: 'Góc tạo bởi hai đường chéo', muc: 2, sinh: function (r) {
@@ -121,7 +125,9 @@
         goiY: ['Trong hình chữ nhật, $O' + t[0] + ' = O' + t[1] + ' = O' + t[2] + ' = O' + t[3] + '$. Tam giác $O' + t[0] + X + '$ là tam giác gì?', hoiKe ? 'Hai góc ở đáy của tam giác cân bằng $(180^\\circ - ' + d(al) + ') : 2$.' : 'Tính góc $' + t[0] + 'O' + t[3] + '$ trước (kề bù với góc $' + t[0] + 'O' + t[1] + '$).'],
         loiGiai: lg, loiThuongGap: boTrung(kq, ltg),
         hinh: hinhTG({ diem: hcn(t, 3.5, al), vong: t, canh: [[t[0], t[2], { mau: TIM, day: 2 }], [t[1], t[3], { mau: TIM, day: 2 }]],
-          goc: [[t[0], 'O', t[1]], ['O', t[0], X, { mau: XANH }]], soGoc: [[t[0], 'O', t[1], al + '°', al < 70 ? 0.8 : 0.6], ['O', t[0], X, '?', 1.1, XANH]], lechTen: { O: [0, -18] } })
+          goc: [[t[0], 'O', t[1]], ['O', t[0], X, { mau: XANH }]], soGoc: [[t[0], 'O', t[1], al + '°', al < 70 ? 0.8 : 0.6], ['O', t[0], X, '?', 1.1, XANH]], lechTen: { O: [0, -18] } }),
+        hinhGiai: hg(hoiKe ? { phi: al, ten: t, to: 'OAB', goc: { AOB: al + '°', OAB: { dau: '?', giai: kq + '°' } } }
+          : { phi: al, ten: t, to: 'OAD', goc: { AOB: al + '°', AOD: (180 - al) + '°', OAD: { dau: '?', giai: kq + '°' } } })
       };
     } },
     { ten: 'Trung tuyến bằng nửa cạnh: góc còn lại', muc: 2, sinh: function (r) {
@@ -135,7 +141,8 @@
         loiThuongGap: boTrung(kq, [{ gt: gB, giaiThich: 'Tam giác $ABC$ không cân. Hãy nhận ra $\\widehat{A} = 90^\\circ$ (vì $AM = \\frac{BC}{2}$) rồi dùng tổng ba góc.' }]),
         hinh: hinhTG({ diem: tgVuong(a, gB), vong: ['A', 'B', 'C'], canh: [['A', 'M', { mau: TIM, day: 3 }], ['B', 'M', { vach: 1 }], ['M', 'C', { vach: 1 }]],
           goc: [['A', 'B', 'C'], ['A', 'C', 'B', { mau: XANH }]], soGoc: [['A', 'B', 'C', gB + '°', 1.5], ['A', 'C', 'B', '?', 1.3, XANH]],
-          nhan: [['A', 'M', a / 2 + ' cm', true, 1, TIM]], ghiChu: 'BC = ' + a + ' cm', lechTen: { M: [0, -18] } })
+          nhan: [['A', 'M', a / 2 + ' cm', true, 1, TIM]], ghiChu: 'BC = ' + a + ' cm', lechTen: { M: [0, -18] } }),
+        hinhGiai: hg({ dang: 'trungTuyen', bc: a, gocB: gB, nhan: { BC: a + ' cm', AM: a / 2 + ' cm' }, goc: { A: { dau: '?', giai: '90°' } }, vuongA: false })
       };
     } },
     { ten: 'Tam giác vuông: góc tại trung điểm cạnh huyền', muc: 3, sinh: function (r) {

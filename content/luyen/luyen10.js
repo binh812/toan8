@@ -97,6 +97,8 @@
     });
   }
   function tong(a) { return a.reduce(function (s, x) { return s + x; }, 0); }
+  // Hình ở lời giải (cảnh "Nhìn là hiểu" bài 10): các góc ghép quanh một điểm thành một vòng, theo chính số của đề
+  function hg(goc, them) { return { widget: 'canh', config: { ten: 'gocTuGiac', chiXem: true, t: 1, thamSo: { trangThai: 'giai' }, tuyChon: Object.assign({ goc: goc }, them) } }; }
 
   // Hình cho câu soạn sẵn: góc ngoài tại B bằng 70°
   var gN = [85, 110, 75, 90], PN = dung(gN), xN = [PN[1][0] + 0.45 * (PN[1][0] - PN[0][0]), PN[1][1]];
@@ -115,7 +117,8 @@
         loiGiai: ['$' + t.map(G).join(' + ') + ' = 360^\\circ$ (tổng các góc của một tứ giác).',
           '$' + G(t[k]) + ' = 360^\\circ - (' + biet.map(function (i) { return d(g[i]); }).join(' + ') + ') = 360^\\circ - ' + d(s) + '$',
           '$' + G(t[k]) + ' = ' + d(g[k]) + '$'],
-        hinh: hinhBonGoc(q.P, t, g, [k])
+        hinh: hinhBonGoc(q.P, t, g, [k]),
+        hinhGiai: hg(g, { ten: t, an: [k] })
       };
     } },
     { ten: 'Góc ngoài của tứ giác', muc: 2, sinh: function (r) {
@@ -134,7 +137,8 @@
         loiThuongGap: boTrung(g[3], [{ gt: sai, giaiThich: 'Em lấy luôn góc ngoài $' + d(e) + '$ làm góc $' + t[1] + '$ của tứ giác. Góc trong là $180^\\circ - ' + d(e) + ' = ' + d(g[1]) + '$.' }]),
         hinh: hinhTG({ diem: D, vong: t, canh: [[t[1], 'x', { day: 2 }]],
           goc: [bo(t, 0), ['x', t[1], t[2]], bo(t, 2), bo(t, 3).concat([{ mau: XANH }])],
-          soGoc: [bo(t, 0).concat([g[0] + '°', xa(g[0])]), ['x', t[1], t[2], e + '°', xa(e) * 1.15], bo(t, 2).concat([g[2] + '°', xa(g[2])]), bo(t, 3).concat(['?', 1, XANH])] })
+          soGoc: [bo(t, 0).concat([g[0] + '°', xa(g[0])]), ['x', t[1], t[2], e + '°', xa(e) * 1.15], bo(t, 2).concat([g[2] + '°', xa(g[2])]), bo(t, 3).concat(['?', 1, XANH])] }),
+        hinhGiai: hg(g, { ten: t, an: [3], ngoai: { i: 1, nhan: e + '°' } })
       };
     } },
     { ten: 'Hai góc hơn kém nhau', muc: 2, sinh: function (r) {
@@ -147,7 +151,8 @@
         loiGiai: ['$' + G(t[0]) + ' + ' + G(t[3]) + ' = 360^\\circ - (' + d(g[1]) + ' + ' + d(g[2]) + ') = ' + d(s) + '$',
           '$2' + G(t[0]) + ' + ' + d(k) + ' = ' + d(s) + '$, nên $' + G(t[0]) + ' = (' + s + ' - ' + k + ') : 2 = ' + d(g[0]) + '$',
           '$' + G(t[3]) + ' = ' + d(g[0]) + ' + ' + d(k) + ' = ' + d(g[3]) + '$'],
-        hinh: hinhBonGoc(q.P, t, g, [0, 3])
+        hinh: hinhBonGoc(q.P, t, g, [0, 3]),
+        hinhGiai: hg(g, { ten: t, an: [0, 3], nhanHo: { dau: '?', cuoi: s + '°' } })
       };
     } },
     { ten: 'Bốn góc tỉ lệ', muc: 2, sinh: function (r) {
@@ -163,7 +168,12 @@
           'Cộng lại: $' + n + 'x = 360^\\circ$. Tìm $x$ rồi nhân với số phần của góc cần tìm.'],
         loiGiai: ['$' + tl.map(function (a) { return (a === 1 ? '' : a) + 'x'; }).join(' + ') + ' = 360^\\circ$, tức $' + n + 'x = 360^\\circ$, $x = ' + d(x) + '$',
           'Góc ' + (hoiLon ? 'lớn' : 'nhỏ') + ' nhất ứng với $' + m + '$ phần: $' + (m === 1 ? 'x = ' + d(kq) : m + 'x = ' + m + ' \\cdot ' + d(x) + ' = ' + d(kq)) + '$'],
-        loiThuongGap: boTrung(kq, ltg)
+        loiThuongGap: boTrung(kq, ltg),
+        // Vòng tròn chia thành n phần bằng nhau, mỗi góc gồm đúng số phần của nó
+        hinhGiai: hg(tl.map(function (a) { return a * x; }), { ten: t, phan: tl, nhan: tl.map(function (a, i) {
+          var chu = (a === 1 ? '' : a) + 'x';
+          return a === m && tl.indexOf(m) === i ? { dau: chu, giai: kq + '°' } : chu;
+        }) })
       };
     } },
     { ten: 'Phân giác hai góc kề', muc: 3, sinh: function (r) {
