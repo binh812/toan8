@@ -6,6 +6,8 @@ function hieu(tenA, tenB, a, b, nhan, ghiChu) {
 }
 function tong(tenA, tenB, a, b, nhan) { return { ten: 'haiLapPhuong', thamSo: { a: a, b: b }, tuyChon: { dang: 'tong', tenA: tenA, tenB: tenB, nhan: nhan } }; }
 function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+// Thẻ Suy ra: bấm nút chỉ bỏ góc và tách tấm, mặt và độ dày các tấm ghi dấu hỏi tới khi em làm đúng
+function an(c) { return Object.assign({}, c, { tuyChon: Object.assign({}, c.tuyChon, { anTam: true }) }); }
 var X3 = { a2: 'x²', ab: '3x', b2: '9', b3: '27', hieu: 'x−3' }, X2 = { a2: 'x²', ab: '2x', b2: '4', b3: '8', hieu: 'x−2' };
 var T1 = { a3: 'x³', a2b: 'x²', ab2: 'x', b3: '1', hop: 'x(x+1)' };
 
@@ -18,7 +20,7 @@ TOAN8.bai({
     canh: { ten: 'haiLapPhuong', tuyChon: { dang: 'hieu' }, moTa: 'Khối lập phương cạnh a bỏ đi khối nhỏ cạnh b ở một góc. Phần còn lại tách thành ba tấm cùng dày a trừ b, mặt lần lượt là a bình phương, a b, b bình phương.',
       dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); }, b = Math.max(0.5, Math.min(p.b, p.a - 0.5));
-        return '$\\ca{' + so(p.a * p.a * p.a) + '} - \\cb{' + so(b * b * b) + '} = (' + so(p.a) + ' - ' + so(b) + ')(\\ca{' + so(p.a * p.a) + '} + \\cc{' + so(p.a * b) + '} + \\cb{' + so(b * b) + '}) = ' + so(p.a * p.a * p.a - b * b * b) + '$'; } },
+        return '$\\ca{' + so(p.a * p.a * p.a) + '} - \\cb{' + so(b * b * b) + '} = ' + so(p.a * p.a * p.a - b * b * b) + '$\n$(' + so(p.a) + ' - ' + so(b) + ')(\\ca{' + so(p.a * p.a) + '} + \\cc{' + so(p.a * b) + '} + \\cb{' + so(b * b) + '}) = ' + so(p.a * p.a * p.a - b * b * b) + '$'; } },
     buoc: [
       { t: 0, chu: 'Khối lập phương cạnh $\\ca{a}$, thể tích $\\ca{a}^3$. Ở một góc là khối nhỏ cạnh $\\cb{b}$.' },
       { t: 0.1, chu: 'Bỏ khối nhỏ đi. Phần còn lại có thể tích $\\ca{a}^3 - \\cb{b}^3$.' },
@@ -43,11 +45,11 @@ TOAN8.bai({
     suyRa: {
       tieuDe: 'Thấy hiệu hai lập phương là thấy ba tấm',
       baDe: [
-        { tuBai: '8.6', canh: hieu('4', 'y', 3.5, 1.5, { a2: '16', ab: '4y', b2: 'y²', b3: 'y³', hieu: '4−y' }), tenNut: 'Bỏ góc, tách tấm',
+        { tuBai: '8.6', canh: an(hieu('4', 'y', 3.5, 1.5, { a2: '16', ab: '4y', b2: 'y²', b3: 'y³', hieu: '4−y' })), tenNut: 'Bỏ góc, tách tấm',
           dungChu: '$64 - y^3 = 4^3 - y^3 = (4 - y)(16 + 4y + y^2)$.', saiChu: 'Khối lớn cạnh $4$ (vì $64 = 4^3$), bỏ góc cạnh $y$. Ba tấm cùng dày $4 - y$, mặt là $4\\cdot 4$, $4\\cdot y$, $y\\cdot y$.' },
-        { tuBai: '8.7', canh: hieu('x', '2', 3.5, 1.5, X2), tenNut: 'Bỏ góc, tách tấm',
+        { tuBai: '8.7', canh: an(hieu('x', '2', 3.5, 1.5, X2)), tenNut: 'Bỏ góc, tách tấm',
           dungChu: '$(x - 2)(x^2 + 2x + 4)$ là ba tấm, tức khối $x^3$ đã bỏ góc $8$. Trừ tiếp $x^3$ thì còn $-8$.', saiChu: 'Tích $(x - 2)(x^2 + 2x + 4)$ chính là ba tấm trên hình: khối $x^3$ đã bỏ góc $2^3 = 8$. Lấy cái đó trừ $x^3$.' },
-        { tuBai: '8.8', canh: hieu('2x', '1', 3.5, 1.5, { a2: '4x²', ab: '2x', b2: '1', b3: '1', hieu: '2x−1' }), tenNut: 'Bỏ góc, tách tấm',
+        { tuBai: '8.8', canh: an(hieu('2x', '1', 3.5, 1.5, { a2: '4x²', ab: '2x', b2: '1', b3: '1', hieu: '2x−1' })), tenNut: 'Bỏ góc, tách tấm',
           de: 'Điền vào ô trống: $8x^3 - 1 = (2x - 1)(\\boxed{?} + 2x + 1)$.',
           dapAn: { kieu: 'bieuThuc', gt: '4x^2' },
           goiY: ['$8x^3 = (2x)^3$: khối lớn có cạnh $2x$.', 'Ô trống là mặt của tấm lớn nhất: $(2x)\\cdot(2x)$.'],

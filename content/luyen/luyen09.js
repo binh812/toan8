@@ -8,8 +8,8 @@
   // khối lập phương (haiLapPhuong). Cạnh có chữ nên hình không theo tỉ lệ.
   function dep(s) { return String(s).replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/-/g, '−'); }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
-  function xn(hang, cot, o, rong, cao, ghiChu) {
-    return hg({ ten: 'xepChuNhat', ghiChu: ghiChu || 'Hình không theo tỉ lệ.', tuyChon: { hang: hang, cot: cot, o: o, tenRong: rong, tenCao: cao } });
+  function xn(hang, cot, o, rong, cao, ghiChu, ket) {
+    return hg({ ten: 'xepChuNhat', ghiChu: ghiChu || 'Hình không theo tỉ lệ.', tuyChon: { hang: hang, cot: cot, o: o, tenRong: rong, tenCao: cao, tenKet: ket } });
   }
   function hbp(A, B, a2, b2, ghiChu) {
     return hg({ ten: 'manhVuong', thamSo: { a: 5, b: 2 }, tuyChon: { dang: 'hieuHaiBP', tenA: A, tenB: B, nhan: { a2: a2, b2: b2 } }, ghiChu: ghiChu || 'Hình vẽ khi ' + A + ' lớn hơn ' + B + '.' });
@@ -30,7 +30,7 @@
       return {
         de: 'Phân tích $' + tx(cc, de) + '$ thành nhân tử.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'nhanTu' },
-        hinhGiai: xn([{ ten: dep(chung), dai: 3 }], [{ ten: dep(cc.daThuc([[p, 'x']])), dai: 5 }, { ten: String(Math.abs(q)), dai: 2, tru: q < 0 }], [[dep(cc.daThuc([[g * p, 'x^' + (e + 1)]])), dep(cc.daThuc([[Math.abs(g * q), e === 1 ? 'x' : 'x^2']]))]], dep(trong)),
+        hinhGiai: xn([{ ten: dep(chung), dai: 3 }], [{ ten: dep(cc.daThuc([[p, 'x']])), dai: 5 }, { ten: String(Math.abs(q)), dai: 2, tru: q < 0 }], [[dep(cc.daThuc([[g * p, 'x^' + (e + 1)]])), dep(cc.daThuc([[Math.abs(g * q), e === 1 ? 'x' : 'x^2']]))]], dep(trong), null, null, dep(chung) + '(' + dep(trong) + ')'),
         goiY: ['Nhân tử chung = ƯCLN của các hệ số nhân với lũy thừa của $x$ có số mũ nhỏ nhất.', 'Nhân tử chung là $' + cc.tex(chung) + '$. Chia từng hạng tử cho nó.'],
         loiGiai: ['$' + tx(cc, de) + ' = ' + cc.tex(chung) + ' \\cdot ' + cc.tex(cc.daThuc([[p, 'x']])) + (q < 0 ? ' - ' : ' + ') + cc.tex(chung) + ' \\cdot ' + Math.abs(q) + '$',
           '$= ' + cc.tex(kq) + '$'],
@@ -95,7 +95,7 @@
         de: 'Phân tích $' + cc.tex(de) + '$ thành nhân tử.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'nhanTu' },
         hinhGiai: xn([{ ten: 'x', dai: 5 }, { ten: String(Math.abs(a)), dai: 2, tru: a < 0 }], [{ ten: 'x', dai: 5 }, { ten: dep(cc.daThuc([[Math.abs(b), 'y']])), dai: 2, tru: b < 0 }],
-          [['x²', dep(cc.daThuc([[Math.abs(b), 'xy']]))], [dep(cc.daThuc([[Math.abs(a), 'x']])), dep(cc.daThuc([[Math.abs(a * b), 'y']]))]], dep(cc.daThuc([[1, 'x'], [b, 'y']])), dep(cc.daThuc([[1, 'x'], [a, '']]))),
+          [['x²', dep(cc.daThuc([[Math.abs(b), 'xy']]))], [dep(cc.daThuc([[Math.abs(a), 'x']])), dep(cc.daThuc([[Math.abs(a * b), 'y']]))]], dep(cc.daThuc([[1, 'x'], [b, 'y']])), dep(cc.daThuc([[1, 'x'], [a, '']])), null, ['(' + dep(cc.daThuc([[1, 'x'], [b, 'y']])) + ')', '(' + dep(cc.daThuc([[1, 'x'], [a, '']])) + ')']),
         goiY: ['Nhóm hai hạng tử đầu và hai hạng tử cuối: $(' + cc.tex(nh1) + ') + (' + tx(cc, nh2) + ')$.', 'Đặt nhân tử chung trong mỗi nhóm, sẽ xuất hiện nhân tử chung $(' + cc.tex(by) + ')$.'],
         loiGiai: ['$= (' + cc.tex(nh1) + ') + (' + tx(cc, nh2) + ')$',
           '$= x(' + cc.tex(by) + ') ' + (a < 0 ? '- ' : '+ ') + (Math.abs(a) === 1 ? '' : Math.abs(a)) + '(' + cc.tex(by) + ')$',
@@ -113,7 +113,8 @@
         return {
           de: 'Tìm $x$, biết $' + cc.tex(de) + ' = 0$. (Ghi các giá trị cách nhau bằng dấu ;)',
           dapAn: { kieu: 'nghiem', gt: [0, k] },
-          hinhGiai: xn([{ ten: dep(nhan(a) + 'x'), dai: 3 }], [{ ten: 'x', dai: 5 }, { ten: String(Math.abs(k)), dai: 2, tru: k > 0 }], [[dep(cc.daThuc([[a, 'x^2']])), dep(cc.daThuc([[a * Math.abs(k), 'x']]))]], dep(cc.daThuc([[1, 'x'], [-k, '']])), null, 'Hình cho bước phân tích, không theo tỉ lệ.'),
+          hinhGiai: xn([{ ten: dep(nhan(a) + 'x'), dai: 3 }], [{ ten: 'x', dai: 5 }, { ten: String(Math.abs(k)), dai: 2, tru: k > 0 }], [[dep(cc.daThuc([[a, 'x^2']])), dep(cc.daThuc([[a * Math.abs(k), 'x']]))]], dep(cc.daThuc([[1, 'x'], [-k, '']])), null, 'Hình cho bước phân tích, không theo tỉ lệ.', dep(nhan(a) + 'x') + '(' + dep(cc.daThuc([[1, 'x'], [-k, '']])) + ')'),
+          loiThuongGap: [{ gt: [k], giaiThich: 'Em làm mất giá trị $x = 0$ (có lẽ đã chia hai vế cho $x$). Thừa số $' + nhan(a) + 'x$ bằng $0$ khi $x = 0$, khi đó tích cũng bằng $0$.' }],
           goiY: ['Đặt nhân tử chung: $' + cc.tex(de) + ' = ' + nhan(a) + 'x(' + cc.daThuc([[1, 'x'], [-k, '']]) + ')$.', 'Tích bằng $0$ khi một trong các thừa số bằng $0$. **Đừng** chia hai vế cho $x$ (sẽ mất nghiệm $x = 0$).'],
           loiGiai: ['$' + cc.tex(de) + ' = 0 \\Rightarrow ' + nhan(a) + 'x(' + cc.tex(cc.daThuc([[1, 'x'], [-k, '']])) + ') = 0$',
             '$x = 0$ hoặc $' + cc.tex(cc.daThuc([[1, 'x'], [-k, '']])) + ' = 0$', 'Vậy $x = 0$; $x = ' + k + '$.']
@@ -125,7 +126,8 @@
         return {
           de: 'Tìm $x$, biết $' + cc.tex(de2) + ' = 0$. (Ghi các giá trị cách nhau bằng dấu ;)',
           dapAn: { kieu: 'nghiem', gt: [m, -m] },
-          hinhGiai: hbp('x', String(m), 'x²', String(m * m), c > 1 ? 'Hình cho phần x² − ' + m * m + ' sau khi đặt ' + c + ' ra ngoài.' : null),
+          hinhGiai: hbp('x', String(m), 'x²', String(m * m), (c > 1 ? 'Hình cho phần x² − ' + m * m + ' sau khi đặt ' + c + ' ra ngoài, ' : 'Hình ') + 'vẽ khi x lớn hơn ' + m + '.'),
+          loiThuongGap: [{ gt: [m], giaiThich: 'Còn giá trị âm: $(-' + m + ')^2 = ' + m * m + '$ nên $x = -' + m + '$ cũng thỏa mãn.' }],
           goiY: [c > 1 ? 'Đặt $' + c + '$ ra ngoài, rồi dùng hiệu hai bình phương.' : 'Dùng hiệu hai bình phương: $x^2 - ' + m * m + ' = x^2 - ' + m + '^2$.', 'Có **hai** giá trị của $x$ (một dương, một âm).'],
           loiGiai: ['$' + cc.tex(de2) + ' = 0 \\Rightarrow ' + nhan(c) + '(x - ' + m + ')(x + ' + m + ') = 0$',
             '$x - ' + m + ' = 0$ hoặc $x + ' + m + ' = 0$', 'Vậy $x = ' + m + '$; $x = -' + m + '$.']
@@ -137,7 +139,9 @@
       return {
         de: 'Tìm $x$, biết $' + cc.tex(de3) + ' = 0$. (Ghi các giá trị cách nhau bằng dấu ;)',
         dapAn: { kieu: 'nghiem', gt: [0, m3, -m3] },
-        hinhGiai: hbp('x', String(m3), 'x²', String(m3 * m3), 'Hình cho phần x² − ' + m3 * m3 + ' sau khi đặt ' + nhan(c3) + 'x ra ngoài.'),
+        hinhGiai: hbp('x', String(m3), 'x²', String(m3 * m3), 'Hình cho phần x² − ' + m3 * m3 + ' sau khi đặt ' + nhan(c3) + 'x ra ngoài, vẽ khi x lớn hơn ' + m3 + '.'),
+        loiThuongGap: [{ gt: [m3, -m3], giaiThich: 'Còn thừa số $' + nhan(c3) + 'x$: nó bằng $0$ khi $x = 0$, nên $x = 0$ cũng là một giá trị cần tìm.' },
+          { gt: [0, m3], giaiThich: 'Còn giá trị âm: $x + ' + m3 + ' = 0$ khi $x = -' + m3 + '$.' }],
         goiY: ['Đặt nhân tử chung $' + nhan(c3) + 'x$ trước, rồi phân tích tiếp bằng hiệu hai bình phương.', 'Có **ba** thừa số chứa $x$ nên có ba giá trị của $x$.'],
         loiGiai: ['$' + cc.tex(de3) + ' = ' + nhan(c3) + 'x(x^2 - ' + m3 * m3 + ') = ' + nhan(c3) + 'x(x - ' + m3 + ')(x + ' + m3 + ')$',
           '$x = 0$ hoặc $x - ' + m3 + ' = 0$ hoặc $x + ' + m3 + ' = 0$', 'Vậy $x = 0$; $x = ' + m3 + '$; $x = -' + m3 + '$.']

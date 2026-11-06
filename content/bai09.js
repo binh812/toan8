@@ -6,8 +6,10 @@
   // Cạnh là số, hoặc [hệ số của x, số hạng tự do] để đổi theo thanh x; cạnh "tru" là phần bị bỏ đi.
   function xn(hang, cot, o, them, ghiChu) {
     return { ten: 'xepChuNhat', thamSo: them && them.x ? { x: them.x } : undefined, ghiChu: ghiChu,
-      tuyChon: { hang: hang, cot: cot, o: o, tenRong: them && them.rong, tenCao: them && them.cao } };
+      tuyChon: { hang: hang, cot: cot, o: o, tenRong: them && them.rong, tenCao: them && them.cao, tenKet: them && them.ket } };
   }
+  // Thẻ Suy ra: bấm nút chỉ xếp mảnh, các cạnh ghi dấu hỏi tới khi em làm đúng
+  function an(c) { return Object.assign({}, c, { tuyChon: Object.assign({}, c.tuyChon, { anCanh: true }) }); }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
   function bp(tenA, tenB, nhan, ghiChu) { return { ten: 'manhVuong', thamSo: { a: 5, b: 2 }, tuyChon: { dang: 'hieuHaiBP', tenA: tenA, tenB: tenB, nhan: nhan }, ghiChu: ghiChu }; }
   var X = [1, 0];
@@ -49,11 +51,11 @@
       suyRa: {
         tieuDe: 'Số, chữ hay hằng đẳng thức: vẫn là xếp thành hình chữ nhật',
         baDe: [
-          { tuBai: '9.9', canh: B99, tenNut: 'Xếp hai mảnh',
+          { tuBai: '9.9', canh: an(B99), tenNut: 'Xếp hai mảnh',
             dungChu: '$37\\cdot 64 + 37\\cdot 36 = 37\\cdot (64 + 36) = 37\\cdot 100 = 3700$.', saiChu: 'Hai mảnh cùng cao $37$; ghép lại thành hình chữ nhật $37 \\times (64 + 36)$.' },
-          { tuBai: '9.6', canh: B96, tenNut: 'Xếp bốn mảnh',
+          { tuBai: '9.6', canh: an(B96), tenNut: 'Xếp bốn mảnh',
             dungChu: 'Bốn mảnh xếp thành hình vuông cạnh $3x + 1$: $9x^2 + 6x + 1 = (3x + 1)^2$.', saiChu: 'Mảnh $9x^2$ là hình vuông cạnh $3x$ (không phải $9x$), mảnh $1$ là hình vuông cạnh $1$; hai mảnh $3x$ lấp chỗ còn lại.' },
-          { tuBai: '9.5', canh: bp('x', '4', { a2: 'x²', b2: '16' }, 'Hình vẽ khi x lớn hơn 4.'), tenNut: 'Cắt và ghép lại',
+          { tuBai: '9.5', canh: bp('x', '4', { a2: 'x²', b2: '16', tong: '?', hieu: '?' }, 'Hình vẽ khi x lớn hơn 4.'), tenNut: 'Cắt và ghép lại',
             dungChu: '$x^2 - 16 = x^2 - 4^2 = (x - 4)(x + 4)$: hình chữ nhật cạnh $x + 4$ và $x - 4$.', saiChu: 'Hình vuông $x^2$ khoét góc $16 = 4^2$, cắt rồi ghép lại thành hình chữ nhật. Hai cạnh của nó là gì?' }
         ],
         cachNhan: 'Phân tích thành nhân tử là xếp các mảnh thành một hình chữ nhật. Các mảnh chung một cạnh: đặt nhân tử chung. Các mảnh ghép thành hình vuông, hay hình vuông khoét góc: dùng hằng đẳng thức.'
@@ -123,7 +125,7 @@
     ],
 
     viDu: [
-      { de: 'Phân tích $6x^2y - 9xy^2$ thành nhân tử.', canh: xn([{ ten: '3xy', dai: 6 }], [{ ten: '2x', dai: 4 }, { ten: '3y', dai: 3, tru: true }], [['6x²y', '9xy²']], { rong: '2x − 3y' }, 'Hình vẽ với x = 2, y = 1.'), buoc: [
+      { de: 'Phân tích $6x^2y - 9xy^2$ thành nhân tử.', canh: xn([{ ten: '3xy', dai: 18 }], [{ ten: '2x', dai: 12 }, { ten: '3y', dai: 3, tru: true }], [['6x²y', '9xy²']], { rong: '2x − 3y', ket: ['3xy', '(2x − 3y)'] }, 'Hình vẽ với x = 6, y = 1.'), buoc: [
         { lam: 'Nhân tử chung: $3xy$', vi: 'ƯCLN$(6, 9) = 3$; biến $x$ và $y$ có ở cả hai hạng tử, lấy số mũ nhỏ nhất là $x$, $y$.' },
         { lam: '$6x^2y - 9xy^2 = 3xy\\cdot 2x - 3xy\\cdot 3y$', vi: 'Viết mỗi hạng tử thành tích có chứa $3xy$.' },
         { lam: '$= 3xy(2x - 3y)$', vi: 'Đặt $3xy$ ra ngoài ngoặc.' } ] },
@@ -162,13 +164,13 @@
         loiGiai: ['$3x + 12 = 3\\cdot x + 3\\cdot 4$', '$= 3(x + 4)$'],
         loiThuongGap: [{ gt: '3(x+12)', hinh: hg(Object.assign({}, B91, { thamSo: { x: 5, thu: { cot: [{ ten: 'x', dai: X }, { ten: '12', dai: 12 }], nhan: 'em ghi 3(x + 12)' } } })), giaiThich: 'Khi đặt 3 ra ngoài, phải **chia** 12 cho 3: còn lại 4.' }] },
 
-      { id: '9.2', hinhGiai: hg(xn([{ ten: 'x', dai: 9 }], [{ ten: 'x', dai: 9 }, { ten: '7', dai: 7, tru: true }], [['x²', '7x']], { rong: 'x − 7' }, 'Hình vẽ khi x lớn hơn 7.')), muc: 1, de: 'Phân tích $x^2 - 7x$ thành nhân tử.',
+      { id: '9.2', hinhGiai: hg(xn([{ ten: 'x', dai: 12 }], [{ ten: 'x', dai: 12 }, { ten: '7', dai: 7, tru: true }], [['x²', '7x']], { rong: 'x − 7', ket: 'x(x − 7)' }, 'Hình vẽ khi x lớn hơn 7.')), muc: 1, de: 'Phân tích $x^2 - 7x$ thành nhân tử.',
         dapAn: { kieu: 'bieuThuc', gt: 'x(x-7)', dang: 'nhanTu' },
         goiY: ['Cả hai hạng tử đều có $x$.', '$x^2 = x\\cdot x$, $7x = x\\cdot 7$.'],
         loiGiai: ['$x^2 - 7x = x\\cdot x - x\\cdot 7$', '$= x(x - 7)$'],
         loiThuongGap: [{ gt: 'x(x+7)', giaiThich: 'Giữ nguyên dấu trừ: $x^2 - 7x = x(x - 7)$.' }] },
 
-      { id: '9.3', hinhGiai: hg(xn([{ ten: '2x', dai: 6 }], [{ ten: 'x', dai: 3 }, { ten: '2', dai: 2, tru: true }], [['2x²', '4x']], { rong: 'x − 2' }, 'Hình vẽ khi x lớn hơn 2.')), muc: 1, de: 'Phân tích $2x^2 - 4x$ thành nhân tử.',
+      { id: '9.3', hinhGiai: hg(xn([{ ten: '2x', dai: 12 }], [{ ten: 'x', dai: 6 }, { ten: '2', dai: 2, tru: true }], [['2x²', '4x']], { rong: 'x − 2', ket: '2x(x − 2)' }, 'Hình vẽ khi x lớn hơn 2.')), muc: 1, de: 'Phân tích $2x^2 - 4x$ thành nhân tử.',
         dapAn: { kieu: 'bieuThuc', gt: '2x(x-2)', dang: 'nhanTu' },
         goiY: ['Nhân tử chung gồm cả **số** và **biến**.', 'ƯCLN$(2, 4) = 2$, biến chung là $x$: nhân tử chung là $2x$.'],
         loiGiai: ['$2x^2 - 4x = 2x\\cdot x - 2x\\cdot 2$', '$= 2x(x - 2)$'],
@@ -191,13 +193,13 @@
         loiGiai: ['$9x^2 + 6x + 1 = (3x)^2 + 2\\cdot 3x\\cdot 1 + 1^2$', '$= (3x + 1)^2$'],
         loiThuongGap: [{ gt: '(9x+1)^2', giaiThich: '$A^2 = 9x^2$ nên $A = 3x$, không phải $9x$.' }] },
 
-      { id: '9.7', hinhGiai: hg(xn([{ ten: 'x', dai: 5 }, { ten: '4', dai: 4 }], [{ ten: 'x', dai: 5 }, { ten: 'y', dai: 2, tru: true }], [['x²', 'xy'], ['4x', '4y']], { rong: 'x − y', cao: 'x + 4' }, 'Hình vẽ khi x lớn hơn y.')), muc: 2, de: 'Phân tích $x^2 - xy + 4x - 4y$ thành nhân tử.',
+      { id: '9.7', hinhGiai: hg(xn([{ ten: 'x', dai: 7 }, { ten: '4', dai: 4 }], [{ ten: 'x', dai: 7 }, { ten: 'y', dai: 2, tru: true }], [['x²', 'xy'], ['4x', '4y']], { rong: 'x − y', cao: 'x + 4', ket: ['(x − y)', '(x + 4)'] }, 'Hình vẽ khi x lớn hơn y.')), muc: 2, de: 'Phân tích $x^2 - xy + 4x - 4y$ thành nhân tử.',
         dapAn: { kieu: 'bieuThuc', gt: '(x-y)(x+4)', dang: 'nhanTu' },
         goiY: ['Nhóm $(x^2 - xy) + (4x - 4y)$.', 'Mỗi nhóm đặt nhân tử chung: $x(x - y) + 4(x - y)$.'],
         loiGiai: ['$x^2 - xy + 4x - 4y = (x^2 - xy) + (4x - 4y)$', '$= x(x - y) + 4(x - y)$', '$= (x - y)(x + 4)$'],
         loiThuongGap: [{ gt: '(x-y)(x-4)', giaiThich: 'Nhóm thứ hai là $4x - 4y = +4(x - y)$, nên thừa số còn lại là $x + 4$.' }] },
 
-      { id: '9.8', hinhGiai: hg(xn([{ ten: 'x', dai: 7 }], [{ ten: 'x', dai: 7 }, { ten: '5', dai: 5, tru: true }], [['x²', '5x']], { rong: 'x − 5' }, 'Hình cho bước phân tích x² − 5x = x(x − 5), vẽ khi x lớn hơn 5.')), muc: 2, de: 'Tìm $x$, biết $x^2 - 5x = 0$. (Ghi các giá trị cách nhau bằng dấu ; ví dụ: x = 1; x = 2)',
+      { id: '9.8', hinhGiai: hg(xn([{ ten: 'x', dai: 12 }], [{ ten: 'x', dai: 12 }, { ten: '5', dai: 5, tru: true }], [['x²', '5x']], { rong: 'x − 5', ket: 'x(x − 5)' }, 'Hình cho bước phân tích x² − 5x = x(x − 5), vẽ khi x lớn hơn 5.')), muc: 2, de: 'Tìm $x$, biết $x^2 - 5x = 0$. (Ghi các giá trị cách nhau bằng dấu ; ví dụ: x = 1; x = 2)',
         dapAn: { kieu: 'nghiem', gt: [0, 5] },
         goiY: ['Phân tích vế trái: $x^2 - 5x = x(x - 5)$.', 'Tích bằng 0 khi $x = 0$ hoặc $x - 5 = 0$. Đừng chia hai vế cho $x$!'],
         loiGiai: ['$x^2 - 5x = 0 \\Rightarrow x(x - 5) = 0$', '$x = 0$ hoặc $x - 5 = 0$', 'Vậy $x = 0$ hoặc $x = 5$.'] },
@@ -217,7 +219,7 @@
         goiY: ['$3x^3 - 12x = 3x(x^2 - 4)$, rồi phân tích tiếp $x^2 - 4$.', '$3x(x - 2)(x + 2) = 0$: có **ba** thừa số chứa $x$, nên có ba giá trị của $x$.'],
         loiGiai: ['$3x^3 - 12x = 3x(x^2 - 4) = 3x(x - 2)(x + 2)$', '$3x(x - 2)(x + 2) = 0 \\Rightarrow x = 0$ hoặc $x - 2 = 0$ hoặc $x + 2 = 0$', 'Vậy $x = 0$; $x = 2$; $x = -2$.'] },
 
-      { id: '9.12', hinhGiai: hg(xn([{ ten: 'x', dai: 53 }, { ten: '3', dai: 3 }], [{ ten: 'x', dai: 53 }, { ten: 'y', dai: 3, tru: true }], [['x²', 'xy'], ['3x', '3y']], { rong: 'x − y = 50', cao: 'x + 3 = 56' }, 'Hình vẽ với x = 53, y = 3.')), muc: 3, de: 'Tính nhanh giá trị của $A = x^2 - xy + 3x - 3y$ tại $x = 53$, $y = 3$.',
+      { id: '9.12', hinhGiai: hg(xn([{ ten: 'x', dai: 8 }, { ten: '3', dai: 3 }], [{ ten: 'x', dai: 8 }, { ten: 'y', dai: 3, tru: true }], [['x²', 'xy'], ['3x', '3y']], { rong: 'x − y = 50', cao: 'x + 3 = 56', ket: ['(x − y)', '(x + 3)'] }, 'Hình không theo tỉ lệ.')), muc: 3, de: 'Tính nhanh giá trị của $A = x^2 - xy + 3x - 3y$ tại $x = 53$, $y = 3$.',
         dapAn: { kieu: 'so', gt: 2800 },
         goiY: ['Phân tích $A$ thành nhân tử bằng cách nhóm hạng tử.', '$A = x(x - y) + 3(x - y) = (x - y)(x + 3)$.'],
         loiGiai: ['$A = (x^2 - xy) + (3x - 3y) = x(x - y) + 3(x - y) = (x - y)(x + 3)$', 'Tại $x = 53$, $y = 3$: $A = (53 - 3)(53 + 3) = 50\\cdot 56$', '$A = 2800$'],

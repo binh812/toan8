@@ -54,7 +54,7 @@
       h.lan = (da >= 1 ? n : 0) - (da >= 2 ? n * (n - 1) / 2 : 0) + (da >= 3 && n === 3 ? 1 : 0);
     });
     var G = 0.16 * a / 2;
-    return { khung3: [[-G, -2.4 * G, -2 * G], [a + G, a + 2.4 * G, a + 2 * G + 0.6 * a]], dang: 'hieu', a: a, b: b, S: a, r: r, hop: xep(ds), doan: [dx, dy, dz], tach: g, nhac: nhac, giaiDoan: da, buoc: buoc, xong: C.muot((t - 0.92) / 0.08),
+    return { kep: p.b != null && q.b !== p.b, khung3: [[-G, -2.4 * G, -2 * G], [a + G, a + 2.4 * G, a + 2 * G + 0.6 * a]], dang: 'hieu', a: a, b: b, S: a, r: r, hop: xep(ds), doan: [dx, dy, dz], tach: g, nhac: nhac, giaiDoan: da, buoc: buoc, xong: C.muot((t - 0.92) / 0.08),
     };
   }
   C.dangKi('lapPhuong', {
@@ -79,7 +79,7 @@
     ];
     var goc = hop(r, 0, r + g + nhac, b, b, b, { ten: 'goc', hien: 1 - bo });
     var G = 0.22 * a;
-    return { dang: 'hieu', a: a, b: b, r: r, S: a, tam: tam, goc: goc, hop: tam.concat([goc]), bo: bo, tach: mo, nhanHien: C.muot((t - 0.75) / 0.15),
+    return { kep: p.b != null && q.b !== p.b, dang: 'hieu', a: a, b: b, r: r, S: a, tam: tam, goc: goc, hop: tam.concat([goc]), bo: bo, tach: mo, nhanHien: C.muot((t - 0.75) / 0.15),
       khung3: [[-G, 0, 0], [a, a + G, a + G + 0.45 * a]] };
   }
   // a³ + b³ = (a + b)³ − 3·ab(a + b): sáu khối giữa ghép từng đôi thành ba hộp ab(a + b), bỏ đi thì còn a³ và b³
@@ -95,7 +95,8 @@
     return k;
   }
   C.dangKi('haiLapPhuong', {
-    thamSo: { a: { min: 1.5, max: 5, step: 0.5, md: 3, nhan: 'Cạnh a', mau: '--a' }, b: { min: 1, max: 4.5, step: 0.5, md: 1.5, nhan: 'Cạnh b', mau: '--b' } },
+    // a ≥ 2,5 và b ≤ 2 nên kéo thế nào cũng còn b < a, hình không phải tự sửa b
+    thamSo: { a: { min: 2.5, max: 5, step: 0.5, md: 3, nhan: 'Cạnh a', mau: '--a' }, b: { min: 0.5, max: 2, step: 0.5, md: 1.5, nhan: 'Cạnh b', mau: '--b' } },
     trangThai: { soiTam1: true, soiTam2: true, soiTam3: true },
     tinh: function (p, t, o) {
       var dang = (o && o.dang) || 'hieu';
@@ -156,6 +157,8 @@
   function chuMau(cha, x, y, s, co, mau, them) {
     var at = Object.assign({}, them || {});
     if (mau && mau.charAt(0) !== '-') { at.style = 'fill:' + mau; mau = null; }
+    // Viền nền quanh chữ, để chữ vẫn đọc được khi nằm đè lên cạnh khối
+    at['paint-order'] = 'stroke'; at.stroke = 'var(--mat)'; at['stroke-width'] = co * 0.22; at['stroke-linejoin'] = 'round';
     return C.chu(cha, x, y, s, co, mau, at);
   }
   function datKhung(svg, k3, le, them) {
@@ -228,8 +231,8 @@
         veHop(svg, h, MAU_LOAI[h.loai], { thieu: h.an });
         if (h.an) return;
         var q = choNhan(h), giua = h.nB === 1 || h.nB === 2;
-        // o.anGiua: chưa làm đúng thì sáu khối giữa ghi dấu hỏi, để em tự đếm và tính
-        var s = o.anGiua && giua && !giai ? '?' : n[h.loai];
+        // o.anGiua: chưa làm đúng thì sáu khối giữa ghi dấu hỏi, để em tự đếm và tính; o.anNhan: cả tám khối
+        var s = (o.anNhan || (o.anGiua && giua)) && !giai ? '?' : n[h.loai];
         chuMau(svg, q[0], q[1], s, co * (s.length > 4 ? 0.8 : 1.05), MAU_LOAI[h.loai], { opacity: k.nhanHien });
       });
       nhanCanh(svg, k, n, co, o.anB && !giai);
@@ -247,6 +250,7 @@
       // Dòng công thức lớn dần theo từng bước bỏ, trả lại, bỏ
       var dong = [n.a3, ' − ' + n.baA2b, ' + ' + n.baAb2, ' − ' + n.b3].slice(0, k.giaiDoan + 1).join('');
       C.chu(svg, kh.x0 + kh.rong / 2, kh.day + co * 0.9, dong, co * (dong.length > 22 ? 0.8 : 0.95), k.xong > 0.5 ? '--a' : '--muc');
+      if (k.kep) C.chu(svg, kh.x0 + kh.rong / 2, kh.y0 + co * 0.8, 'b phải nhỏ hơn a, đang vẽ b = ' + C.fmt(k.b), co * 0.8, '--sai');
     }
   };
 
@@ -259,10 +263,12 @@
         veHop(svg, h, mau, { mo: giua ? 1 - 0.8 * k.bo : 1, net: giua && k.bo > 0.5 });
         var q = choNhan(h);
         if (h.doi == null) { chuMau(svg, q[0], q[1], n[h.loai], co * 1.05, MAU_LOAI[h.loai], { opacity: k.nhanHien }); return; }
-        if (h.dauDoi) chuMau(svg, q[0], q[1], n.hop, co * (n.hop.length > 8 ? 0.62 : 0.75), '--cc', { opacity: k.gom * (1 - 0.6 * k.bo) });
+        // Tên hộp chỉ ghi lúc ghép đôi; khi đã bỏ thì nói ở dòng chữ bên dưới
+        if (h.dauDoi) chuMau(svg, q[0], q[1], n.hop, co * (n.hop.length > 8 ? 0.72 : 0.85), '--muc', { opacity: k.gom * (1 - k.bo) });
       });
       nhanCanh(svg, k, n, co);
-      C.chu(svg, kh.x0 + kh.rong / 2, kh.day + co * 0.9, k.bo > 0.5 ? 'Bỏ 3 hộp, còn ' + n.a3 + ' + ' + n.b3 : k.gom > 0.5 ? 'Ghép đôi: 3 hộp ' + n.hop : '', co * 0.85, k.bo > 0.5 ? '--muc' : '--cc');
+      var duoi = k.bo > 0.5 ? 'Bỏ 3 hộp ' + n.hop + ', còn ' + n.a3 + ' + ' + n.b3 : k.gom > 0.5 ? 'Ghép đôi: 3 hộp ' + n.hop : '';
+      C.chu(svg, kh.x0 + kh.rong / 2, kh.day + co * 0.9, duoi, Math.min(co * 0.85, kh.rong * 0.95 / (0.55 * Math.max(1, duoi.length))), k.bo > 0.5 ? '--muc' : '--cc');
       return;
     }
     var kh2 = datKhung(svg, k.khung3, 0.14, 0.12), c2 = kh2.co, it = { 'font-style': 'italic' };
@@ -294,7 +300,8 @@
     chuMau(svg, q1[0] - c2 * 0.3, q1[1] + c2 * 1.1, n.A, c2, '--a', Object.assign({ opacity: 1 - k.tach }, it));
     chuMau(svg, q2[0] + c2 * 1.1, q2[1] + c2 * 0.6, n.A, c2, '--a', Object.assign({ opacity: 1 - k.tach }, it));
     chuMau(svg, q3[0] + c2 * 0.9, q3[1], n.B, c2, '--b', Object.assign({ opacity: 1 - k.bo }, it));
-    C.chu(svg, kh2.x0 + kh2.rong / 2, kh2.day + c2 * 0.9, 'Ba tấm cùng dày ' + n.hieu, c2 * 0.9, '--sai', { opacity: k.nhanHien });
+    C.chu(svg, kh2.x0 + kh2.rong / 2, kh2.day + c2 * 0.9, 'Ba tấm cùng dày ' + (o.anTam && !giai ? '?' : n.hieu), c2 * 0.9, '--sai', { opacity: k.nhanHien });
+    if (k.kep) C.chu(svg, kh2.x0 + kh2.rong / 2, kh2.y0 + c2 * 0.8, 'b phải nhỏ hơn a, đang vẽ b = ' + C.fmt(b), c2 * 0.8, '--sai');
   };
 
   C.lay('xepChuNhat').ve = function (svg, k, p, t, o) {
@@ -305,7 +312,13 @@
     var dai = function (s) { return String(s || '').length; };
     var trai = Math.max(d + g0 / 2, g0 / 2 + co * (1.6 + 0.6 * Math.max.apply(null, k.hang.map(function (r) { return dai(r.ten) + 1; }))));
     var phai = Math.max(d + g0 / 2, co * (1.2 + 0.85 * dai(o.tenCao)) + (rong - k.rongCo));
-    svg.setAttribute('viewBox', [-trai, -d - g0 / 2, rong + trai + phai, cao + 2 * d + g0 + (thu ? co * 1.6 : 0)].join(' '));
+    // Mảnh có sẵn bị phần bỏ đi phủ lên: tên của nó chuyển lên dòng "cả hình" phía trên, để không đọc nhầm là phần bị bỏ
+    var bo = k.manh.filter(function (m) { return !m.coSan && !m.traLai; });
+    var chong = function (m) { return bo.some(function (n) { return n.x < m.x + m.w - 1e-9 && m.x < n.x + n.w - 1e-9 && n.y < m.y + m.h - 1e-9 && m.y < n.y + n.h - 1e-9; }); };
+    var biPhu = k.manh.filter(function (m) { return m.coSan && m.nhan && chong(m); });
+    var caHinh = biPhu.length ? 'cả hình: ' + biPhu.map(function (m) { return m.nhan; }).join(' + ') : '';
+    var tren = d + g0 / 2 + (caHinh ? co * 2.4 : 0), coCot = k.cot.some(function (c) { return c.dau < 0; });
+    svg.setAttribute('viewBox', [-trai, -tren, rong + trai + phai, cao + tren + d + g0 / 2 + (thu ? co * 1.6 : 0)].join(' '));
     var net = { 'vector-effect': 'non-scaling-stroke' };
     function mauManh(m) {
       if (m.mau) return m.mau;
@@ -324,10 +337,10 @@
     });
     k.manh.forEach(function (m) {
       if (!m.nhan) return;
-      var q = giua(m), them = m.coSan ? {} : { opacity: k.hienBo };
+      var q = giua(m), them = m.coSan ? (biPhu.indexOf(m) >= 0 ? { opacity: 1 - k.hienBo } : {}) : { opacity: k.hienBo };
       var s = m.coSan ? m.nhan : (m.traLai ? '+' : '−') + m.nhan;
       var c = co * Math.min(1, 0.9 * Math.min(m.w, m.h * 2.2) / (co * 0.6 * s.length));
-      chuMau(svg, q[0], q[1], s, Math.max(co * 0.55, c), m.coSan ? mauManh(m) : m.traLai ? '--cc' : '--sai', them);
+      chuMau(svg, q[0], q[1], s, Math.max(co * (m.coSan ? 0.55 : 0.7), c), m.coSan ? mauManh(m) : m.traLai ? '--cc' : '--sai', them);
     });
     C.mk('rect', Object.assign({ x: 0, y: 0, width: k.W, height: k.H, fill: 'none', stroke: 'var(--muc)', 'stroke-width': 3.5, opacity: k.ket }, net), svg);
     // Cạnh từng đoạn và cạnh cả hình: chưa tới cuối (hoặc o.anCanh mà em chưa làm đúng) thì ghi dấu hỏi
@@ -340,6 +353,17 @@
       var s = lo ? '?' : (r.dau < 0 ? '−' : '') + r.ten;
       chuMau(svg, -g0 / 2 - co * (0.6 + 0.3 * s.length) - (r.dau < 0 ? co * 1.2 : 0), r.bat + r.dai / 2, s, co * 0.9, r.dau < 0 ? '--sai' : '--muc', it);
     });
+    if (caHinh) {
+      var rongVe = rong + trai + phai;
+      chuMau(svg, rong / 2, -g0 / 2 - co * (coCot ? 3.1 : 2.1), caHinh, Math.min(co * 0.85, rongVe * 0.9 / (0.55 * caHinh.length)), '--muc', { opacity: k.hienBo });
+      // Phần còn lại chính là hình chữ nhật cuối: ghi tích của hai cạnh (giấu như tên cạnh)
+      // tenKet là chuỗi hoặc mảng nhiều dòng (mỗi thừa số một dòng khi phần còn lại hẹp)
+      if (o.tenKet) {
+        var dong = lo ? ['?'] : [].concat(o.tenKet), dai1 = Math.max.apply(null, dong.map(function (x) { return x.length; }));
+        var ck = Math.max(co * 0.5, Math.min(co, 0.9 * k.W / (0.55 * dai1), 0.8 * k.H / dong.length));
+        dong.forEach(function (x, i) { chuMau(svg, k.W / 2, k.H / 2 + (i - (dong.length - 1) / 2) * ck * 1.2, x, ck, '--muc', { opacity: k.hienBo }); });
+      }
+    }
     var tenRong = o.tenRong || '', tenCao = o.tenCao || '';
     // Hai cạnh của hình chữ nhật cuối ghi ngoài phần có sẵn, để không đè lên mảnh bỏ đi
     if (tenRong) C.chu(svg, k.W / 2, k.caoCo + co * 1.1, lo ? '?' : tenRong, co, '--muc', { opacity: k.ket });

@@ -20,6 +20,8 @@
     return { ten: 'lapPhuong', thamSo: { a: a, b: b }, tuyChon: { dang: dang, tenA: tenA, tenB: tenB, nhan: nhan }, ghiChu: chu };
   }
   function hg(c) { return { widget: 'canh', config: Object.assign({ chiXem: true, t: 1 }, c) }; }
+  // Thẻ Suy ra: bấm nút chỉ tách khối, tên khối ghi dấu hỏi tới khi em làm đúng
+  function an(c) { return Object.assign({}, c, { tuyChon: Object.assign({}, c.tuyChon, { anNhan: true }) }); }
   var X4 = { a3: 'x³', a2b: '4x²', ab2: '16x', b3: '64' };
 
   TOAN8.bai({
@@ -31,7 +33,7 @@
       canh: { ten: 'lapPhuong', tuyChon: { dang: 'tong' }, moTa: 'Khối lập phương cạnh a cộng b, mỗi cạnh chia thành đoạn a và đoạn b, tách ra thành tám khối hộp: một khối a mũ ba, ba khối a bình phương b, ba khối a b bình phương, một khối b mũ ba.',
         dongSo: function (p, f) { // Bước 0,5 nên mọi số ở đây đúng tới ba chữ số thập phân, không phải làm tròn
         var so = function (x) { return String(Math.round(x * 1000) / 1000).replace('.', '{,}'); };
-          return '$\\ca{' + so(p.a * p.a * p.a) + '} + 3 \\cdot \\cc{' + so(p.a * p.a * p.b) + '} + 3 \\cdot \\cd{' + so(p.a * p.b * p.b) + '} + \\cb{' + so(p.b * p.b * p.b) + '} = ' + so(Math.pow(p.a + p.b, 3)) + ' = (' + so(p.a) + ' + ' + so(p.b) + ')^3$'; } },
+          return '$\\ca{' + so(p.a * p.a * p.a) + '} + 3 \\cdot \\cc{' + so(p.a * p.a * p.b) + '} + 3 \\cdot \\cd{' + so(p.a * p.b * p.b) + '} + \\cb{' + so(p.b * p.b * p.b) + '} = ' + so(Math.pow(p.a + p.b, 3)) + '$\n$(' + so(p.a) + ' + ' + so(p.b) + ')^3 = ' + so(Math.pow(p.a + p.b, 3)) + '$'; } },
       buoc: [
         { t: 0, chu: 'Khối lập phương cạnh $\\ca{a} + \\cb{b}$. Mỗi cạnh chia thành một đoạn $\\ca{a}$ và một đoạn $\\cb{b}$.' },
         { t: 0.1, chu: 'Cắt theo các đường chia rồi tách ra: được $8$ khối hộp. Không khối nào đổi kích thước.' },
@@ -55,11 +57,11 @@
       suyRa: {
         tieuDe: 'Số, chữ hay hệ số: vẫn là tám khối',
         baDe: [
-          { tuBai: '7.10', canh: lp('tong', '20', '1', 4, 1, { a3: '8000', a2b: '400', ab2: '20', b3: '1' }, KHONG_TI_LE), tenNut: 'Tách khối',
+          { tuBai: '7.10', canh: an(lp('tong', '20', '1', 4, 1, { a3: '8000', a2b: '400', ab2: '20', b3: '1' }, KHONG_TI_LE)), tenNut: 'Tách khối',
             dungChu: '$21^3 = (20 + 1)^3 = 8000 + 3\\cdot 400 + 3\\cdot 20 + 1 = 9261$.', saiChu: 'Khối cạnh $21 = 20 + 1$ tách thành $8$ khối: một khối $20^3$, ba khối $20\\cdot 20\\cdot 1$, ba khối $20\\cdot 1\\cdot 1$, một khối $1$.' },
-          { tuBai: '7.7', canh: { ten: 'lapPhuong', thamSo: { a: 3, b: 2 }, tuyChon: { dang: 'tong', tenA: 'x', tenB: '5', anB: true, nhan: { a3: 'x³', a2b: '5x²', ab2: '25x', b3: '125' } } }, tenNut: 'Tách khối',
+          { tuBai: '7.7', canh: { ten: 'lapPhuong', thamSo: { a: 3, b: 2 }, tuyChon: { dang: 'tong', tenA: 'x', tenB: '5', anB: true, anNhan: true, nhan: { a3: 'x³', a2b: '5x²', ab2: '25x', b3: '125' } } }, tenNut: 'Tách khối',
             dungChu: '$125 = 5^3$; ba khối $5x^2$ là $15x^2$, ba khối $25x$ là $75x$: đúng tám khối của khối lập phương cạnh $x + 5$.', saiChu: 'Khối góc nhỏ có thể tích $125$. Cạnh của nó là số nào? Khối lớn có cạnh $x$ cộng cạnh đó.' },
-          { tuBai: '7.5', canh: lp('tong', '2x', '1', 4, 1.5, { a3: '8x³', a2b: '4x²', ab2: '2x', b3: '1' }), tenNut: 'Tách khối',
+          { tuBai: '7.5', canh: an(lp('tong', '2x', '1', 4, 1.5, { a3: '8x³', a2b: '4x²', ab2: '2x', b3: '1' })), tenNut: 'Tách khối',
             dungChu: '$8x^3 + 3\\cdot 4x^2 + 3\\cdot 2x + 1 = 8x^3 + 12x^2 + 6x + 1$.', saiChu: 'Khối lớn nhất có cạnh $2x$, nên thể tích là $(2x)^3 = 8x^3$. Ba khối $2x\\cdot 2x\\cdot 1$, ba khối $2x\\cdot 1\\cdot 1$.' }
         ],
         cachNhan: 'Thấy lập phương của một tổng, hoặc một số gần số tròn được lập phương lên: nghĩ tới khối lập phương tách thành $8$ khối, đếm $1, 3, 3, 1$.'
