@@ -5,6 +5,17 @@
   function lp(s) { return /^([0-9]+|[a-z])$/.test(s) ? s + '^3' : '(' + s + ')^3'; }
   function bp(s) { return /^([0-9]+|[a-z])$/.test(s) ? s + '^2' : '(' + s + ')^2'; }
 
+  function dep(s) { return String(s).replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/-/g, '−'); }
+  // Hình lời giải theo chính số của đề (cảnh haiLapPhuong): hiệu là khối A bỏ góc B, còn ba tấm dày A − B;
+  // tổng là khối (A + B)³ bỏ ba hộp AB(A + B)
+  function hinh(cc, A, B, a, u, b, v, s, m) {
+    if (s < 0) return { widget: 'canh', config: { ten: 'haiLapPhuong', chiXem: true, t: 1, thamSo: { a: 3.5, b: 1.5 }, ghiChu: 'Hình vẽ khi ' + A + ' lớn hơn ' + B + '.',
+      tuyChon: { dang: 'hieu', tenA: A, tenB: B, nhan: { a2: dep(m.A2), ab: dep(m.AB), b2: dep(m.B2), b3: dep(m.B3), hieu: A + '−' + B } } } };
+    var mu = function (bien, k) { return bien && k ? (k === 1 ? bien : bien + '^' + k) : ''; };
+    return { widget: 'canh', config: { ten: 'haiLapPhuong', chiXem: true, t: 1, thamSo: { a: 3, b: 1.5 },
+      tuyChon: { dang: 'tong', tenA: A, tenB: B, nhan: { a3: dep(m.A3), b3: dep(m.B3), a2b: dep(cc.daThuc([[a * a * b, mu(u, 2) + mu(v, 1)]])),
+        ab2: dep(cc.daThuc([[a * b * b, mu(u, 1) + mu(v, 2)]])), hop: dep(m.AB) + '(' + A + '+' + B + ')' } } } };
+  }
   // A³ ± B³ với A = a·u, B = b·v (u, v là biến hoặc ''): trả về đề, đáp án và các lỗi
   function hang(cc, a, u, b, v, s) {
     var A = nhan(a) + u || String(a), B = (v ? nhan(b) + v : String(b));
@@ -13,6 +24,7 @@
     var AB = cc.daThuc([[a * b, u + v]]);
     var dau = s > 0 ? '+' : '-', nguoc = s > 0 ? '-' : '+';
     return {
+      hinh: hinh(cc, A, B, a, u, b, v, s, { A3: A3, B3: B3, A2: A2, AB: AB, B2: B2 }),
       A: A, B: B, A2: A2, AB: AB, A3: A3, B3: B3, dau: dau,
       de: A3 + dau + B3,
       kq: '(' + A + dau + B + ')(' + A2 + nguoc + AB + '+' + B2 + ')',
@@ -28,6 +40,7 @@
       return {
         de: 'Viết $' + cc.tex(h.de) + '$ dưới dạng tích.',
         dapAn: { kieu: 'bieuThuc', gt: h.kq, dang: 'nhanTu' },
+        hinhGiai: h.hinh,
         goiY: ['Viết $' + b * b * b + ' = ' + b + '^3$ để thấy ' + (s > 0 ? 'tổng' : 'hiệu') + ' hai lập phương với $A = x$, $B = ' + b + '$.',
           s > 0 ? '$A^3 + B^3 = (A + B)(A^2 - AB + B^2)$.' : '$A^3 - B^3 = (A - B)(A^2 + AB + B^2)$.'],
         loiGiai: ['$' + cc.tex(h.de) + ' = x^3 ' + h.dau + ' ' + b + '^3$',
@@ -45,6 +58,7 @@
       return {
         de: 'Viết $' + cc.tex(h.de) + '$ dưới dạng tích.',
         dapAn: { kieu: 'bieuThuc', gt: h.kq, dang: 'nhanTu' },
+        hinhGiai: h.hinh,
         goiY: ['Viết mỗi hạng tử thành một lập phương: $' + cc.tex(h.A3) + ' = ' + lp(h.A) + '$, $' + cc.tex(h.B3) + ' = ' + lp(h.B) + '$.',
           s > 0 ? 'Dùng $A^3 + B^3 = (A + B)(A^2 - AB + B^2)$.' : 'Dùng $A^3 - B^3 = (A - B)(A^2 + AB + B^2)$.'],
         loiGiai: ['$' + cc.tex(h.de) + ' = ' + lp(h.A) + ' ' + h.dau + ' ' + lp(h.B) + '$, với $A = ' + h.A + '$, $B = ' + h.B + '$; $A^2 = ' + cc.tex(h.A2) + '$, $AB = ' + cc.tex(h.AB) + '$.',
@@ -60,6 +74,7 @@
       return {
         de: 'Tính $' + cc.tex(h.kq) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
+        hinhGiai: h.hinh,
         goiY: ['Nhận ra dạng ' + (s > 0 ? '$(A + B)(A^2 - AB + B^2) = A^3 + B^3$' : '$(A - B)(A^2 + AB + B^2) = A^3 - B^3$') + '.', 'Ở đây $A = x$, $B = ' + b + '$. (Hoặc nhân phá ngoặc: các hạng tử giữa triệt tiêu.)'],
         loiGiai: ['$= x^3 ' + h.dau + ' ' + b + '^3$', '$= ' + cc.tex(kq) + '$'],
         loiThuongGap: [{ gt: cc.daThuc([[1, 'x^3'], [-s * b * b * b, '']]), giaiThich: 'Dấu của kết quả trùng với dấu trong thừa số thứ nhất $(x ' + h.dau + ' ' + b + ')$.' }]
@@ -72,6 +87,7 @@
       return {
         de: 'Tính nhanh giá trị của biểu thức $' + cc.tex(h.kq) + '$ tại $x = ' + x + '$.',
         dapAn: { kieu: 'so', gt: kq },
+        hinhGiai: h.hinh,
         goiY: ['Biểu thức bằng $x^3 ' + h.dau + ' ' + b * b * b + '$ (' + (s > 0 ? 'tổng' : 'hiệu') + ' hai lập phương).', 'Thay $x = ' + x + '$ vào $x^3 ' + h.dau + ' ' + b * b * b + '$.'],
         loiGiai: ['$' + cc.tex(h.kq) + ' = x^3 ' + h.dau + ' ' + b + '^3 = x^3 ' + h.dau + ' ' + b * b * b + '$',
           'Tại $x = ' + x + '$: $' + x + '^3 ' + h.dau + ' ' + b * b * b + ' = ' + x * x * x + ' ' + h.dau + ' ' + b * b * b + ' = ' + kq + '$'],

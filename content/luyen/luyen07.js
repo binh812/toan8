@@ -3,6 +3,16 @@
   'use strict';
   function nhan(a) { return a === 1 ? '' : String(a); }
   function tx(cc, s) { s = String(s); return s.charAt(0) === '-' ? '-' + cc.tex(s.slice(1)) : cc.tex(s); }
+  function dep(s) { return String(s).replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/-/g, '−'); }
+  // Hình lời giải theo chính số của đề: khối lập phương cạnh A ± B (cảnh lapPhuong). A = a·u, B = b·v với u, v là biến hoặc ''.
+  function hinh(cc, s, A, B, a, u, b, v) {
+    var mu = function (bien, k) { return bien && k ? (k === 1 ? bien : bien + '^' + k) : ''; };
+    var m = function (c, ku, kv) { return dep(cc.daThuc([[c, mu(u, ku) + mu(v, kv)]])); };
+    var nh = { a3: m(a * a * a, 3, 0), a2b: m(a * a * b, 2, 1), ab2: m(a * b * b, 1, 2), b3: m(b * b * b, 0, 3),
+      baA2b: m(3 * a * a * b, 2, 1), baAb2: m(3 * a * b * b, 1, 2), hieu: dep(A + '-' + B) };
+    return { widget: 'canh', config: { ten: 'lapPhuong', chiXem: true, t: 1, thamSo: { a: s > 0 ? 3 : 5, b: 2 },
+      tuyChon: { dang: s > 0 ? 'tong' : 'hieu', tenA: A, tenB: B, nhan: nh }, ghiChu: s > 0 ? null : 'Hình vẽ khi ' + A + ' lớn hơn ' + B + '.' } };
+  }
 
   TOAN8.luyen(7, [
     { ten: 'Khai triển (x ± b)³', muc: 1, sinh: function (r, cc) {
@@ -14,6 +24,7 @@
       return {
         de: 'Khai triển $(x ' + dau + ' ' + b + ')^3$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
+        hinhGiai: hinh(cc, s, 'x', String(b), 1, 'x', b, ''),
         goiY: ['$(A ' + dau + ' B)^3 = A^3 ' + dau + ' 3A^2B + 3AB^2 ' + dau + ' B^3$ với $A = x$, $B = ' + b + '$.', 'Tính lần lượt $A^3$, $3A^2B$, $3AB^2$, $B^3$ rồi ghép với đúng dấu.'],
         loiGiai: ['$(x ' + dau + ' ' + b + ')^3 = x^3 ' + dau + ' 3 \\cdot x^2 \\cdot ' + b + ' + 3 \\cdot x \\cdot ' + b + '^2 ' + dau + ' ' + b + '^3$',
           '$= ' + cc.tex(kq) + '$'],
@@ -31,6 +42,7 @@
       return {
         de: 'Khai triển $(' + a + 'x ' + dau + ' ' + B + ')^3$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
+        hinhGiai: hinh(cc, s, a + 'x', B, a, 'x', b, coY ? 'y' : ''),
         goiY: ['Dùng $(A ' + dau + ' B)^3 = A^3 ' + dau + ' 3A^2B + 3AB^2 ' + dau + ' B^3$ với $A = ' + a + 'x$, $B = ' + B + '$.', 'Lập phương cả hệ số: $(' + a + 'x)^3 = ' + a * a * a + 'x^3$; $(' + a + 'x)^2 = ' + a * a + 'x^2$.'],
         loiGiai: ['$= (' + a + 'x)^3 ' + dau + ' 3(' + a + 'x)^2 \\cdot ' + B + ' + 3 \\cdot ' + a + 'x \\cdot ' + (coY ? 'y^2' : B + '^2') + ' ' + dau + ' ' + B + '^3$',
           '$= ' + tx(cc, kq) + '$'],
@@ -53,6 +65,7 @@
       return {
         de: 'Viết $' + tx(cc, de) + '$ dưới dạng lập phương của một ' + (s > 0 ? 'tổng' : 'hiệu') + '.',
         dapAn: { kieu: 'bieuThuc', gt: kq2, dang: 'nhanTu' },
+        hinhGiai: kq2.charAt(1) === 'x' ? hinh(cc, s, 'x', String(b), 1, 'x', b, '') : hinh(cc, -1, String(b), 'x', b, '', 1, 'x'),
         goiY: ['Tìm $A$, $B$ từ hai hạng tử $A^3$ và $B^3$ ở hai đầu.', 'Kiểm tra hai hạng tử giữa có đúng là $3A^2B$ và $3AB^2$ không; dấu xen kẽ thì là lập phương của một hiệu.'],
         loiGiai: ['$A = ' + Atex + '$, $B = ' + Btex + '$: $3A^2B = 3 \\cdot ' + (Atex === 'x' ? 'x^2 \\cdot ' + b : b + '^2 \\cdot x') + '$, $3AB^2 = 3 \\cdot ' + (Atex === 'x' ? 'x \\cdot ' + b + '^2' : b + ' \\cdot x^2') + '$ (đúng).',
           '$' + tx(cc, de) + ' = ' + cc.tex(kq2) + '$'],

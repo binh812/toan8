@@ -4,6 +4,13 @@
   function nhan(a) { return a === 1 ? '' : String(a); }
   // (3x)^2 nhưng x^2, 9^2 (không cần ngoặc)
   function bp(s) { return /^([0-9]+|[a-z])$/.test(s) ? s + '^2' : '(' + s + ')^2'; }
+  // Hình lời giải theo chính số của đề: mảnh ghép hình vuông (cảnh manhVuong của bài 6)
+  function dep(s) { return String(s).replace(/\^2/g, '²').replace(/-/g, '−'); }
+  function hinh(dang, tenA, tenB, nhan) {
+    var to = dang === 'tong';
+    return { widget: 'canh', config: { ten: 'manhVuong', chiXem: true, t: 1, thamSo: { a: to ? 4 : 5, b: 2 },
+      tuyChon: { dang: dang, tenA: tenA, tenB: tenB, nhan: nhan }, ghiChu: to ? null : 'Hình vẽ khi ' + tenA + ' lớn hơn ' + tenB + '.' } };
+  }
 
   TOAN8.luyen(6, [
     { ten: 'Khai triển (ax ± b)²', muc: 1, sinh: function (r, cc) {
@@ -13,6 +20,7 @@
       return {
         de: 'Khai triển $' + cc.tex(de) + '$.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'khaiTrien' },
+        hinhGiai: hinh(s > 0 ? 'tong' : 'hieu', nhan(a) + 'x', String(b), { a2: dep(cc.daThuc([[a * a, 'x^2']])), ab: dep(cc.daThuc([[a * b, 'x']])), b2: String(b * b), hieu: nhan(a) + 'x−' + b }),
         goiY: ['Dùng $(A ' + dau + ' B)^2 = A^2 ' + dau + ' 2AB + B^2$ với $A = ' + cc.tex(nhan(a) + 'x') + '$ và $B = ' + b + '$.',
           'Tính lần lượt $A^2$, $2AB$ và $B^2$ rồi ghép lại.'],
         loiGiai: ['$A^2 = ' + cc.tex(cc.daThuc([[a * a, 'x^2']])) + '$; $2AB = ' + cc.tex(2 * a * b + 'x') + '$; $B^2 = ' + b * b + '$.',
@@ -26,6 +34,7 @@
       return {
         de: 'Viết $' + cc.tex(de) + '$ dưới dạng bình phương của một ' + (s > 0 ? 'tổng' : 'hiệu') + '.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'nhanTu' },
+        hinhGiai: hinh(s > 0 ? 'tong' : 'hieu', 'x', String(k), { a2: 'x²', ab: dep(cc.daThuc([[k, 'x']])), b2: String(k * k), hieu: 'x−' + k }),
         goiY: ['Tìm $A$, $B$ sao cho $A^2 = x^2$ và $B^2 = ' + k * k + '$.',
           'Kiểm tra hạng tử giữa: $2AB$ có bằng $' + 2 * k + 'x$ không? Dấu của nó cho biết là tổng hay hiệu.'],
         loiGiai: ['$x^2 = A^2$ với $A = x$; $' + k * k + ' = B^2$ với $B = ' + k + '$; $2AB = ' + 2 * k + 'x$.',
@@ -69,6 +78,7 @@
       return {
         de: 'Viết $' + cc.tex(P2 + '-' + Q2) + '$ dưới dạng tích.',
         dapAn: { kieu: 'bieuThuc', gt: kq, dang: 'nhanTu' },
+        hinhGiai: hinh('hieuHaiBP', P, Q, { a2: dep(P2), b2: dep(Q2) }),
         goiY: ['Viết mỗi hạng tử thành một bình phương: $' + cc.tex(P2) + ' = ' + bp(P) + '$, $' + cc.tex(Q2) + ' = ' + bp(Q) + '$.',
           'Dùng $A^2 - B^2 = (A - B)(A + B)$.'],
         loiGiai: ['$' + cc.tex(P2 + '-' + Q2) + ' = ' + bp(P) + ' - ' + bp(Q) + '$',
