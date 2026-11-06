@@ -177,15 +177,16 @@
       { loai: 'lapCM', tieuDe: 'Lắp lập luận: chia $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$', config: {
         de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
         buoc: [
-          { id: 'pt', chu: 'Phân tích hai mẫu: $x^2 - 1 = (x-1)(x+1)$ và $x^2 - x = x(x-1)$.' },
-          { id: 'dk', chu: 'Hai phân thức có giá trị khi $x \\ne 1$, $x \\ne -1$ và $x \\ne 0$.', can: ['pt'] },
-          { id: 'khac0', chu: 'Phân thức chia $\\frac{3}{x^2-x}$ có tử $3 \\ne 0$, nên nó khác $0$ và có nghịch đảo $\\frac{x^2-x}{3}$.' },
-          { id: 'lat', chu: 'Đổi phép chia thành phép nhân: $\\frac{5}{x^2-1} \\cdot \\frac{x^2-x}{3}$.', can: ['khac0'] },
-          { id: 'nhan', chu: 'Tử nhân tử, mẫu nhân mẫu: $\\frac{5(x^2-x)}{3(x^2-1)}$.', can: ['lat'] },
-          { id: 'gon', chu: 'Viết tử, mẫu thành $5x(x-1)$ và $3(x-1)(x+1)$, rồi chia cả hai cho $x - 1$: được $\\frac{5x}{3(x+1)}$.', can: ['nhan', 'pt'] },
-          { id: 'kl', chu: 'Vậy $\\frac{5}{x^2-1} : \\frac{3}{x^2-x} = \\frac{5x}{3(x+1)}$ với $x \\ne 0$, $x \\ne 1$, $x \\ne -1$.', can: ['gon', 'dk'] }
+          { id: 'pt1', chu: 'Phân tích mẫu thứ nhất: $x^2 - 1 = (x-1)(x+1).$' },
+          { id: 'pt2', chu: 'Phân tích mẫu thứ hai: $x^2 - x = x(x-1).$' },
+          { id: 'dk', chu: 'Hai phân thức có giá trị khi $x \\ne 1,\\ x \\ne -1$ và $x \\ne 0.$', can: ['pt1', 'pt2'] },
+          { id: 'khac0', chu: 'Với $x \\ne 0,\\ x \\ne 1,$ phân thức chia $\\frac{3}{x^2-x}$ có tử $3 \\ne 0,$ nên nó khác $0$ và có nghịch đảo $\\frac{x^2-x}{3}.$', can: ['dk'] },
+          { id: 'lat', chu: 'Đổi phép chia thành phép nhân: $\\frac{5}{x^2-1} \\cdot \\frac{x^2-x}{3}.$', can: ['khac0'] },
+          { id: 'nhan', chu: 'Tử nhân tử, mẫu nhân mẫu: $\\frac{5(x^2-x)}{3(x^2-1)}.$', can: ['lat'] },
+          { id: 'gon', chu: 'Viết tử, mẫu thành $5x(x-1)$ và $3(x-1)(x+1),$ rồi chia cả hai cho $x - 1 \\ne 0$: được $\\frac{5x}{3(x+1)}.$', can: ['nhan', 'pt1', 'pt2', 'dk'] },
+          { id: 'kl', chu: 'Vậy $\\frac{5}{x^2-1} : \\frac{3}{x^2-x} = \\frac{5x}{3(x+1)}$ với $x \\ne 0,\\ x \\ne 1,\\ x \\ne -1.$', can: ['gon', 'dk'] }
         ],
-        ketLuan: 'Thương bằng $\\frac{5x}{3(x+1)}$. Kết quả này tính được cả tại $x = 0$ và $x = 1$, nhưng phép chia ban đầu thì không, nên phải ghi điều kiện $x \\ne 0$, $x \\ne 1$, $x \\ne -1$.'
+        ketLuan: 'Thương bằng $\\frac{5x}{3(x+1)}.$ Kết quả này tính được cả tại $x = 0$ và $x = 1,$ nhưng phép chia ban đầu thì không, nên phải ghi điều kiện $x \\ne 0,\\ x \\ne 1,\\ x \\ne -1.$'
       } },
       { loai: 'hinh', widget: 'geo', config: hinhChia,
         chuThich: 'Đồ thị của thương $\\frac{5}{x^2-1} : \\frac{3}{x^2-x}$. Nó gần giống đồ thị của $\\frac{5x}{3(x+1)}$ nhưng có **hai lỗ hổng**: tại $x = 1$ (mẫu $x^2 - 1 = 0$) và tại $x = 0$ (phân thức chia $\\frac{3}{x^2-x}$ không xác định). Kéo điểm cam tới $0$ và $1$ để xem.' },

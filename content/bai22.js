@@ -99,7 +99,10 @@
         // Thử phá: thanh xThu kéo dưới 1 thì x lấy giá trị đó (xem cảnh luoiPhanSo)
         dongSo: function (p) {
           var x = p.xThu != null && p.xThu < 1 ? p.xThu : p.x, ng = function (v) { return v < 0 ? '(' + v + ')' : String(v); };
-          return 'Tại $x = ' + x + '$: $\\frac{\\ca{' + x + '}}{\\cb{' + (x + 1) + '}} = \\frac{' + ng(x) + ' \\cdot \\cc{' + ng(x + 2) + '}}{' + ng(x + 1) + ' \\cdot \\cc{' + ng(x + 2) + '}}$';
+          // Có mẫu bằng 0 thì không ghi dấu "=" giữa hai biểu thức không xác định
+          if (x + 1 === 0) return 'Tại $x = -1$: mẫu $\\cb{x + 1} = 0$, cả hai vế đều không có giá trị.';
+          if (x + 2 === 0) return 'Tại $x = -2$: vế trái $\\frac{\\ca{-2}}{\\cb{-1}} = 2$; vế phải $\\frac{(-2) \\cdot \\cc{0}}{(-1) \\cdot \\cc{0}} = \\frac{0}{0},$ không xác định.';
+          return 'Tại $x = ' + x + '$:$\\frac{\\ca{' + x + '}}{\\cb{' + (x + 1) + '}} = \\frac{' + ng(x) + ' \\cdot \\cc{' + ng(x + 2) + '}}{' + ng(x + 1) + ' \\cdot \\cc{' + ng(x + 2) + '}}$';
         } }),
       buoc: [
         { t: 0, chu: 'Phân thức $\\frac{\\ca{x}}{\\cb{x+1}}$: hình chữ nhật chia $\\cb{x+1}$ cột, tô $\\ca{x}$ cột.' },
@@ -176,15 +179,15 @@
       { loai: 'lapCM', tieuDe: 'Lắp lập luận: rút gọn $\\frac{2x^2+2x}{x^2-1}$ mà không quên điều kiện', config: {
         de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
         buoc: [
-          { id: 'tu', chu: 'Phân tích tử: $2x^2 + 2x = 2x(x+1)$.' },
-          { id: 'mau', chu: 'Phân tích mẫu: $x^2 - 1 = (x-1)(x+1)$.' },
-          { id: 'dk', chu: 'Phân thức ban đầu chỉ có giá trị khi $x \\ne 1$ và $x \\ne -1$.', can: ['mau'] },
-          { id: 'chung', chu: 'Tử và mẫu có chung nhân tử $x + 1$.', can: ['tu', 'mau'] },
-          { id: 'chia', chu: 'Chia cả tử và mẫu cho $x + 1$, được $\\frac{2x}{x-1}$.', can: ['chung'] },
-          { id: 'kq', chu: 'Vậy $\\frac{2x^2+2x}{x^2-1} = \\frac{2x}{x-1}$.', can: ['chia'] },
-          { id: 'giu', chu: 'Tại $x = -1$ phân thức mới cho $\\frac{-2}{-2} = 1$, còn phân thức ban đầu là $\\frac{0}{0}$. Nên khi tính giá trị vẫn giữ $x \\ne -1$.', can: ['kq', 'dk'] }
+          { id: 'tu', chu: 'Phân tích tử: $2x^2 + 2x = 2x(x+1).$' },
+          { id: 'mau', chu: 'Phân tích mẫu: $x^2 - 1 = (x-1)(x+1).$' },
+          { id: 'dk', chu: 'Phân thức ban đầu chỉ có giá trị khi $x \\ne 1$ và $x \\ne -1.$', can: ['mau'] },
+          { id: 'chung', chu: 'Tử và mẫu có chung nhân tử $x + 1.$', can: ['tu', 'mau'] },
+          { id: 'chia', chu: 'Chia cả tử và mẫu cho $x + 1,$ được $\\frac{2x}{x-1}.$', can: ['chung'] },
+          { id: 'kq', chu: 'Vậy $\\frac{2x^2+2x}{x^2-1} = \\frac{2x}{x-1}.$', can: ['chia'] },
+          { id: 'giu', chu: 'Tại $x = -1$ phân thức mới cho $\\frac{-2}{-2} = 1,$ còn phân thức ban đầu là $\\frac{0}{0}.$ Nên khi tính giá trị vẫn giữ $x \\ne -1.$', can: ['kq', 'dk'] }
         ],
-        ketLuan: '$\\frac{2x^2+2x}{x^2-1} = \\frac{2x}{x-1}$. Khi thay số, vẫn nhớ điều kiện $x \\ne 1$, $x \\ne -1$ của phân thức ban đầu.'
+        ketLuan: '$\\frac{2x^2+2x}{x^2-1} = \\frac{2x}{x-1}.$ Khi thay số, vẫn nhớ điều kiện $x \\ne 1,$ $x \\ne -1$ của phân thức ban đầu.'
       } },
       { loai: 'hinh', widget: 'dienTich', config: hinhNhanTu,
         chuThich: 'Tử $2x^2 + 2x$ là diện tích của hình chữ nhật có hai cạnh $2x$ và $x + 1$, nên $2x^2 + 2x = 2x(x+1)$. Mẫu $x^2 - 1 = (x-1)(x+1)$. Cả hai đều có **nhân tử** $(x+1)$ – đó mới là thứ được phép chia đi.' },

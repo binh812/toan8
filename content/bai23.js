@@ -170,15 +170,15 @@
       { loai: 'lapCM', tieuDe: 'Lắp lập luận: cộng $\\frac{5}{x} + \\frac{3}{1-x}$', config: {
         de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
         buoc: [
-          { id: 'dk', chu: 'Hai phân thức chỉ có giá trị khi $x \\ne 0$ và $x \\ne 1$.' },
-          { id: 'mtc', chu: 'Mẫu thức chung là $x(1-x)$.' },
-          { id: 'phu1', chu: 'Nhân cả tử và mẫu của $\\frac{5}{x}$ với $1 - x$ (khác $0$ vì $x \\ne 1$): $\\frac{5(1-x)}{x(1-x)}$.', can: ['mtc', 'dk'] },
-          { id: 'phu2', chu: 'Nhân cả tử và mẫu của $\\frac{3}{1-x}$ với $x$ (khác $0$ vì $x \\ne 0$): $\\frac{3x}{x(1-x)}$.', can: ['mtc', 'dk'] },
-          { id: 'cong', chu: 'Cộng hai tử, giữ nguyên mẫu chung: $\\frac{5 - 5x + 3x}{x(1-x)}$.', can: ['phu1', 'phu2'] },
-          { id: 'gon', chu: 'Thu gọn tử: $5 - 5x + 3x = 5 - 2x$.', can: ['cong'] },
-          { id: 'kl', chu: 'Vậy $\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5-2x}{x(1-x)}$ với $x \\ne 0$, $x \\ne 1$.', can: ['gon'] }
+          { id: 'dk', chu: 'Hai phân thức chỉ có giá trị khi $x \\ne 0$ và $x \\ne 1.$' },
+          { id: 'mtc', chu: 'Mẫu thức chung là $x(1-x).$' },
+          { id: 'phu1', chu: 'Nhân cả tử và mẫu của $\\frac{5}{x}$ với $1 - x$ (khác $0$ vì $x \\ne 1$): $\\frac{5(1-x)}{x(1-x)}.$', can: ['mtc', 'dk'] },
+          { id: 'phu2', chu: 'Nhân cả tử và mẫu của $\\frac{3}{1-x}$ với $x$ (khác $0$ vì $x \\ne 0$): $\\frac{3x}{x(1-x)}.$', can: ['mtc', 'dk'] },
+          { id: 'cong', chu: 'Cộng hai tử, giữ nguyên mẫu chung: $\\frac{5 - 5x + 3x}{x(1-x)}.$', can: ['phu1', 'phu2'] },
+          { id: 'gon', chu: 'Thu gọn tử: $5 - 5x + 3x = 5 - 2x.$', can: ['cong'] },
+          { id: 'kl', chu: 'Vậy $\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5-2x}{x(1-x)}$ với $x \\ne 0,$ $x \\ne 1.$', can: ['gon'] }
         ],
-        ketLuan: '$\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5-2x}{x(1-x)}$. Nhân tử phụ phải khác $0$, nên điều kiện $x \\ne 0$, $x \\ne 1$ đi theo suốt bài.'
+        ketLuan: '$\\frac{5}{x} + \\frac{3}{1-x} = \\frac{5-2x}{x(1-x)}.$ Hai mẫu phải khác $0,$ nên $x \\ne 0,\\ x \\ne 1.$ Nhờ vậy nhân tử phụ cũng khác $0.$'
       } },
       { loai: 'hinh', widget: 'geo', config: hinhKiemTra,
         chuThich: '**Kiểm tra kết quả bằng số:** kéo điểm cam tới vài giá trị của $x$ (khác $0$ và $1$). Dòng xanh lá (cộng trực tiếp) luôn bằng dòng xanh dương (kết quả đã tính) – hai đường trùng nhau. Em có thể dùng mẹo này để tự kiểm tra bài làm: thay một số vào đề và vào đáp án.' },

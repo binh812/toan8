@@ -139,6 +139,7 @@
       'Phân loại được dữ liệu: số liệu rời rạc, số liệu liên tục, dữ liệu không là số có thể hay không thể sắp thứ tự.',
       'Nói được vì sao một số liệu là rời rạc hay liên tục bằng câu hỏi "đếm hay đo?".',
       'Chỉ ra một cách thu thập dữ liệu là trực tiếp hay gián tiếp.',
+      'Nhận ra dữ liệu có đại diện cho cả nhóm cần tìm hiểu hay không, ví dụ chỉ hỏi vài bạn cùng bàn thì chưa đại diện cho cả khối.',
       'Phát hiện giá trị không hợp lí trong một dãy dữ liệu và giải thích vì sao.'
     ],
     lyThuyet: [

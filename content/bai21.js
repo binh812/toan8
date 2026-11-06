@@ -162,14 +162,14 @@
       { loai: 'lapCM', tieuDe: 'Lắp lập luận: điều kiện xác định của $\\frac{3}{x^2-4}$', config: {
         de: 'Xếp các bước theo đúng thứ tự lập luận. Bước nào chưa đủ căn cứ, máy sẽ nói thiếu gì.',
         buoc: [
-          { id: 'mau', chu: 'Phân thức có giá trị khi mẫu $x^2 - 4 \\ne 0$.' },
-          { id: 'pt', chu: 'Phân tích mẫu: $x^2 - 4 = (x-2)(x+2)$.' },
-          { id: 'tich', chu: 'Một tích bằng $0$ khi có một thừa số bằng $0$.' },
-          { id: 'a', chu: 'Thừa số $x - 2$ bằng $0$ khi $x = 2$.', can: ['pt', 'tich'] },
-          { id: 'b', chu: 'Thừa số $x + 2$ bằng $0$ khi $x = -2$.', can: ['pt', 'tich'] },
-          { id: 'kl', chu: 'Vậy điều kiện xác định là $x \\ne 2$ và $x \\ne -2$.', can: ['mau', 'a', 'b'] }
+          { id: 'mau', chu: 'Phân thức có giá trị khi mẫu $x^2 - 4 \\ne 0.$' },
+          { id: 'pt', chu: 'Phân tích mẫu: $x^2 - 4 = (x-2)(x+2).$' },
+          { id: 'tich', chu: 'Một tích bằng $0$ khi có một thừa số bằng $0.$' },
+          { id: 'a', chu: 'Thừa số $x - 2$ bằng $0$ khi $x = 2.$', can: ['pt', 'tich'] },
+          { id: 'b', chu: 'Thừa số $x + 2$ bằng $0$ khi $x = -2.$', can: ['pt', 'tich'] },
+          { id: 'kl', chu: 'Vậy điều kiện xác định là $x \\ne 2$ và $x \\ne -2.$', can: ['mau', 'a', 'b'] }
         ],
-        ketLuan: 'Mẫu $(x-2)(x+2)$ bằng $0$ ở cả hai chỗ $x = 2$ và $x = -2$, nên phải loại cả hai: $x \\ne 2$ và $x \\ne -2$.'
+        ketLuan: 'Mẫu $(x-2)(x+2)$ bằng $0$ ở cả hai chỗ $x = 2$ và $x = -2,$ nên phải loại cả hai: $x \\ne 2$ và $x \\ne -2.$'
       } },
       { loai: 'hinh', widget: 'geo', config: hinhHaiChoKhongXacDinh,
         chuThich: 'Phân thức $\\frac{3}{x^2-4}$ có mẫu $x^2 - 4 = (x-2)(x+2)$ bằng $0$ tại **hai** chỗ: $x = 2$ và $x = -2$ (hai đường đỏ nét đứt). Kéo điểm cam tới đó: phân thức không xác định. Điều kiện xác định là $x \\ne 2$ **và** $x \\ne -2$.' },

@@ -58,14 +58,17 @@
   // Thử phá đoạn chia: ép đoạn mẫu ngắn dần về 0. Không có số nào nhân với 0 ra tử, nên tử : 0 không có giá trị.
   function phaDoan(h, ep) {
     var A = h.A, B = h.B, B0 = h.B0;
+    var X = h.coX ? 'Tại $x = ' + soL(h.x) + '$' : 'Ở đây', x = h.coX ? 'tại $x = ' + soL(h.x) + '$' : 'ở đây';
+    // Nhắc giá trị thật của phân thức: đoạn đã thu chỉ là phép thử, không phải phân thức
+    var that = khong(B0) ? ' Còn phân thức thật ' + x + ' có mẫu bằng $0,$ cũng không có giá trị.'
+      : ' Đây là đoạn đã thu, không phải giá trị phân thức: ' + x + ' phân thức vẫn bằng $' + phan(A, B0) + bangL(A / B0) + '.$';
     if (ep < GAN) {
-      if (khong(A)) return { hong: true, chu: 'Đoạn mẫu thu về $0$, mà tử cũng bằng $0$: $\\frac{0}{0}$. Số nào nhân với $0$ cũng ra $0$, nên không có **một** giá trị nào để chọn. Phân thức không xác định.' };
-      return { hong: true, chu: 'Đoạn mẫu thu về $0$. Đặt $10$, $100$ hay $1000$ bản thì vẫn dài $1000 \\cdot 0 = 0$, không phủ được đoạn tử dài $' + soL(Math.abs(A)) + '$. Không có số nào nhân với $0$ ra $' + soL(A) + '$, nên $' + phan(A, 0) + '$ không có giá trị.' };
+      if (khong(A)) return { hong: true, chu: 'Đoạn mẫu thu về $0,$ mà tử cũng bằng $0$: được $\\frac{0}{0}.$ Số nào nhân với $0$ cũng ra $0,$ nên không có một giá trị duy nhất.' + that };
+      return { hong: true, chu: 'Đoạn mẫu thu về $0.$ Đặt $10,$ $100$ hay $1000$ bản thì vẫn dài $1000 \\cdot 0 = 0,$ không phủ được đoạn tử dài $' + soL(Math.abs(A)) + '.$ Không có số nào nhân với $0$ ra $' + soL(A) + ',$ nên chia cho $0$ không có kết quả.' + that };
     }
-    var X = h.coX ? 'Tại $x = ' + soL(h.x) + '$' : 'Ở đây';
-    if (khong(B0)) return { hong: false, chu: X + ' mẫu đã bằng $0$: không đếm được số lần đặt, nên phân thức không xác định. Đúng như điều kiện mẫu khác $0$.' };
-    if (ep < 1 - GAN) return { hong: false, chu: 'Đoạn mẫu thu còn $' + soL(ep) + ' \\cdot ' + ngoac(B0) + bangL(B) + '$: phải đặt $' + soL(Math.abs(A)) + ' : ' + soL(Math.abs(B)) + bangL(h.dem) + '$ lần. Mẫu càng ngắn, số lần càng lớn; nhưng mẫu còn khác $0$ thì vẫn đếm được.' };
-    return { hong: false, chu: X + ' mẫu bằng $' + soL(B) + ' \\ne 0$: đoạn mẫu đặt vừa $' + soL(Math.abs(A)) + ' : ' + soL(Math.abs(B)) + bangL(h.dem) + '$ lần, nên $' + phan(A, B) + bangL(h.gt) + '$.' };
+    if (khong(B0)) return { hong: false, chu: X + ' mẫu đã bằng $0$: không đếm được số lần đặt, nên phân thức không xác định. Đúng như điều kiện mẫu khác $0.$' };
+    if (ep < 1 - GAN) return { hong: false, chu: 'Đoạn mẫu thu còn $' + soL(ep) + ' \\cdot ' + ngoac(B0) + bangL(B) + ',$ phải đặt $' + soL(Math.abs(A)) + ' : ' + soL(Math.abs(B)) + bangL(h.dem) + '$ lần. Đoạn càng ngắn, số lần càng lớn; còn khác $0$ thì vẫn đếm được.' + that };
+    return { hong: false, chu: X + ' mẫu bằng $' + soL(B) + ' \\ne 0,$ đoạn mẫu đặt vừa $' + soL(Math.abs(A)) + ' : ' + soL(Math.abs(B)) + bangL(h.dem) + '$ lần, nên $' + phan(A, B) + bangL(h.gt) + '.$' };
   }
   // "tử 2x + 3 = 17"; tên đã là chính con số thì không ghi lại "= 9"
   // Tên đa thức gõ kiểu máy (x^2-5) đổi thành kiểu sách (x² − 5)
@@ -156,7 +159,11 @@
       // o.tachMau: mẫu viết thành tích, hiện dần (nút "Phân tích mẫu")
       if (o.tachMau) { yChu += 7.5; C.chu(g, X0, yChu, 'mẫu = ' + o.tachMau, CO, null, hop(huong('start', '--b'), { opacity: k.hienTach < 0.01 ? 0 : k.hienTach })); }
       var kq, mauKq = '--muc';
+      // Đang thu đoạn mẫu (thử phá): phép chia là của đoạn đã thu, không phải giá trị phân thức
+      var thu = k.ep < 1 - GAN && !khong(h.B0);
       if (chua) kq = '';
+      else if (thu && !h.xd) { kq = 'đoạn thu về 0: không phủ được'; mauKq = '--sai'; }
+      else if (thu) kq = 'đoạn đã thu: ' + viet(h.A) + ' : ' + viet(h.B) + bang(h.gt);
       else if (!h.xd) { kq = 'mẫu bằng 0: không chia được'; mauKq = '--sai'; }
       else if (Math.abs(h.A) < GAN) kq = 'tử bằng 0, nên giá trị = 0';
       else kq = (h.soTu || viet(h.A)) + ' : ' + (h.soMau || viet(h.B)) + (k.hienGT > 0.5 ? bang(h.gt) : ' = ?');
@@ -180,8 +187,11 @@
         : h.chuMau.charAt(0).toUpperCase() + h.chuMau.slice(1) + ten(h.tenMau) + X + ' ' + giaTriL(h.B, h.soMau) + ', khác $0$, nên đặt được nối tiếp dọc đoạn tử.' };
       ra['ban' + hau] = { tieuDe: 'Các bản đoạn ' + h.chuMau, chu: anGT || !h.xd ? 'Đặt các bản của đoạn ' + h.chuMau + ' nối tiếp nhau cho tới khi phủ vừa đoạn ' + h.chuTu + '. Bản cuối có thể chỉ là một phần.'
         : 'Có $' + soL(h.dem).replace(/^/, tron(h.dem) ? '\\approx ' : '') + '$ bản (bản cuối có thể chỉ là một phần). Đó là số lần đoạn ' + h.chuMau + ' nằm vừa trong đoạn ' + h.chuTu + '.' };
+      var thu = k.ep < 1 - GAN && !khong(h.B0), giaThat = (h.coX ? 'Tại $x = ' + soL(h.x) + '$' : 'Ở đây') + ' phân thức vẫn bằng $' + phan(h.A, h.B0) + bangL(h.A / h.B0) + '.$';
+      if (thu) ra['ban' + hau].chu += ' (Đây là các bản của đoạn đã thu.)';
       ra['giaTri' + hau] = { tieuDe: 'Giá trị', chu: anGT ? 'Giá trị là tử chia mẫu, khi mẫu khác $0$.'
-        : !h.xd ? 'Không có số nào nhân với $0$ ra ' + (khong(h.A) ? '$0$ một cách duy nhất' : '$' + soL(h.A) + '$') + ', nên không có giá trị.'
+        : thu ? (h.xd ? 'Đây là $' + soL(h.A) + ' : ' + soL(h.B) + bangL(h.gt) + '$ của đoạn đã thu, không phải giá trị phân thức. ' : 'Đoạn mẫu đã thu về $0,$ chia cho $0$ không có kết quả. Đó là đoạn đã thu, không phải phân thức. ') + giaThat
+        : !h.xd ? (khong(h.A) ? 'Số nào nhân với $0$ cũng ra $0,$ nên không có một giá trị duy nhất.' : 'Không có số nào nhân với $0$ ra $' + soL(h.A) + ',$ nên không có giá trị.')
         : 'Tử chia mẫu: $' + (h.soTu || h.soMau ? (tron(h.gt) ? '\\approx ' : '') : phan(h.A, h.B) + (tron(h.gt) ? ' \\approx ' : ' = ')) + soL(h.gt) + '$.' + (h.gt < -GAN ? ' Tử và mẫu khác dấu nên giá trị âm.' : '') };
     });
     return ra;
@@ -269,9 +279,11 @@
       var a = giaTri(o.tu, x), b = giaTri(o.mau, x), m = giaTri(o.M == null ? 1 : o.M, x), tenM = o.tenM ? String(o.tenM).replace(/−/g, '-') : '';
       dong.push('Bên trái: ' + ps(a, b) + (khong(b) ? ', mẫu bằng 0' : bang(a / b)));
       dong.push('Nhân M = ' + viet(m) + ': ' + ps(a * m, b * m) + (khong(b * m) ? ', mẫu bằng 0' : bang(a / b)));
-      if (khong(b)) return { hong: true, dong: dong, chu: X + ' mẫu bằng $0$: ngay $' + phan(a, 0) + '$ đã không có giá trị, nên không có phân thức nào để giữ nguyên.' };
-      if (khong(m)) return { hong: true, dong: dong, chu: X + ' thì $M' + (tenM && tenM !== soL(m) ? ' = ' + tenM : '') + ' = 0$. Bên trái $' + phan(a, b) + bangL(a / b) + '$, nhưng bên phải $\\frac{' + ngoac(a) + ' \\cdot 0}{' + ngoac(b) + ' \\cdot 0} = \\frac{0}{0}$: không xác định. Nhân cả tử và mẫu với $0$ thì mất phân thức, nên phải có $M \\ne 0$.' };
-      return { hong: false, dong: dong, chu: X + ': $' + phan(a, b) + ' = ' + phan(a * m, b * m) + bangL(a / b) + '$. Ở đây $M = ' + soL(m) + ' \\ne 0$ nên phân thức không đổi.' };
+      // M là đa thức khác 0 nên đẳng thức hai phân thức vẫn đúng; chỉ tại điểm này một vế không có giá trị (chiHinh, không phải hỏng)
+      var chiCho = ' Hai phân thức chỉ cùng giá trị ở những chỗ cả hai mẫu khác $0.$ Nếu $M$ là đa thức $0$ thì không còn phân thức nào.';
+      if (khong(b)) return { hong: true, chiHinh: true, dong: dong, chu: X + ' mẫu bằng $0$: ngay $' + phan(a, 0) + '$ đã không có giá trị, nên cả hai vế đều không có giá trị.' + chiCho };
+      if (khong(m)) return { hong: true, chiHinh: true, dong: dong, chu: X + ' thì $M' + (tenM && tenM !== soL(m) ? ' = ' + tenM : '') + ' = 0.$ Vế trái $' + phan(a, b) + bangL(a / b) + ',$ còn vế phải là $\\frac{' + ngoac(a) + ' \\cdot 0}{' + ngoac(b) + ' \\cdot 0} = \\frac{0}{0},$ không có giá trị.' + chiCho };
+      return { hong: false, dong: dong, chu: X + ': $' + phan(a, b) + ' = ' + phan(a * m, b * m) + bangL(a / b) + '.$ Ở đây $M = ' + soL(m) + ' \\ne 0$ nên phân thức không đổi.' };
     }
     var q1 = phanSo(o.p1, x), q2 = phanSo(o.p2, x), a1 = q1.a, b1 = q1.b, a2 = q2.a, b2 = q2.b;
     dong.push('Thứ nhất: ' + ps(a1, b1) + (khong(b1) ? ', mẫu bằng 0' : ''));
@@ -282,20 +294,20 @@
       if (hongMau) {
         dong.push('Tích: không tính được');
         var them = '';
-        if (gv && !khong(gv.b)) { them = ' Thế mà kết quả rút gọn $' + gon.ten + '$ lại cho $' + soL(gv.a / gv.b) + '$. Rút gọn xong vẫn phải giữ điều kiện $' + gon.dk + '$.'; dong.push('Kết quả rút gọn lại cho ' + viet(gv.a / gv.b) + '!'); }
-        return { hong: true, dong: dong, chu: X + ': ' + (khong(b1) ? 'phân thức thứ nhất là $' + phan(a1, 0) + '$' : 'phân thức thứ hai là $' + phan(a2, 0) + '$') + ', không có giá trị, nên tích không tính được.' + them };
+        if (gv && !khong(gv.b)) { them = ' Thế mà kết quả rút gọn $' + gon.ten + '$ lại cho $' + soL(gv.a / gv.b) + '.$ Rút gọn xong vẫn phải giữ điều kiện $' + gon.dk + '.$'; dong.push('Kết quả rút gọn lại cho ' + viet(gv.a / gv.b) + '!'); }
+        return { hong: true, dong: dong, chu: X + ': ' + (khong(b1) ? 'phân thức thứ nhất là $' + phan(a1, 0) + ',$' : 'phân thức thứ hai là $' + phan(a2, 0) + ',$') + ' không có giá trị, nên tích không tính được.' + them };
       }
       dong.push('Tích: ' + ps(a1 * a2, b1 * b2) + bang(a1 * a2 / (b1 * b2)));
-      return { hong: false, dong: dong, chu: X + ': $' + hai + ' = \\frac{' + ngoac(a1) + ' \\cdot ' + ngoac(a2) + '}{' + ngoac(b1) + ' \\cdot ' + ngoac(b2) + '} = ' + phan(a1 * a2, b1 * b2) + bangL(a1 * a2 / (b1 * b2)) + '$: tử nhân tử, mẫu nhân mẫu.' + (gv && !khong(gv.b) ? ' Khớp với $' + gon.ten + bangL(gv.a / gv.b) + '$.' : '') };
+      return { hong: false, dong: dong, chu: X + ': $' + hai + ' = \\frac{' + ngoac(a1) + ' \\cdot ' + ngoac(a2) + '}{' + ngoac(b1) + ' \\cdot ' + ngoac(b2) + '} = ' + phan(a1 * a2, b1 * b2) + bangL(a1 * a2 / (b1 * b2)) + ':$ tử nhân tử, mẫu nhân mẫu.' + (gv && !khong(gv.b) ? ' Khớp với $' + gon.ten + bangL(gv.a / gv.b) + '.$' : '') };
     }
     var tru = dang === 'tru', Mc = o.mtc != null ? giaTri(o.mtc, x) : b1 * b2 / (nguyen(b1) && nguyen(b2) && !hongMau ? ucln(Math.round(b1), Math.round(b2)) : 1);
     if (hongMau || khong(Mc)) {
       dong.push('Mẫu chung: ' + viet(Mc) + ', không chia được');
-      return { hong: true, dong: dong, chu: X + ': trong $' + hai + '$ có mẫu bằng $0$, phân thức đó không có giá trị. Mẫu chung bằng $' + soL(Mc) + '$, không chia hình thành $0$ ô được, nên không ' + (tru ? 'trừ' : 'cộng') + ' được.' };
+      return { hong: true, dong: dong, chu: X + ': trong $' + hai + '$ có mẫu bằng $0,$ phân thức đó không có giá trị. Mẫu chung bằng $' + soL(Mc) + ',$ không chia hình thành $0$ ô được, nên không ' + (tru ? 'trừ' : 'cộng') + ' được.' };
     }
     var s1 = a1 * Mc / b1, s2 = a2 * Mc / b2, kq = tru ? s1 - s2 : s1 + s2;
     dong.push((tru ? 'Hiệu: ' : 'Tổng: ') + ps(kq, Mc) + bang(kq / Mc));
-    return { hong: false, dong: dong, chu: X + ': $' + hai + ' = ' + phan(s1, Mc) + (tru ? ' - ' : ' + ') + phan(s2, Mc) + ' = ' + phan(kq, Mc) + bangL(kq / Mc) + '$. Hai mẫu khác $0$ nên quy đồng được.' };
+    return { hong: false, dong: dong, chu: X + ': $' + hai + ' = ' + phan(s1, Mc) + (tru ? ' - ' : ' + ') + phan(s2, Mc) + ' = ' + phan(kq, Mc) + bangL(kq / Mc) + '.$ Hai mẫu khác $0$ nên quy đồng được.' };
   }
   C.dangKi('luoiPhanSo', {
     thamSo: { x: { min: 1, max: 6, step: 1, md: 3, nhan: 'x', mau: '--a' },

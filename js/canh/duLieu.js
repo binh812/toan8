@@ -290,7 +290,7 @@
         else if (r.loai === 3) ra[k] = { tieuDe: 'Có thể sắp thứ tự', chu: '"' + r.ten + '": là chữ, nhưng xếp được thành bậc ' + r.thuTu.join(' < ') + '. Nên đây là dữ liệu không là số, **có thể sắp thứ tự**.' };
         else ra[k] = { tieuDe: 'Không thể sắp thứ tự', chu: '"' + r.ten + '": ' + ds + '. Đổi chỗ thế nào cũng được, không có bậc nào cao hơn: dữ liệu **không thể sắp thứ tự**.' };
       }
-      if (vl.length && !ra.voLi) ra.voLi = { tieuDe: 'Giá trị không hợp lí', chu: 'Thẻ ' + M(vl[0].v) + ' ở câu "' + r.ten + '" không có chỗ trên giá: các giá trị hợp lí chỉ từ ' + M(r.truc.tu) + ' đến ' + M(r.truc.den) + '. Có lẽ ai đó ghi nhầm.' };
+      if (vl.length && !ra.voLi) ra.voLi = { tieuDe: 'Giá trị không hợp lí', chu: 'Trên giá chỉ có chỗ từ ' + M(r.truc.tu) + ' đến ' + M(r.truc.den) + '; giá trị ' + M(vl[0].v) + ' cho câu "' + r.ten + '" là vô lí. Có lẽ ai đó ghi nhầm.' };
       if (r.giua && !ra.giua) ra.giua = r.loai === 0
         ? { tieuDe: 'Thẻ thử ' + r.giua.s, chu: 'Số liệu đếm được chỉ là số tự nhiên, nên ' + M(r.giua.v) + ' không thể là câu trả lời.' }
         : { tieuDe: 'Thẻ thử ' + r.giua.s, chu: 'Số đo có thể nằm giữa hai vạch, nên ' + M(r.giua.v) + ' vẫn là một câu trả lời có thể có.' };
@@ -738,7 +738,7 @@
   // Soi chi tiết: cột (số liệu và chiều cao trên gốc), gốc trục, đường cắt.
   // Đề còn giấu (anLucDau) thì không ghi chiều cao từng cột, vì tỉ số hai chiều cao là điều em cần tìm.
   C.lay('catTruc').soi = function (g, p, o) {
-    var an = o.anLucDau && p.trangThai !== 'giai', don = o.don ? ' ' + o.don : '', ra = {};
+    var an = o.anLucDau && p.trangThai !== 'giai', don = o.don ? (o.don === '%' ? '%' : ' ' + o.don) : '', ra = {};
     var M = function (x) { return '$' + soM(x) + '$'; }, L = Math.round(g.L * 10) / 10, coGoc = L > 0.05;
     g.cot.forEach(function (c, i) {
       var chu = 'Số liệu ' + M(c.v) + don + ', ghi trên đầu cột, không đổi khi cắt trục.';
@@ -753,7 +753,7 @@
       goc += ' Ở đây chiều cao gấp $' + lam(g.tiCao).replace(/^= /, '') + '$ lần, còn số liệu chỉ gấp $\\frac{' + soM(o.so[o.hoi[0]]) + '}{' + soM(o.so[o.hoi[1]]) + '} ' + lam(g.tiSo) + '$ lần.';
     }
     ra.goc = { tieuDe: 'Gốc trục đứng', chu: goc };
-    ra.cat = { tieuDe: 'Đường cắt', chu: 'Đang nâng tới ' + M(Math.round(g.cat)) + '. Phần cột dưới đường này (nét đứt) sẽ bị bỏ đi, rồi phần còn lại được kéo giãn cho đầy khung.' };
+    ra.cat = { tieuDe: 'Đường cắt', chu: g.sB > 0.99 ? 'Đường cắt đã nâng tới ' + M(Math.round(g.cat)) + '. Phần cột dưới mức này đã bỏ đi, phần còn lại đã kéo giãn cho đầy khung.' : 'Đang nâng tới ' + M(Math.round(g.cat)) + '. Phần cột dưới đường này (nét đứt) sẽ bị bỏ đi, rồi phần còn lại được kéo giãn cho đầy khung.' };
     return ra;
   };
 

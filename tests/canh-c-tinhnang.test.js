@@ -23,7 +23,9 @@ test('doanChia thử phá: ở md không hỏng (kể cả khi đường x tới
   const h = C('doanChia').tinh({ epMau: 0 }, 0, O21);
   assert.strictEqual(h.pha.hong, true);
   assert.strictEqual(h.hang[0].xd, false); assert.strictEqual(h.hang[0].ban.length, 0);
-  coSo(h.pha.chu, '\\frac{7}{0}', 'tử 7 tại x = 6');
+  coSo(h.pha.chu, 'đoạn tử dài $7', 'tử 7 tại x = 6');
+  coSo(h.pha.chu, 'chia cho $0$ không có kết quả', 'chỗ hỏng');
+  coSo(h.pha.chu, '\\frac{7}{4}', 'phân thức thật vẫn có giá trị');
 });
 
 test('doanChia thử phá: thu mẫu còn ep lần thì số bản = tử : (ep · mẫu), mẫu gốc giữ nguyên', () => {
@@ -32,6 +34,10 @@ test('doanChia thử phá: thu mẫu còn ep lần thì số bản = tử : (ep 
   assert.ok(Math.abs(h.B0 - 4) < 1e-9 && Math.abs(h.B - 2) < 1e-9);
   assert.ok(Math.abs(h.dem - 3.5) < 1e-9);
   coSo(k.pha.chu, '3{,}5', 'số lần đặt');
+  // Nói rõ đó là đoạn đã thu; phân thức thật vẫn bằng 7/4
+  coSo(k.pha.chu, '\\frac{7}{4} = 1{,}75', 'giá trị thật');
+  const sg = C('doanChia').soi(k, {}, O21).giaTri.chu;
+  coSo(sg, 'đoạn đã thu', 'thẻ giá trị'); coSo(sg, '\\frac{7}{4}', 'thẻ giá trị: giá trị thật');
   // Không thử phá: hành vi cũ
   const cu = C('doanChia').tinh({}, 0, O21).hang[0];
   assert.ok(Math.abs(cu.B - 4) < 1e-9 && Math.abs(cu.dem - 1.75) < 1e-9);
@@ -42,6 +48,8 @@ test('luoiPhanSo thử phá bài 22: x = −2 làm M = 0, x = −1 làm mẫu 0;
   assert.strictEqual(tinh(1).hong, false);
   coSo(tinh(1).chu, '\\frac{3}{4} = \\frac{15}{20}', 'x = 3 (md)');
   assert.strictEqual(tinh(-2).hong, true);
+  // M = x + 2 là đa thức khác 0: đẳng thức vẫn đúng, chỉ tại x = −2 vế phải không có giá trị (vàng, không đỏ)
+  assert.strictEqual(tinh(-2).chiHinh, true); assert.strictEqual(tinh(-1).chiHinh, true);
   coSo(tinh(-2).chu, '\\frac{-2}{-1} = 2', 'bên trái vẫn là 2');
   coSo(tinh(-2).chu, '\\frac{0}{0}', 'bên phải 0/0');
   assert.strictEqual(tinh(-1).hong, true);
@@ -65,7 +73,7 @@ test('luoiPhanSo thử phá bài 24: x = 0 tích không tính được, mà kế
   const h = tinh(0);
   assert.strictEqual(h.hong, true);
   coSo(h.chu, '\\frac{-1}{0}', 'phân thức thứ hai');
-  coSo(h.chu, 'lại cho $-1$', 'rút gọn (x − 1)/(x + 1) tại 0');
+  coSo(h.chu, 'lại cho $-1', 'rút gọn (x − 1)/(x + 1) tại 0');
   assert.strictEqual(tinh(-1).hong, true);
   // x = −2: (−2)/(−1) · (−3)/(−2) = 6/2 = 3, khớp (x − 1)/(x + 1) = 3
   coSo(tinh(-2).chu, '\\frac{6}{2} = 3', 'x = −2');
